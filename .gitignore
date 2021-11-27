@@ -1,0 +1,4 @@
+/packages
+bin/
+obj/
+/.vs/AutoTest/v16/.suo

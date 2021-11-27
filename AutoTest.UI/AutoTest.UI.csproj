@@ -1,0 +1,466 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\CefSharp.Common.95.7.141\build\CefSharp.Common.props" Condition="Exists('..\packages\CefSharp.Common.95.7.141\build\CefSharp.Common.props')" />
+  <Import Project="..\packages\cef.redist.x86.95.7.14\build\cef.redist.x86.props" Condition="Exists('..\packages\cef.redist.x86.95.7.14\build\cef.redist.x86.props')" />
+  <Import Project="..\packages\cef.redist.x64.95.7.14\build\cef.redist.x64.props" Condition="Exists('..\packages\cef.redist.x64.95.7.14\build\cef.redist.x64.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{F6FA3570-C0E1-4995-B584-1E2F293A4695}</ProjectGuid>
+    <OutputType>WinExe</OutputType>
+    <RootNamespace>AutoTest.UI</RootNamespace>
+    <AssemblyName>AutoTest.UI</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
+    <Deterministic>true</Deterministic>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Autofac, Version=6.3.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
+      <HintPath>..\packages\Autofac.6.3.0\lib\netstandard2.0\Autofac.dll</HintPath>
+    </Reference>
+    <Reference Include="AutoMapper, Version=10.0.0.0, Culture=neutral, PublicKeyToken=be96cd2c38ef1005, processorArchitecture=MSIL">
+      <HintPath>..\packages\AutoMapper.10.1.1\lib\net461\AutoMapper.dll</HintPath>
+    </Reference>
+    <Reference Include="CefSharp, Version=95.7.141.0, Culture=neutral, PublicKeyToken=40c4b6fc221f4138, processorArchitecture=MSIL">
+      <HintPath>..\packages\CefSharp.Common.95.7.141\lib\net452\CefSharp.dll</HintPath>
+    </Reference>
+    <Reference Include="CefSharp.Core, Version=95.7.141.0, Culture=neutral, PublicKeyToken=40c4b6fc221f4138, processorArchitecture=MSIL">
+      <HintPath>..\packages\CefSharp.Common.95.7.141\lib\net452\CefSharp.Core.dll</HintPath>
+    </Reference>
+    <Reference Include="CefSharp.WinForms, Version=95.7.141.0, Culture=neutral, PublicKeyToken=40c4b6fc221f4138, processorArchitecture=MSIL">
+      <HintPath>..\packages\CefSharp.WinForms.95.7.141\lib\net452\CefSharp.WinForms.dll</HintPath>
+    </Reference>
+    <Reference Include="LJC.FrameWorkV3">
+      <HintPath>..\Lib\LJC.FrameWorkV3.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=1.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.1.1.0\lib\net461\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System" />
+    <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Configuration.ConfigurationManager, Version=6.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Configuration.ConfigurationManager.6.0.0\lib\net461\System.Configuration.ConfigurationManager.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Core" />
+    <Reference Include="System.Data.OracleClient" />
+    <Reference Include="System.Diagnostics.DiagnosticSource, Version=4.0.5.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Diagnostics.DiagnosticSource.4.7.1\lib\net46\System.Diagnostics.DiagnosticSource.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Memory, Version=4.0.1.1, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Memory.4.5.4\lib\net461\System.Memory.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Numerics.Vectors, Version=4.1.4.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Numerics.Vectors.4.5.0\lib\net46\System.Numerics.Vectors.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.3\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security" />
+    <Reference Include="System.Security.AccessControl, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.AccessControl.6.0.0\lib\net461\System.Security.AccessControl.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security.Permissions, Version=6.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Permissions.6.0.0\lib\net461\System.Security.Permissions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Security.Principal.Windows, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Security.Principal.Windows.5.0.0\lib\net461\System.Security.Principal.Windows.dll</HintPath>
+    </Reference>
+    <Reference Include="System.ServiceProcess" />
+    <Reference Include="System.Threading.Tasks.Extensions, Version=4.2.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Threading.Tasks.Extensions.4.5.2\lib\netstandard2.0\System.Threading.Tasks.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Deployment" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="AutofacBuilder.cs" />
+    <Compile Include="EventListener\EventListener.cs" />
+    <Compile Include="EventListener\IEventListener.cs" />
+    <Compile Include="EventListener\WebEvent.cs" />
+    <Compile Include="MainFrm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MainFrm.Designer.cs">
+      <DependentUpon>MainFrm.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Program.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="ResourceHandler\DefaultRequestHandler.cs" />
+    <Compile Include="ResourceHandler\DefaultResourceHandler.cs" />
+    <Compile Include="Resources\Resource1.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resource1.resx</DependentUpon>
+    </Compile>
+    <Compile Include="ResponseFilters\BaseResponseFilter.cs" />
+    <Compile Include="ResponseFilters\JsonResponseFilter.cs" />
+    <Compile Include="ResponseFilters\ResponseFilterFactory.cs" />
+    <Compile Include="ResponseFilters\TextResponseFilter.cs" />
+    <Compile Include="SubForm\InputStringDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SubForm\InputStringDlg.Designer.cs">
+      <DependentUpon>InputStringDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SubForm\MD5Dlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SubForm\MD5Dlg.Designer.cs">
+      <DependentUpon>MD5Dlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SubForm\PopMessageDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SubForm\PopMessageDlg.Designer.cs">
+      <DependentUpon>PopMessageDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SubForm\SubBaseDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SubForm\SubBaseDlg.Designer.cs">
+      <DependentUpon>SubBaseDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SubForm\URLEncodeDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SubForm\URLEncodeDlg.Designer.cs">
+      <DependentUpon>URLEncodeDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SubForm\WatingDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SubForm\WatingDlg.Designer.cs">
+      <DependentUpon>WatingDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UC\DBServerView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UC\DBServerView.Designer.cs">
+      <DependentUpon>DBServerView.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UC\LoadingBox.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UC\LoadingBox.Designer.cs">
+      <DependentUpon>LoadingBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UC\MyTabControl.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UC\MyTabControl.Designer.cs">
+      <DependentUpon>MyTabControl.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UC\TabTableTabEx.cs" />
+    <Compile Include="UC\UCProxy.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UC\UCProxy.Designer.cs">
+      <DependentUpon>UCProxy.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Util.cs" />
+    <Compile Include="WebBrowser\CookieVisitor.cs" />
+    <Compile Include="WebBrowser\DefaultChromiumWebBrowser.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="WebBrowser\IWebBrowserTool.cs" />
+    <Compile Include="WebBrowser\WebBrowserTool.cs" />
+    <Compile Include="WebTask\IWebTask.cs" />
+    <EmbeddedResource Include="MainFrm.resx">
+      <DependentUpon>MainFrm.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Resources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+    </Compile>
+    <EmbeddedResource Include="Resources\Resource1.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resource1.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <None Include="configfile.json" />
+    <None Include="packages.config" />
+    <None Include="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+    <Compile Include="Properties\Settings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AutoTest.Biz\AutoTest.Biz.csproj">
+      <Project>{0DDDC35D-3534-43AA-A308-BADDA3C6C7A6}</Project>
+      <Name>AutoTest.Biz</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AutoTest.Domain\AutoTest.Domain.csproj">
+      <Project>{8E857C55-C682-4241-834F-F3E43C49F255}</Project>
+      <Name>AutoTest.Domain</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\AutoTest.Util\AutoTest.Util.csproj">
+      <Project>{14518546-5662-4846-B334-E6D9EB23DCAD}</Project>
+      <Name>AutoTest.Util</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\shape_3d.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\rgb.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\arrow_down.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\arrow_up.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\sort_ascending.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\bullet_eject.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\bullet_green.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\bullet_red.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\bullet_tick.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\CloseServer.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\colq.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\computer_link.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\connect.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\cross.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\DB1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\key_add1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\plugin_add1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\application_form_magnify.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\DB16.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\DB3.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\DB4.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\DB5.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\DB6.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\shapes_many1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\shapes_many2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\report1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\report2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\report_key1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\report_key2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\sort_descending.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\DB2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\folder_database.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\folder.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\help.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\page1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\page2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\link.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\loading.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\loading2.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\sitemap.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\msg.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\bullet_database_yellow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\OpenServer.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\OpenServer.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\tags_grey.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\tags_red.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\plugin.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\disk_black.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\script_code.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\script_code_no.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\script_code_red.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\script_code_red_no.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\新建位图图像.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\application_side_contract.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\application_side_expand.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\SQLSerTop.jpg" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\table.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\tbview.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\text_columns.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\arrow_down1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\arrow_up1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\cross1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\disk_black1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\SwaggerApi.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\text_columns1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\新建位图图像1.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\新建位图图像 %282%29.bmp" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>这台计算机上缺少此项目引用的 NuGet 程序包。使用“NuGet 程序包还原”可下载这些程序包。有关更多信息，请参见 http://go.microsoft.com/fwlink/?LinkID=322105。缺少的文件是 {0}。</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\cef.redist.x64.95.7.14\build\cef.redist.x64.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\cef.redist.x64.95.7.14\build\cef.redist.x64.props'))" />
+    <Error Condition="!Exists('..\packages\cef.redist.x86.95.7.14\build\cef.redist.x86.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\cef.redist.x86.95.7.14\build\cef.redist.x86.props'))" />
+    <Error Condition="!Exists('..\packages\CefSharp.Common.95.7.141\build\CefSharp.Common.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CefSharp.Common.95.7.141\build\CefSharp.Common.props'))" />
+    <Error Condition="!Exists('..\packages\CefSharp.Common.95.7.141\build\CefSharp.Common.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\CefSharp.Common.95.7.141\build\CefSharp.Common.targets'))" />
+  </Target>
+  <Import Project="..\packages\CefSharp.Common.95.7.141\build\CefSharp.Common.targets" Condition="Exists('..\packages\CefSharp.Common.95.7.141\build\CefSharp.Common.targets')" />
+</Project>
