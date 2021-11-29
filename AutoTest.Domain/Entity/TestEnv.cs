@@ -6,10 +6,8 @@ using System.Threading.Tasks;
 
 namespace AutoTest.Domain.Entity
 {
-    /// <summary>
-    /// 测试包
-    /// </summary>
-    public class TaskBag
+    [Serializable]
+    public class TestEnv : INodeContents
     {
         public int Id
         {
@@ -17,16 +15,27 @@ namespace AutoTest.Domain.Entity
             set;
         }
 
-        public string BagName
+        public int SourceId
         {
             get;
             set;
         }
 
-        public AuthCofig AuthCofig
+        public string EnvName
         {
             get;
             set;
+        }
+
+        public string EnvDesc
+        {
+            get;
+            set;
+        }
+
+        public NodeContentType GetNodeContentType()
+        {
+            return NodeContentType.ENV;
         }
     }
 }

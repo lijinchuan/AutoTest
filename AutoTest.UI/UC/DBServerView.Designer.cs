@@ -35,7 +35,7 @@ namespace AutoTest.UI.UC
             this.DBServerviewContextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
             this.复制表名ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.刷新ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.添加API资源ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.添加测试资源ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.添加环境ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.添加环境变量ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.添加APIToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -56,8 +56,8 @@ namespace AutoTest.UI.UC
             // 
             // tv_DBServers
             // 
-            this.tv_DBServers.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
+            this.tv_DBServers.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tv_DBServers.Location = new System.Drawing.Point(3, 45);
             this.tv_DBServers.Name = "tv_DBServers";
@@ -80,7 +80,7 @@ namespace AutoTest.UI.UC
             this.DBServerviewContextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.复制表名ToolStripMenuItem,
             this.刷新ToolStripMenuItem,
-            this.添加API资源ToolStripMenuItem,
+            this.添加测试资源ToolStripMenuItem,
             this.添加环境ToolStripMenuItem,
             this.添加环境变量ToolStripMenuItem,
             this.添加APIToolStripMenuItem,
@@ -93,90 +93,90 @@ namespace AutoTest.UI.UC
             this.批量复制引用ToolStripMenuItem,
             this.如何使用ToolStripMenuItem});
             this.DBServerviewContextMenuStrip.Name = "DBServerviewContextMenuStrip";
-            this.DBServerviewContextMenuStrip.Size = new System.Drawing.Size(161, 312);
+            this.DBServerviewContextMenuStrip.Size = new System.Drawing.Size(181, 334);
             // 
             // 复制表名ToolStripMenuItem
             // 
             this.复制表名ToolStripMenuItem.Name = "复制表名ToolStripMenuItem";
-            this.复制表名ToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.复制表名ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.复制表名ToolStripMenuItem.Text = "复制对象名";
             // 
             // 刷新ToolStripMenuItem
             // 
             this.刷新ToolStripMenuItem.Name = "刷新ToolStripMenuItem";
-            this.刷新ToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.刷新ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.刷新ToolStripMenuItem.Text = "刷新";
             // 
-            // 添加API资源ToolStripMenuItem
+            // 添加测试资源ToolStripMenuItem
             // 
-            this.添加API资源ToolStripMenuItem.Name = "添加API资源ToolStripMenuItem";
-            this.添加API资源ToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
-            this.添加API资源ToolStripMenuItem.Text = "添加API资源";
+            this.添加测试资源ToolStripMenuItem.Name = "添加测试资源ToolStripMenuItem";
+            this.添加测试资源ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.添加测试资源ToolStripMenuItem.Text = "添加测试资源";
             // 
             // 添加环境ToolStripMenuItem
             // 
             this.添加环境ToolStripMenuItem.Name = "添加环境ToolStripMenuItem";
-            this.添加环境ToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.添加环境ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.添加环境ToolStripMenuItem.Text = "添加环境";
             // 
             // 添加环境变量ToolStripMenuItem
             // 
             this.添加环境变量ToolStripMenuItem.Name = "添加环境变量ToolStripMenuItem";
-            this.添加环境变量ToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.添加环境变量ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.添加环境变量ToolStripMenuItem.Text = "添加环境变量";
             // 
             // 添加APIToolStripMenuItem
             // 
             this.添加APIToolStripMenuItem.Name = "添加APIToolStripMenuItem";
-            this.添加APIToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.添加APIToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.添加APIToolStripMenuItem.Text = "添加API";
             // 
             // 修改ToolStripMenuItem
             // 
             this.修改ToolStripMenuItem.Name = "修改ToolStripMenuItem";
-            this.修改ToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.修改ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.修改ToolStripMenuItem.Text = "编辑";
             // 
             // 参数定义ToolStripMenuItem
             // 
             this.参数定义ToolStripMenuItem.Name = "参数定义ToolStripMenuItem";
-            this.参数定义ToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.参数定义ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.参数定义ToolStripMenuItem.Text = "参数定义";
             // 
             // 添加WCF接口ToolStripMenuItem
             // 
             this.添加WCF接口ToolStripMenuItem.Name = "添加WCF接口ToolStripMenuItem";
-            this.添加WCF接口ToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.添加WCF接口ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.添加WCF接口ToolStripMenuItem.Text = "添加WCF接口";
             // 
             // 删除ToolStripMenuItem
             // 
             this.删除ToolStripMenuItem.Name = "删除ToolStripMenuItem";
-            this.删除ToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.删除ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.删除ToolStripMenuItem.Text = "删除";
             // 
             // 新增逻辑关系图ToolStripMenuItem
             // 
             this.新增逻辑关系图ToolStripMenuItem.Name = "新增逻辑关系图ToolStripMenuItem";
-            this.新增逻辑关系图ToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.新增逻辑关系图ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.新增逻辑关系图ToolStripMenuItem.Text = "新增逻辑关系图";
             // 
             // 删除逻辑关系图ToolStripMenuItem
             // 
             this.删除逻辑关系图ToolStripMenuItem.Name = "删除逻辑关系图ToolStripMenuItem";
-            this.删除逻辑关系图ToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.删除逻辑关系图ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.删除逻辑关系图ToolStripMenuItem.Text = "删除逻辑关系图";
             // 
             // 批量复制引用ToolStripMenuItem
             // 
             this.批量复制引用ToolStripMenuItem.Name = "批量复制引用ToolStripMenuItem";
-            this.批量复制引用ToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.批量复制引用ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.批量复制引用ToolStripMenuItem.Text = "批量复制引用";
             // 
             // 如何使用ToolStripMenuItem
             // 
             this.如何使用ToolStripMenuItem.Name = "如何使用ToolStripMenuItem";
-            this.如何使用ToolStripMenuItem.Size = new System.Drawing.Size(160, 22);
+            this.如何使用ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.如何使用ToolStripMenuItem.Text = "如何使用";
             // 
             // toolStrip1
@@ -241,7 +241,7 @@ namespace AutoTest.UI.UC
         private System.Windows.Forms.ToolStripMenuItem 刷新ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 新增逻辑关系图ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 删除逻辑关系图ToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem 添加API资源ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 添加测试资源ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 修改ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 删除ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 添加APIToolStripMenuItem;

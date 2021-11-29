@@ -62,6 +62,9 @@
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
+    <Reference Include="protobuf-net">
+      <HintPath>..\Lib\protobuf-net.2.0.0.668\lib\net40\protobuf-net.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Buffers.4.5.1\lib\net461\System.Buffers.dll</HintPath>
@@ -136,6 +139,24 @@
     <Compile Include="ResponseFilters\JsonResponseFilter.cs" />
     <Compile Include="ResponseFilters\ResponseFilterFactory.cs" />
     <Compile Include="ResponseFilters\TextResponseFilter.cs" />
+    <Compile Include="SubForm\AddEnvDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SubForm\AddEnvDlg.Designer.cs">
+      <DependentUpon>AddEnvDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SubForm\AddTestEnvParamDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SubForm\AddTestEnvParamDlg.Designer.cs">
+      <DependentUpon>AddTestEnvParamDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SubForm\AddTestSource.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SubForm\AddTestSource.Designer.cs">
+      <DependentUpon>AddTestSource.cs</DependentUpon>
+    </Compile>
     <Compile Include="SubForm\InputStringDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -221,6 +242,9 @@
     <EmbeddedResource Include="Resources\Resource1.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resource1.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UC\DBServerView.resx">
+      <DependentUpon>DBServerView.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="configfile.json" />
     <None Include="packages.config" />

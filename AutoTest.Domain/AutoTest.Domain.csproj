@@ -44,11 +44,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Entity\AuthCofig.cs" />
+    <Compile Include="Entity\ParamInfo.cs" />
+    <Compile Include="Entity\TestEnv.cs" />
+    <Compile Include="Entity\TestEnvParam.cs" />
     <Compile Include="INodeContents.cs" />
+    <Compile Include="NodeContents.cs" />
     <Compile Include="NodeContentType.cs" />
     <Compile Include="Entity\ProxyConfig.cs" />
     <Compile Include="Entity\ProxyServer.cs" />
-    <Compile Include="Entity\TaskBag.cs" />
+    <Compile Include="Entity\TestSource.cs" />
     <Compile Include="Entity\TaskConfig.cs" />
     <Compile Include="Entity\TestCase.cs" />
     <Compile Include="Entity\TestConfig.cs" />

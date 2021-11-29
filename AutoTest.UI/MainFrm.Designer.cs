@@ -96,7 +96,7 @@ namespace AutoTest.UI
             // 最近ToolStripMenuItem
             // 
             this.最近ToolStripMenuItem.Name = "最近ToolStripMenuItem";
-            this.最近ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.最近ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
             this.最近ToolStripMenuItem.Text = "最近访问";
             // 
             // SubItemEdit
@@ -110,7 +110,7 @@ namespace AutoTest.UI
             // 代理服务器ToolStripMenuItem
             // 
             this.代理服务器ToolStripMenuItem.Name = "代理服务器ToolStripMenuItem";
-            this.代理服务器ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.代理服务器ToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
             this.代理服务器ToolStripMenuItem.Text = "代理服务器";
             this.代理服务器ToolStripMenuItem.Click += new System.EventHandler(this.代理服务器ToolStripMenuItem_Click);
             // 
@@ -226,13 +226,13 @@ namespace AutoTest.UI
             // 版本ToolStripMenuItem
             // 
             this.版本ToolStripMenuItem.Name = "版本ToolStripMenuItem";
-            this.版本ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.版本ToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
             this.版本ToolStripMenuItem.Text = "当前版本V1.1";
             // 
             // TSMReportError
             // 
             this.TSMReportError.Name = "TSMReportError";
-            this.TSMReportError.Size = new System.Drawing.Size(180, 22);
+            this.TSMReportError.Size = new System.Drawing.Size(149, 22);
             this.TSMReportError.Text = "故障报告";
             this.TSMReportError.Click += new System.EventHandler(this.TSMReportError_Click);
             // 
@@ -351,7 +351,7 @@ namespace AutoTest.UI
             this.Controls.Add(this.mainMenuBar);
             this.MainMenuStrip = this.mainMenuBar;
             this.Name = "MainFrm";
-            this.Text = "流星蝴蝶剑";
+            this.Text = "自动测试工具";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.mainMenuBar.ResumeLayout(false);
             this.mainMenuBar.PerformLayout();

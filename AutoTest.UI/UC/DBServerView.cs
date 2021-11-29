@@ -1,6 +1,8 @@
 ﻿using AutoTest.Biz;
 using AutoTest.Domain;
+using AutoTest.Domain.Entity;
 using AutoTest.UI.SubForm;
+using LJC.FrameWorkV3.Data.EntityDataBase;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -125,9 +127,20 @@ namespace AutoTest.UI.UC
             }
             if (selNode.Level == 0)
             {
-
+                Biz.UILoadHelper.LoadTestResurceAsync(this.ParentForm, selNode, callback, selNode);
             }
-            
+            else if (selNode.Tag is INodeContents && (selNode.Tag as INodeContents).GetNodeContentType() == NodeContentType.ENVPARENT)
+            {
+                var sid = (selNode.Parent.Tag as TestSource).Id;
+                Biz.UILoadHelper.LoadTestEnvAsync(this.ParentForm, selNode, sid, callback, selNode);
+            }
+            else if (selNode.Tag is TestEnv)
+            {
+                var sid = FindParentNode<TestSource>(selNode).Id;
+                var envid = (selNode.Tag as TestEnv).Id;
+                Biz.UILoadHelper.LoadTestEnvParamsAsync(this.ParentForm, selNode, sid, envid, callback, selNode);
+            }
+
         }
 
         void OnMenuStrip_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -142,9 +155,12 @@ namespace AutoTest.UI.UC
                 }
                 switch (e.ClickedItem.Text)
                 {
-                    case "添加API资源":
+                    case "添加测试资源":
                         {
-                            
+                            if (new AddTestSource().ShowDialog() == DialogResult.OK)
+                            {
+                                Bind();
+                            }
                             break;
                         }
                     case "编辑":
@@ -164,10 +180,24 @@ namespace AutoTest.UI.UC
                         }
                     case "添加环境":
                         {
+                            var apisource = selnode.Parent.Tag as TestSource;
+                            var sourceid = apisource.Id;
+                            var dlg = new SubForm.AddEnvDlg(sourceid);
+                            if (dlg.ShowDialog() == DialogResult.OK)
+                            {
+                                this.ReLoadDBObj(selnode);
+                            }
                             break;
                         }
                     case "添加环境变量":
                         {
+                            var apisource = selnode.Parent.Tag as TestSource;
+                            var sourceid = apisource.Id;
+                            var dlg = new AddTestEnvParamDlg(sourceid, 0);
+                            if (dlg.ShowDialog() == DialogResult.OK)
+                            {
+                                this.ReLoadDBObj(selnode);
+                            }
                             break;
                         }
                     case "参数定义":
@@ -245,7 +275,20 @@ namespace AutoTest.UI.UC
 
         private void Tv_DBServers_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
         {
-            
+            if (e.Node.Tag is TestEnvParam)
+            {
+                var apisource = FindParentNode<TestSource>(e.Node);
+                var envparam = e.Node.Tag as TestEnvParam;
+                if (envparam.Id == 0)
+                {
+                    envparam = BigEntityTableEngine.LocalEngine.Find<TestEnvParam>(nameof(TestEnvParam), "APISourceId_Name", new object[] { apisource.Id, envparam.Name }).FirstOrDefault();
+                }
+                var dlg = new SubForm.AddTestEnvParamDlg(apisource.Id, envparam.Id);
+                if (dlg.ShowDialog() == DialogResult.OK)
+                {
+
+                }
+            }
         }
 
         public void Bind()
@@ -279,7 +322,7 @@ namespace AutoTest.UI.UC
                 var node = tv_DBServers.SelectedNode;
                 this.tv_DBServers.ContextMenuStrip = this.DBServerviewContextMenuStrip;
 
-                添加API资源ToolStripMenuItem.Visible = node.Level == 0;
+                添加测试资源ToolStripMenuItem.Visible = node.Level == 0;
 
                 添加APIToolStripMenuItem.Visible = (node.Tag as INodeContents)?.GetNodeContentType() == NodeContentType.APIPARENT;
                 添加WCF接口ToolStripMenuItem.Visible = (node.Tag as INodeContents)?.GetNodeContentType() == NodeContentType.APIPARENT;
