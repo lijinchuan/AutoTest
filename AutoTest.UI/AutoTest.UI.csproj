@@ -181,6 +181,12 @@
     <Compile Include="SubForm\SubBaseDlg.Designer.cs">
       <DependentUpon>SubBaseDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="SubForm\UpsertTestCaseDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SubForm\UpsertTestCaseDlg.Designer.cs">
+      <DependentUpon>UpsertTestCaseDlg.cs</DependentUpon>
+    </Compile>
     <Compile Include="SubForm\URLEncodeDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -242,6 +248,9 @@
     <EmbeddedResource Include="Resources\Resource1.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resource1.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SubForm\UpsertTestCaseDlg.resx">
+      <DependentUpon>UpsertTestCaseDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UC\DBServerView.resx">
       <DependentUpon>DBServerView.cs</DependentUpon>
