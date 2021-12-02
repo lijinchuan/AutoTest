@@ -157,6 +157,12 @@
     <Compile Include="SubForm\AddTestLoginDlg.Designer.cs">
       <DependentUpon>AddTestLoginDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="SubForm\AddTestSiteDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SubForm\AddTestSiteDlg.Designer.cs">
+      <DependentUpon>AddTestSiteDlg.cs</DependentUpon>
+    </Compile>
     <Compile Include="SubForm\AddTestSource.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -257,6 +263,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SubForm\AddTestLoginDlg.resx">
       <DependentUpon>AddTestLoginDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SubForm\AddTestSiteDlg.resx">
+      <DependentUpon>AddTestSiteDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SubForm\UpsertTestCaseDlg.resx">
       <DependentUpon>UpsertTestCaseDlg.cs</DependentUpon>
