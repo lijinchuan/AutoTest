@@ -30,15 +30,20 @@ namespace AutoTest.Biz
                 var serverinfo = s;
                 node.Tag = serverinfo;
 
-                node.Nodes.Add(new TreeNodeEx
+                var testSiteList = BigEntityTableEngine.LocalEngine.Find<TestSite>(nameof(TestSite), nameof(TestSite.SourceId), new object[] { s.Id }).ToList();
+
+                foreach(var site in testSiteList)
                 {
-                    Text = "登录",
-                    Tag = new NodeContents(NodeContentType.LOGINPAGE),
-                    ImageIndex = 0,
-                    SelectedImageIndex = 2,
-                    CollapseImgIndex = 0,
-                    ExpandImgIndex = 2
-                });
+                    node.Nodes.Add(new TreeNodeEx
+                    {
+                        Text=site.Name,
+                        Tag=new NodeContents(NodeContentType.TESTSITE),
+                        ImageIndex=1,
+                        SelectedImageIndex=2,
+                        CollapseImgIndex=0,
+                        ExpandImgIndex=2
+                    });
+                }
 
                 node.Nodes.Add(new TreeNodeEx
                 {

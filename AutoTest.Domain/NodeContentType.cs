@@ -19,6 +19,7 @@ namespace AutoTest.Domain
         LOGICMAPParent,
         LOGICMAP,
         LOGINPAGE,
+        TESTSITE,
         UNKNOWN = 999
     }
 }

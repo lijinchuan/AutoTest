@@ -6,10 +6,7 @@ using System.Threading.Tasks;
 
 namespace AutoTest.Domain.Entity
 {
-    /// <summary>
-    /// 测试实例
-    /// </summary>
-    public class TestCase
+    public class TestLogin
     {
         public int Id
         {
@@ -17,31 +14,34 @@ namespace AutoTest.Domain.Entity
             set;
         }
 
-        public int PageId
+        public int SiteId
         {
             get;
             set;
         }
 
-        public string CaseName
+        public string Url
         {
             get;
             set;
         }
 
-        public int Order
-        {
-            get;
-            set;
-        }
-
-        public string TestCode
+        public string LoginCode
         {
             get;
             set;
         }
 
         public string ValidCode
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// 是否人工
+        /// </summary>
+        public bool IsMannual
         {
             get;
             set;

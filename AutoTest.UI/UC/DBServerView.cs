@@ -239,6 +239,11 @@ namespace AutoTest.UI.UC
                             Util.SendMsg(this, "已复制到剪切板");
                             break;
                         }
+                    case "添加测试站点":
+                        {
+
+                            break;
+                        }
                     default:
                         {
                             MessageBox.Show(e.ClickedItem.Text);
@@ -323,6 +328,8 @@ namespace AutoTest.UI.UC
                 this.tv_DBServers.ContextMenuStrip = this.DBServerviewContextMenuStrip;
 
                 添加测试资源ToolStripMenuItem.Visible = node.Level == 0;
+
+                添加测试站点ToolStripMenuItem.Visible = node.Tag is TestSource;
 
                 添加APIToolStripMenuItem.Visible = (node.Tag as INodeContents)?.GetNodeContentType() == NodeContentType.APIPARENT;
                 添加WCF接口ToolStripMenuItem.Visible = (node.Tag as INodeContents)?.GetNodeContentType() == NodeContentType.APIPARENT;

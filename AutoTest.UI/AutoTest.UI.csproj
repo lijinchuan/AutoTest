@@ -151,6 +151,12 @@
     <Compile Include="SubForm\AddTestEnvParamDlg.Designer.cs">
       <DependentUpon>AddTestEnvParamDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="SubForm\AddTestLoginDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SubForm\AddTestLoginDlg.Designer.cs">
+      <DependentUpon>AddTestLoginDlg.cs</DependentUpon>
+    </Compile>
     <Compile Include="SubForm\AddTestSource.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -248,6 +254,9 @@
     <EmbeddedResource Include="Resources\Resource1.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resource1.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SubForm\AddTestLoginDlg.resx">
+      <DependentUpon>AddTestLoginDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SubForm\UpsertTestCaseDlg.resx">
       <DependentUpon>UpsertTestCaseDlg.cs</DependentUpon>

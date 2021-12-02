@@ -6,21 +6,27 @@ using System.Threading.Tasks;
 
 namespace AutoTest.Domain.Entity
 {
-    public class TestScript
+    public class TestSite
     {
-        public string Code
+        public int Id
         {
             get;
             set;
         }
 
-        public string SucessResult
+        public string Name
         {
             get;
             set;
         }
 
-        public string ErrorResult
+        public string SourceId
+        {
+            get;
+            set;
+        }
+
+        public string CheckLoginCode
         {
             get;
             set;
