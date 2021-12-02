@@ -20,7 +20,7 @@ namespace AutoTest.Domain.Entity
             set;
         }
 
-        public string SourceId
+        public int SourceId
         {
             get;
             set;
