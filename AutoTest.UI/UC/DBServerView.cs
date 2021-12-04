@@ -32,6 +32,12 @@ namespace AutoTest.UI.UC
             tv_DBServers.ImageList.Images.Add("COLQ", Resources.Resource1.ColQ);
             tv_DBServers.ImageList.Images.Add("LOGIC", Resources.Resource1.logic);
             tv_DBServers.ImageList.Images.Add("DOC", Resources.Resource1.Index);
+            tv_DBServers.ImageList.Images.Add("FPAGE", Resources.Resource1.folder_page);//9
+            tv_DBServers.ImageList.Images.Add("CASE", Resources.Resource1.page_world);
+            tv_DBServers.ImageList.Images.Add("SITE", Resources.Resource1.site);
+            tv_DBServers.ImageList.Images.Add("BAG", Resources.Resource1.application_double);
+            tv_DBServers.ImageList.Images.Add("ENV", Resources.Resource1.folder_palette);//13
+            tv_DBServers.ImageList.Images.Add("BOX", Resources.Resource1.box);
 
             tv_DBServers.Nodes.Add(new TreeNodeEx("资源管理器", 0, 1));
             tv_DBServers.BeforeExpand += Tv_DBServers_BeforeExpand;
@@ -61,7 +67,7 @@ namespace AutoTest.UI.UC
 
         T FindParentNode<T>(TreeNode node)
         {
-            var parent = node.Parent;
+            var parent = node;
             while (parent != null)
             {
                 if (parent.Tag is T)
@@ -129,14 +135,29 @@ namespace AutoTest.UI.UC
             {
                 Biz.UILoadHelper.LoadTestResurceAsync(this.ParentForm, selNode, callback, selNode);
             }
+            else if(selNode.Tag is TestSource)
+            {
+                var sid = (selNode.Tag as TestSource).Id;
+                Biz.UILoadHelper.LoadTestSiteAsync(this.ParentForm, selNode, sid, callback, selNode);
+            }
+            else if (selNode.Tag is TestSite)
+            {
+                var sid = FindParentNode<TestSite>(selNode).Id;
+                Biz.UILoadHelper.LoadTestPageAsync(ParentForm, selNode, sid, callback, selNode);
+            }
+            else if (selNode.Tag is TestPage)
+            {
+                var pid = (selNode.Tag as TestPage).Id;
+                Biz.UILoadHelper.LoadTestCaseAsync(this.ParentForm, selNode, pid, callback, selNode);
+            }
             else if (selNode.Tag is INodeContents && (selNode.Tag as INodeContents).GetNodeContentType() == NodeContentType.ENVPARENT)
             {
-                var sid = (selNode.Parent.Tag as TestSource).Id;
-                Biz.UILoadHelper.LoadTestEnvAsync(this.ParentForm, selNode, sid, callback, selNode);
+                var sid = FindParentNode<TestSite>(selNode).Id;
+                Biz.UILoadHelper.LoadTestEnvAsync(ParentForm, selNode, sid, callback, selNode);
             }
             else if (selNode.Tag is TestEnv)
             {
-                var sid = FindParentNode<TestSource>(selNode).Id;
+                var sid = FindParentNode<TestSite>(selNode).Id;
                 var envid = (selNode.Tag as TestEnv).Id;
                 Biz.UILoadHelper.LoadTestEnvParamsAsync(this.ParentForm, selNode, sid, envid, callback, selNode);
             }
@@ -165,12 +186,65 @@ namespace AutoTest.UI.UC
                         }
                     case "编辑":
                         {
-                            
+                            if (selnode.Tag is TestCase)
+                            {
+                                var testPage = FindParentNode<TestPage>(selnode);
+                                var testCase = selnode.Tag as TestCase;
+                                var dlg = new AddTestCaseDlg(testPage.Id, testCase.Id);
+                                if (dlg.ShowDialog() == DialogResult.OK)
+                                {
+                                    ReLoadDBObj(selnode.Parent);
+                                }
+                            }
+                            else if (selnode.Tag is TestPage)
+                            {
+                                var testSite = FindParentNode<TestSite>(selnode);
+                                var dlg = new AddTestPageDlg(testSite.Id, (selnode.Tag as TestPage).Id);
+                                if (dlg.ShowDialog() == DialogResult.OK)
+                                {
+                                    ReLoadDBObj(selnode.Parent);
+                                }
+                            }
+                            else if (selnode.Tag is TestSite)
+                            {
+                                var testSource = FindParentNode<TestSource>(selnode);
+                                AddTestSiteDlg dlg = new AddTestSiteDlg(testSource.Id, (selnode.Tag as TestSite).Id);
+                                if (dlg.ShowDialog() == DialogResult.OK)
+                                {
+                                    ReLoadDBObj(selnode.Parent);
+                                }
+                            }
+                            else if (selnode.Tag is TestSource)
+                            {
+                                if (new AddTestSource((selnode.Tag as TestSource).Id).ShowDialog() == DialogResult.OK)
+                                {
+                                    Bind();
+                                }
+                            }
                             break;
                         }
                     case "删除":
                         {
-                            
+                            if (MessageBox.Show("确认删除吗？", "删除确认", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+                            {
+                                return;
+                            }
+                            var isDel = false;
+                            if (selnode.Tag is TestCase)
+                            {
+                                BigEntityTableEngine.LocalEngine.Delete<TestCase>(nameof(TestCase), (selnode.Tag as TestCase).Id);
+                                isDel = true;
+                            }
+                            else if (selnode.Tag is TestPage)
+                            {
+                                BigEntityTableEngine.LocalEngine.Delete<TestPage>(nameof(TestPage), (selnode.Tag as TestPage).Id);
+                                isDel = true;
+                            }
+
+                            if (isDel)
+                            {
+                                ReLoadDBObj(selnode.Parent);
+                            }
                             break;
                         }
                     case "添加API":
@@ -180,9 +254,9 @@ namespace AutoTest.UI.UC
                         }
                     case "添加环境":
                         {
-                            var apisource = selnode.Parent.Tag as TestSource;
+                            var apisource = FindParentNode<TestSite>(selnode);
                             var sourceid = apisource.Id;
-                            var dlg = new SubForm.AddEnvDlg(sourceid);
+                            var dlg = new AddEnvDlg(sourceid);
                             if (dlg.ShowDialog() == DialogResult.OK)
                             {
                                 this.ReLoadDBObj(selnode);
@@ -191,9 +265,9 @@ namespace AutoTest.UI.UC
                         }
                     case "添加环境变量":
                         {
-                            var apisource = selnode.Parent.Tag as TestSource;
-                            var sourceid = apisource.Id;
-                            var dlg = new AddTestEnvParamDlg(sourceid, 0);
+                            var testSite =FindParentNode<TestSite>(selnode);
+                            var siteId = testSite.Id;
+                            var dlg = new AddTestEnvParamDlg(siteId, 0);
                             if (dlg.ShowDialog() == DialogResult.OK)
                             {
                                 this.ReLoadDBObj(selnode);
@@ -241,7 +315,32 @@ namespace AutoTest.UI.UC
                         }
                     case "添加测试站点":
                         {
-
+                            var testSource = FindParentNode<TestSource>(selnode);
+                            AddTestSiteDlg dlg = new AddTestSiteDlg(testSource.Id,0);
+                            if (dlg.ShowDialog() == DialogResult.OK)
+                            {
+                                ReLoadDBObj(selnode);
+                            }
+                            break;
+                        }
+                    case "添加测试页面":
+                        {
+                            var testSite = FindParentNode<TestSite>(selnode);
+                            var dlg = new AddTestPageDlg(testSite.Id,0);
+                            if (dlg.ShowDialog() == DialogResult.OK)
+                            {
+                                ReLoadDBObj(selnode);
+                            }
+                            break;
+                        }
+                    case "添加测试用例":
+                        {
+                            var testPage = FindParentNode<TestPage>(selnode);
+                            var dlg = new AddTestCaseDlg(testPage.Id,0);
+                            if (dlg.ShowDialog() == DialogResult.OK)
+                            {
+                                ReLoadDBObj(selnode);
+                            }
                             break;
                         }
                     default:
@@ -343,6 +442,10 @@ namespace AutoTest.UI.UC
                 删除逻辑关系图ToolStripMenuItem.Visible = (node.Tag as INodeContents)?.GetNodeContentType() == NodeContentType.LOGICMAP;
 
                 批量复制引用ToolStripMenuItem.Visible = (node.Tag as INodeContents)?.GetNodeContentType() == NodeContentType.ENV;
+
+                添加测试页面ToolStripMenuItem.Visible= node.Tag is TestSite;
+
+                添加测试用例ToolStripMenuItem.Visible= node.Tag is TestPage;
             }
 
         }

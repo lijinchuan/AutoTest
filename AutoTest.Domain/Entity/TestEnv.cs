@@ -15,7 +15,7 @@ namespace AutoTest.Domain.Entity
             set;
         }
 
-        public int SourceId
+        public int SiteId
         {
             get;
             set;

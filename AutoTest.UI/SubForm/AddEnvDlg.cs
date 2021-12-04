@@ -14,18 +14,18 @@ namespace AutoTest.UI.SubForm
 {
     public partial class AddEnvDlg : Form
     {
-        private int _sourceid;
+        private int _siteId;
 
         public AddEnvDlg()
         {
             InitializeComponent();
         }
 
-        public AddEnvDlg(int sourceid)
+        public AddEnvDlg(int siteId)
         {
             InitializeComponent();
 
-            _sourceid = sourceid;
+            _siteId = siteId;
         }
 
         private void BtnCancel_Click(object sender, EventArgs e)
@@ -35,7 +35,7 @@ namespace AutoTest.UI.SubForm
 
         private void BtnOK_Click(object sender, EventArgs e)
         {
-            if (_sourceid == 0)
+            if (_siteId == 0)
             {
                 return;
             }
@@ -47,18 +47,18 @@ namespace AutoTest.UI.SubForm
                 return;
             }
 
-            var isexists = BigEntityTableEngine.LocalEngine.Find<TestEnv>(nameof(TestEnv), "SourceId", new object[] { _sourceid }).Any(p => p.EnvName.Equals(envname, StringComparison.OrdinalIgnoreCase));
+            var isexists = BigEntityTableEngine.LocalEngine.Find<TestEnv>(nameof(TestEnv), nameof(TestEnv.SiteId), new object[] { _siteId }).Any(p => p.EnvName.Equals(envname, StringComparison.OrdinalIgnoreCase));
             if (isexists)
             {
                 MessageBox.Show("环境名称不能重复");
                 return;
             }
 
-            BigEntityTableEngine.LocalEngine.Insert<TestEnv>(nameof(TestEnv), new TestEnv
+            BigEntityTableEngine.LocalEngine.Insert(nameof(TestEnv), new TestEnv
             {
                 EnvDesc = TBDesc.Text.Trim(),
                 EnvName = envname,
-                SourceId = _sourceid
+                SiteId = _siteId
             });
 
             this.DialogResult = DialogResult.OK;

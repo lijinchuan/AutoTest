@@ -47,10 +47,12 @@ namespace AutoTest.UI.UC
             this.删除逻辑关系图ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.批量复制引用ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.如何使用ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.添加测试站点ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.ts_serchKey = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripButton();
-            this.添加测试站点ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.添加测试页面ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.添加测试用例ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.DBServerviewContextMenuStrip.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -93,9 +95,11 @@ namespace AutoTest.UI.UC
             this.删除逻辑关系图ToolStripMenuItem,
             this.批量复制引用ToolStripMenuItem,
             this.如何使用ToolStripMenuItem,
-            this.添加测试站点ToolStripMenuItem});
+            this.添加测试站点ToolStripMenuItem,
+            this.添加测试页面ToolStripMenuItem,
+            this.添加测试用例ToolStripMenuItem});
             this.DBServerviewContextMenuStrip.Name = "DBServerviewContextMenuStrip";
-            this.DBServerviewContextMenuStrip.Size = new System.Drawing.Size(181, 356);
+            this.DBServerviewContextMenuStrip.Size = new System.Drawing.Size(181, 400);
             // 
             // 复制表名ToolStripMenuItem
             // 
@@ -181,6 +185,12 @@ namespace AutoTest.UI.UC
             this.如何使用ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.如何使用ToolStripMenuItem.Text = "如何使用";
             // 
+            // 添加测试站点ToolStripMenuItem
+            // 
+            this.添加测试站点ToolStripMenuItem.Name = "添加测试站点ToolStripMenuItem";
+            this.添加测试站点ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.添加测试站点ToolStripMenuItem.Text = "添加测试站点";
+            // 
             // toolStrip1
             // 
             this.toolStrip1.AutoSize = false;
@@ -211,11 +221,17 @@ namespace AutoTest.UI.UC
             this.toolStripDropDownButton1.Text = "搜索";
             this.toolStripDropDownButton1.Click += new System.EventHandler(this.toolStripDropDownButton1_Click);
             // 
-            // 添加测试站点ToolStripMenuItem
+            // 添加测试页面ToolStripMenuItem
             // 
-            this.添加测试站点ToolStripMenuItem.Name = "添加测试站点ToolStripMenuItem";
-            this.添加测试站点ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.添加测试站点ToolStripMenuItem.Text = "添加测试站点";
+            this.添加测试页面ToolStripMenuItem.Name = "添加测试页面ToolStripMenuItem";
+            this.添加测试页面ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.添加测试页面ToolStripMenuItem.Text = "添加测试页面";
+            // 
+            // 添加测试用例ToolStripMenuItem
+            // 
+            this.添加测试用例ToolStripMenuItem.Name = "添加测试用例ToolStripMenuItem";
+            this.添加测试用例ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.添加测试用例ToolStripMenuItem.Text = "添加测试用例";
             // 
             // DBServerView
             // 
@@ -260,5 +276,7 @@ namespace AutoTest.UI.UC
         private System.Windows.Forms.ToolStripMenuItem 如何使用ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 批量复制引用ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 添加测试站点ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 添加测试页面ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 添加测试用例ToolStripMenuItem;
     }
 }

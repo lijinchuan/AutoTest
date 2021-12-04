@@ -26,52 +26,125 @@ namespace AutoTest.Biz
             var aPISources = BigEntityTableEngine.LocalEngine.List<TestSource>(nameof(TestSource), 1, int.MaxValue);
             foreach (var s in aPISources)
             {
-                TreeNode node = new TreeNodeEx(s.SourceName, 0, 2, 0, 2);
+                TreeNode node = new TreeNodeEx(s.SourceName, 12, 12, 12, 12);
                 var serverinfo = s;
                 node.Tag = serverinfo;
-
-                var testSiteList = BigEntityTableEngine.LocalEngine.Find<TestSite>(nameof(TestSite), nameof(TestSite.SourceId), new object[] { s.Id }).ToList();
-
-                foreach(var site in testSiteList)
-                {
-                    node.Nodes.Add(new TreeNodeEx
-                    {
-                        Text=site.Name,
-                        Tag=new NodeContents(NodeContentType.TESTSITE),
-                        ImageIndex=1,
-                        SelectedImageIndex=2,
-                        CollapseImgIndex=0,
-                        ExpandImgIndex=2
-                    });
-                }
-
-                node.Nodes.Add(new TreeNodeEx
-                {
-                    Text = "环境",
-                    Tag = new NodeContents(NodeContentType.ENVPARENT),
-                    ImageIndex = 0,
-                    SelectedImageIndex = 2,
-                    CollapseImgIndex = 0,
-                    ExpandImgIndex = 2
-                });
 
                 treeNodes.Add(node);
             }
             parent.Invoke(new Action(() => { pnode.Nodes.Clear(); pnode.Nodes.AddRange(treeNodes.ToArray()); pnode.Expand(); }));
         }
 
-        public static void LoadTestEnvAsync(Form parent, TreeNode pnode, int sourceid, AsyncCallback callback, object @object)
+        public static void LoadTestSiteAsync(Form parent, TreeNode tbNode, int sourceId, AsyncCallback callback, object @object)
+        {
+            tbNode.Nodes.Add(new TreeNode("加载中...", 3, 3));
+            tbNode.Expand();
+
+            new Action<Form, TreeNode,int>(LoadTestSite).BeginInvoke(parent, tbNode, sourceId, callback, @object);
+        }
+        public static void LoadTestSite(Form parent, TreeNode pnode, int sourceId)
+        {
+            List<TreeNode> treeNodes = new List<TreeNode>();
+
+            var testSiteList = BigEntityTableEngine.LocalEngine.Find<TestSite>(nameof(TestSite), nameof(TestSite.SourceId), new object[] { sourceId }).ToList();
+
+            foreach (var page in testSiteList)
+            {
+                var node=new TreeNodeEx
+                {
+                    Text = page.Name,
+                    Tag = page,
+                    ImageIndex = 11,
+                    SelectedImageIndex = 11,
+                    CollapseImgIndex = 11,
+                    ExpandImgIndex = 11
+                };
+                treeNodes.Add(node);
+            }
+
+            parent.Invoke(new Action(() => { pnode.Nodes.Clear(); pnode.Nodes.AddRange(treeNodes.ToArray()); pnode.Expand(); }));
+        }
+
+        public static void LoadTestPageAsync(Form parent, TreeNode tbNode, int siteId, AsyncCallback callback, object @object)
+        {
+            tbNode.Nodes.Add(new TreeNode("加载中...", 3, 3));
+            tbNode.Expand();
+
+            new Action<Form, TreeNode, int>(LoadTestPage).BeginInvoke(parent, tbNode, siteId, callback, @object);
+        }
+
+        public static void LoadTestPage(Form parent, TreeNode pnode, int siteId)
+        {
+            List<TreeNode> treeNodes = new List<TreeNode>();
+            var testPageList = BigEntityTableEngine.LocalEngine.Find<TestPage>(nameof(TestPage), nameof(TestPage.SiteId), new object[] { siteId }).ToList();
+
+            foreach (var page in testPageList)
+            {
+                treeNodes.Add(new TreeNodeEx
+                {
+                    Text = page.Name,
+                    Tag = page,
+                    ImageIndex = 10,
+                    SelectedImageIndex = 10,
+                    CollapseImgIndex = 10,
+                    ExpandImgIndex = 10
+                });
+            }
+
+            treeNodes.Add(new TreeNodeEx
+            {
+                Text = "环境",
+                Tag = new NodeContents(NodeContentType.ENVPARENT),
+                ImageIndex = 13,
+                SelectedImageIndex = 13,
+                CollapseImgIndex = 13,
+                ExpandImgIndex = 13
+            });
+
+            parent.Invoke(new Action(() => { pnode.Nodes.Clear(); pnode.Nodes.AddRange(treeNodes.ToArray()); pnode.Expand(); }));
+        }
+
+        public static void LoadTestCaseAsync(Form parent, TreeNode tbNode, int pageId, AsyncCallback callback, object @object)
+        {
+            tbNode.Nodes.Add(new TreeNode("加载中...", 3, 3));
+            tbNode.Expand();
+
+            new Action<Form, TreeNode, int>(LoadTestCase).BeginInvoke(parent, tbNode, pageId, callback, @object);
+        }
+
+        public static void LoadTestCase(Form parent, TreeNode pnode, int pageId)
+        {
+            List<TreeNode> treeNodes = new List<TreeNode>();
+            var testCaseList = BigEntityTableEngine.LocalEngine.Find<TestCase>(nameof(TestCase), nameof(TestCase.PageId), new object[] { pageId }).ToList();
+
+            foreach (var @case in testCaseList)
+            {
+                treeNodes.Add(new TreeNodeEx
+                {
+                    Text = @case.CaseName,
+                    Tag = @case,
+                    ImageIndex = 4,
+                    SelectedImageIndex = 4,
+                    CollapseImgIndex = 4,
+                    ExpandImgIndex = 4
+                });
+            }
+
+            parent.Invoke(new Action(() => { pnode.Nodes.Clear(); pnode.Nodes.AddRange(treeNodes.ToArray()); pnode.Expand(); }));
+        }
+
+        public static void LoadTestEnvAsync(Form parent, TreeNode pnode, int siteId, AsyncCallback callback, object @object)
         {
             pnode.Nodes.Add(new TreeNode("加载中...", 3, 3));
             pnode.Expand();
 
-            new Action<Form, TreeNode, int>(LoadTestEnv).BeginInvoke(parent, pnode, sourceid, callback, @object);
+            new Action<Form, TreeNode, int>(LoadTestEnv).BeginInvoke(parent, pnode, siteId, callback, @object);
         }
 
-        public static void LoadTestEnv(Form parent, TreeNode pnode, int sourceid)
+        public static void LoadTestEnv(Form parent, TreeNode pnode, int siteId)
         {
             List<TreeNode> treeNodes = new List<TreeNode>();
-            var envlist = BigEntityTableEngine.LocalEngine.Find<TestEnv>(nameof(TestEnv), "SourceId", new object[] { sourceid }).ToList();
+            var envlist = BigEntityTableEngine.LocalEngine.Find<TestEnv>(nameof(TestEnv), nameof(TestEnv.SiteId), new object[] { siteId }).ToList();
             foreach (var s in envlist)
             {
                 TreeNode node = new TreeNodeEx(s.EnvName, 0, 2, 0, 2);
@@ -90,12 +163,12 @@ namespace AutoTest.Biz
             new Action<Form, TreeNode, int, int>(LoadTestEnvParams).BeginInvoke(parent, pnode, sourceid, envid, callback, @object);
         }
 
-        public static void LoadTestEnvParams(Form parent, TreeNode pnode, int sourceid, int envid)
+        public static void LoadTestEnvParams(Form parent, TreeNode pnode, int siteId, int envid)
         {
             try
             {
                 List<TreeNode> treeNodes = new List<TreeNode>();
-                var allenvparamslist = BigEntityTableEngine.LocalEngine.Find<TestEnvParam>(nameof(TestEnvParam), "APISourceId", new object[] { sourceid }).ToList();
+                var allenvparamslist = BigEntityTableEngine.LocalEngine.Find<TestEnvParam>(nameof(TestEnvParam), "SiteId", new object[] { siteId }).ToList();
                 var allparamnames = allenvparamslist.Select(p => p.Name).Distinct();
                 foreach (var s in allparamnames)
                 {
@@ -107,7 +180,7 @@ namespace AutoTest.Biz
                         node.Tag = new TestEnvParam
                         {
                             EnvId = envid,
-                            APISourceId = sourceid,
+                            SiteId = siteId,
                             Name = s
                         };
                         node.ImageKey = node.SelectedImageKey = "COLQ";

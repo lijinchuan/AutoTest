@@ -10,7 +10,7 @@ namespace AutoTest.UI.SubForm
 {
     public partial class AddTestEnvParamDlg : Form
     {
-        private int _apisourceid = 0, _envparamid = 0;
+        private int _siteId = 0, _envparamid = 0;
 
         private List<TestEnv> apiEnvs = null;
         private List<ParamInfo> apiEnvParams = new List<ParamInfo>();
@@ -20,14 +20,14 @@ namespace AutoTest.UI.SubForm
             InitializeComponent();
         }
 
-        public AddTestEnvParamDlg(int apisourceid, int envparamid)
+        public AddTestEnvParamDlg(int siteId, int envparamid)
         {
             InitializeComponent();
 
-            _apisourceid = apisourceid;
+            _siteId = siteId;
             _envparamid = envparamid;
 
-            apiEnvs = BigEntityTableEngine.LocalEngine.Find<TestEnv>(nameof(TestEnv), "SourceId", new object[] { _apisourceid }).ToList();
+            apiEnvs = BigEntityTableEngine.LocalEngine.Find<TestEnv>(nameof(TestEnv), nameof(TestEnv.SiteId), new object[] { _siteId }).ToList();
             if (_envparamid == 0)
             {
                 apiEnvParams.AddRange(apiEnvs.Select(p => new ParamInfo
@@ -38,7 +38,7 @@ namespace AutoTest.UI.SubForm
             else
             {
                 var apienvparam = BigEntityTableEngine.LocalEngine.Find<TestEnvParam>(nameof(TestEnvParam), _envparamid);
-                var envparamlist = BigEntityTableEngine.LocalEngine.Find<TestEnvParam>(nameof(TestEnvParam), "APISourceId_Name", new object[] { _apisourceid, apienvparam.Name }).ToList();
+                var envparamlist = BigEntityTableEngine.LocalEngine.Find<TestEnvParam>(nameof(TestEnvParam), "SiteId_Name", new object[] { _siteId, apienvparam.Name }).ToList();
                 apiEnvParams.AddRange(apiEnvs.Select(p =>
                 {
                     return new ParamInfo
@@ -88,7 +88,7 @@ namespace AutoTest.UI.SubForm
 
             var list = apiEnvParams.Select(p => new TestEnvParam
             {
-                APISourceId = _apisourceid,
+                SiteId = _siteId,
                 EnvId = apiEnvs.Find(q => q.EnvName == p.Name).Id,
                 Name = envparamname,
                 Val = p.Value,
