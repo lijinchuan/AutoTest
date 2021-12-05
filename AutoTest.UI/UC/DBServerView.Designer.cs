@@ -54,6 +54,7 @@ namespace AutoTest.UI.UC
             this.ts_serchKey = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripButton();
             this.运行测试ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.添加登陆页ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.DBServerviewContextMenuStrip.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -99,9 +100,10 @@ namespace AutoTest.UI.UC
             this.添加测试站点ToolStripMenuItem,
             this.添加测试页面ToolStripMenuItem,
             this.添加测试用例ToolStripMenuItem,
-            this.运行测试ToolStripMenuItem});
+            this.运行测试ToolStripMenuItem,
+            this.添加登陆页ToolStripMenuItem});
             this.DBServerviewContextMenuStrip.Name = "DBServerviewContextMenuStrip";
-            this.DBServerviewContextMenuStrip.Size = new System.Drawing.Size(181, 422);
+            this.DBServerviewContextMenuStrip.Size = new System.Drawing.Size(181, 444);
             // 
             // 复制表名ToolStripMenuItem
             // 
@@ -241,6 +243,12 @@ namespace AutoTest.UI.UC
             this.运行测试ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.运行测试ToolStripMenuItem.Text = "运行测试";
             // 
+            // 添加登陆页ToolStripMenuItem
+            // 
+            this.添加登陆页ToolStripMenuItem.Name = "添加登陆页ToolStripMenuItem";
+            this.添加登陆页ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.添加登陆页ToolStripMenuItem.Text = "添加登陆页";
+            // 
             // DBServerView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -287,5 +295,6 @@ namespace AutoTest.UI.UC
         private System.Windows.Forms.ToolStripMenuItem 添加测试页面ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 添加测试用例ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 运行测试ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 添加登陆页ToolStripMenuItem;
     }
 }

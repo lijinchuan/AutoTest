@@ -293,6 +293,35 @@ namespace AutoTest.UI
             return false;
         }
 
+        public TabPage TryAddTab(string title, Func<TabPage> func, Type tabPageType = null)
+        {
+            bool isExists = false;
+            TabPage addpage = null;
+            foreach (TabPage page in this.TabControl.TabPages)
+            {
+                if (page.Text == title || (tabPageType != null && page.GetType() == tabPageType))
+                {
+                    isExists = true;
+                    TabControl.SelectedTab = page;
+                    addpage = page;
+                    break;
+                }
+            }
+
+            if (!isExists)
+            {
+                addpage = func();
+                if (string.IsNullOrWhiteSpace(addpage.Text))
+                {
+                    addpage.Text = title;
+                }
+                TabControl.TabPages.Add(addpage);
+                TabControl.SelectedTab = addpage;
+            }
+
+            return addpage;
+        }
+
 
         private void TSL_ClearMsg_Click(object sender, EventArgs e)
         {
@@ -345,7 +374,7 @@ namespace AutoTest.UI
 
         private void 代理服务器ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var dlg = new SubForm.SubBaseDlg();
+            var dlg = new SubBaseDlg();
             dlg.Text = "全局代理服务器";
             var globProxyServer = BigEntityTableEngine.LocalEngine.Find<ProxyServer>(nameof(ProxyServer), p => p.Name.Equals(ProxyServer.GlobName)).FirstOrDefault();
 

@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.label1 = new System.Windows.Forms.Label();
-            this.textBox1 = new System.Windows.Forms.TextBox();
+            this.TBUrl = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.TBLoginCode = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
@@ -50,13 +50,13 @@
             this.label1.TabIndex = 0;
             this.label1.Text = "地址：";
             // 
-            // textBox1
+            // TBUrl
             // 
-            this.textBox1.Font = new System.Drawing.Font("宋体", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.textBox1.Location = new System.Drawing.Point(125, 30);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.Size = new System.Drawing.Size(664, 29);
-            this.textBox1.TabIndex = 1;
+            this.TBUrl.Font = new System.Drawing.Font("宋体", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.TBUrl.Location = new System.Drawing.Point(125, 30);
+            this.TBUrl.Name = "TBUrl";
+            this.TBUrl.Size = new System.Drawing.Size(664, 29);
+            this.TBUrl.TabIndex = 1;
             // 
             // label2
             // 
@@ -153,7 +153,7 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.TBLoginCode);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.textBox1);
+            this.Controls.Add(this.TBUrl);
             this.Controls.Add(this.label1);
             this.Name = "AddTestLoginDlg";
             this.Text = "登录设置";
@@ -165,7 +165,7 @@
         #endregion
 
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox textBox1;
+        private System.Windows.Forms.TextBox TBUrl;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox TBLoginCode;
         private System.Windows.Forms.Label label3;

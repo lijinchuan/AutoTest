@@ -182,6 +182,22 @@ namespace AutoTest.UI
             return false;
         }
 
+        public static TabPage TryAddToMainTab(Control ctl, string title, Func<TabPage> func, Type tabPageType = null)
+        {
+            var parent = ctl;
+            while (parent != null)
+            {
+                if (parent is MainFrm)
+                {
+                    return ((MainFrm)parent).TryAddTab(title,func,tabPageType);
+                }
+
+                parent = parent.Parent;
+            }
+
+            return null;
+        }
+
         public static void PopMsg(int msgid, string title, string content)
         {
             PopMessageDlg dlg = null;

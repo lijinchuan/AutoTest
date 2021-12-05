@@ -2,6 +2,7 @@
 using AutoTest.Domain;
 using AutoTest.Domain.Entity;
 using AutoTest.UI.SubForm;
+using AutoTest.UI.WebTask;
 using LJC.FrameWorkV3.Data.EntityDataBase;
 using System;
 using System.Collections.Generic;
@@ -38,6 +39,7 @@ namespace AutoTest.UI.UC
             tv_DBServers.ImageList.Images.Add("BAG", Resources.Resource1.application_double);
             tv_DBServers.ImageList.Images.Add("ENV", Resources.Resource1.folder_palette);//13
             tv_DBServers.ImageList.Images.Add("BOX", Resources.Resource1.box);
+            tv_DBServers.ImageList.Images.Add("USERLOGIN", Resources.Resource1.user_earth);
 
             tv_DBServers.Nodes.Add(new TreeNodeEx("资源管理器", 0, 1));
             tv_DBServers.BeforeExpand += Tv_DBServers_BeforeExpand;
@@ -221,29 +223,65 @@ namespace AutoTest.UI.UC
                                     Bind();
                                 }
                             }
+                            else if (selnode.Tag is TestLogin)
+                            {
+                                var testSite = FindParentNode<TestSite>(selnode);
+                                var dlg = new AddTestLoginDlg(testSite.Id);
+                                if (dlg.ShowDialog() == DialogResult.OK)
+                                {
+                                    ReLoadDBObj(selnode.Parent);
+                                }
+                            }
                             break;
                         }
                     case "删除":
                         {
-                            if (MessageBox.Show("确认删除吗？", "删除确认", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
-                            {
-                                return;
-                            }
-                            var isDel = false;
+                            
+                            Func<bool> delFunc = null;
+                            
                             if (selnode.Tag is TestCase)
                             {
-                                BigEntityTableEngine.LocalEngine.Delete<TestCase>(nameof(TestCase), (selnode.Tag as TestCase).Id);
-                                isDel = true;
+                                delFunc = () =>
+                                {
+                                    BigEntityTableEngine.LocalEngine.Delete<TestCase>(nameof(TestCase), (selnode.Tag as TestCase).Id);
+                                    return true;
+                                };
                             }
                             else if (selnode.Tag is TestPage)
                             {
-                                BigEntityTableEngine.LocalEngine.Delete<TestPage>(nameof(TestPage), (selnode.Tag as TestPage).Id);
-                                isDel = true;
+                                delFunc = () =>
+                                {
+                                    BigEntityTableEngine.LocalEngine.Delete<TestPage>(nameof(TestPage), (selnode.Tag as TestPage).Id);
+                                    return true;
+                                };
+                            }
+                            else if (selnode.Tag is TestSite)
+                            {
+                                delFunc = () =>
+                                {
+                                    BigEntityTableEngine.LocalEngine.Delete<TestSite>(nameof(TestSite), (selnode.Tag as TestSite).Id);
+                                    return true;
+                                };
+                            }
+                            else if (selnode.Tag is TestSource)
+                            {
+                                delFunc = () =>
+                                {
+                                    BigEntityTableEngine.LocalEngine.Delete<TestSource>(nameof(TestSource), (selnode.Tag as TestSource).Id);
+                                    return true;
+                                };
                             }
 
-                            if (isDel)
+                            if (delFunc!=null)
                             {
-                                ReLoadDBObj(selnode.Parent);
+                                if (MessageBox.Show("确认删除吗？", "删除确认", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
+                                {
+                                    return;
+                                }
+                                if (delFunc())
+                                {
+                                    ReLoadDBObj(selnode.Parent);
+                                }
                             }
                             break;
                         }
@@ -348,9 +386,26 @@ namespace AutoTest.UI.UC
                             var testPage = FindParentNode<TestPage>(selnode);
                             var testSite=FindParentNode<TestSite>(selnode);
                             var testCase = FindParentNode<TestCase>(selnode);
-                            var panel = new UC.TestPanel(testSite.Name);
-                            panel.Load();
-                            Util.AddToMainTab(this, $"{testSite.Name}_", panel);
+
+                            var testPanel = (TestPanel)Util.TryAddToMainTab(this, $"{testSite.Name}_", () =>
+                              {
+                                  var panel = new UC.TestPanel(testSite.Name);
+                                  panel.Load();
+
+                                  return panel;
+                              }, typeof(TestPanel));
+
+                            testPanel.RunTest(new RunTestTask(testCase.CaseName, false, testSite, testPage, testCase)).GetAwaiter();
+                            break;
+                        }
+                    case "添加登陆页":
+                        {
+                            var testSite = FindParentNode<TestSite>(selnode);
+                            var dlg = new AddTestLoginDlg(testSite.Id);
+                            if (dlg.ShowDialog() == DialogResult.OK)
+                            {
+                                ReLoadDBObj(selnode);
+                            }
                             break;
                         }
                     default:
@@ -453,11 +508,32 @@ namespace AutoTest.UI.UC
 
                 批量复制引用ToolStripMenuItem.Visible = (node.Tag as INodeContents)?.GetNodeContentType() == NodeContentType.ENV;
 
-                添加测试页面ToolStripMenuItem.Visible= node.Tag is TestSite;
+                if(node.Tag is TestSite)
+                {
+                    添加测试页面ToolStripMenuItem.Visible = true;
+                    bool hasLoginPage = false;
+                    foreach(TreeNode item in node.Nodes)
+                    {
+                        if(item.Tag is TestLogin)
+                        {
+                            hasLoginPage = true;
+                            break;
+                        }
+                    }
+                    添加登陆页ToolStripMenuItem.Visible = !hasLoginPage;
+                }
+                else
+                {
+                    添加测试页面ToolStripMenuItem.Visible = false;
+                    添加登陆页ToolStripMenuItem.Visible = false;
+                }
+                
 
                 添加测试用例ToolStripMenuItem.Visible= node.Tag is TestPage;
 
                 运行测试ToolStripMenuItem.Visible = node.Tag is TestCase;
+
+                
             }
 
         }

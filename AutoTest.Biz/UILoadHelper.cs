@@ -76,6 +76,21 @@ namespace AutoTest.Biz
         public static void LoadTestPage(Form parent, TreeNode pnode, int siteId)
         {
             List<TreeNode> treeNodes = new List<TreeNode>();
+
+            var testLoginList = BigEntityTableEngine.LocalEngine.Find<TestLogin>(nameof(TestLogin), nameof(TestLogin.SiteId), new object[] { siteId });
+            foreach(var testLogin in testLoginList)
+            {
+                treeNodes.Add(new TreeNodeEx
+                {
+                    Text = "登陆",
+                    Tag = testLogin,
+                    ImageIndex = 15,
+                    SelectedImageIndex = 15,
+                    CollapseImgIndex = 15,
+                    ExpandImgIndex = 15
+                });
+            }
+
             var testPageList = BigEntityTableEngine.LocalEngine.Find<TestPage>(nameof(TestPage), nameof(TestPage.SiteId), new object[] { siteId }).ToList();
 
             foreach (var page in testPageList)

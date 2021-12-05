@@ -1,4 +1,5 @@
 ﻿using AutoTest.UI.WebBrowser;
+using AutoTest.UI.WebTask;
 using AutoTest.Util;
 using System;
 using System.Collections.Generic;
@@ -25,6 +26,12 @@ namespace AutoTest.UI.UC
         {
             InitializeComponent();
             _name = name;
+        }
+
+        public async Task RunTest(IWebTask webTask)
+        {
+            this.webView.AddTask(webTask);
+            await this.webView.RunTask();
         }
 
         private void LoadWebBrowser()
