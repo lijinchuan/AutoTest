@@ -58,20 +58,18 @@ namespace AutoTest.UI.UC
             // tbMsg
             // 
             this.tbMsg.BackColor = System.Drawing.SystemColors.InfoText;
+            this.tbMsg.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tbMsg.ForeColor = System.Drawing.SystemColors.Info;
-            this.tbMsg.Location = new System.Drawing.Point(3, 3);
+            this.tbMsg.Location = new System.Drawing.Point(0, 0);
             this.tbMsg.Multiline = true;
             this.tbMsg.Name = "tbMsg";
-            this.tbMsg.Size = new System.Drawing.Size(160, 442);
+            this.tbMsg.Size = new System.Drawing.Size(166, 448);
             this.tbMsg.TabIndex = 0;
             // 
             // TestPanel
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.PannelLeft);
-            this.Name = "TestPanel";
             this.Size = new System.Drawing.Size(740, 454);
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();

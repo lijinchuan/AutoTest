@@ -343,6 +343,16 @@ namespace AutoTest.UI.UC
                             }
                             break;
                         }
+                    case "运行测试":
+                        {
+                            var testPage = FindParentNode<TestPage>(selnode);
+                            var testSite=FindParentNode<TestSite>(selnode);
+                            var testCase = FindParentNode<TestCase>(selnode);
+                            var panel = new UC.TestPanel(testSite.Name);
+                            panel.Load();
+                            Util.AddToMainTab(this, $"{testSite.Name}_", panel);
+                            break;
+                        }
                     default:
                         {
                             MessageBox.Show(e.ClickedItem.Text);
@@ -446,6 +456,8 @@ namespace AutoTest.UI.UC
                 添加测试页面ToolStripMenuItem.Visible= node.Tag is TestSite;
 
                 添加测试用例ToolStripMenuItem.Visible= node.Tag is TestPage;
+
+                运行测试ToolStripMenuItem.Visible = node.Tag is TestCase;
             }
 
         }

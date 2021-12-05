@@ -12,7 +12,7 @@ using System.Windows.Forms;
 
 namespace AutoTest.UI.UC
 {
-    public partial class TestPanel : UserControl
+    public partial class TestPanel : TabPage//UserControl
     {
         private string _name = string.Empty;
         private DefaultChromiumWebBrowser webView = null;
@@ -34,7 +34,7 @@ namespace AutoTest.UI.UC
                 webView = new DefaultChromiumWebBrowser(_name, "about:blank");
                 webView.Dock = DockStyle.Fill;
                 PannelLeft.Controls.Add(webView);
-                tbMsg.Text = "定时任务每30分钟执行一次";
+                tbMsg.Text = "";
                 webView.OnMsgPublished += (msg =>
                 {
                     _ = BeginInvoke(new Action(() =>
@@ -56,11 +56,16 @@ namespace AutoTest.UI.UC
             }
         }
 
-        protected override void OnLoad(EventArgs e)
+        public void Load()
         {
-            base.OnLoad(e);
-
             LoadWebBrowser();
         }
+
+        //protected override void OnLoad(EventArgs e)
+        //{
+        //    base.OnLoad(e);
+
+        //    LoadWebBrowser();
+        //}
     }
 }

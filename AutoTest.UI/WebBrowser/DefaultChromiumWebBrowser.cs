@@ -65,11 +65,6 @@ namespace AutoTest.UI.WebBrowser
         private AutoResetEvent readyResetEvent = new AutoResetEvent(true);
 
         /// <summary>
-        /// 日志
-        /// </summary>
-        private readonly ILogger logger = null;
-
-        /// <summary>
         /// 局部锁
         /// </summary>
         private readonly object localLocker = new object();
@@ -78,7 +73,6 @@ namespace AutoTest.UI.WebBrowser
             : base(address)
         {
             Name = name;
-            logger = AutofacBuilder.GetFromFac<ILogger>();
             var setting = new RequestContextSettings()
             {
                 CachePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CefSharp\\Cache_" + name),
@@ -310,7 +304,6 @@ namespace AutoTest.UI.WebBrowser
             catch (Exception ex)
             {
                 _ = OnMsgPublished?.BeginInvoke(ex.Message, null, null);
-                logger.Error(ex, "非正常退出,taskname:{0},url:{1}", webTask.GetTaskName(), webTask.GetStartPageUrl());
                 WebTask_OnTaskCompleted(webTask);
             }
         }

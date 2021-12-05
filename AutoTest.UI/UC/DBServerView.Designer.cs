@@ -48,11 +48,12 @@ namespace AutoTest.UI.UC
             this.批量复制引用ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.如何使用ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.添加测试站点ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.添加测试页面ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.添加测试用例ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.ts_serchKey = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripButton();
-            this.添加测试页面ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.添加测试用例ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.运行测试ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.DBServerviewContextMenuStrip.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -97,9 +98,10 @@ namespace AutoTest.UI.UC
             this.如何使用ToolStripMenuItem,
             this.添加测试站点ToolStripMenuItem,
             this.添加测试页面ToolStripMenuItem,
-            this.添加测试用例ToolStripMenuItem});
+            this.添加测试用例ToolStripMenuItem,
+            this.运行测试ToolStripMenuItem});
             this.DBServerviewContextMenuStrip.Name = "DBServerviewContextMenuStrip";
-            this.DBServerviewContextMenuStrip.Size = new System.Drawing.Size(181, 400);
+            this.DBServerviewContextMenuStrip.Size = new System.Drawing.Size(181, 422);
             // 
             // 复制表名ToolStripMenuItem
             // 
@@ -191,6 +193,18 @@ namespace AutoTest.UI.UC
             this.添加测试站点ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.添加测试站点ToolStripMenuItem.Text = "添加测试站点";
             // 
+            // 添加测试页面ToolStripMenuItem
+            // 
+            this.添加测试页面ToolStripMenuItem.Name = "添加测试页面ToolStripMenuItem";
+            this.添加测试页面ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.添加测试页面ToolStripMenuItem.Text = "添加测试页面";
+            // 
+            // 添加测试用例ToolStripMenuItem
+            // 
+            this.添加测试用例ToolStripMenuItem.Name = "添加测试用例ToolStripMenuItem";
+            this.添加测试用例ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.添加测试用例ToolStripMenuItem.Text = "添加测试用例";
+            // 
             // toolStrip1
             // 
             this.toolStrip1.AutoSize = false;
@@ -221,17 +235,11 @@ namespace AutoTest.UI.UC
             this.toolStripDropDownButton1.Text = "搜索";
             this.toolStripDropDownButton1.Click += new System.EventHandler(this.toolStripDropDownButton1_Click);
             // 
-            // 添加测试页面ToolStripMenuItem
+            // 运行测试ToolStripMenuItem
             // 
-            this.添加测试页面ToolStripMenuItem.Name = "添加测试页面ToolStripMenuItem";
-            this.添加测试页面ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.添加测试页面ToolStripMenuItem.Text = "添加测试页面";
-            // 
-            // 添加测试用例ToolStripMenuItem
-            // 
-            this.添加测试用例ToolStripMenuItem.Name = "添加测试用例ToolStripMenuItem";
-            this.添加测试用例ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.添加测试用例ToolStripMenuItem.Text = "添加测试用例";
+            this.运行测试ToolStripMenuItem.Name = "运行测试ToolStripMenuItem";
+            this.运行测试ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.运行测试ToolStripMenuItem.Text = "运行测试";
             // 
             // DBServerView
             // 
@@ -278,5 +286,6 @@ namespace AutoTest.UI.UC
         private System.Windows.Forms.ToolStripMenuItem 添加测试站点ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 添加测试页面ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 添加测试用例ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 运行测试ToolStripMenuItem;
     }
 }
