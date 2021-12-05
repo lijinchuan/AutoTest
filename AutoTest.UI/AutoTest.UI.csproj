@@ -119,6 +119,7 @@
     <Compile Include="AutofacBuilder.cs" />
     <Compile Include="EventListener\EventListener.cs" />
     <Compile Include="EventListener\IEventListener.cs" />
+    <Compile Include="EventListener\TestEventListener.cs" />
     <Compile Include="EventListener\WebEvent.cs" />
     <Compile Include="MainFrm.cs">
       <SubType>Form</SubType>
@@ -236,6 +237,12 @@
       <DependentUpon>MyTabControl.cs</DependentUpon>
     </Compile>
     <Compile Include="UC\TabTableTabEx.cs" />
+    <Compile Include="UC\TestPanel.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UC\TestPanel.Designer.cs">
+      <DependentUpon>TestPanel.cs</DependentUpon>
+    </Compile>
     <Compile Include="UC\UCProxy.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -250,6 +257,8 @@
     <Compile Include="WebBrowser\IWebBrowserTool.cs" />
     <Compile Include="WebBrowser\WebBrowserTool.cs" />
     <Compile Include="WebTask\IWebTask.cs" />
+    <Compile Include="WebTask\RunTestTask.cs" />
+    <Compile Include="WebTask\WebTask.cs" />
     <EmbeddedResource Include="MainFrm.resx">
       <DependentUpon>MainFrm.cs</DependentUpon>
     </EmbeddedResource>
@@ -281,6 +290,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UC\DBServerView.resx">
       <DependentUpon>DBServerView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UC\TestPanel.resx">
+      <DependentUpon>TestPanel.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="configfile.json" />
     <None Include="packages.config" />

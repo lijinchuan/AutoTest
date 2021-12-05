@@ -32,8 +32,8 @@ namespace AutoTest.UI
                 .AsImplementedInterfaces().AsSelf();
             }
 
-            var configFile = System.Configuration.ConfigurationManager.AppSettings["configfile"];
-            var configText = File.ReadAllText(configFile, Encoding.UTF8);
+            //var configFile = System.Configuration.ConfigurationManager.AppSettings["configfile"];
+            //var configText = File.ReadAllText(configFile, Encoding.UTF8);
             
 
             //_ = builder.Register<IConfigurationProvider>(ctx => new MapperConfiguration(cfg => cfg.AddMaps("Topuc22Top.Spiders.Position.Simulator.Domain"))).SingleInstance();

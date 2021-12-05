@@ -32,6 +32,7 @@ namespace AutoTest.UI
             .AddIndex("SiteId_EnvId", q => q.Asc(m => m.SiteId).Asc(m => m.EnvId))
             .AddIndex("SiteId_Name", q => q.Asc(m => m.SiteId).Asc(m => m.Name)));
 
+            AutofacBuilder.init();
 
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
