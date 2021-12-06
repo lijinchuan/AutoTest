@@ -80,6 +80,19 @@ namespace AutoTest.UI.WebBrowser
             return resp.Success;
         }
 
+        public object ExecuteScript(IBrowser browser,IFrame frame,string code)
+        {
+            var resp = browser.MainFrame.EvaluateScriptAsync(code);
+            return resp.Result.Result;
+        }
+
+        public object ExecutePromiseScript(IBrowser browser, IFrame frame, string code)
+        {
+            var resp = browser.MainFrame.EvaluateScriptAsPromiseAsync(code);
+            return resp.Result.Result;
+        }
+
+
         public void DragX(IBrowser browser, int startX, int startY, int endX, int endY)
         {
             var host = browser.GetHost();

@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace AutoTest.UI.WebTask
@@ -24,7 +25,7 @@ namespace AutoTest.UI.WebTask
         private TestPage _testPage;
         private TestCase _testCase;
 
-        public RunTestTask(string taskname, bool useProxy, TestSite testSite, TestPage testPage, TestCase testCase) : base(taskname, testPage.Url, useProxy)
+        public RunTestTask(string taskname, bool useProxy, TestSite testSite, TestPage testPage, TestCase testCase) : base(taskname, testPage.Url, useProxy, false)
         {
 
             eventListener = new TestEventListener();
@@ -62,7 +63,40 @@ namespace AutoTest.UI.WebTask
 
         protected override async Task<int> ExecuteInner(IBrowser browser, IFrame frame)
         {
-            return await Task.FromResult(0);
+            if (!string.IsNullOrWhiteSpace(_testCase.TestCode))
+            {
+                var tryCount = 0;
+                object ret;
+                while (true)
+                {
+                    try
+                    {
+                        ret = webBrowserTool.ExecutePromiseScript(browser, frame, _testCase.TestCode);
+                        if (object.Equals(ret, false))
+                        {
+                            if (tryCount > 30)
+                            {
+                                return await Task.FromResult(0);
+                            }
+                            Thread.Sleep(1000);
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        if (tryCount > 30)
+                        {
+                            return await Task.FromResult(0);
+                        }
+                        Thread.Sleep(1000);
+                    }
+                }
+
+            }
+            return await Task.FromResult(1);
         }
 
         /// <summary>

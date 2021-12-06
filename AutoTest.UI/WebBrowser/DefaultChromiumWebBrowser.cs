@@ -47,7 +47,7 @@ namespace AutoTest.UI.WebBrowser
         /// <summary>
         /// 是否初始化了，对只能进行一次的操作作控制
         /// </summary>
-        private bool isInit = false;
+        private volatile bool isInit = false;
 
         /// <summary>
         /// 是否是在执行任务状态
@@ -68,6 +68,7 @@ namespace AutoTest.UI.WebBrowser
         /// 局部锁
         /// </summary>
         private readonly object localLocker = new object();
+
 
         public DefaultChromiumWebBrowser(string name, string address)
             : base(address)
@@ -197,8 +198,11 @@ namespace AutoTest.UI.WebBrowser
             DocumentLoadCompleted -= webTask.DocumentCompletedHandler;
             _ = webTaskListHash.Remove(webTask.GetTaskName());
             RemoveEventListener(webTask.GetEventListener());
-            //删除所有的COOKIE
-            _ = this.GetCookieManager().DeleteCookies(webTask.GetSite());
+            if (webTask.ClearCookies)
+            {
+                //删除所有的COOKIE
+                _ = this.GetCookieManager().DeleteCookies(webTask.GetSite());
+            }
         }
 
         public bool AddTask(IWebTask webTask)
@@ -321,9 +325,14 @@ namespace AutoTest.UI.WebBrowser
         {
             lock (localLocker)
             {
-                if (!isInit)
+                int tryTimes = 0;
+                while (!isInit)
                 {
-                    return false;
+                    Thread.Sleep(100);
+                    if (tryTimes++ > 30)
+                    {
+                        throw new TimeoutException("isInit");
+                    }
                 }
 
                 if (isRunningJob)

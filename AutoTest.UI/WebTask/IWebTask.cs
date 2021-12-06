@@ -30,6 +30,11 @@ namespace AutoTest.UI.WebTask
             get;
         }
 
+        bool ClearCookies
+        {
+            get;
+        }
+
         /// <summary>
         /// 任务名称，防止重复
         /// </summary>

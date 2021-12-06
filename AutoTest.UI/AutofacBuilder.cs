@@ -36,7 +36,7 @@ namespace AutoTest.UI
             //var configText = File.ReadAllText(configFile, Encoding.UTF8);
             
 
-            //_ = builder.Register<IConfigurationProvider>(ctx => new MapperConfiguration(cfg => cfg.AddMaps("Topuc22Top.Spiders.Position.Simulator.Domain"))).SingleInstance();
+            _ = builder.Register<IConfigurationProvider>(ctx => new MapperConfiguration(cfg => cfg.AddMaps("AutoTest.Domain"))).SingleInstance();
             _ = builder.Register<IMapper>(ctx => new Mapper(ctx.Resolve<IConfigurationProvider>(), ctx.Resolve)).InstancePerDependency();
 
             //_ = builder.RegisterModule<Util.LoggingModule>();

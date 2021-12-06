@@ -8,6 +8,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -17,6 +18,7 @@ namespace AutoTest.UI.UC
     {
         private string _name = string.Empty;
         private DefaultChromiumWebBrowser webView = null;
+
         public TestPanel()
         {
             InitializeComponent();

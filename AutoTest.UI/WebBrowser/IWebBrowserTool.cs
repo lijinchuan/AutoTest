@@ -36,5 +36,16 @@ namespace AutoTest.UI.WebBrowser
         /// <param name="endX">结束X位置</param>
         /// <param name="endY">结束Y位置</param>
         void DragX(IBrowser browser, int startX, int startY, int endX, int endY);
+
+        /// <summary>
+        /// 执行JS代码
+        /// </summary>
+        /// <param name="browser"></param>
+        /// <param name="frame"></param>
+        /// <param name="code"></param>
+        /// <returns></returns>
+        object ExecuteScript(IBrowser browser, IFrame frame, string code);
+
+        object ExecutePromiseScript(IBrowser browser, IFrame frame, string code);
     }
 }

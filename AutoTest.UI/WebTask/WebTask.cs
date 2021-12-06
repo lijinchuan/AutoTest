@@ -57,12 +57,18 @@ namespace AutoTest.UI.WebTask
             get;
             private set;
         }
+        public bool ClearCookies 
+        { 
+            get; 
+            private set; 
+        }
 
-        protected WebTask(string strTaskName, string strStartPageUrl, bool useProxy)
+        protected WebTask(string strTaskName, string strStartPageUrl, bool useProxy,bool clearCookies)
         {
             taskName = strTaskName;
             startPageUrl = strStartPageUrl;
             UseProxy = useProxy;
+            ClearCookies = clearCookies;
         }
 
         public abstract void DocumentCompletedHandler(IBrowser browser, IFrame frame, List<Cookie> cookies);

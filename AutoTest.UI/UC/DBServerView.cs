@@ -395,7 +395,12 @@ namespace AutoTest.UI.UC
                                   return panel;
                               }, typeof(TestPanel));
 
-                            testPanel.RunTest(new RunTestTask(testCase.CaseName, false, testSite, testPage, testCase)).GetAwaiter();
+                            LJC.FrameWorkV3.Comm.TaskHelper.SetInterval(1000, () =>
+                            {
+                                this.BeginInvoke(new Action(() => testPanel.RunTest(new RunTestTask(testCase.CaseName, false, testSite, testPage, testCase))));
+                                return true;
+                            }, runintime: false);
+                            
                             break;
                         }
                     case "添加登陆页":
