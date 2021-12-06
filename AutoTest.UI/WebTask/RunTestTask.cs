@@ -66,19 +66,34 @@ namespace AutoTest.UI.WebTask
             if (!string.IsNullOrWhiteSpace(_testCase.TestCode))
             {
                 var tryCount = 0;
-                object ret;
+                dynamic ret;
+                dynamic bag=null;
                 while (true)
                 {
                     try
                     {
-                        ret = webBrowserTool.ExecutePromiseScript(browser, frame, _testCase.TestCode);
-                        if (object.Equals(ret, false))
+                        string varCode = "";
+                        if (bag != null)
                         {
-                            if (tryCount > 30)
+                            varCode = $@"eval('$$=$$||{{}};\
+                            $$.bag={Newtonsoft.Json.JsonConvert.SerializeObject(bag)}');";
+                        }
+                        ret = webBrowserTool.ExecutePromiseScript(browser, frame, varCode + _testCase.TestCode) as dynamic;
+                        if (ret != null)
+                        {
+                            bag = ret.bag;
+                            if (!ret.ret)
                             {
-                                return await Task.FromResult(0);
+                                if (tryCount++ > 30)
+                                {
+                                    return await Task.FromResult(0);
+                                }
+                                Thread.Sleep(1000);
                             }
-                            Thread.Sleep(1000);
+                            else
+                            {
+                                break;
+                            }
                         }
                         else
                         {
@@ -87,7 +102,7 @@ namespace AutoTest.UI.WebTask
                     }
                     catch (Exception ex)
                     {
-                        if (tryCount > 30)
+                        if (tryCount++ > 30)
                         {
                             return await Task.FromResult(0);
                         }
