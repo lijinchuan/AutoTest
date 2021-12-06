@@ -13,20 +13,19 @@ using System.Threading.Tasks;
 
 namespace AutoTest.UI.WebTask
 {
-    public class RunTestTask : WebTask
+    public class RunTestLoginTask : WebTask
     {
         private readonly IEventListener eventListener = null;
         private readonly IWebBrowserTool webBrowserTool = null;
         private readonly RequestAutoResetEvent pageRequestAutoResetEvent = null;
         private readonly IMapper mapper = null;
-
         private TestSite _testSite;
-        private TestPage _testPage;
-        private TestCase _testCase;
-        private bool _readyFlag = false;
-        private dynamic bag = null;
 
-        public RunTestTask(string taskname, bool useProxy, TestSite testSite, TestPage testPage, TestCase testCase) : base(taskname, testPage.Url, useProxy, false)
+        private TestLogin _testLogin;
+        private bool _readyFlag;
+        private dynamic bag;
+
+        public RunTestLoginTask(string taskname, bool useProxy, TestSite testSite, TestLogin testLogin) : base(taskname, testLogin.Url, useProxy, false)
         {
 
             eventListener = new TestEventListener();
@@ -38,8 +37,7 @@ namespace AutoTest.UI.WebTask
             mapper = AutofacBuilder.GetFromFac<IMapper>();
 
             _testSite = testSite;
-            _testPage = testPage;
-            _testCase = testCase;
+            _testLogin = testLogin;
         }
 
         public override void DocumentCompletedHandler(IBrowser browser, IFrame frame, List<Cookie> cookies)
@@ -63,16 +61,16 @@ namespace AutoTest.UI.WebTask
 
         public override string GetSite()
         {
-            return GetTaskName();
+            return _testSite.Name;
         }
 
         protected override async Task<int> ExecuteInner(IBrowser browser, IFrame frame)
         {
-            if (!string.IsNullOrWhiteSpace(_testCase.TestCode))
+            if (!string.IsNullOrWhiteSpace(_testLogin.LoginCode))
             {
                 var tryCount = 0;
                 dynamic ret;
-                
+
                 while (true)
                 {
                     try
@@ -83,7 +81,7 @@ namespace AutoTest.UI.WebTask
                             varCode = $@"eval('_$$=_$$||{{}};\
                             _$$.bag={Newtonsoft.Json.JsonConvert.SerializeObject(bag)}');";
                         }
-                        ret = webBrowserTool.ExecutePromiseScript(browser, frame, varCode + _testCase.TestCode) as dynamic;
+                        ret = webBrowserTool.ExecutePromiseScript(browser, frame, varCode + _testLogin.LoginCode) as dynamic;
                         if (ret != null)
                         {
                             bag = ret.bag;
@@ -118,6 +116,7 @@ namespace AutoTest.UI.WebTask
             }
             return await Task.FromResult(1);
         }
+
 
         /// <summary>
         /// 监听底层数据方法

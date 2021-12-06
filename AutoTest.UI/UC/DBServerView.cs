@@ -413,6 +413,26 @@ namespace AutoTest.UI.UC
                             }
                             break;
                         }
+                    case "登陆":
+                        {
+                            var testSite = FindParentNode<TestSite>(selnode);
+                            var testLogin = FindParentNode<TestLogin>(selnode);
+
+                            var testPanel = (TestPanel)Util.TryAddToMainTab(this, $"{testSite.Name}_", () =>
+                            {
+                                var panel = new UC.TestPanel(testSite.Name);
+                                panel.Load();
+
+                                return panel;
+                            }, typeof(TestPanel));
+
+                            LJC.FrameWorkV3.Comm.TaskHelper.SetInterval(1000, () =>
+                            {
+                                this.BeginInvoke(new Action(() => testPanel.RunTest(new RunTestLoginTask(testLogin.Url, false, testSite, testLogin))));
+                                return true;
+                            }, runintime: false);
+                            break;
+                        }
                     default:
                         {
                             MessageBox.Show(e.ClickedItem.Text);
@@ -538,7 +558,7 @@ namespace AutoTest.UI.UC
 
                 运行测试ToolStripMenuItem.Visible = node.Tag is TestCase;
 
-                
+                登陆ToolStripMenuItem.Visible = node.Tag is TestLogin;
             }
 
         }
