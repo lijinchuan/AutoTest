@@ -1,4 +1,6 @@
-﻿using System;
+﻿using AutoTest.UI.EventListener;
+using CefSharp;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,6 +13,9 @@ namespace AutoTest.UI.ResponseFilters
     /// </summary>
     public class JsonResponseFilter : BaseResponseFilter
     {
-
+        public override string GetContent(WebEvent webEvent)
+        {
+            return Encoding.GetEncoding(webEvent.ResponseChartSet).GetString(webEvent.Data);
+        }
     }
 }

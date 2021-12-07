@@ -1,4 +1,5 @@
-﻿using CefSharp;
+﻿using AutoTest.UI.EventListener;
+using CefSharp;
 using System;
 using System.IO;
 
@@ -26,6 +27,12 @@ namespace AutoTest.UI.ResponseFilters
         {
             // Method intentionally left empty.
         }
+
+        /// <summary>
+        /// 获取文本内容
+        /// </summary>
+        /// <returns></returns>
+        public abstract string GetContent(WebEvent webEvent);
 
         public virtual FilterStatus Filter(Stream dataIn, out long dataInRead, Stream dataOut, out long dataOutWritten)
         {

@@ -30,6 +30,15 @@ namespace AutoTest.UI.EventListener
         }
 
         /// <summary>
+        /// 文本内容
+        /// </summary>
+        public string Content
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
         /// 数据类型
         /// </summary>
         public string DataType

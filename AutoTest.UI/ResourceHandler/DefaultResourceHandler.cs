@@ -22,6 +22,7 @@ namespace AutoTest.UI.ResourceHandler
         protected sealed override IResponseFilter GetResourceResponseFilter(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request, IResponse response)
         {
             var guid = StringUtil.GetMD5(request.Url);
+            //编码
             return ResponseFilterFactory.CreateResponseFilter(guid, response.MimeType);
         }
 
@@ -54,9 +55,11 @@ namespace AutoTest.UI.ResourceHandler
                             Data = data,
                             SourceUrl = request.Url,
                             DataType = response.MimeType,
-                            ResponseChartSet = response.Charset,
+                            ResponseChartSet =string.IsNullOrWhiteSpace(response.Charset)?"utf-8": response.Charset,
                             StatusCode = response.StatusCode
                         };
+
+                        webevent.Content = filter.GetContent(webevent);
 
                         foreach (var listener in (chromiumWebBrowser as DefaultChromiumWebBrowser).GetEventListeners())
                         {

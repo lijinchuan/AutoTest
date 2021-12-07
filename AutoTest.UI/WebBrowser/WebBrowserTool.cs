@@ -7,10 +7,11 @@ namespace AutoTest.UI.WebBrowser
 {
     public class WebBrowserTool : IWebBrowserTool
     {
-        private static string ADDJQUERYLIBCODE = @"var script = document.createElement(""script"");
+        private static string ADDJQUERYLIBCODE = @"if(typeof jQuery == 'undefined'){
+                var script = document.createElement(""script"");
                 script.type = ""text/javascript"";
                 script.src = ""https://code.jquery.com/jquery-1.12.4.min.js"";//script.src=""jquery-1.12.4.min.js"";
-                document.getElementsByTagName('head')[0].appendChild(script);";
+                document.getElementsByTagName('head')[0].appendChild(script);}";
 
         private const string ADDEVALFUNCTIONCODE = @"var script = document.createElement(""script"");
                 script.type = ""text/javascript"";
