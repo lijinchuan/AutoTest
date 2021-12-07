@@ -368,6 +368,10 @@ namespace AutoTest.UI.WebBrowser
         {
             try
             {
+                if (webTask.GetNext() != null)
+                {
+                    webTaskList.Enqueue(webTask.GetNext());
+                }
                 Clear(webTask);
             }
             catch (Exception ex)

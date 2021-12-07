@@ -405,6 +405,7 @@ namespace AutoTest.UI.UC
                             var testPage = FindParentNode<TestPage>(selnode);
                             var testSite=FindParentNode<TestSite>(selnode);
                             var testCase = FindParentNode<TestCase>(selnode);
+                            var testLogin = BigEntityTableEngine.LocalEngine.Find<TestLogin>(nameof(TestLogin), nameof(TestLogin.SiteId), new object[] { testSite.Id }).FirstOrDefault();
 
                             var testPanel = (TestPanel)Util.TryAddToMainTab(this, $"{testSite.Name}_", () =>
                               {
@@ -418,7 +419,7 @@ namespace AutoTest.UI.UC
 
                             LJC.FrameWorkV3.Comm.TaskHelper.SetInterval(1000, () =>
                             {
-                                this.BeginInvoke(new Action(() => testPanel.RunTest(new RunTestTask(testCase.CaseName, false, testSite, testPage, testCase, ep.env, ep.envParams))));
+                                this.BeginInvoke(new Action(() => testPanel.RunTest(new RunTestTask(testCase.CaseName, false, testSite, testLogin, testPage, testCase, ep.env, ep.envParams))));
                                 return true;
                             }, runintime: false);
                             

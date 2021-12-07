@@ -135,10 +135,10 @@ namespace AutoTest.UI.WebTask
                         var ret = webBrowserTool.ExecutePromiseScript(browser, frame, Util.ReplaceEvnParams(_testLogin.LoginCode, _testEnvParams));
                         if (object.Equals(ret, false))
                         {
-                            if (tryCount++ > 30)
-                            {
-                                return await Task.FromResult(0);
-                            }
+                            //if (tryCount++ > 30)
+                            //{
+                            //    return await Task.FromResult(0);
+                            //}
                             Thread.Sleep(1000);
                         }
                         else
@@ -189,7 +189,14 @@ namespace AutoTest.UI.WebTask
                         else
                         {
                             validResult = object.Equals(ret, true) ? 1 : 0;
-                            break;
+                            if (validResult == 0 && _testLogin.IsMannual)
+                            {
+                                Thread.Sleep(1000);
+                            }
+                            else
+                            {
+                                break;
+                            }
                         }
                     }
                     catch (Exception ex)

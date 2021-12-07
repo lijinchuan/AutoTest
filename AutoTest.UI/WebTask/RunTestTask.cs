@@ -24,13 +24,14 @@ namespace AutoTest.UI.WebTask
 
         private TestSite _testSite;
         private TestPage _testPage;
+        private TestLogin _testLogin;
         private TestCase _testCase;
         private TestEnv _testEnv;
         private List<TestEnvParam> _testEnvParams;
         private bool _readyFlag = false;
         private List<WebEvent> webEvents = new List<WebEvent>();
 
-        public RunTestTask(string taskname, bool useProxy, TestSite testSite,
+        public RunTestTask(string taskname, bool useProxy, TestSite testSite,TestLogin testLogin,
             TestPage testPage, TestCase testCase,TestEnv testEnv,List<TestEnvParam> testEnvParams) 
             : base(taskname,Util.ReplaceEvnParams(testPage.Url,testEnvParams), useProxy, false)
         {
@@ -48,6 +49,7 @@ namespace AutoTest.UI.WebTask
             _testCase = testCase;
             _testEnv = testEnv;
             _testEnvParams = testEnvParams;
+            _testLogin = testLogin;
         }
 
         public override void DocumentCompletedHandler(IBrowser browser, IFrame frame, List<Cookie> cookies)
@@ -121,11 +123,14 @@ namespace AutoTest.UI.WebTask
 
             code += $"{WebVar.VarName}.{nameof(WebVar.WebRequestDatas)}={Newtonsoft.Json.JsonConvert.SerializeObject(webRequestDatas)}\n";
 
-            webBrowserTool.ExecuteScript(browser, frame, code);
+            code += " return true;";
+            var ret = webBrowserTool.ExecutePromiseScript(browser, frame, code);
         }
 
-        private async Task<int> RunTestCode(IBrowser browser,IFrame frame)
+        private async Task<int> RunTestCode(IBrowser browser, IFrame frame)
         {
+            //
+
             dynamic bag = null;
             if (!string.IsNullOrWhiteSpace(_testCase.TestCode))
             {
@@ -136,7 +141,7 @@ namespace AutoTest.UI.WebTask
                     try
                     {
                         PrepareTest(browser, frame, bag);
-                        var ret = webBrowserTool.ExecutePromiseScript(browser, frame,Util.ReplaceEvnParams(_testCase.TestCode,_testEnvParams));
+                        var ret = webBrowserTool.ExecutePromiseScript(browser, frame, Util.ReplaceEvnParams(_testCase.TestCode, _testEnvParams));
                         if (object.Equals(ret, false))
                         {
                             if (tryCount++ > 30)
@@ -165,7 +170,9 @@ namespace AutoTest.UI.WebTask
                 }
 
             }
+
             return await Task.FromResult(1);
+
         }
 
         private async Task<int> RunValidCode(IBrowser browser, IFrame frame)
@@ -214,8 +221,29 @@ namespace AutoTest.UI.WebTask
             return await Task.FromResult(validResult);
         }
 
+        private bool Check(IBrowser browser, IFrame frame)
+        {
+            var flag = true;
+            if (!string.IsNullOrWhiteSpace(_testSite.CheckLoginCode))
+            {
+                var isLogin = webBrowserTool.ExecuteScript(browser, frame, _testSite.CheckLoginCode);
+                if (!object.Equals(isLogin, true))
+                {
+                    flag = false;
+                    var loginTask = new RunTestLoginTask(_testSite.Name + "登陆", UseProxy, _testSite, _testLogin, _testEnv, _testEnvParams);
+                    loginTask.SetNext(new RunTestTask(GetTaskName(), UseProxy, _testSite, _testLogin, _testPage, _testCase, _testEnv, _testEnvParams));
+                    this.SetNext(loginTask);
+                }
+            }
+            return flag;
+        }
+
         protected override async Task<int> ExecuteInner(IBrowser browser, IFrame frame)
         {
+            if (!Check(browser, frame))
+            {
+                return await Task.FromResult(0);
+            }
             var ret = 0;
             try
             {

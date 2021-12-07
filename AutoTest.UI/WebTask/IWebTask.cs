@@ -81,5 +81,7 @@ namespace AutoTest.UI.WebTask
         /// 设置当前是测试模式
         /// </summary>
         void SetTestMode(bool isTestMode);
+
+        IWebTask GetNext();
     }
 }

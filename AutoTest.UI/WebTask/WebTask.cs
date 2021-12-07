@@ -49,6 +49,8 @@ namespace AutoTest.UI.WebTask
         /// </summary>
         protected const int lastSendErrorEmailTimeLimitMins = 30;
 
+        protected IWebTask NextWebTask = null;
+
         /// <summary>
         /// 是否使用代理
         /// </summary>
@@ -133,6 +135,16 @@ namespace AutoTest.UI.WebTask
         public void SetTestMode(bool bIsTestMode)
         {
             isTestMode = bIsTestMode;
+        }
+
+        public void SetNext(IWebTask webTask)
+        {
+            this.NextWebTask = webTask;
+        }
+
+        public IWebTask GetNext()
+        {
+            return NextWebTask;
         }
     }
 }
