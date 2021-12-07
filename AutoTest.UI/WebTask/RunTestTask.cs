@@ -89,7 +89,7 @@ namespace AutoTest.UI.WebTask
         /// <returns></returns>
         private dynamic GetUserVarData(IBrowser browser, IFrame frame)
         {
-            var code = $"return {WebVar.VarName}";
+            var code = $"if({WebVar.VarName}&&{WebVar.VarName}.{nameof(WebVar.Bag)}) return {WebVar.VarName}.{nameof(WebVar.Bag)}";
 
             return webBrowserTool.ExecutePromiseScript(browser, frame, code) as dynamic;
         }

@@ -1,4 +1,5 @@
-﻿using CefSharp;
+﻿using AutoTest.Domain;
+using CefSharp;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -84,12 +85,20 @@ namespace AutoTest.UI.WebBrowser
         public object ExecuteScript(IBrowser browser,IFrame frame,string code)
         {
             var resp = browser.MainFrame.EvaluateScriptAsync(code);
+            if (!resp.Result.Success)
+            {
+                throw new ScriptException(resp.Result.Message);
+            }
             return resp.Result.Result;
         }
 
         public object ExecutePromiseScript(IBrowser browser, IFrame frame, string code)
         {
             var resp = browser.MainFrame.EvaluateScriptAsPromiseAsync(code);
+            if (!resp.Result.Success)
+            {
+                throw new ScriptException(resp.Result.Message);
+            }
             return resp.Result.Result;
         }
 

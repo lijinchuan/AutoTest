@@ -30,7 +30,8 @@ namespace AutoTest.UI.ResponseFilters
                     return filter;
                 }
             }
-            else if (mimetype.Equals("text/html", StringComparison.OrdinalIgnoreCase))
+            else if (mimetype.Equals("text/html", StringComparison.OrdinalIgnoreCase)
+                || mimetype.Equals("text/plain", StringComparison.OrdinalIgnoreCase))
             {
                 var filter = new TextResponseFilter();
                 if (RESPONSEFILTERDIC.TryAdd(guid, filter))
