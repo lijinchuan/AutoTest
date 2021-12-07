@@ -33,6 +33,12 @@ namespace AutoTest.Domain.Entity
             set;
         }
 
+        public bool Used
+        {
+            get;
+            set;
+        }
+
         public NodeContentType GetNodeContentType()
         {
             return NodeContentType.ENV;

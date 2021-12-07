@@ -9,6 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -24,10 +25,14 @@ namespace AutoTest.UI.WebTask
         private TestSite _testSite;
         private TestPage _testPage;
         private TestCase _testCase;
+        private TestEnv _testEnv;
+        private List<TestEnvParam> _testEnvParams;
         private bool _readyFlag = false;
         private List<WebEvent> webEvents = new List<WebEvent>();
 
-        public RunTestTask(string taskname, bool useProxy, TestSite testSite, TestPage testPage, TestCase testCase) : base(taskname, testPage.Url, useProxy, false)
+        public RunTestTask(string taskname, bool useProxy, TestSite testSite,
+            TestPage testPage, TestCase testCase,TestEnv testEnv,List<TestEnvParam> testEnvParams) 
+            : base(taskname,Util.ReplaceEvnParams(testPage.Url,testEnvParams), useProxy, false)
         {
 
             eventListener = new TestEventListener();
@@ -41,6 +46,8 @@ namespace AutoTest.UI.WebTask
             _testSite = testSite;
             _testPage = testPage;
             _testCase = testCase;
+            _testEnv = testEnv;
+            _testEnvParams = testEnvParams;
         }
 
         public override void DocumentCompletedHandler(IBrowser browser, IFrame frame, List<Cookie> cookies)
@@ -129,7 +136,7 @@ namespace AutoTest.UI.WebTask
                     try
                     {
                         PrepareTest(browser, frame, bag);
-                        var ret = webBrowserTool.ExecutePromiseScript(browser, frame, _testCase.TestCode);
+                        var ret = webBrowserTool.ExecutePromiseScript(browser, frame,Util.ReplaceEvnParams(_testCase.TestCode,_testEnvParams));
                         if (object.Equals(ret, false))
                         {
                             if (tryCount++ > 30)
@@ -174,7 +181,7 @@ namespace AutoTest.UI.WebTask
                     try
                     {
                         PrepareTest(browser, frame, bag);
-                        var ret = webBrowserTool.ExecutePromiseScript(browser, frame, _testCase.ValidCode);
+                        var ret = webBrowserTool.ExecutePromiseScript(browser, frame, Util.ReplaceEvnParams(_testCase.ValidCode, _testEnvParams));
                         if (ret == null)
                         {
                             if (tryCount++ > 30)

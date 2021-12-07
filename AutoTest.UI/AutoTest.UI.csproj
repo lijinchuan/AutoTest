@@ -238,7 +238,7 @@
     </Compile>
     <Compile Include="UC\TabTableTabEx.cs" />
     <Compile Include="UC\TestPanel.cs">
-      <SubType>UserControl</SubType>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="UC\TestPanel.Designer.cs">
       <DependentUpon>TestPanel.cs</DependentUpon>
@@ -548,6 +548,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\user_earth.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\folder_star.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

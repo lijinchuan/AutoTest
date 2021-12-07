@@ -40,6 +40,7 @@ namespace AutoTest.UI.UC
             tv_DBServers.ImageList.Images.Add("ENV", Resources.Resource1.folder_palette);//13
             tv_DBServers.ImageList.Images.Add("BOX", Resources.Resource1.box);
             tv_DBServers.ImageList.Images.Add("USERLOGIN", Resources.Resource1.user_earth);
+            tv_DBServers.ImageList.Images.Add("FORDERSELECTED", Resources.Resource1.folder_star);
 
             tv_DBServers.Nodes.Add(new TreeNodeEx("资源管理器", 0, 1));
             tv_DBServers.BeforeExpand += Tv_DBServers_BeforeExpand;
@@ -164,6 +165,24 @@ namespace AutoTest.UI.UC
                 Biz.UILoadHelper.LoadTestEnvParamsAsync(this.ParentForm, selNode, sid, envid, callback, selNode);
             }
 
+        }
+
+        private (TestEnv env,List<TestEnvParam> envParams) GetCurrEnvData(TreeNode node)
+        {
+            var testSite = FindParentNode<TestSite>(node);
+            if (testSite == null)
+            {
+                return (null,null);
+            }
+            
+            var testEnvs = BigEntityTableEngine.LocalEngine.Find<TestEnv>(nameof(TestEnv), nameof(TestEnv.SiteId), new object[] { testSite.Id });
+            var currentEnv = testEnvs.FirstOrDefault(p => p.Used);
+            List<TestEnvParam> testEnvParams = null;
+            if (currentEnv != null)
+            {
+                testEnvParams = BigEntityTableEngine.LocalEngine.Find<TestEnvParam>(nameof(TestEnvParam), "SiteId_EnvId", new object[] { testSite.Id, currentEnv.Id }).ToList();
+            }
+            return (currentEnv, testEnvParams);
         }
 
         void OnMenuStrip_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -395,9 +414,11 @@ namespace AutoTest.UI.UC
                                   return panel;
                               }, typeof(TestPanel));
 
+                            var ep = GetCurrEnvData(selnode);
+
                             LJC.FrameWorkV3.Comm.TaskHelper.SetInterval(1000, () =>
                             {
-                                this.BeginInvoke(new Action(() => testPanel.RunTest(new RunTestTask(testCase.CaseName, false, testSite, testPage, testCase))));
+                                this.BeginInvoke(new Action(() => testPanel.RunTest(new RunTestTask(testCase.CaseName, false, testSite, testPage, testCase, ep.env, ep.envParams))));
                                 return true;
                             }, runintime: false);
                             
@@ -417,6 +438,7 @@ namespace AutoTest.UI.UC
                         {
                             var testSite = FindParentNode<TestSite>(selnode);
                             var testLogin = FindParentNode<TestLogin>(selnode);
+                            var ep = GetCurrEnvData(selnode);
 
                             var testPanel = (TestPanel)Util.TryAddToMainTab(this, $"{testSite.Name}_", () =>
                             {
@@ -428,9 +450,32 @@ namespace AutoTest.UI.UC
 
                             LJC.FrameWorkV3.Comm.TaskHelper.SetInterval(1000, () =>
                             {
-                                this.BeginInvoke(new Action(() => testPanel.RunTest(new RunTestLoginTask(testLogin.Url, false, testSite, testLogin))));
+                                this.BeginInvoke(new Action(() => testPanel.RunTest(new RunTestLoginTask(testLogin.Url, false, testSite, testLogin, ep.env, ep.envParams))));
                                 return true;
                             }, runintime: false);
+                            break;
+                        }
+                    case "切换此环境":
+                        {
+                            
+                            var currEnv = selnode.Tag as TestEnv;
+                            if (!currEnv.Used)
+                            {
+                                var testSite = FindParentNode<TestSite>(selnode);
+                                
+                                var envList = BigEntityTableEngine.LocalEngine.Find<TestEnv>(nameof(TestEnv), nameof(TestEnv.SiteId), new object[] { testSite.Id });
+                                foreach(var envUse in envList.Where(p => p.Used))
+                                {
+                                    envUse.Used = false;
+                                    BigEntityTableEngine.LocalEngine.Update(nameof(TestEnv), envUse);
+                                }
+
+                                currEnv.Used = true;
+                                BigEntityTableEngine.LocalEngine.Update(nameof(TestEnv), currEnv);
+
+                                ReLoadDBObj(selnode.Parent);
+                            }
+                            
                             break;
                         }
                     default:
@@ -524,14 +569,23 @@ namespace AutoTest.UI.UC
                 添加WCF接口ToolStripMenuItem.Visible = (node.Tag as INodeContents)?.GetNodeContentType() == NodeContentType.APIPARENT;
 
                 添加环境ToolStripMenuItem.Visible = (node.Tag as INodeContents)?.GetNodeContentType() == NodeContentType.ENVPARENT;
-                添加环境变量ToolStripMenuItem.Visible = (node.Tag as INodeContents)?.GetNodeContentType() == NodeContentType.ENVPARENT;
+                添加环境变量ToolStripMenuItem.Visible = node.Tag is TestEnv;
 
                 参数定义ToolStripMenuItem.Visible = (node.Tag as INodeContents)?.GetNodeContentType() == NodeContentType.DOC;
 
                 新增逻辑关系图ToolStripMenuItem.Visible = (node.Tag as INodeContents)?.GetNodeContentType() == NodeContentType.LOGICMAPParent;
                 删除逻辑关系图ToolStripMenuItem.Visible = (node.Tag as INodeContents)?.GetNodeContentType() == NodeContentType.LOGICMAP;
 
-                批量复制引用ToolStripMenuItem.Visible = (node.Tag as INodeContents)?.GetNodeContentType() == NodeContentType.ENV;
+                if ((node.Tag as INodeContents)?.GetNodeContentType() == NodeContentType.ENV)
+                {
+                    批量复制引用ToolStripMenuItem.Visible = true;
+                    切换此环境ToolStripMenuItem.Visible = !(node.Tag as TestEnv).Used;
+                }
+                else
+                {
+                    批量复制引用ToolStripMenuItem.Visible = false;
+                    切换此环境ToolStripMenuItem.Visible = false;
+                }
 
                 if(node.Tag is TestSite)
                 {

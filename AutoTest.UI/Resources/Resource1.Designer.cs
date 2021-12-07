@@ -413,6 +413,16 @@ namespace AutoTest.UI.Resources {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
+        internal static System.Drawing.Bitmap folder_star {
+            get {
+                object obj = ResourceManager.GetObject("folder_star", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
         internal static System.Drawing.Bitmap ForderClose {
             get {
                 object obj = ResourceManager.GetObject("ForderClose", resourceCulture);

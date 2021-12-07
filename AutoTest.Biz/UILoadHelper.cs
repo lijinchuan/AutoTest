@@ -162,7 +162,13 @@ namespace AutoTest.Biz
             var envlist = BigEntityTableEngine.LocalEngine.Find<TestEnv>(nameof(TestEnv), nameof(TestEnv.SiteId), new object[] { siteId }).ToList();
             foreach (var s in envlist)
             {
-                TreeNode node = new TreeNodeEx(s.EnvName, 0, 2, 0, 2);
+                int imageIndex = 0, selectedImageIndex = 2;
+                if (s.Used)
+                {
+                    imageIndex = 16;
+                    selectedImageIndex = 16;
+                }
+                TreeNode node = new TreeNodeEx(s.EnvName, imageIndex, selectedImageIndex, imageIndex, selectedImageIndex);
                 node.Tag = s;
 
                 treeNodes.Add(node);

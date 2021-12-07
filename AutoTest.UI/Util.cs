@@ -1,4 +1,5 @@
-﻿using AutoTest.UI.SubForm;
+﻿using AutoTest.Domain.Entity;
+using AutoTest.UI.SubForm;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -233,6 +234,32 @@ namespace AutoTest.UI
                 dlg.SetMsg(title, content);
                 dlg.PopShow(cnt);
             }
+        }
+
+        public static string ReplaceEvnParams(string str, List<TestEnvParam> testEnvParams)
+        {
+            if (string.IsNullOrWhiteSpace(str))
+            {
+                return str;
+            }
+            if (str.IndexOf("{{") == -1 || str.IndexOf("}}") == -1)
+            {
+                return str;
+            }
+
+            if (testEnvParams == null || testEnvParams.Count == 0)
+            {
+                return str;
+            }
+
+            StringBuilder sb = new StringBuilder(str);
+
+            foreach (var p in testEnvParams)
+            {
+                sb.Replace($"{{{{{p.Name}}}}}", p.Val);
+            }
+
+            return sb.ToString();
         }
     }
 }
