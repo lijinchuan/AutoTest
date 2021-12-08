@@ -53,10 +53,13 @@ namespace AutoTest.UI.WebTask
 
         public override void DocumentCompletedHandler(IBrowser browser, IFrame frame, List<Cookie> cookies)
         {
-            if (!_readyFlag)
+            //if (browser.MainFrame.Url.IndexOf(this.GetStartPageUrl(), StringComparison.OrdinalIgnoreCase) > -1)
             {
-                _readyFlag = true;
-                FireTaskReady();
+                if (!_readyFlag)
+                {
+                    _readyFlag = true;
+                    FireTaskReady();
+                }
             }
         }
 

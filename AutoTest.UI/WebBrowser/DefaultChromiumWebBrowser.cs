@@ -88,6 +88,7 @@ namespace AutoTest.UI.WebBrowser
             var context = new RequestContext(setting);
             RequestContext = context;
 
+            this.JsDialogHandler = new JsDialogHandler();
             FrameLoadStart += DefaultChromiumWebBrowser_FrameLoadStart;
             FrameLoadEnd += DefaultChromiumWebBrowser_FrameLoadEnd;
             LoadingStateChanged += DefaultChromiumWebBrowser_LoadingStateChanged;
@@ -289,13 +290,7 @@ namespace AutoTest.UI.WebBrowser
                 //    ClearProxy();
                 //}
 
-                var fileName = "GlobalFunction.js";
-
-                var jsFile = File.ReadAllText(fileName);
-
-                new WebBrowserTool().ExecuteScript(GetBrowser(), GetBrowser().MainFrame, jsFile);
                 GetBrowser().MainFrame.LoadUrl(webTask.GetStartPageUrl());
-
 
                 if (!readyResetEvent.WaitOne(60000))
                 {
@@ -381,11 +376,18 @@ namespace AutoTest.UI.WebBrowser
         {
             try
             {
+                this.Stop();
+                while (IsLoading)
+                {
+                    Thread.Sleep(10);
+                }
+                Clear(webTask);
+
                 if (webTask.GetNext() != null)
                 {
                     webTaskList.Enqueue(webTask.GetNext());
                 }
-                Clear(webTask);
+                
             }
             catch (Exception ex)
             {

@@ -156,7 +156,7 @@ namespace AutoTest.UI.WebTask
             return NextWebTask;
         }
 
-        private void AddGlobalFunction(IBrowser browser, IFrame frame)
+        protected void AddGlobalFunction(IBrowser browser, IFrame frame)
         {
             var fileName = "GlobalFunction.js";
 

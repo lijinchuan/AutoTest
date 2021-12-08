@@ -1,4 +1,4 @@
-﻿function Alert(str) {
+﻿window.alert=function(str) {
 
     var msgw, msgh, bordercolor;
     msgw = 150;//提示窗口的宽度
@@ -64,7 +64,7 @@
     txt.innerHTML = str;
     document.getElementById("alertmsgDiv").appendChild(txt);
     //设置关闭时间
-    window.setTimeout("closealertwin()", 30000);
+    window.setTimeout("closealertwin()", 3000);
 }
 function closealertwin() {
     document.body.removeChild(document.getElementById("alertbgDiv"));
