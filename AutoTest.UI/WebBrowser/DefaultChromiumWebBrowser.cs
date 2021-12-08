@@ -25,6 +25,11 @@ namespace AutoTest.UI.WebBrowser
         private readonly List<Cookie> cookiecontainer = new List<Cookie>();
 
         /// <summary>
+        /// 开始下载网页
+        /// </summary>
+        private event Action<IBrowser, IFrame> DocumentLoadStart;
+
+        /// <summary>
         ///文档下载完成事件通知 
         /// </summary>
         private event Action<IBrowser,IFrame,List<Cookie>> DocumentLoadCompleted;
@@ -93,6 +98,13 @@ namespace AutoTest.UI.WebBrowser
 
         }
 
+        private void DefaultChromiumWebBrowser_FrameLoadStart(object sender, FrameLoadStartEventArgs e)
+        {
+            
+
+            DocumentLoadStart?.BeginInvoke(e.Browser, e.Frame, null, null);
+        }
+
         private void DefaultChromiumWebBrowser_IsBrowserInitializedChanged(object sender, EventArgs e)
         {
             if (IsBrowserInitialized)
@@ -109,15 +121,9 @@ namespace AutoTest.UI.WebBrowser
             }
         }
 
-        private void DefaultChromiumWebBrowser_FrameLoadStart(object sender, FrameLoadStartEventArgs e)
-        {
-            
-        }
-
         private void DefaultChromiumWebBrowser_FrameLoadEnd(object sender, FrameLoadEndEventArgs e)
         {
             // Method intentionally left empty.
-
             if (DocumentLoadCompleted != null)
             {
                 _ = new Action(() =>
@@ -196,6 +202,7 @@ namespace AutoTest.UI.WebBrowser
             webTask.OnMsgPublish -= WebTask_OnMsgPublish;
             webTask.OnTaskReady -= WebTask_OnTaskReady;
             DocumentLoadCompleted -= webTask.DocumentCompletedHandler;
+            DocumentLoadStart -= webTask.DocumentLoadStartHandler;
             _ = webTaskListHash.Remove(webTask.GetTaskName());
             RemoveEventListener(webTask.GetEventListener());
             if (webTask.ClearCookies)
@@ -259,6 +266,7 @@ namespace AutoTest.UI.WebBrowser
                     throw new NotSupportedException($"存在未清理的任务:{DocumentLoadCompleted?.GetInvocationList().Length}个");
                 }
                 DocumentLoadCompleted += webTask.DocumentCompletedHandler;
+                DocumentLoadStart += webTask.DocumentLoadStartHandler;
                 AddEventListener(webTask.GetEventListener());
                 webTask.OnTaskCompleted += WebTask_OnTaskCompleted;
                 _ = readyResetEvent.Reset();
@@ -281,6 +289,11 @@ namespace AutoTest.UI.WebBrowser
                 //    ClearProxy();
                 //}
 
+                var fileName = "GlobalFunction.js";
+
+                var jsFile = File.ReadAllText(fileName);
+
+                new WebBrowserTool().ExecuteScript(GetBrowser(), GetBrowser().MainFrame, jsFile);
                 GetBrowser().MainFrame.LoadUrl(webTask.GetStartPageUrl());
 
 

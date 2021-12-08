@@ -552,6 +552,11 @@
   <ItemGroup>
     <None Include="Resources\folder_star.png" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="GlobalFunction.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>

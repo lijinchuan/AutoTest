@@ -78,6 +78,13 @@ namespace AutoTest.UI.WebTask
         void DocumentCompletedHandler(IBrowser browser, IFrame frame, List<Cookie> cookies);
 
         /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="browser"></param>
+        /// <param name="frame"></param>
+        void DocumentLoadStartHandler(IBrowser browser, IFrame frame);
+
+        /// <summary>
         /// 设置当前是测试模式
         /// </summary>
         void SetTestMode(bool isTestMode);

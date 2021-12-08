@@ -17,7 +17,6 @@ namespace AutoTest.UI.WebTask
     public class RunTestLoginTask : WebTask
     {
         private readonly IEventListener eventListener = null;
-        private readonly IWebBrowserTool webBrowserTool = null;
         private readonly RequestAutoResetEvent pageRequestAutoResetEvent = null;
         private readonly IMapper mapper = null;
         private TestSite _testSite;
@@ -36,7 +35,6 @@ namespace AutoTest.UI.WebTask
 
             eventListener = new TestEventListener();
             eventListener.OnProcess += ProcessWebEvent;
-            webBrowserTool = new WebBrowserTool();
 
             pageRequestAutoResetEvent = new RequestAutoResetEvent(true);
 
@@ -115,7 +113,7 @@ namespace AutoTest.UI.WebTask
         /// <returns></returns>
         private dynamic GetUserVarData(IBrowser browser, IFrame frame)
         {
-            var code = $"if({WebVar.VarName}&&{WebVar.VarName}.{nameof(WebVar.Bag)}) return {WebVar.VarName}.{nameof(WebVar.Bag)}";
+            var code = $"if(typeof {WebVar.VarName}!='undefined'&&{WebVar.VarName}.{nameof(WebVar.Bag)}) return {WebVar.VarName}.{nameof(WebVar.Bag)}";
 
             return webBrowserTool.ExecutePromiseScript(browser, frame, code) as dynamic;
         }

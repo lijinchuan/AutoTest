@@ -1,7 +1,9 @@
 ﻿using AutoTest.UI.EventListener;
+using AutoTest.UI.WebBrowser;
 using CefSharp;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -52,6 +54,11 @@ namespace AutoTest.UI.WebTask
         protected IWebTask NextWebTask = null;
 
         /// <summary>
+        /// 
+        /// </summary>
+        protected readonly WebBrowserTool webBrowserTool;
+
+        /// <summary>
         /// 是否使用代理
         /// </summary>
         public bool UseProxy
@@ -71,6 +78,8 @@ namespace AutoTest.UI.WebTask
             startPageUrl = strStartPageUrl;
             UseProxy = useProxy;
             ClearCookies = clearCookies;
+
+            webBrowserTool = new WebBrowserTool();
         }
 
         public abstract void DocumentCompletedHandler(IBrowser browser, IFrame frame, List<Cookie> cookies);
@@ -145,6 +154,22 @@ namespace AutoTest.UI.WebTask
         public IWebTask GetNext()
         {
             return NextWebTask;
+        }
+
+        private void AddGlobalFunction(IBrowser browser, IFrame frame)
+        {
+            var fileName = "GlobalFunction.js";
+
+            var jsFile = File.ReadAllText(fileName);
+
+            webBrowserTool.ExecuteScript(browser, frame, jsFile);
+
+        }
+
+        public virtual void DocumentLoadStartHandler(IBrowser browser, IFrame frame)
+        {
+            
+
         }
     }
 }

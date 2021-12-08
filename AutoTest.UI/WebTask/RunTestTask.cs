@@ -7,6 +7,7 @@ using AutoTest.Util;
 using CefSharp;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -18,7 +19,6 @@ namespace AutoTest.UI.WebTask
     public class RunTestTask : WebTask
     {
         private readonly IEventListener eventListener = null;
-        private readonly IWebBrowserTool webBrowserTool = null;
         private readonly RequestAutoResetEvent pageRequestAutoResetEvent = null;
         private readonly IMapper mapper = null;
 
@@ -38,7 +38,6 @@ namespace AutoTest.UI.WebTask
 
             eventListener = new TestEventListener();
             eventListener.OnProcess += ProcessWebEvent;
-            webBrowserTool = new WebBrowserTool();
 
             pageRequestAutoResetEvent = new RequestAutoResetEvent(true);
 
@@ -90,6 +89,7 @@ namespace AutoTest.UI.WebTask
             }
         }
 
+
         /// <summary>
         /// 获取用户变量数据
         /// </summary>
@@ -98,7 +98,7 @@ namespace AutoTest.UI.WebTask
         /// <returns></returns>
         private dynamic GetUserVarData(IBrowser browser, IFrame frame)
         {
-            var code = $"if({WebVar.VarName}&&{WebVar.VarName}.{nameof(WebVar.Bag)}) return {WebVar.VarName}.{nameof(WebVar.Bag)}";
+            var code = $"if(typeof {WebVar.VarName}!='undefined'&&{WebVar.VarName}.{nameof(WebVar.Bag)}) return {WebVar.VarName}.{nameof(WebVar.Bag)}";
 
             return webBrowserTool.ExecutePromiseScript(browser, frame, code) as dynamic;
         }
@@ -123,8 +123,7 @@ namespace AutoTest.UI.WebTask
 
             code += $"{WebVar.VarName}.{nameof(WebVar.WebRequestDatas)}={Newtonsoft.Json.JsonConvert.SerializeObject(webRequestDatas)}\n";
 
-            code += " return true;";
-            var ret = webBrowserTool.ExecutePromiseScript(browser, frame, code);
+            var ret = webBrowserTool.ExecuteScript(browser, frame, code);
         }
 
         private async Task<int> RunTestCode(IBrowser browser, IFrame frame)
