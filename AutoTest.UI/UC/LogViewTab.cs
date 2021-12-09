@@ -384,7 +384,7 @@ namespace AutoTest.UI.UC
                     {
                         if (_apiid > 0)
                         {
-                            logs = BigEntityTableEngine.LocalEngine.Scan<TestCaseInvokeLog>(nameof(TestCaseInvokeLog), "APIId_ApiEnvId_CDate",
+                            logs = BigEntityTableEngine.LocalEngine.Scan<TestCaseInvokeLog>(nameof(TestCaseInvokeLog), "TestCaseId_EnvId_CDate",
                                 new object[] { _apiid, _envid, EndDate.Value.Date.AddDays(1) }, new object[] { _apiid, _envid, BeginDate.Value.Date }, PageIndex == 0 ? 1 : PageIndex, pageSize, ref total).Select(p => new
                                 {
                                     编号 = p.Id,
@@ -413,7 +413,7 @@ namespace AutoTest.UI.UC
                     }
                     else
                     {
-                        var list = BigEntityTableEngine.LocalEngine.Scan<TestCaseInvokeLog>(nameof(TestCaseInvokeLog), "APIId_ApiEnvId_CDate",
+                        var list = BigEntityTableEngine.LocalEngine.Scan<TestCaseInvokeLog>(nameof(TestCaseInvokeLog), "TestCaseId_EnvId_CDate",
                             new object[] { _apiid, _envid, EndDate.Value.Date.AddDays(1) }, new object[] { _apiid, _envid, BeginDate.Value.Date }, 1, int.MaxValue, ref total);
                         var key = TBSearchKey.Text;
                         list = list.Where(p => p.GetRequestBody().ToString().Contains(key) || (p.ResponseText ?? "").Contains(key)).ToList();
