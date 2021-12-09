@@ -102,6 +102,12 @@ namespace AutoTest.UI.WebBrowser
             return resp.Result.Result;
         }
 
+        public object TryExecuteScript(IBrowser browser, IFrame frame, string code)
+        {
+            return ExecutePromiseScript(browser, frame, code) 
+                ?? ExecuteScript(browser, frame, code);
+        }
+
 
         public void DragX(IBrowser browser, int startX, int startY, int endX, int endY)
         {

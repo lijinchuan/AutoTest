@@ -287,6 +287,13 @@ namespace AutoTest.UI.UC
                                     BigEntityTableEngine.LocalEngine.Delete<TestSource>(nameof(TestSource), (selnode.Tag as TestSource).Id);
                                     return true;
                                 };
+                            }else if(selnode.Tag is TestEnv)
+                            {
+                                delFunc = () =>
+                                {
+                                    BigEntityTableEngine.LocalEngine.Delete<TestEnv>(nameof(TestEnv), (selnode.Tag as TestEnv).Id);
+                                    return true;
+                                };
                             }
 
                             if (delFunc!=null)

@@ -110,7 +110,7 @@ namespace AutoTest.UI.WebTask
 
         public abstract string GetSite();
 
-        public string GetStartPageUrl()
+        public virtual string GetStartPageUrl()
         {
             return startPageUrl;
         }

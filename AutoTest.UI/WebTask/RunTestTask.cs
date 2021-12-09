@@ -5,6 +5,7 @@ using AutoTest.UI.EventListener;
 using AutoTest.UI.WebBrowser;
 using AutoTest.Util;
 using CefSharp;
+using LJC.FrameWorkV3.Data.EntityDataBase;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -29,6 +30,7 @@ namespace AutoTest.UI.WebTask
         private TestEnv _testEnv;
         private List<TestEnvParam> _testEnvParams;
         private bool _readyFlag = false;
+        private TestCaseData _testCaseData;
         private List<WebEvent> webEvents = new List<WebEvent>();
 
         public RunTestTask(string taskname, bool useProxy, TestSite testSite,TestLogin testLogin,
@@ -49,6 +51,7 @@ namespace AutoTest.UI.WebTask
             _testEnv = testEnv;
             _testEnvParams = testEnvParams;
             _testLogin = testLogin;
+            _testCaseData = BigEntityTableEngine.LocalEngine.Find<TestCaseData>(nameof(TestCaseData), nameof(TestCaseData.TestCaseId), new object[] { _testCase.Id}).FirstOrDefault();
         }
 
         public override void DocumentCompletedHandler(IBrowser browser, IFrame frame, List<Cookie> cookies)
@@ -190,7 +193,7 @@ namespace AutoTest.UI.WebTask
                     try
                     {
                         PrepareTest(browser, frame, bag);
-                        var ret = webBrowserTool.ExecutePromiseScript(browser, frame, Util.ReplaceEvnParams(_testCase.ValidCode, _testEnvParams));
+                        var ret = webBrowserTool.TryExecuteScript(browser, frame, Util.ReplaceEvnParams(_testCase.ValidCode, _testEnvParams));
                         if (ret == null)
                         {
                             if (tryCount++ > 30)
@@ -228,7 +231,7 @@ namespace AutoTest.UI.WebTask
             var flag = true;
             if (!string.IsNullOrWhiteSpace(_testSite.CheckLoginCode))
             {
-                var isLogin = webBrowserTool.ExecuteScript(browser, frame, _testSite.CheckLoginCode);
+                var isLogin = webBrowserTool.TryExecuteScript(browser, frame, _testSite.CheckLoginCode);
                 if (!object.Equals(isLogin, true))
                 {
                     flag = false;
@@ -279,6 +282,22 @@ namespace AutoTest.UI.WebTask
         {
             webEvents.Add(webEvent);
             return false;
+        }
+
+        public override string GetStartPageUrl()
+        {
+            var url = base.GetStartPageUrl();
+            var paramlist2 =_testCaseData.Params?.Where(p => p.Checked);
+            if (paramlist2?.Count() > 0)
+            {
+                if (url.IndexOf("?") == -1)
+                {
+                    url += "?";
+                }
+
+                url += string.Join("&", paramlist2.Select(p => $"{System.Net.WebUtility.UrlEncode(Util.ReplaceEvnParams(p.Name, _testEnvParams))}={System.Net.WebUtility.UrlEncode(Util.ReplaceEvnParams(p.Value, _testEnvParams))}"));
+            }
+            return url;
         }
     }
 }

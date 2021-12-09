@@ -309,12 +309,6 @@
     <Compile Include="UC\UCApiResult.Designer.cs">
       <DependentUpon>UCApiResult.cs</DependentUpon>
     </Compile>
-    <Compile Include="UC\UCTestCaseSetting.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="UC\UCTestCaseSetting.Designer.cs">
-      <DependentUpon>UCTestCaseSetting.cs</DependentUpon>
-    </Compile>
     <Compile Include="UC\UCJsonViewer.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -332,6 +326,12 @@
     </Compile>
     <Compile Include="UC\UCProxy.Designer.cs">
       <DependentUpon>UCProxy.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UC\UCTestCaseSetting.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UC\UCTestCaseSetting.Designer.cs">
+      <DependentUpon>UCTestCaseSetting.cs</DependentUpon>
     </Compile>
     <Compile Include="UC\WebTab.cs">
       <SubType>Component</SubType>
@@ -414,14 +414,14 @@
     <EmbeddedResource Include="UC\UCApiResult.resx">
       <DependentUpon>UCApiResult.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="UC\UCTestCaseSetting.resx">
-      <DependentUpon>UCTestCaseSetting.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="UC\UCJsonViewer.resx">
       <DependentUpon>UCJsonViewer.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UC\UCParamsTable.resx">
       <DependentUpon>UCParamsTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UC\UCTestCaseSetting.resx">
+      <DependentUpon>UCTestCaseSetting.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UC\WebTab.resx">
       <DependentUpon>WebTab.cs</DependentUpon>
@@ -690,7 +690,9 @@
     <Content Include="ApiDoc.css">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="btn.svg" />
+    <Content Include="btn.svg">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="GlobalFunction.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -700,10 +702,21 @@
     <Content Include="Json2.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="jsonviewer.html" />
+    <Content Include="jsonviewer.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="marked.min.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="Resources\control_add.png" />
+    <Content Include="Resources\control_remove.png" />
+    <Content Include="Resources\date.png" />
+    <Content Include="Resources\number.png" />
+    <Content Include="Resources\record_blue.png" />
+    <Content Include="Resources\record_green.png" />
+    <Content Include="Resources\text_ab.png" />
+    <Content Include="Resources\text_bold.png" />
+    <Content Include="Resources\text_underline.png" />
     <Content Include="worker-xml.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -713,15 +726,6 @@
     <Content Include="xmltool.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <None Include="Resources\text_underline.png" />
-    <None Include="Resources\record_green.png" />
-    <None Include="Resources\record_blue.png" />
-    <None Include="Resources\number.png" />
-    <None Include="Resources\date.png" />
-    <None Include="Resources\control_remove.png" />
-    <None Include="Resources\control_add.png" />
-    <None Include="Resources\text_ab.png" />
-    <None Include="Resources\text_bold.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

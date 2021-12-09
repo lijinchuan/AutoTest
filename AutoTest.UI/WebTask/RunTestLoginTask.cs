@@ -175,7 +175,7 @@ namespace AutoTest.UI.WebTask
                     try
                     {
                         PrepareTest(browser, frame, bag);
-                        var ret = webBrowserTool.ExecutePromiseScript(browser, frame, Util.ReplaceEvnParams(_testLogin.ValidCode, _testEnvParams));
+                        var ret = webBrowserTool.TryExecuteScript(browser, frame, Util.ReplaceEvnParams(_testLogin.ValidCode, _testEnvParams));
                         if (ret == null)
                         {
                             if (tryCount++ > 30)
