@@ -209,13 +209,11 @@ namespace AutoTest.UI.UC
                         {
                             if (selnode.Tag is TestCase)
                             {
+                                var testSite = FindParentNode<TestSite>(selnode);
                                 var testPage = FindParentNode<TestPage>(selnode);
                                 var testCase = selnode.Tag as TestCase;
-                                var dlg = new AddTestCaseDlg(testPage.Id, testCase.Id);
-                                if (dlg.ShowDialog() == DialogResult.OK)
-                                {
-                                    ReLoadDBObj(selnode.Parent);
-                                }
+
+                                Util.AddToMainTab(this, $"[{testSite.Name}]{testCase.CaseName}", new UC.UCAddCaseParam(testSite, testPage, testCase));
                             }
                             else if (selnode.Tag is TestPage)
                             {
@@ -392,11 +390,13 @@ namespace AutoTest.UI.UC
                         }
                     case "添加测试用例":
                         {
+                            var testSite = FindParentNode<TestSite>(selnode);
                             var testPage = FindParentNode<TestPage>(selnode);
-                            var dlg = new AddTestCaseDlg(testPage.Id,0);
-                            if (dlg.ShowDialog() == DialogResult.OK)
+                            var step1dlg = new AddTestCaseDlg(testPage.Id,0);
+                            if (step1dlg.ShowDialog() == DialogResult.OK)
                             {
                                 ReLoadDBObj(selnode);
+                                Util.AddToMainTab(this, $"[{testSite.Name}]{step1dlg.TestCase.CaseName}", new UC.UCAddCaseParam(testSite, testPage, step1dlg.TestCase));
                             }
                             break;
                         }

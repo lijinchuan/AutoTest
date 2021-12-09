@@ -1,18 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace AutoTest.UI.SubForm
+namespace AutoTest.UI.UC.Auth
 {
-    public partial class UpsertTestCaseDlg : SubBaseDlg
+    public partial class UCNoAuth : UserControl
     {
-        public UpsertTestCaseDlg()
+        public UCNoAuth()
         {
             InitializeComponent();
         }

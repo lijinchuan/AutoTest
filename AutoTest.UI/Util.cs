@@ -261,5 +261,26 @@ namespace AutoTest.UI
 
             return sb.ToString();
         }
+
+        public static bool Compare(List<ParamInfo> paramInfos1, List<ParamInfo> paramInfos2)
+        {
+            if (paramInfos1?.Count != paramInfos2?.Count)
+            {
+                return false;
+            }
+
+            for (int i = 0; i < paramInfos1?.Count; i++)
+            {
+                if (paramInfos1[i].Name != paramInfos2[i].Name
+                    || paramInfos1[i].Value != paramInfos2[i].Value
+                    || paramInfos1[i].Checked != paramInfos2[i].Checked
+                    || paramInfos1[i].Desc != paramInfos2[i].Desc)
+                {
+                    return false;
+                }
+            }
+
+            return true;
+        }
     }
 }

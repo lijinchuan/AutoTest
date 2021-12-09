@@ -176,6 +176,18 @@
     <Compile Include="SubForm\AddTestSource.Designer.cs">
       <DependentUpon>AddTestSource.cs</DependentUpon>
     </Compile>
+    <Compile Include="SubForm\FileDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SubForm\FileDlg.Designer.cs">
+      <DependentUpon>FileDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SubForm\FindDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SubForm\FindDlg.Designer.cs">
+      <DependentUpon>FindDlg.cs</DependentUpon>
+    </Compile>
     <Compile Include="SubForm\InputStringDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -200,6 +212,12 @@
     <Compile Include="SubForm\SubBaseDlg.Designer.cs">
       <DependentUpon>SubBaseDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="SubForm\TextBoxWin.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SubForm\TextBoxWin.Designer.cs">
+      <DependentUpon>TextBoxWin.cs</DependentUpon>
+    </Compile>
     <Compile Include="SubForm\URLEncodeDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -218,17 +236,50 @@
     <Compile Include="SubForm\AddTestCaseDlg.Designer.cs">
       <DependentUpon>AddTestCaseDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="UC\Auth\UCApiKey.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UC\Auth\UCApiKey.Designer.cs">
+      <DependentUpon>UCApiKey.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UC\Auth\UCBasicAuth.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UC\Auth\UCBasicAuth.Designer.cs">
+      <DependentUpon>UCBasicAuth.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UC\Auth\UCBearToken.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UC\Auth\UCBearToken.Designer.cs">
+      <DependentUpon>UCBearToken.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UC\Auth\UCNoAuth.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UC\Auth\UCNoAuth.Designer.cs">
+      <DependentUpon>UCNoAuth.cs</DependentUpon>
+    </Compile>
     <Compile Include="UC\DBServerView.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="UC\DBServerView.Designer.cs">
       <DependentUpon>DBServerView.cs</DependentUpon>
     </Compile>
+    <Compile Include="UC\DocPage.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="UC\LoadingBox.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="UC\LoadingBox.Designer.cs">
       <DependentUpon>LoadingBox.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UC\LogViewTab.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UC\LogViewTab.Designer.cs">
+      <DependentUpon>LogViewTab.cs</DependentUpon>
     </Compile>
     <Compile Include="UC\MyTabControl.cs">
       <SubType>Component</SubType>
@@ -243,11 +294,50 @@
     <Compile Include="UC\TestPanel.Designer.cs">
       <DependentUpon>TestPanel.cs</DependentUpon>
     </Compile>
+    <Compile Include="UC\TextBoxEx.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UC\UCAddCaseParam.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UC\UCAddCaseParam.designer.cs">
+      <DependentUpon>UCAddCaseParam.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UC\UCApiResult.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UC\UCApiResult.Designer.cs">
+      <DependentUpon>UCApiResult.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UC\UCTestCaseSetting.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UC\UCTestCaseSetting.Designer.cs">
+      <DependentUpon>UCTestCaseSetting.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UC\UCJsonViewer.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UC\UCJsonViewer.Designer.cs">
+      <DependentUpon>UCJsonViewer.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UC\UCParamsTable.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UC\UCParamsTable.Designer.cs">
+      <DependentUpon>UCParamsTable.cs</DependentUpon>
+    </Compile>
     <Compile Include="UC\UCProxy.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="UC\UCProxy.Designer.cs">
       <DependentUpon>UCProxy.cs</DependentUpon>
+    </Compile>
+    <Compile Include="UC\WebTab.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UC\WebTab.Designer.cs">
+      <DependentUpon>WebTab.cs</DependentUpon>
     </Compile>
     <Compile Include="Util.cs" />
     <Compile Include="WebBrowser\CookieVisitor.cs" />
@@ -290,13 +380,55 @@
     <EmbeddedResource Include="SubForm\AddTestSiteDlg.resx">
       <DependentUpon>AddTestSiteDlg.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="SubForm\FileDlg.resx">
+      <DependentUpon>FileDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SubForm\FindDlg.resx">
+      <DependentUpon>FindDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SubForm\TextBoxWin.resx">
+      <DependentUpon>TextBoxWin.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UC\Auth\UCApiKey.resx">
+      <DependentUpon>UCApiKey.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UC\Auth\UCBasicAuth.resx">
+      <DependentUpon>UCBasicAuth.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UC\Auth\UCBearToken.resx">
+      <DependentUpon>UCBearToken.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UC\DBServerView.resx">
       <DependentUpon>DBServerView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UC\LogViewTab.resx">
+      <DependentUpon>LogViewTab.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UC\TestPanel.resx">
       <DependentUpon>TestPanel.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UC\UCAddCaseParam.resx">
+      <DependentUpon>UCAddCaseParam.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UC\UCApiResult.resx">
+      <DependentUpon>UCApiResult.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UC\UCTestCaseSetting.resx">
+      <DependentUpon>UCTestCaseSetting.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UC\UCJsonViewer.resx">
+      <DependentUpon>UCJsonViewer.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UC\UCParamsTable.resx">
+      <DependentUpon>UCParamsTable.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UC\WebTab.resx">
+      <DependentUpon>WebTab.cs</DependentUpon>
+    </EmbeddedResource>
     <None Include="configfile.json" />
+    <None Include="jsonview.html.tpl">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
@@ -554,9 +686,41 @@
     <None Include="Resources\folder_star.png" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="ApiDoc.css">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="btn.svg" />
     <Content Include="GlobalFunction.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="help.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Json2.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="jsonviewer.html" />
+    <Content Include="marked.min.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="worker-xml.js">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="xml.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="xmltool.html">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <None Include="Resources\text_underline.png" />
+    <None Include="Resources\record_green.png" />
+    <None Include="Resources\record_blue.png" />
+    <None Include="Resources\number.png" />
+    <None Include="Resources\date.png" />
+    <None Include="Resources\control_remove.png" />
+    <None Include="Resources\control_add.png" />
+    <None Include="Resources\text_ab.png" />
+    <None Include="Resources\text_bold.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

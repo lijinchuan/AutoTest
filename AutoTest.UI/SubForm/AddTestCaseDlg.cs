@@ -30,6 +30,12 @@ namespace AutoTest.UI.SubForm
             
         }
 
+        public TestCase TestCase
+        {
+            get;
+            private set;
+        }
+
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -62,28 +68,24 @@ namespace AutoTest.UI.SubForm
                 MessageBox.Show("名称不能为空");
                 return;
             }
+
+            TestCase = new TestCase
+            {
+                Id = _caseId,
+                PageId = _pageId,
+                CaseName = TBName.Text,
+                Order = (int)NUDOrder.Value,
+                TestCode = TBCode.Text,
+                ValidCode = TBValidCode.Text
+            };
             if (_caseId == 0)
             {
-                BigEntityTableEngine.LocalEngine.Insert(nameof(TestCase), new TestCase
-                {
-                    PageId = _pageId,
-                    CaseName = TBName.Text,
-                    Order = (int)NUDOrder.Value,
-                    TestCode = TBCode.Text,
-                    ValidCode = TBValidCode.Text
-                });
+
+                BigEntityTableEngine.LocalEngine.Insert(nameof(TestCase), TestCase);
             }
             else
             {
-                BigEntityTableEngine.LocalEngine.Update<TestCase>(nameof(TestCase), new TestCase
-                {
-                    Id=_caseId,
-                    PageId = _pageId,
-                    CaseName = TBName.Text,
-                    Order = (int)NUDOrder.Value,
-                    TestCode = TBCode.Text,
-                    ValidCode = TBValidCode.Text
-                });
+                BigEntityTableEngine.LocalEngine.Update<TestCase>(nameof(TestCase), TestCase);
             }
             this.DialogResult = DialogResult.OK;
         }

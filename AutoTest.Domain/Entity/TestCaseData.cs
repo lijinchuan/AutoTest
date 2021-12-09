@@ -7,10 +7,7 @@ using System.Threading.Tasks;
 namespace AutoTest.Domain.Entity
 {
     [Serializable]
-    /// <summary>
-    /// 测试实例
-    /// </summary>
-    public class TestCase
+    public class TestCaseData
     {
         public int Id
         {
@@ -18,85 +15,91 @@ namespace AutoTest.Domain.Entity
             set;
         }
 
-        public int PageId
+        public int TestCaseId
         {
             get;
             set;
         }
 
-        public string CaseName
+        public List<ParamInfo> Params
         {
             get;
             set;
         }
 
-        public int Order
+        public List<ParamInfo> Headers
         {
             get;
             set;
         }
 
-        public string TestCode
+        public List<ParamInfo> FormDatas
         {
             get;
             set;
         }
 
-        public string ValidCode
+        public List<ParamInfo> XWWWFormUrlEncoded
         {
             get;
             set;
         }
 
-        public WebMethod WebMethod
+        /// <summary>
+        /// raw请求的报文
+        /// </summary>
+        public string RawText
         {
             get;
             set;
         }
 
-        public BodyDataType BodyDataType
+        public string BearToken
         {
             get;
             set;
         }
 
-        public ApplicationType ApplicationType
+        public string ApiKeyName
         {
             get;
             set;
         }
 
-        public AuthType AuthType
+        public string ApiKeyValue
         {
             get;
             set;
         }
 
-        public string Desc
+        public int ApiKeyAddTo
         {
             get;
             set;
         }
 
-        public int ApiEnvId
+        public string BasicUserName
         {
             get;
             set;
         }
 
-        public int CompareTo(object obj)
+        public string BasicUserPwd
         {
-            if (obj is TestCase)
-            {
-                return this.Id.CompareTo(((TestCase)obj).Id);
-            }
-
-            return 1;
+            get;
+            set;
         }
 
-        public NodeContentType GetNodeContentType()
+        public List<ParamInfo> Cookies
         {
-            return NodeContentType.TESTCASE;
+            get;
+            set;
+        }
+
+        public List<ParamInfo> Multipart_form_data
+        {
+            get;
+            set;
         }
     }
 }

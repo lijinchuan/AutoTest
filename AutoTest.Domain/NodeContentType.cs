@@ -21,6 +21,7 @@ namespace AutoTest.Domain
         LOGINPAGE,
         TESTSITE,
         TESTPAGE,
+        TESTCASE,
         UNKNOWN = 999
     }
 }
