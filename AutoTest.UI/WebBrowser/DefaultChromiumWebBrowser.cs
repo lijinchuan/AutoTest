@@ -96,7 +96,6 @@ namespace AutoTest.UI.WebBrowser
             IsBrowserInitializedChanged += DefaultChromiumWebBrowser_IsBrowserInitializedChanged;
 
             RequestHandler = new DefaultRequestHandler();
-
         }
 
         private void DefaultChromiumWebBrowser_FrameLoadStart(object sender, FrameLoadStartEventArgs e)
@@ -112,6 +111,8 @@ namespace AutoTest.UI.WebBrowser
             {
                 if (!isInit)
                 {
+                    MenuHandler = new MenuHandler();
+
                     var cookieManager = this.GetCookieManager();
                     CookieVisitor visitor = new CookieVisitor();
                     visitor.SendCookie += Visitor_SendCookie;
@@ -266,6 +267,8 @@ namespace AutoTest.UI.WebBrowser
                 {
                     throw new NotSupportedException($"存在未清理的任务:{DocumentLoadCompleted?.GetInvocationList().Length}个");
                 }
+                
+                //this.ShowDevTools();
                 DocumentLoadCompleted += webTask.DocumentCompletedHandler;
                 DocumentLoadStart += webTask.DocumentLoadStartHandler;
                 AddEventListener(webTask.GetEventListener());
@@ -290,6 +293,7 @@ namespace AutoTest.UI.WebBrowser
                 //    ClearProxy();
                 //}
 
+                this.OnMsgPublished($"开始任务:{webTask.GetTaskName()},地址:{webTask.GetStartPageUrl()}");
                 GetBrowser().MainFrame.LoadUrl(webTask.GetStartPageUrl());
 
                 if (!readyResetEvent.WaitOne(60000))

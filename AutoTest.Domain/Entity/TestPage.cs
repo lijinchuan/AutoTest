@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace AutoTest.Domain.Entity
 {
+    [Serializable]
     public class TestPage
     {
         public int Id

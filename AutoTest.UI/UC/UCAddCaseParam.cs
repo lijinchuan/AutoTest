@@ -1407,14 +1407,16 @@ namespace AutoTest.UI.UC
 
         public object[] GetRecoverData()
         {
-            return new object[] { this._testCase, this._testCaseData, this.Text };
+            return new object[] {this._testSite,this._testPage, this._testCase, this._testCaseData, this.Text };
         }
 
         public IRecoverAble Recover(object[] recoverData)
         {
-            this._testCase = (TestCase)recoverData[0];
-            this._testCaseData = (TestCaseData)recoverData[1];
-            this.Text = (string)recoverData[2];
+            this._testSite = (TestSite)recoverData[0];
+            this._testPage = (TestPage)recoverData[1];
+            this._testCase = (TestCase)recoverData[2];
+            this._testCaseData = (TestCaseData)recoverData[3];
+            this.Text = (string)recoverData[4];
             Bind();
             BindData();
             return this;
