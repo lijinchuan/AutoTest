@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 using AutoTest.Domain.Entity;
 using AutoTest.Domain;
 using LJC.FrameWorkV3.Data.EntityDataBase;
@@ -31,6 +23,7 @@ namespace AutoTest.UI.UC
             this.TBName.Text = testScript.ScriptName;
             this.NUDNumber.Value = testScript.Order;
             this.TBBody.Text = testScript.Body;
+            this.TBDesc.Text = testScript.Desc;
         }
 
         public void Save()
@@ -50,6 +43,7 @@ namespace AutoTest.UI.UC
             _testScript.ScriptName = TBName.Text.Trim();
             _testScript.Order = (int)NUDNumber.Value;
             _testScript.Body = TBBody.Text;
+            _testScript.Desc = TBDesc.Text.Trim();
 
             if (_testScript.Id == 0)
             {

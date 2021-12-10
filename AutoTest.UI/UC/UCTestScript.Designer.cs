@@ -35,6 +35,8 @@
             this.NUDNumber = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();
             this.TBBody = new AutoTest.UI.UC.JSCodeEditBox();
+            this.label4 = new System.Windows.Forms.Label();
+            this.TBDesc = new System.Windows.Forms.TextBox();
             ((System.ComponentModel.ISupportInitialize)(this.NUDNumber)).BeginInit();
             this.SuspendLayout();
             // 
@@ -51,7 +53,7 @@
             // 
             this.TBName.Location = new System.Drawing.Point(118, 21);
             this.TBName.Name = "TBName";
-            this.TBName.Size = new System.Drawing.Size(247, 21);
+            this.TBName.Size = new System.Drawing.Size(170, 21);
             this.TBName.TabIndex = 1;
             // 
             // label2
@@ -67,7 +69,7 @@
             // 
             this.NUDNumber.Location = new System.Drawing.Point(118, 62);
             this.NUDNumber.Name = "NUDNumber";
-            this.NUDNumber.Size = new System.Drawing.Size(120, 21);
+            this.NUDNumber.Size = new System.Drawing.Size(170, 21);
             this.NUDNumber.TabIndex = 3;
             // 
             // label3
@@ -91,8 +93,27 @@
             this.TBBody.Size = new System.Drawing.Size(582, 519);
             this.TBBody.TabIndex = 5;
             // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(356, 24);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(65, 12);
+            this.label4.TabIndex = 7;
+            this.label4.Text = "函数说明：";
+            // 
+            // TBDesc
+            // 
+            this.TBDesc.Location = new System.Drawing.Point(427, 21);
+            this.TBDesc.Multiline = true;
+            this.TBDesc.Name = "TBDesc";
+            this.TBDesc.Size = new System.Drawing.Size(265, 62);
+            this.TBDesc.TabIndex = 8;
+            // 
             // UCTestScript
             // 
+            this.Controls.Add(this.TBDesc);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.TBBody);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.NUDNumber);
@@ -114,6 +135,8 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.NumericUpDown NUDNumber;
         private System.Windows.Forms.Label label3;
-        private EditTextBox TBBody;
+        private JSCodeEditBox TBBody;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.TextBox TBDesc;
     }
 }

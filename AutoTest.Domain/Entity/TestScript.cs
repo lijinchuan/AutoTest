@@ -32,6 +32,12 @@ namespace AutoTest.Domain.Entity
             set;
         }
 
+        public string Desc
+        {
+            get;
+            set;
+        }
+
         public int Order
         {
             get;

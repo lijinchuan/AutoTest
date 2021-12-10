@@ -97,7 +97,6 @@ namespace AutoTest.UI.UC
         private HashSet<string> TableSet = new HashSet<string>();
         private object GetObjects(string keys, ref int count)
         {
-
             if (ThinkInfoLib == null)
             {
                 ThinkInfoLib = new List<ThinkInfo>();
@@ -124,7 +123,7 @@ namespace AutoTest.UI.UC
             List<ThinkInfo> thinkresut = new List<ThinkInfo>();
             foreach (var item in ThinkInfoLib)
             {
-                var desc = item.Desc;
+                var desc = string.Empty;
                 var fullobjectname = item.ObjectName;
                 if (item.ObjectName.Equals(keys, StringComparison.OrdinalIgnoreCase)
                     || (item.ObjectName.Equals(keys, StringComparison.OrdinalIgnoreCase) == true))
@@ -180,7 +179,6 @@ namespace AutoTest.UI.UC
 
                 objectname = p.ObjectName;
                 replaceobjectname = p.ObjectName;
-
                 return new
                 {
                     建议 = objectname,
@@ -250,6 +248,7 @@ namespace AutoTest.UI.UC
             this.RichText.MouseLeave += RichText_MouseLeave;
             this.RichText.DoubleClick += RichText_DoubleClick;
             contextMenuStrip1.VisibleChanged += ContextMenuStrip1_VisibleChanged;
+            this.view.Font = new Font(RichText.Font.FontFamily, RichText.Font.Size + 1.019f);
 
             defaultSelectionColor = this.RichText.SelectionColor;
 
@@ -257,8 +256,7 @@ namespace AutoTest.UI.UC
             view.MouseLeave += View_MouseLeave;
             view.BorderStyle = BorderStyle.None;
             view.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
-            view.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.DisplayedCellsExceptHeaders;
-            view.RowsDefaultCellStyle.WrapMode = DataGridViewTriState.True;
+            //view.AutoSizeRowsMode = DataGridViewAutoSizeRowsMode.AllCells;
             view.AllowUserToAddRows = false;
             view.RowHeadersVisible = false;
             view.KeyUp += View_KeyUp;
@@ -282,6 +280,34 @@ namespace AutoTest.UI.UC
             this.RichText.ImeMode = ImeMode.On;
 
             this.RichText.HideSelection = false;
+
+            backtimer = new System.Threading.Timer(new System.Threading.TimerCallback((o) =>
+            {
+                if (this.Visible && !view.Visible && _currpt != Point.Empty && DateTime.Now.Subtract(_pointtiptime).TotalMilliseconds >= 1000)
+                {
+                    _pointtiptime = DateTime.MaxValue;
+                    backtimer.Change(0, Timeout.Infinite);
+                    this.BeginInvoke(new Action(() =>
+                    {
+                        try
+                        {
+                            ShowTip();
+                        }
+                        catch (Exception ex)
+                        {
+                        }
+                        finally
+                        {
+                            backtimer.Change(0, 100);
+                        }
+                    }));
+                }
+            }), null, 0, 100);
+
+            foreach (var x in ScriptKeyWordHelper.GetKeyWordList())
+            {
+                this.KeyWords.AddKeyWord(x.KeyWord, x.HighColor);
+            }
         }
 
         private void ContextMenuStrip1_VisibleChanged(object sender, EventArgs e)
@@ -299,6 +325,11 @@ namespace AutoTest.UI.UC
                 return;
             }
             this.RichText.Select(st - seltext.Length, seltext.Length);
+        }
+
+        private void ShowTip()
+        {
+
         }
 
         private void RichText_MouseLeave(object sender, EventArgs e)
@@ -368,12 +399,12 @@ namespace AutoTest.UI.UC
                 icount++;
             }
 
-            var limitwidth = (int)(this.Width * 0.8);
+            var limitwidth = (int)(view.Parent?.Width ?? 800 * 0.7);
             var width = Math.Min(ajustviewwith, limitwidth);
 
             view.Width = width;
 
-            var rate = width < ajustviewwith ? (width * 1.0 / ajustviewwith) : 1.0;
+            var rate = width < ajustviewwith ? ((width * 1.0 / ajustviewwith)) : 1.0;
             icount = 0;
             foreach (DataGridViewColumn col in view.Columns)
             {
@@ -385,12 +416,6 @@ namespace AutoTest.UI.UC
                 icount++;
             }
 
-            var height = view.ColumnHeadersHeight;
-            for (var i = 0; i < Math.Min(view.Rows.Count, 10); i++)
-            {
-                height += view.Rows[i].Height;
-            }
-            view.Height = height;
         }
 
         private void View_RowPostPaint(object sender, DataGridViewRowPostPaintEventArgs e)
@@ -402,11 +427,11 @@ namespace AutoTest.UI.UC
                 var tp = (int)view.Rows[e.RowIndex].Cells["Type"].Value;
                 if (tp == 1)
                 {
-                    rowIcon = Resources.Resource1.table;
+
                 }
                 else if (tp == 2)
                 {
-                    rowIcon = Resources.Resource1.DB6;
+
                 }
 
                 if (rowIcon != null)
@@ -543,6 +568,11 @@ namespace AutoTest.UI.UC
 
         private int GetCurrWord(out string word)
         {
+            if (this.RichText.Lines.Length == 0)
+            {
+                word = string.Empty;
+                return -1;
+            }
             var curindex = this.RichText.SelectionStart;
             var currline = this.RichText.GetLineFromCharIndex(curindex);
             //var charstartindex = this.RichText.GetFirstCharIndexOfCurrentLine();
@@ -756,22 +786,24 @@ namespace AutoTest.UI.UC
 
                     view.ClearSelection();
                     view.BringToFront();
+                    view.Height = (view.Rows.GetRowsHeight(DataGridViewElementStates.Visible) / count) * Math.Min(10, count) + view.ColumnHeadersHeight;
+                    //view.Height = ((view.Height- view.ColumnHeadersHeight)/count)*5+view.ColumnHeadersHeight;
 
                     var curindex = this.RichText.SelectionStart;
                     var tippt = this.RichText.GetPositionFromCharIndex(curindex);
-                    tippt.Offset(RichText.Location.X, 20);
+                    tippt.Offset(RichText.Location.X + this.Location.X, 20 + this.Location.Y);
                     var morewidth = tippt.X + view.Width - view.Parent.Location.X - view.Parent.Width;
                     if (morewidth > 0)
                     {
                         tippt.Offset(-morewidth, 0);
                     }
-                    if (view.Height + tippt.Y + 30 > this.Parent.Location.Y + this.Parent.Height)
+                    if (view.Height + tippt.Y + 30 > Screen.GetWorkingArea(this).Height - this.Parent.PointToScreen(this.Parent.Location).Y)
                     {
                         tippt.Offset(0, -view.Height - 20);
                     }
                     view.ScrollBars = ScrollBars.Vertical;
                     view.Location = tippt;
-
+                    view.BringToFront();
                 }
                 else
                 {
@@ -944,7 +976,7 @@ namespace AutoTest.UI.UC
                 //    oldSelectLen = 0;
                 //}
 
-                DataTable tb = Util.CreateFatTable("pos", "len", "color");
+                DataTable tb = CreateFatTable("pos", "len", "color");
 
                 var linesLen = this.RichText.Lines.Length;
                 for (int l = line1; l <= line2 && l < linesLen; l++)
@@ -968,8 +1000,8 @@ namespace AutoTest.UI.UC
                         }
                         foreach (var m in this.KeyWords.MatchKeyWord(express.ToLower()))
                         {
-                            if ((m.PostionStart == 0 || "[]{},|%#!<>=();+-*/\r\n 　".IndexOf(express[m.PostionStart - 1]) > -1)
-                                && (m.PostionEnd == express.Length - 1 || "[]{},|%#!<>=();+-*/\r\n 　".IndexOf(express[m.PostionEnd + 1]) > -1))
+                            if ((m.PostionStart == 0 || "[]{},|%#!<>:=();+-*/\r\n 　".IndexOf(express[m.PostionStart - 1]) > -1)
+                                && (m.PostionEnd == express.Length - 1 || "[]{},|%#!<>:=();+-*/\r\n 　".IndexOf(express[m.PostionEnd + 1]) > -1))
                             {
                                 DataRow row = tb.NewRow();
                                 row[0] = totalIndex + m.PostionStart;
@@ -1058,38 +1090,10 @@ namespace AutoTest.UI.UC
 
         private void 搜索ToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            SubForm.FindDlg dlg = new SubForm.FindDlg();
+        }
 
-            dlg.FindLast += (s, i) =>
-            {
-                var pos = this.RichText.Find(s, 0, i, RichTextBoxFinds.Reverse | RichTextBoxFinds.NoHighlight);
-                if (pos != -1)
-                {
-                    this.RichText.Select(pos, s.Length);
-                    this.RichText.ScrollToCaret();
-                    this.RichText.Focus();
-                    return pos;
-                }
-                return 0;
-            };
-            dlg.FindNext += (s, i) =>
-            {
-                var pos = this.RichText.Find(s, i, RichTextBoxFinds.NoHighlight);
-                if (pos != -1)
-                {
-                    this.RichText.Select(pos, s.Length);
-                    this.RichText.ScrollToCaret();
-                    this.RichText.Focus();
-                    return pos + s.Length;
-                }
-                else
-                {
-                    return 0;
-                }
-
-            };
-
-            dlg.ShowMe(Util.FindParent<TabPage>(this));
+        private void TSMI_Save_Click(object sender, EventArgs e)
+        {
         }
 
         private void 剪切ToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1119,34 +1123,23 @@ namespace AutoTest.UI.UC
 
         private void TSMI_SaveAsFile_Click(object sender, EventArgs e)
         {
-            var sql = this.RichText.Text;
-            if (string.IsNullOrEmpty(sql))
+
+        }
+
+        /// <summary>
+        /// 创建一个表格
+        /// </summary>
+        /// <param name="colsName">表格字段,可以加//注释</param>
+        /// <returns></returns>
+        public static DataTable CreateFatTable(params string[] colsName)
+        {
+            DataTable dt = new DataTable();
+            for (int i = 0; i < colsName.Length; i++)
             {
-                return;
+                dt.Columns.Add(colsName[i].Split(new string[] { "//" }, StringSplitOptions.None)[0].Trim(), typeof(object));
             }
 
-            var nameinput = new SubForm.InputStringDlg("导出文件名");
-            if (nameinput.ShowDialog() == DialogResult.OK)
-            {
-                var dir = Application.StartupPath + "\\temp\\";
-                if (!Directory.Exists(dir))
-                {
-                    Directory.CreateDirectory(dir);
-                }
-
-                var filename = $"{dir}\\{nameinput.InputString}.sql";
-                using (StreamWriter fs = new StreamWriter(filename, false, Encoding.UTF8))
-                {
-
-                    var str = sql;
-                    if (!string.IsNullOrWhiteSpace(str))
-                    {
-                        fs.Write(str);
-                    }
-                }
-                Util.SendMsg(this, $"文件已保存:{filename}");
-                System.Diagnostics.Process.Start("explorer.exe", dir);
-            }
+            return dt;
         }
     }
 }
