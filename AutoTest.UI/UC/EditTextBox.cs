@@ -10,6 +10,8 @@ using System.Threading;
 using System.IO;
 using LJC.FrameWorkV3.CodeExpression.KeyWordMatch;
 using LJC.FrameWorkV3.Comm;
+using AutoTest.Domain.Entity;
+using AutoTest.Util;
 
 namespace AutoTest.UI.UC
 {
@@ -77,7 +79,7 @@ namespace AutoTest.UI.UC
 
         private Color defaultSelectionColor;
         //internal KeyWordManager keywordman = new KeyWordManager();
-        private KeyWordManager _keyWords=new KeyWordManager();
+        private KeyWordManager _keyWords = new KeyWordManager();
         private WatchTimer _timer = new WatchTimer(3);
         private System.Threading.Timer backtimer = null;
         private List<int> _markedLines = new List<int>();
@@ -93,18 +95,101 @@ namespace AutoTest.UI.UC
         /// </summary>
         private List<ThinkInfo> ThinkInfoLib = null;
         private HashSet<string> TableSet = new HashSet<string>();
-
-        private string _dbname;
-        public string DBName
+        private object GetObjects(string keys, ref int count)
         {
-            get
+
+            if (ThinkInfoLib == null)
             {
-                return _dbname;
+                ThinkInfoLib = new List<ThinkInfo>();
+
+                foreach (var o in ScriptKeyWordHelper.GetKeyWordList())
+                {
+                    ThinkInfoLib.Add(new ThinkInfo
+                    {
+                        Type = 0,
+                        Desc = o.Desc,
+                        ObjectName = o.KeyWord
+                    });
+                }
             }
-            set
+
+            var searchtable = string.Empty;
+            if (keys.IndexOf('.') > -1)
             {
-                _dbname = value;
+                var keyarr = keys.Split('.');
+                searchtable = keyarr[keyarr.Length - 2];
+                keys = keyarr.Last();
             }
+
+            List<ThinkInfo> thinkresut = new List<ThinkInfo>();
+            foreach (var item in ThinkInfoLib)
+            {
+                var desc = item.Desc;
+                var fullobjectname = item.ObjectName;
+                if (item.ObjectName.Equals(keys, StringComparison.OrdinalIgnoreCase)
+                    || (item.ObjectName.Equals(keys, StringComparison.OrdinalIgnoreCase) == true))
+                {
+                    item.Score = (byte)(byte.MaxValue - (byte)fullobjectname.IndexOf(keys, StringComparison.OrdinalIgnoreCase));
+                    thinkresut.Add(item);
+                    continue;
+                }
+
+                if (item.ObjectName.StartsWith(keys, StringComparison.OrdinalIgnoreCase)
+                    || (desc?.StartsWith(keys, StringComparison.OrdinalIgnoreCase)) == true)
+                {
+                    item.Score = (byte)(byte.MaxValue - 1 - (byte)fullobjectname.Length);
+                    thinkresut.Add(item);
+                    continue;
+                }
+
+                int pos = fullobjectname.IndexOf(keys, StringComparison.OrdinalIgnoreCase);
+                if (pos > -1)
+                {
+                    item.Score = Math.Max((byte)(byte.MaxValue - (byte)fullobjectname.Length - (byte)pos), (byte)0);
+                    thinkresut.Add(item);
+                    continue;
+                }
+                else
+                {
+                    pos = desc?.IndexOf(keys, StringComparison.OrdinalIgnoreCase) ?? -1;
+                    if (pos > -1)
+                    {
+                        item.Score = Math.Max((byte)(byte.MaxValue - fullobjectname.Length - (byte)item.Desc.Length - (byte)pos), (byte)0);
+                        thinkresut.Add(item);
+                        continue;
+                    }
+                }
+            }
+
+            foreach (var item in TableSet.Select(p => p).ToList())
+            {
+                if (this.RichText.Text.IndexOf(item, StringComparison.OrdinalIgnoreCase) == -1)
+                {
+                    TableSet.Remove(item);
+                }
+            }
+
+            thinkresut = thinkresut.OrderByDescending(p => p.Score).ThenBy(p => p.ObjectName.Length).Take(250).ToList();
+
+            count = thinkresut.Count;
+            return thinkresut.Select(p =>
+            {
+                string objectname = null;
+                string replaceobjectname = null;
+                bool issamedb = true;
+
+                objectname = p.ObjectName;
+                replaceobjectname = p.ObjectName;
+
+                return new
+                {
+                    建议 = objectname,
+                    说明 = p.Desc,
+                    p.Type,
+                    Issamedb = issamedb,
+                    replaceobjectname
+                };
+            }).ToList();
         }
 
         public KeyWordManager KeyWords
@@ -159,7 +244,7 @@ namespace AutoTest.UI.UC
             this.ScaleNos.Font = new Font(RichText.Font.FontFamily, RichText.Font.Size + 1.019f);
             this.RichText.KeyUp += new KeyEventHandler(RichText_KeyUp);
             this.RichText.KeyDown += RichText_KeyDown;
-            this.RichText.TextChanged+=new EventHandler(RichText_TextChanged);
+            this.RichText.TextChanged += new EventHandler(RichText_TextChanged);
             this.RichText.MouseClick += RichText_MouseClick;
             this.RichText.MouseMove += RichText_MouseMove;
             this.RichText.MouseLeave += RichText_MouseLeave;
@@ -186,41 +271,17 @@ namespace AutoTest.UI.UC
             view.DataBindingComplete += View_DataBindingComplete;
 
             剪切ToolStripMenuItem.Enabled = false;
-            
+
             view.Tag = new ViewContext
             {
-                DataType=0
+                DataType = 0
             };
-            
+
             this.ParentChanged += EditTextBox_ParentChanged;
 
             this.RichText.ImeMode = ImeMode.On;
 
             this.RichText.HideSelection = false;
-
-            backtimer = new System.Threading.Timer(new System.Threading.TimerCallback((o) =>
-              {
-                  if (this.Visible&& !view.Visible && _currpt != Point.Empty && DateTime.Now.Subtract(_pointtiptime).TotalMilliseconds >= 1000)
-                  {
-                      _pointtiptime = DateTime.MaxValue;
-                      backtimer.Change(0, Timeout.Infinite);
-                      this.BeginInvoke(new Action(() =>
-                      {
-                          try
-                          {
-                              ShowTip();
-                          }
-                          catch(Exception ex)
-                          {
-                              Util.SendMsg(this, ex.ToString());
-                          }
-                          finally
-                          {
-                              backtimer.Change(0, 100);
-                          }
-                      }));
-                  }
-              }), null, 0, 100);
         }
 
         private void ContextMenuStrip1_VisibleChanged(object sender, EventArgs e)
@@ -237,123 +298,7 @@ namespace AutoTest.UI.UC
             {
                 return;
             }
-            this.RichText.Select(st-seltext.Length, seltext.Length);
-        }
-
-        private void ShowTip()
-        {
-            if (string.IsNullOrWhiteSpace(DBName))
-            {
-                return;
-            }
-            int st;
-            var seltext = GetTipCurrWord(true,out st);
-            if (string.IsNullOrWhiteSpace(seltext) || seltext.IndexOf('\n') > -1)
-            {
-                return;
-            }
-
-            seltext = seltext.Trim().ToUpper();
-            var subtexts = seltext.Split('.').Select(p => p.Trim('[', ']').Trim()).ToArray();
-            List<string[]> keys = new List<string[]>();
-            if (subtexts.Length > 2)
-            {
-                keys.Add(new string[] { subtexts[subtexts.Length - 3], subtexts[subtexts.Length - 2], subtexts.Last() });
-            }
-            else if (subtexts.Length > 1)
-            {
-                keys.Add(new string[] { DBName.ToUpper(), subtexts[subtexts.Length - 2], subtexts.Last() });
-            }
-            else
-            {
-                //[\s\n]+from[\s\r\n]+(?:(?:[\w\.\[\]]{1,})[\s\r\n]+(?:as)?(?:\w+)?(?:\,(?:[\w\.\[\]]{1,})[\s\r\n]+(?:as)?(?:\s+\w+)?)*)
-                //[\s\n]+from[\s\r\n]+((?:[\w\.\[\]]{1,}(?:\s?=\w+)?(?:\,?=[\w\.\[\]]{1,}(?:\s?=\w+)?))*)|[\s\n]+join[\s\n]+([\w\.\[\]]{1,})|(?:^?|\s+)update|insert\s+([\w\.\[\]]+)
-                HashSet<Tuple<string, string>> tablenamehash = new HashSet<Tuple<string, string>>();
-                foreach (Match m in Regex.Matches(this.RichText.Text, @"[\s\r\n]+from[\s\r\n]+(?:([\w\.\[\]]{1,})[\s\r\n]+)|(?:[\s\n\r]+|^)join[\s\n\r]+([\w\.\[\]]{1,})|(?:^?|\s+)update[\s\r\n]+([\w\.\[\]]{1,})|insert[\s\r\n]+into[\s\r\n]+([\w\.\[\]]+)|delete[\s\r\n]+from[\s\r\n]+([\w\.\[\]]+)",
-                    RegexOptions.IgnoreCase | RegexOptions.Multiline))
-                {
-                    if (!string.IsNullOrWhiteSpace(m.Groups[0].Value))
-                    {
-                        foreach (Match n in Regex.Matches(m.Groups[0].Value, @",[\s\r\n]*([\w\.\[\]]{1,})[\s\r\n]+", RegexOptions.IgnoreCase | RegexOptions.Multiline))
-                        {
-                            var t = GetTableName(n.Groups[1].Value, DBName);
-
-                            if (!tablenamehash.Contains(t))
-                            {
-                                tablenamehash.Add(t);
-                            }
-                        }
-                    }
-
-                    //select
-                    if (!string.IsNullOrEmpty(m.Groups[1].Value))
-                    {
-                        var t1 = GetTableName(m.Groups[1].Value, DBName);
-
-                        if (!tablenamehash.Contains(t1))
-                        {
-                            tablenamehash.Add(t1);
-                        }
-
-                    }
-
-                    //join
-                    if (!string.IsNullOrEmpty(m.Groups[2].Value))
-                    {
-                        var t2 = GetTableName(m.Groups[2].Value, DBName);
-
-                        if (!tablenamehash.Contains(t2))
-                        {
-                            tablenamehash.Add(t2);
-                        }
-
-                    }
-
-                    //update
-                    if (!string.IsNullOrEmpty(m.Groups[3].Value))
-                    {
-                        var t = GetTableName(m.Groups[3].Value, DBName);
-
-                        if (!tablenamehash.Contains(t))
-                        {
-                            tablenamehash.Add(t);
-                        }
-
-                    }
-
-                    //insert
-                    if (!string.IsNullOrEmpty(m.Groups[4].Value))
-                    {
-                        var t = GetTableName(m.Groups[4].Value, DBName);
-
-                        if (!tablenamehash.Contains(t))
-                        {
-                            tablenamehash.Add(t);
-                        }
-
-                    }
-                    //delete
-                    if (!string.IsNullOrEmpty(m.Groups[5].Value))
-                    {
-                        var t = GetTableName(m.Groups[5].Value, DBName);
-
-                        if (!tablenamehash.Contains(t))
-                        {
-                            tablenamehash.Add(t);
-                        }
-
-                    }
-                }
-
-                if (tablenamehash.Count > 0)
-                {
-                    foreach (var it in tablenamehash)
-                    {
-                        keys.Add(new string[] { it.Item1, it.Item2, subtexts.Last() });
-                    }
-                }
-
-            }
+            this.RichText.Select(st - seltext.Length, seltext.Length);
         }
 
         private void RichText_MouseLeave(object sender, EventArgs e)
@@ -428,7 +373,7 @@ namespace AutoTest.UI.UC
 
             view.Width = width;
 
-            var rate = width < ajustviewwith ? (width*1.0/ajustviewwith): 1.0;
+            var rate = width < ajustviewwith ? (width * 1.0 / ajustviewwith) : 1.0;
             icount = 0;
             foreach (DataGridViewColumn col in view.Columns)
             {
@@ -436,7 +381,7 @@ namespace AutoTest.UI.UC
                 {
                     continue;
                 }
-                col.Width = (int)(maxwidthlist[icount]*rate);
+                col.Width = (int)(maxwidthlist[icount] * rate);
                 icount++;
             }
 
@@ -496,8 +441,8 @@ namespace AutoTest.UI.UC
                 }
             }
             else if (e.KeyCode == Keys.Enter
-                ||e.KeyCode==Keys.Space
-                ||e.KeyCode==Keys.Right)
+                || e.KeyCode == Keys.Space
+                || e.KeyCode == Keys.Right)
             {
                 if (view.Visible)
                 {
@@ -519,7 +464,7 @@ namespace AutoTest.UI.UC
                         view.Visible = false;
                     }
                     e.Handled = true;
-                    
+
                 }
             }
         }
@@ -620,9 +565,9 @@ namespace AutoTest.UI.UC
 
                 var ch = this.RichText.Lines[currline][pi];
 
-                if ((ch >= 'A' && ch <= 'Z') || (ch >= 48 && ch <= 57) || (ch >= 'a' && ch <= 'z') 
+                if ((ch >= 'A' && ch <= 'Z') || (ch >= 48 && ch <= 57) || (ch >= 'a' && ch <= 'z')
                     || ch == '_' || ch == '.' || ch == '@'
-                    || (ch>= '\u4E00'&&ch<='\u9FA5'))
+                    || (ch >= '\u4E00' && ch <= '\u9FA5'))
                 {
                     pre = ch + pre;
                     pi--;
@@ -696,7 +641,7 @@ namespace AutoTest.UI.UC
         private void View_KeyUp(object sender, KeyEventArgs e)
         {
             int i = 0;
-            for(; i < view.Rows.Count; i++)
+            for (; i < view.Rows.Count; i++)
             {
                 if (view.Rows[i].Selected)
                 {
@@ -742,7 +687,7 @@ namespace AutoTest.UI.UC
 
         private void EditTextBox_ParentChanged(object sender, EventArgs e)
         {
-            if (this.Parent != null&&!this.Parent.Controls.Contains(view))
+            if (this.Parent != null && !this.Parent.Controls.Contains(view))
             {
                 this.Parent.Controls.Add(view);
             }
@@ -775,7 +720,7 @@ namespace AutoTest.UI.UC
                 return;
             //if (e.Shift)
             //    return;
-            if (e.KeyData == (Keys.LButton|Keys.ShiftKey))
+            if (e.KeyData == (Keys.LButton | Keys.ShiftKey))
             {
                 return;
             }
@@ -795,7 +740,47 @@ namespace AutoTest.UI.UC
             string keyword;
             var keywordindex = GetCurrWord(out keyword);
 
-            if (string.IsNullOrEmpty(keyword))
+            if (!string.IsNullOrEmpty(keyword))
+            {
+                int count = 0;
+                var obj = GetObjects(keyword, ref count);
+                if (obj != null && count > 0)
+                {
+                    (view.Tag as ViewContext).DataType = 2;
+                    view.DataSource = obj;
+
+                    var padding = view.Columns[0].DefaultCellStyle.Padding;
+                    padding.Left = 20;
+                    view.Columns[0].DefaultCellStyle.Padding = padding;
+                    view.Visible = true;
+
+                    view.ClearSelection();
+                    view.BringToFront();
+
+                    var curindex = this.RichText.SelectionStart;
+                    var tippt = this.RichText.GetPositionFromCharIndex(curindex);
+                    tippt.Offset(RichText.Location.X, 20);
+                    var morewidth = tippt.X + view.Width - view.Parent.Location.X - view.Parent.Width;
+                    if (morewidth > 0)
+                    {
+                        tippt.Offset(-morewidth, 0);
+                    }
+                    if (view.Height + tippt.Y + 30 > this.Parent.Location.Y + this.Parent.Height)
+                    {
+                        tippt.Offset(0, -view.Height - 20);
+                    }
+                    view.ScrollBars = ScrollBars.Vertical;
+                    view.Location = tippt;
+
+                }
+                else
+                {
+                    (view.Tag as ViewContext).DataType = 0;
+                    view.DataSource = null;
+                    view.Visible = false;
+                }
+            }
+            else
             {
                 (view.Tag as ViewContext).DataType = 0;
                 view.DataSource = null;
@@ -820,7 +805,7 @@ namespace AutoTest.UI.UC
                 _markedLines.RemoveAll(p => p == line);
             }
             _lastMarketedLines = -1;
-            _lastInputChar='\0';
+            _lastInputChar = '\0';
 
             this.RichText.LockPaint = true;
             var oldstart = this.RichText.SelectionStart;
@@ -857,7 +842,7 @@ namespace AutoTest.UI.UC
                         continue;
                     }
                     Point p = new Point(2, 0);
-                    p.Y = offset + (offset==0?0:this.Font.Height) + 1;
+                    p.Y = offset + (offset == 0 ? 0 : this.Font.Height) + 1;
                     offset = p.Y;
                     nos.Add(i, p);
                     strLen += 1;
@@ -890,12 +875,12 @@ namespace AutoTest.UI.UC
                 }
             }
             _timer.SetTimeOutCallBack(() =>
-                {
-                    this.Invoke(new Action<bool>(MarkKeyWords), true);
-                    this.Invoke(new Action(() => {
-                        
-                    }));
-                });
+            {
+                this.Invoke(new Action<bool>(MarkKeyWords), true);
+                this.Invoke(new Action(() => {
+
+                }));
+            });
         }
 
         public void AppendText(string text)
@@ -918,24 +903,8 @@ namespace AutoTest.UI.UC
         {
             get
             {
-               return this.RichText.GetLineFromCharIndex(this.RichText.GetCharIndexFromPosition(new Point(0, this.RichText.Height)));
+                return this.RichText.GetLineFromCharIndex(this.RichText.GetCharIndexFromPosition(new Point(0, this.RichText.Height)));
             }
-        }
-
-        /// <summary>
-        /// 创建一个表格
-        /// </summary>
-        /// <param name="colsName">表格字段,可以加//注释</param>
-        /// <returns></returns>
-        public static DataTable CreateFatTable(params string[] colsName)
-        {
-            DataTable dt = new DataTable();
-            for (int i = 0; i < colsName.Length; i++)
-            {
-                dt.Columns.Add(colsName[i].Split(new string[] { "//" }, StringSplitOptions.None)[0].Trim(), typeof(object));
-            }
-
-            return dt;
         }
 
         /// <summary>
@@ -975,7 +944,7 @@ namespace AutoTest.UI.UC
                 //    oldSelectLen = 0;
                 //}
 
-                DataTable tb = CreateFatTable("pos", "len", "color");
+                DataTable tb = Util.CreateFatTable("pos", "len", "color");
 
                 var linesLen = this.RichText.Lines.Length;
                 for (int l = line1; l <= line2 && l < linesLen; l++)
@@ -1036,7 +1005,7 @@ namespace AutoTest.UI.UC
                 if (reSetLineNo)
                     SetLineNo();
             }
-            
+
         }
 
         private void 粘贴ToolStripMenuItem_Click(object sender, EventArgs e)
@@ -1076,9 +1045,9 @@ namespace AutoTest.UI.UC
             }
             else if (arr.Length == 3)
             {
-                return new Tuple<string, string>(arr.First().Trim('[',']').Trim().ToUpper(), arr.Last().Trim('[', ']').Trim().ToUpper());
+                return new Tuple<string, string>(arr.First().Trim('[', ']').Trim().ToUpper(), arr.Last().Trim('[', ']').Trim().ToUpper());
             }
-            return new Tuple<string, string>(arr.First().Trim('[', ']').Trim().ToUpper(), 
+            return new Tuple<string, string>(arr.First().Trim('[', ']').Trim().ToUpper(),
                 arr.Last().Trim('[', ']').Trim().ToUpper());
         }
 
@@ -1127,7 +1096,7 @@ namespace AutoTest.UI.UC
         {
             if (this.SelectionLength > 0)
             {
-                Clipboard.SetData(DataFormats.Rtf,this.RichText.SelectedRtf);
+                Clipboard.SetData(DataFormats.Rtf, this.RichText.SelectedRtf);
                 this.RichText.SelectedRtf = string.Empty;
             }
         }

@@ -2,6 +2,7 @@
 using AutoTest.UI.SubForm;
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -282,5 +283,22 @@ namespace AutoTest.UI
 
             return true;
         }
+
+        /// <summary>
+        /// 创建一个表格
+        /// </summary>
+        /// <param name="colsName">表格字段,可以加//注释</param>
+        /// <returns></returns>
+        public static DataTable CreateFatTable(params string[] colsName)
+        {
+            DataTable dt = new DataTable();
+            for (int i = 0; i < colsName.Length; i++)
+            {
+                dt.Columns.Add(colsName[i].Split(new string[] { "//" }, StringSplitOptions.None)[0].Trim(), typeof(object));
+            }
+
+            return dt;
+        }
+
     }
 }
