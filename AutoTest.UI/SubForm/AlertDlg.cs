@@ -45,18 +45,24 @@ namespace AutoTest.UI.SubForm
 
             while (sec >= 0)
             {
-                this.BeginInvoke(new Action(() =>
+                if (this.IsHandleCreated && !this.IsDisposed)
                 {
-                    this.LBSecs.Text = $"{sec}秒后自动关闭";
-                }));
+                    this.BeginInvoke(new Action(() =>
+                    {
+                        this.LBSecs.Text = $"{sec}秒后自动关闭";
+                    }));
+                }
                 Thread.Sleep(1000);
                 sec -= 1;
             }
 
-            this.BeginInvoke(new Action(() =>
+            if (this.IsHandleCreated&&!this.IsDisposed)
             {
-                this.DialogResult = DialogResult.OK;
-            }));
+                this.BeginInvoke(new Action(() =>
+                {
+                    this.DialogResult = DialogResult.OK;
+                }));
+            }
         }
 
         private void button1_Click(object sender, EventArgs e)

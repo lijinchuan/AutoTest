@@ -28,16 +28,17 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.label1 = new System.Windows.Forms.Label();
             this.TBUrl = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
-            this.TBLoginCode = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.TBValidCode = new System.Windows.Forms.TextBox();
             this.CBManual = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.BtnOk = new System.Windows.Forms.Button();
             this.BtnCancel = new System.Windows.Forms.Button();
+            this.TBLoginCode = new AutoTest.UI.UC.JSCodeEditBox();
+            this.TBValidCode = new AutoTest.UI.UC.JSCodeEditBox();
             this.SuspendLayout();
             // 
             // label1
@@ -68,41 +69,21 @@
             this.label2.TabIndex = 2;
             this.label2.Text = "登录脚本：";
             // 
-            // TBLoginCode
-            // 
-            this.TBLoginCode.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.TBLoginCode.Location = new System.Drawing.Point(127, 77);
-            this.TBLoginCode.Multiline = true;
-            this.TBLoginCode.Name = "TBLoginCode";
-            this.TBLoginCode.Size = new System.Drawing.Size(662, 133);
-            this.TBLoginCode.TabIndex = 3;
-            this.TBLoginCode.Text = "function(){}";
-            // 
             // label3
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("宋体", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label3.Location = new System.Drawing.Point(12, 255);
+            this.label3.Location = new System.Drawing.Point(12, 270);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(109, 20);
             this.label3.TabIndex = 4;
             this.label3.Text = "验证脚本：";
             // 
-            // TBValidCode
-            // 
-            this.TBValidCode.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.TBValidCode.Location = new System.Drawing.Point(127, 255);
-            this.TBValidCode.Multiline = true;
-            this.TBValidCode.Name = "TBValidCode";
-            this.TBValidCode.Size = new System.Drawing.Size(662, 133);
-            this.TBValidCode.TabIndex = 5;
-            this.TBValidCode.Text = "function(){}";
-            // 
             // CBManual
             // 
             this.CBManual.AutoSize = true;
             this.CBManual.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.CBManual.Location = new System.Drawing.Point(698, 215);
+            this.CBManual.Location = new System.Drawing.Point(30, 293);
             this.CBManual.Name = "CBManual";
             this.CBManual.Size = new System.Drawing.Size(91, 20);
             this.CBManual.TabIndex = 6;
@@ -140,18 +121,34 @@
             this.BtnCancel.UseVisualStyleBackColor = true;
             this.BtnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
             // 
+            // TBLoginCode
+            // 
+            this.TBLoginCode.Location = new System.Drawing.Point(125, 77);
+            this.TBLoginCode.Name = "TBLoginCode";
+            this.TBLoginCode.SelectedText = "";
+            this.TBLoginCode.Size = new System.Drawing.Size(676, 179);
+            this.TBLoginCode.TabIndex = 10;
+            // 
+            // TBValidCode
+            // 
+            this.TBValidCode.Location = new System.Drawing.Point(127, 270);
+            this.TBValidCode.Name = "TBValidCode";
+            this.TBValidCode.SelectedText = "";
+            this.TBValidCode.Size = new System.Drawing.Size(674, 187);
+            this.TBValidCode.TabIndex = 12;
+            // 
             // AddTestLoginDlg
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(844, 543);
+            this.Controls.Add(this.TBValidCode);
+            this.Controls.Add(this.TBLoginCode);
             this.Controls.Add(this.BtnCancel);
             this.Controls.Add(this.BtnOk);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.CBManual);
-            this.Controls.Add(this.TBValidCode);
             this.Controls.Add(this.label3);
-            this.Controls.Add(this.TBLoginCode);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.TBUrl);
             this.Controls.Add(this.label1);
@@ -167,12 +164,12 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox TBUrl;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox TBLoginCode;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox TBValidCode;
         private System.Windows.Forms.CheckBox CBManual;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button BtnOk;
         private System.Windows.Forms.Button BtnCancel;
+        private UC.JSCodeEditBox TBLoginCode;
+        private UC.JSCodeEditBox TBValidCode;
     }
 }

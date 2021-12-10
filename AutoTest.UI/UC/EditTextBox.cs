@@ -596,7 +596,7 @@ namespace AutoTest.UI.UC
                 var ch = this.RichText.Lines[currline][pi];
 
                 if ((ch >= 'A' && ch <= 'Z') || (ch >= 48 && ch <= 57) || (ch >= 'a' && ch <= 'z')
-                    || ch == '_' || ch == '.' || ch == '@'
+                    || ch == '_' || ch == '.' || ch == '$'
                     || (ch >= '\u4E00' && ch <= '\u9FA5'))
                 {
                     pre = ch + pre;
@@ -615,7 +615,7 @@ namespace AutoTest.UI.UC
                     var ch = this.RichText.Lines[currline][pi];
 
                     if ((ch >= 'A' && ch <= 'Z') || (ch >= 48 && ch <= 57) || (ch >= 'a' && ch <= 'z')
-                        || ch == '_' || ch == '.' || ch == '@'
+                        || ch == '_' || ch == '.' || ch == '$'
                         || (ch >= '\u4E00' && ch <= '\u9FA5'))
                     {
                         last += ch;
@@ -652,13 +652,13 @@ namespace AutoTest.UI.UC
                     this.RichText.Select(keywordindex - keyword.Length, keyword.Length);
                     //this.RichText.Text.Remove(this.RichText.SelectionStart - keyword.Length, keyword.Length);
 
-                    if (keyword.IndexOf('.') > -1 || sender?.Equals(Keys.Right) == true || !Issamedb)
+                    if (val.StartsWith(keyword))
                     {
                         this.RichText.SelectedText = val;
                     }
                     else
                     {
-                        this.RichText.SelectedText = val.Split('.').Last();
+                        this.RichText.SelectedText = this.RichText.SelectedText + val ;
                     }
                     //this.RichText.SelectionStart += val.Length - keyword.Length;
                     view.Visible = false;

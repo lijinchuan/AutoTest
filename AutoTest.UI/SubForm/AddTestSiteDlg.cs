@@ -73,5 +73,10 @@ namespace AutoTest.UI.SubForm
 
             DialogResult = DialogResult.OK;
         }
+
+        private void BtnCancel_Click(object sender, EventArgs e)
+        {
+            DialogResult = DialogResult.Cancel;
+        }
     }
 }

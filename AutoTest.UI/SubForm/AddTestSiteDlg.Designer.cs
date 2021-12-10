@@ -102,6 +102,7 @@
             this.BtnCancel.TabIndex = 6;
             this.BtnCancel.Text = "取消";
             this.BtnCancel.UseVisualStyleBackColor = true;
+            this.BtnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
             // 
             // AddTestSiteDlg
             // 
