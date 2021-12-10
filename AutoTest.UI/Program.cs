@@ -47,6 +47,9 @@ namespace AutoTest.UI
             BigEntityTableEngine.LocalEngine.CreateTable<TestCaseDocExample>(p => p.Id, p => p.AddIndex(nameof(TestCaseDocExample.TestCaseId), m => m.Asc(s => s.TestCaseId)));
             BigEntityTableEngine.LocalEngine.CreateTable<ProxyServer>(p => p.Id, null);
 
+
+            BigEntityTableEngine.LocalEngine.CreateTable<TestScript>(p => p.Id, a => a.AddIndex($"{nameof(TestScript.SourceId)}_{nameof(TestScript.SiteId)}_{nameof(TestScript.ScriptName)}", b => b.Asc(m => m.SourceId).Asc(m => m.SiteId).Asc(m => m.ScriptName)));
+
             AutofacBuilder.init();
 
             Application.EnableVisualStyles();

@@ -62,6 +62,16 @@ namespace AutoTest.Biz
                 treeNodes.Add(node);
             }
 
+            treeNodes.Add(new TreeNodeEx
+            {
+                Text = "脚本",
+                Tag = new NodeContents(NodeContentType.SCRIPTPARENT),
+                ImageIndex = 0,
+                SelectedImageIndex = 2,
+                CollapseImgIndex = 0,
+                ExpandImgIndex = 2
+            });
+
             parent.Invoke(new Action(() => { pnode.Nodes.Clear(); pnode.Nodes.AddRange(treeNodes.ToArray()); pnode.Expand(); }));
         }
 
@@ -105,6 +115,16 @@ namespace AutoTest.Biz
                     ExpandImgIndex = 10
                 });
             }
+
+            treeNodes.Add(new TreeNodeEx
+            {
+                Text = "脚本",
+                Tag = new NodeContents(NodeContentType.SCRIPTPARENT),
+                ImageIndex = 0,
+                SelectedImageIndex = 2,
+                CollapseImgIndex = 0,
+                ExpandImgIndex = 2
+            });
 
             treeNodes.Add(new TreeNodeEx
             {
@@ -212,6 +232,39 @@ namespace AutoTest.Biz
                         node.Tag = param;
                         node.ImageKey = node.SelectedImageKey = "COL";
                     }
+                    treeNodes.Add(node);
+
+                }
+                parent.Invoke(new Action(() => { pnode.Nodes.Clear(); pnode.Nodes.AddRange(treeNodes.ToArray()); pnode.Expand(); }));
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public static void LoadTestScriptAsync(Form parent, TreeNode pnode, int sourceid, int siteId, AsyncCallback callback, object @object)
+        {
+            pnode.Nodes.Add(new TreeNode("加载中...", 3, 3));
+            pnode.Expand();
+
+            new Action<Form, TreeNode, int, int>(LoadTestScrip).BeginInvoke(parent, pnode, sourceid, siteId, callback, @object);
+        }
+
+        public static void LoadTestScrip(Form parent, TreeNode pnode, int sourceid, int siteId)
+        {
+            try
+            {
+                List<TreeNode> treeNodes = new List<TreeNode>();
+                var testScriptList = BigEntityTableEngine.LocalEngine.Scan<TestScript>(nameof(TestScript), $"{nameof(TestScript.SourceId)}_{nameof(TestScript.SiteId)}_{nameof(TestScript.ScriptName)}",
+                    new object[] { sourceid, siteId, Consts.STRINGCOMPAIRMIN }, new object[] { sourceid, siteId, Consts.STRINGCOMPAIRMAX }, 1, int.MaxValue)
+                    .OrderBy(p => p.Order).ToList();
+
+                foreach (var s in testScriptList)
+                {
+                    TreeNode node = new TreeNodeEx(s.ScriptName, 17, 17, 17, 17);
+                    node.Tag = s;
+
                     treeNodes.Add(node);
 
                 }

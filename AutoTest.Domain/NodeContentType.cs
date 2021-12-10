@@ -22,6 +22,7 @@ namespace AutoTest.Domain
         TESTSITE,
         TESTPAGE,
         TESTCASE,
+        SCRIPTPARENT,
         UNKNOWN = 999
     }
 }

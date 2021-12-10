@@ -40,7 +40,8 @@ namespace AutoTest.UI.UC
             tv_DBServers.ImageList.Images.Add("ENV", Resources.Resource1.folder_palette);//13
             tv_DBServers.ImageList.Images.Add("BOX", Resources.Resource1.box);
             tv_DBServers.ImageList.Images.Add("USERLOGIN", Resources.Resource1.user_earth);
-            tv_DBServers.ImageList.Images.Add("FORDERSELECTED", Resources.Resource1.folder_star);
+            tv_DBServers.ImageList.Images.Add("FORDERSELECTED", Resources.Resource1.folder_star);//16
+            tv_DBServers.ImageList.Images.Add("SCRIPTCODE", Resources.Resource1.script_code);
 
             tv_DBServers.Nodes.Add(new TreeNodeEx("资源管理器", 0, 1));
             tv_DBServers.BeforeExpand += Tv_DBServers_BeforeExpand;
@@ -138,7 +139,7 @@ namespace AutoTest.UI.UC
             {
                 Biz.UILoadHelper.LoadTestResurceAsync(this.ParentForm, selNode, callback, selNode);
             }
-            else if(selNode.Tag is TestSource)
+            else if (selNode.Tag is TestSource)
             {
                 var sid = (selNode.Tag as TestSource).Id;
                 Biz.UILoadHelper.LoadTestSiteAsync(this.ParentForm, selNode, sid, callback, selNode);
@@ -163,6 +164,12 @@ namespace AutoTest.UI.UC
                 var sid = FindParentNode<TestSite>(selNode).Id;
                 var envid = (selNode.Tag as TestEnv).Id;
                 Biz.UILoadHelper.LoadTestEnvParamsAsync(this.ParentForm, selNode, sid, envid, callback, selNode);
+            }
+            else if (selNode.Tag is INodeContents && (selNode.Tag as INodeContents).GetNodeContentType() == NodeContentType.SCRIPTPARENT)
+            {
+                var sid = FindParentNode<TestSource>(selNode).Id;
+                var testSite = FindParentNode<TestSite>(selNode);
+                Biz.UILoadHelper.LoadTestScriptAsync(this.ParentForm, selNode, sid, testSite == null ? 0 : testSite.Id, callback, selNode);
             }
 
         }
@@ -249,13 +256,21 @@ namespace AutoTest.UI.UC
                                     ReLoadDBObj(selnode.Parent);
                                 }
                             }
+                            else if (selnode.Tag is TestScript)
+                            {
+                                var testScript = selnode.Tag as TestScript;
+                                var testResource = FindParentNode<TestSource>(selnode);
+                                var testSite = FindParentNode<TestSite>(selnode);
+                                Util.AddToMainTab(this, $"{testResource.SourceName}_{testSite?.Name}_{testScript.ScriptName}(脚本)",
+                                        new UC.UCTestScript(testScript));
+                            }
                             break;
                         }
                     case "删除":
                         {
                             
                             Func<bool> delFunc = null;
-                            
+
                             if (selnode.Tag is TestCase)
                             {
                                 delFunc = () =>
@@ -287,11 +302,20 @@ namespace AutoTest.UI.UC
                                     BigEntityTableEngine.LocalEngine.Delete<TestSource>(nameof(TestSource), (selnode.Tag as TestSource).Id);
                                     return true;
                                 };
-                            }else if(selnode.Tag is TestEnv)
+                            }
+                            else if (selnode.Tag is TestEnv)
                             {
                                 delFunc = () =>
                                 {
                                     BigEntityTableEngine.LocalEngine.Delete<TestEnv>(nameof(TestEnv), (selnode.Tag as TestEnv).Id);
+                                    return true;
+                                };
+                            }
+                            else if (selnode.Tag is TestScript)
+                            {
+                                delFunc = () =>
+                                {
+                                    BigEntityTableEngine.LocalEngine.Delete<TestEnv>(nameof(TestScript), (selnode.Tag as TestScript).Id);
                                     return true;
                                 };
                             }
@@ -486,6 +510,37 @@ namespace AutoTest.UI.UC
                             
                             break;
                         }
+                    case "添加脚本":
+                        {
+                            var testResource = FindParentNode<TestSource>(selnode);
+                            var testSite = FindParentNode<TestSite>(selnode);
+                            var scriptNameDlg = new SubForm.InputStringDlg("输入脚本名称");
+                            if (scriptNameDlg.ShowDialog() == DialogResult.OK)
+                            {
+                                if(BigEntityTableEngine.LocalEngine.Find<TestScript>(nameof(TestScript), 
+                                    $"{nameof(TestScript.SourceId)}_{nameof(TestScript.SiteId)}_{nameof(TestScript.ScriptName)}", 
+                                    new object[] { testResource.Id, testSite == null ? 0 : testSite.Id, scriptNameDlg.InputString }).Count() > 0)
+                                {
+                                    Util.SendMsg(this, $"{scriptNameDlg.InputString}已经存在，不能重复添加。");
+                                }
+                                else
+                                {
+                                    var testScript = new TestScript
+                                    {
+                                        ScriptName=scriptNameDlg.InputString,
+                                        Enable=true,
+                                        SiteId = testSite == null ? 0 : testSite.Id,
+                                        SourceId=testResource.Id
+                                    };
+
+                                    BigEntityTableEngine.LocalEngine.Insert(nameof(TestScript), testScript);
+
+                                    Util.AddToMainTab(this, $"{testResource.SourceName}_{testSite?.Name}_{testScript.ScriptName}(脚本)",
+                                        new UC.UCTestScript(testScript));
+                                }
+                            }
+                            break;
+                        }
                     default:
                         {
                             MessageBox.Show(e.ClickedItem.Text);
@@ -621,6 +676,8 @@ namespace AutoTest.UI.UC
                 运行测试ToolStripMenuItem.Visible = node.Tag is TestCase;
 
                 登陆ToolStripMenuItem.Visible = node.Tag is TestLogin;
+
+                添加脚本ToolStripMenuItem.Visible= (node.Tag as INodeContents)?.GetNodeContentType() == NodeContentType.SCRIPTPARENT;
             }
 
         }

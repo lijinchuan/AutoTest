@@ -339,6 +339,12 @@
     <Compile Include="UC\UCTestCaseSetting.Designer.cs">
       <DependentUpon>UCTestCaseSetting.cs</DependentUpon>
     </Compile>
+    <Compile Include="UC\UCTestScript.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UC\UCTestScript.Designer.cs">
+      <DependentUpon>UCTestScript.cs</DependentUpon>
+    </Compile>
     <Compile Include="UC\WebTab.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -431,6 +437,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UC\UCTestCaseSetting.resx">
       <DependentUpon>UCTestCaseSetting.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UC\UCTestScript.resx">
+      <DependentUpon>UCTestScript.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UC\WebTab.resx">
       <DependentUpon>WebTab.cs</DependentUpon>
