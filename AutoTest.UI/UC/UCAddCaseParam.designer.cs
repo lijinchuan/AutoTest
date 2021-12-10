@@ -33,6 +33,17 @@
             this.TBUrl = new System.Windows.Forms.TextBox();
             this.BtnSend = new System.Windows.Forms.Button();
             this.Tabs = new System.Windows.Forms.TabControl();
+            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.myTabControl1 = new System.Windows.Forms.TabControl();
+            this.tabPage7 = new System.Windows.Forms.TabPage();
+            this.NUDOrder = new System.Windows.Forms.NumericUpDown();
+            this.label5 = new System.Windows.Forms.Label();
+            this.TBName = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.tabPage8 = new System.Windows.Forms.TabPage();
+            this.TBCode = new System.Windows.Forms.TextBox();
+            this.tabPage9 = new System.Windows.Forms.TabPage();
+            this.TBValidCode = new System.Windows.Forms.TextBox();
             this.TP_Params = new System.Windows.Forms.TabPage();
             this.ParamDataPanel = new System.Windows.Forms.Panel();
             this.TP_Auth = new System.Windows.Forms.TabPage();
@@ -63,18 +74,13 @@
             this.PannelBottom = new System.Windows.Forms.Panel();
             this.TabResults = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
-            this.myTabControl1 = new AutoTest.UI.UC.MyTabControl();
-            this.tabPage7 = new System.Windows.Forms.TabPage();
-            this.NUDOrder = new System.Windows.Forms.NumericUpDown();
-            this.label5 = new System.Windows.Forms.Label();
-            this.TBName = new System.Windows.Forms.TextBox();
-            this.label6 = new System.Windows.Forms.Label();
-            this.tabPage8 = new System.Windows.Forms.TabPage();
-            this.TBCode = new System.Windows.Forms.TextBox();
-            this.tabPage9 = new System.Windows.Forms.TabPage();
-            this.TBValidCode = new System.Windows.Forms.TextBox();
             this.Tabs.SuspendLayout();
+            this.tabPage2.SuspendLayout();
+            this.myTabControl1.SuspendLayout();
+            this.tabPage7.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.NUDOrder)).BeginInit();
+            this.tabPage8.SuspendLayout();
+            this.tabPage9.SuspendLayout();
             this.TP_Params.SuspendLayout();
             this.TP_Auth.SuspendLayout();
             this.AuthTableLayoutPanel.SuspendLayout();
@@ -88,12 +94,6 @@
             this.pannelmid.SuspendLayout();
             this.PannelBottom.SuspendLayout();
             this.TabResults.SuspendLayout();
-            this.tabPage2.SuspendLayout();
-            this.myTabControl1.SuspendLayout();
-            this.tabPage7.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.NUDOrder)).BeginInit();
-            this.tabPage8.SuspendLayout();
-            this.tabPage9.SuspendLayout();
             this.SuspendLayout();
             // 
             // CBWebMethod
@@ -150,6 +150,125 @@
             this.Tabs.SelectedIndex = 0;
             this.Tabs.Size = new System.Drawing.Size(747, 183);
             this.Tabs.TabIndex = 3;
+            // 
+            // tabPage2
+            // 
+            this.tabPage2.Controls.Add(this.myTabControl1);
+            this.tabPage2.Location = new System.Drawing.Point(4, 22);
+            this.tabPage2.Name = "tabPage2";
+            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage2.Size = new System.Drawing.Size(739, 157);
+            this.tabPage2.TabIndex = 8;
+            this.tabPage2.Text = "基本";
+            this.tabPage2.UseVisualStyleBackColor = true;
+            // 
+            // myTabControl1
+            // 
+            this.myTabControl1.Controls.Add(this.tabPage7);
+            this.myTabControl1.Controls.Add(this.tabPage8);
+            this.myTabControl1.Controls.Add(this.tabPage9);
+            this.myTabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.myTabControl1.Location = new System.Drawing.Point(3, 3);
+            this.myTabControl1.Name = "myTabControl1";
+            this.myTabControl1.SelectedIndex = 0;
+            this.myTabControl1.Size = new System.Drawing.Size(733, 151);
+            this.myTabControl1.TabIndex = 5;
+            // 
+            // tabPage7
+            // 
+            this.tabPage7.Controls.Add(this.NUDOrder);
+            this.tabPage7.Controls.Add(this.label5);
+            this.tabPage7.Controls.Add(this.TBName);
+            this.tabPage7.Controls.Add(this.label6);
+            this.tabPage7.Location = new System.Drawing.Point(4, 22);
+            this.tabPage7.Name = "tabPage7";
+            this.tabPage7.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage7.Size = new System.Drawing.Size(725, 125);
+            this.tabPage7.TabIndex = 0;
+            this.tabPage7.Text = "属性";
+            this.tabPage7.UseVisualStyleBackColor = true;
+            // 
+            // NUDOrder
+            // 
+            this.NUDOrder.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.NUDOrder.Location = new System.Drawing.Point(115, 83);
+            this.NUDOrder.Maximum = new decimal(new int[] {
+            10000,
+            0,
+            0,
+            0});
+            this.NUDOrder.Name = "NUDOrder";
+            this.NUDOrder.Size = new System.Drawing.Size(120, 26);
+            this.NUDOrder.TabIndex = 3;
+            // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label5.Location = new System.Drawing.Point(39, 88);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(56, 16);
+            this.label5.TabIndex = 2;
+            this.label5.Text = "顺序：";
+            // 
+            // TBName
+            // 
+            this.TBName.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.TBName.Location = new System.Drawing.Point(115, 26);
+            this.TBName.Name = "TBName";
+            this.TBName.Size = new System.Drawing.Size(242, 26);
+            this.TBName.TabIndex = 1;
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label6.Location = new System.Drawing.Point(39, 31);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(56, 16);
+            this.label6.TabIndex = 0;
+            this.label6.Text = "名称：";
+            // 
+            // tabPage8
+            // 
+            this.tabPage8.Controls.Add(this.TBCode);
+            this.tabPage8.Location = new System.Drawing.Point(4, 22);
+            this.tabPage8.Name = "tabPage8";
+            this.tabPage8.Padding = new System.Windows.Forms.Padding(3);
+            this.tabPage8.Size = new System.Drawing.Size(725, 125);
+            this.tabPage8.TabIndex = 1;
+            this.tabPage8.Text = "脚本";
+            this.tabPage8.UseVisualStyleBackColor = true;
+            // 
+            // TBCode
+            // 
+            this.TBCode.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.TBCode.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.TBCode.Location = new System.Drawing.Point(3, 3);
+            this.TBCode.Multiline = true;
+            this.TBCode.Name = "TBCode";
+            this.TBCode.Size = new System.Drawing.Size(719, 119);
+            this.TBCode.TabIndex = 0;
+            // 
+            // tabPage9
+            // 
+            this.tabPage9.Controls.Add(this.TBValidCode);
+            this.tabPage9.Location = new System.Drawing.Point(4, 22);
+            this.tabPage9.Name = "tabPage9";
+            this.tabPage9.Size = new System.Drawing.Size(725, 125);
+            this.tabPage9.TabIndex = 2;
+            this.tabPage9.Text = "验证";
+            this.tabPage9.UseVisualStyleBackColor = true;
+            // 
+            // TBValidCode
+            // 
+            this.TBValidCode.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.TBValidCode.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.TBValidCode.Location = new System.Drawing.Point(0, 0);
+            this.TBValidCode.Multiline = true;
+            this.TBValidCode.Name = "TBValidCode";
+            this.TBValidCode.Size = new System.Drawing.Size(725, 125);
+            this.TBValidCode.TabIndex = 0;
             // 
             // TP_Params
             // 
@@ -473,128 +592,6 @@
             this.tabPage1.Text = "tabPage1";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
-            // tabPage2
-            // 
-            this.tabPage2.Controls.Add(this.myTabControl1);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(739, 157);
-            this.tabPage2.TabIndex = 8;
-            this.tabPage2.Text = "基本";
-            this.tabPage2.UseVisualStyleBackColor = true;
-            // 
-            // myTabControl1
-            // 
-            this.myTabControl1.Controls.Add(this.tabPage7);
-            this.myTabControl1.Controls.Add(this.tabPage8);
-            this.myTabControl1.Controls.Add(this.tabPage9);
-            this.myTabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.myTabControl1.DrawMode = System.Windows.Forms.TabDrawMode.OwnerDrawFixed;
-            this.myTabControl1.ItemSize = new System.Drawing.Size(0, 18);
-            this.myTabControl1.Location = new System.Drawing.Point(3, 3);
-            this.myTabControl1.Name = "myTabControl1";
-            this.myTabControl1.SelectedIndex = 0;
-            this.myTabControl1.Size = new System.Drawing.Size(733, 151);
-            this.myTabControl1.SizeMode = System.Windows.Forms.TabSizeMode.Fixed;
-            this.myTabControl1.TabIndex = 5;
-            // 
-            // tabPage7
-            // 
-            this.tabPage7.Controls.Add(this.NUDOrder);
-            this.tabPage7.Controls.Add(this.label5);
-            this.tabPage7.Controls.Add(this.TBName);
-            this.tabPage7.Controls.Add(this.label6);
-            this.tabPage7.Location = new System.Drawing.Point(4, 22);
-            this.tabPage7.Name = "tabPage7";
-            this.tabPage7.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage7.Size = new System.Drawing.Size(725, 125);
-            this.tabPage7.TabIndex = 0;
-            this.tabPage7.Text = "属性";
-            this.tabPage7.UseVisualStyleBackColor = true;
-            // 
-            // NUDOrder
-            // 
-            this.NUDOrder.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.NUDOrder.Location = new System.Drawing.Point(115, 83);
-            this.NUDOrder.Maximum = new decimal(new int[] {
-            10000,
-            0,
-            0,
-            0});
-            this.NUDOrder.Name = "NUDOrder";
-            this.NUDOrder.Size = new System.Drawing.Size(120, 26);
-            this.NUDOrder.TabIndex = 3;
-            // 
-            // label5
-            // 
-            this.label5.AutoSize = true;
-            this.label5.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label5.Location = new System.Drawing.Point(39, 88);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(56, 16);
-            this.label5.TabIndex = 2;
-            this.label5.Text = "顺序：";
-            // 
-            // TBName
-            // 
-            this.TBName.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.TBName.Location = new System.Drawing.Point(115, 26);
-            this.TBName.Name = "TBName";
-            this.TBName.Size = new System.Drawing.Size(242, 26);
-            this.TBName.TabIndex = 1;
-            // 
-            // label6
-            // 
-            this.label6.AutoSize = true;
-            this.label6.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label6.Location = new System.Drawing.Point(39, 31);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(56, 16);
-            this.label6.TabIndex = 0;
-            this.label6.Text = "名称：";
-            // 
-            // tabPage8
-            // 
-            this.tabPage8.Controls.Add(this.TBCode);
-            this.tabPage8.Location = new System.Drawing.Point(4, 22);
-            this.tabPage8.Name = "tabPage8";
-            this.tabPage8.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage8.Size = new System.Drawing.Size(725, 125);
-            this.tabPage8.TabIndex = 1;
-            this.tabPage8.Text = "脚本";
-            this.tabPage8.UseVisualStyleBackColor = true;
-            // 
-            // TBCode
-            // 
-            this.TBCode.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.TBCode.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.TBCode.Location = new System.Drawing.Point(3, 3);
-            this.TBCode.Multiline = true;
-            this.TBCode.Name = "TBCode";
-            this.TBCode.Size = new System.Drawing.Size(719, 119);
-            this.TBCode.TabIndex = 0;
-            // 
-            // tabPage9
-            // 
-            this.tabPage9.Controls.Add(this.TBValidCode);
-            this.tabPage9.Location = new System.Drawing.Point(4, 22);
-            this.tabPage9.Name = "tabPage9";
-            this.tabPage9.Size = new System.Drawing.Size(725, 125);
-            this.tabPage9.TabIndex = 2;
-            this.tabPage9.Text = "验证";
-            this.tabPage9.UseVisualStyleBackColor = true;
-            // 
-            // TBValidCode
-            // 
-            this.TBValidCode.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.TBValidCode.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.TBValidCode.Location = new System.Drawing.Point(0, 0);
-            this.TBValidCode.Multiline = true;
-            this.TBValidCode.Name = "TBValidCode";
-            this.TBValidCode.Size = new System.Drawing.Size(725, 125);
-            this.TBValidCode.TabIndex = 0;
-            // 
             // UCAddCaseParam
             // 
             this.Controls.Add(this.PannelBottom);
@@ -603,6 +600,15 @@
             this.Name = "UCAddCaseParam";
             this.Size = new System.Drawing.Size(753, 444);
             this.Tabs.ResumeLayout(false);
+            this.tabPage2.ResumeLayout(false);
+            this.myTabControl1.ResumeLayout(false);
+            this.tabPage7.ResumeLayout(false);
+            this.tabPage7.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.NUDOrder)).EndInit();
+            this.tabPage8.ResumeLayout(false);
+            this.tabPage8.PerformLayout();
+            this.tabPage9.ResumeLayout(false);
+            this.tabPage9.PerformLayout();
             this.TP_Params.ResumeLayout(false);
             this.TP_Auth.ResumeLayout(false);
             this.AuthTableLayoutPanel.ResumeLayout(false);
@@ -619,15 +625,6 @@
             this.pannelmid.ResumeLayout(false);
             this.PannelBottom.ResumeLayout(false);
             this.TabResults.ResumeLayout(false);
-            this.tabPage2.ResumeLayout(false);
-            this.myTabControl1.ResumeLayout(false);
-            this.tabPage7.ResumeLayout(false);
-            this.tabPage7.PerformLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.NUDOrder)).EndInit();
-            this.tabPage8.ResumeLayout(false);
-            this.tabPage8.PerformLayout();
-            this.tabPage9.ResumeLayout(false);
-            this.tabPage9.PerformLayout();
             this.ResumeLayout(false);
 
         }
@@ -669,7 +666,7 @@
         private System.Windows.Forms.TabControl TabResults;
         private System.Windows.Forms.TabPage tabPage1;
         private System.Windows.Forms.TabPage tabPage2;
-        private MyTabControl myTabControl1;
+        private System.Windows.Forms.TabControl myTabControl1;
         private System.Windows.Forms.TabPage tabPage7;
         private System.Windows.Forms.NumericUpDown NUDOrder;
         private System.Windows.Forms.Label label5;

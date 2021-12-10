@@ -213,7 +213,7 @@ namespace AutoTest.UI.UC
                                 var testPage = FindParentNode<TestPage>(selnode);
                                 var testCase = selnode.Tag as TestCase;
 
-                                Util.AddToMainTab(this, $"[{testSite.Name}]{testCase.CaseName}", new UC.UCAddCaseParam(testSite, testPage, testCase));
+                                Util.AddToMainTab(this, $"[{testSite.Name}]-{testPage.Name}-{testCase.CaseName}", new UC.UCAddCaseParam(testSite, testPage, testCase));
                             }
                             else if (selnode.Tag is TestPage)
                             {
@@ -403,7 +403,7 @@ namespace AutoTest.UI.UC
                             if (step1dlg.ShowDialog() == DialogResult.OK)
                             {
                                 ReLoadDBObj(selnode);
-                                Util.AddToMainTab(this, $"[{testSite.Name}]{step1dlg.TestCase.CaseName}", new UC.UCAddCaseParam(testSite, testPage, step1dlg.TestCase));
+                                Util.AddToMainTab(this, $"[{testSite.Name}]-{testPage.Name}-{step1dlg.TestCase.CaseName}", new UC.UCAddCaseParam(testSite, testPage, step1dlg.TestCase));
                             }
                             break;
                         }
