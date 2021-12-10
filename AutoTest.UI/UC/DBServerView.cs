@@ -315,7 +315,7 @@ namespace AutoTest.UI.UC
                             {
                                 delFunc = () =>
                                 {
-                                    BigEntityTableEngine.LocalEngine.Delete<TestEnv>(nameof(TestScript), (selnode.Tag as TestScript).Id);
+                                    BigEntityTableEngine.LocalEngine.Delete<TestScript>(nameof(TestScript), (selnode.Tag as TestScript).Id);
                                     return true;
                                 };
                             }
