@@ -28,12 +28,13 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.label1 = new System.Windows.Forms.Label();
             this.TBName = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.NUDNumber = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();
-            this.TBBody = new System.Windows.Forms.TextBox();
+            this.TBBody = new AutoTest.UI.UC.JSCodeEditBox();
             ((System.ComponentModel.ISupportInitialize)(this.NUDNumber)).BeginInit();
             this.SuspendLayout();
             // 
@@ -84,10 +85,11 @@
             this.TBBody.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.TBBody.Location = new System.Drawing.Point(118, 104);
-            this.TBBody.Multiline = true;
+            this.TBBody.DBName = null;
+            this.TBBody.Location = new System.Drawing.Point(122, 107);
             this.TBBody.Name = "TBBody";
-            this.TBBody.Size = new System.Drawing.Size(584, 519);
+            this.TBBody.SelectedText = "";
+            this.TBBody.Size = new System.Drawing.Size(582, 519);
             this.TBBody.TabIndex = 5;
             // 
             // UCTestScript
@@ -113,6 +115,6 @@
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.NumericUpDown NUDNumber;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.TextBox TBBody;
+        private EditTextBox TBBody;
     }
 }
