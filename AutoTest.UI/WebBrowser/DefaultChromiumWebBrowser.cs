@@ -343,6 +343,7 @@ namespace AutoTest.UI.WebBrowser
                     Thread.Sleep(100);
                     if (tryTimes++ > 30)
                     {
+                        OnMsgPublished?.Invoke("timeout:isInit");
                         throw new TimeoutException("isInit");
                     }
                 }
@@ -389,7 +390,24 @@ namespace AutoTest.UI.WebBrowser
 
                 if (webTask.GetNext() != null)
                 {
-                    webTaskList.Enqueue(webTask.GetNext());
+                    webTaskList.ToList().Insert(0,webTask.GetNext());
+
+                    List<IWebTask> list = new List<IWebTask>();
+                    list.Add(webTask.GetNext());
+                    IWebTask webTask1 = null;
+                    while (true)
+                    {
+                        if(!webTaskList.TryDequeue(out webTask1))
+                        {
+                            break;
+                        }
+                        list.Add(webTask1);
+                    }
+
+                    foreach(var item in list)
+                    {
+                        webTaskList.Enqueue(item);
+                    }
                 }
                 
             }

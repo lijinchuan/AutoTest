@@ -33,7 +33,10 @@ namespace AutoTest.UI.UC
         public async Task RunTest(IWebTask webTask)
         {
             this.webView.AddTask(webTask);
-            await this.webView.RunTask();
+            new Action(() =>
+            {
+                this.webView.RunTask();
+            }).BeginInvoke(null, null);
         }
 
         private void LoadWebBrowser()

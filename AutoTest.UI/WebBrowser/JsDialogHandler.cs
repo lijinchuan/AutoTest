@@ -1,4 +1,5 @@
-﻿using CefSharp;
+﻿using AutoTest.UI.SubForm;
+using CefSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,10 +16,14 @@ namespace AutoTest.UI.WebBrowser
             switch (dialogType)
             {
                 case CefSharp.CefJsDialogType.Alert:
-                    //MessageBox.Show(messageText, "提示");
-                    callback.Continue(true, string.Empty);
-                    suppressMessage = false;
-                    return false;
+                    {
+                        //MessageBox.Show(messageText, "提示");
+                        
+                        new AlertDlg(originUrl, messageText,null).ShowDialog();
+                        callback.Continue(true, string.Empty);
+                        suppressMessage = false;
+                        return false;
+                    }
                 case CefSharp.CefJsDialogType.Confirm:
                     var dr = MessageBox.Show(messageText, "提示", MessageBoxButtons.YesNo);
                     if (dr == DialogResult.Yes)
