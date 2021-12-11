@@ -14,6 +14,11 @@ namespace AutoTest.UI.WebBrowser
                 script.src = ""https://code.jquery.com/jquery-1.12.4.min.js"";//script.src=""jquery-1.12.4.min.js"";
                 document.getElementsByTagName('head')[0].appendChild(script);}";
 
+        private static string REGISTERREMOTESCRIPTCODE = @"var script = document.createElement(""script"");
+                script.type = ""text/javascript"";
+                script.src = ""{0}"";
+                document.getElementsByTagName('head')[0].appendChild(script);";
+
         private const string ADDEVALFUNCTIONCODE = @"var script = document.createElement(""script"");
                 script.type = ""text/javascript"";
                 script.text = ""function _$eval(code) { eval('_r_='+code); return _r_;}"";
@@ -78,6 +83,14 @@ namespace AutoTest.UI.WebBrowser
         public bool AddCookeManagerFunction(IBrowser browser, IFrame frame)
         {
             var resp = browser.MainFrame.EvaluateScriptAsync(ADDCOOKIEMANAGERFUNCTION).Result;
+
+            return resp.Success;
+        }
+
+        public bool RegisterRomoteScript(IBrowser browser,IFrame frame,string url)
+        {
+            var code = string.Format(REGISTERREMOTESCRIPTCODE, url);
+            var resp = browser.MainFrame.EvaluateScriptAsync(code).Result;
 
             return resp.Success;
         }

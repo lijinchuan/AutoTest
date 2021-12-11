@@ -433,6 +433,7 @@ namespace AutoTest.UI.UC
                         }
                     case "运行测试":
                         {
+                            var testSource = FindParentNode<TestSource>(selnode);
                             var testPage = FindParentNode<TestPage>(selnode);
                             var testSite=FindParentNode<TestSite>(selnode);
                             var testCase = FindParentNode<TestCase>(selnode);
@@ -450,7 +451,10 @@ namespace AutoTest.UI.UC
 
                             LJC.FrameWorkV3.Comm.TaskHelper.SetInterval(1000, () =>
                             {
-                                this.BeginInvoke(new Action(() => testPanel.RunTest(new RunTestTask(testCase.CaseName, false, testSite, testLogin, testPage, testCase, ep.env, ep.envParams))));
+                                var globalScripts= BigEntityTableEngine.LocalEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == testSource.Id && s.SiteId == 0).ToList();
+                                var siteScripts = BigEntityTableEngine.LocalEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == testSource.Id && s.SiteId == testSite.Id).ToList();
+
+                                this.BeginInvoke(new Action(() => testPanel.RunTest(new RunTestTask(testCase.CaseName, false, testSite, testLogin, testPage, testCase, ep.env, ep.envParams, globalScripts, siteScripts))));
                                 return true;
                             }, runintime: false);
                             

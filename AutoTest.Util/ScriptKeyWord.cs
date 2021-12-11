@@ -80,29 +80,36 @@ namespace AutoTest.Util
 
             KeyWordDic.Add(new ScriptKeyWord
             {
+                KeyWord = "Bag",
+                Desc = "页面用户自定义变量:$VewBag.Bag,object",
+                HighColor = Color.Green
+            });
+
+            KeyWordDic.Add(new ScriptKeyWord
+            {
                 KeyWord = "WebRequestDatas",
-                Desc = "网络数据，$VewBag.WebRequestDatas",
+                Desc = "网络数据，$VewBag.WebRequestDatas,Array",
                 HighColor = Color.Green
             });
 
             KeyWordDic.Add(new ScriptKeyWord
             {
                 KeyWord = "ResponseContent",
-                Desc = "网络数据响应内容，$VewBag.WebRequestDatas[].ResponseContent",
+                Desc = "网络数据响应内容，$VewBag.WebRequestDatas[].ResponseContent,string",
                 HighColor = Color.Green
             });
 
             KeyWordDic.Add(new ScriptKeyWord
             {
                 KeyWord = "Url",
-                Desc = "网络请求地址，$VewBag.WebRequestDatas[].Url",
+                Desc = "网络请求地址，$VewBag.WebRequestDatas[].Url,string",
                 HighColor = Color.Green
             });
 
             KeyWordDic.Add(new ScriptKeyWord
             {
                 KeyWord = "Code",
-                Desc = "网络请求状态码，$VewBag.WebRequestDatas[].Code",
+                Desc = "网络请求状态码，$VewBag.WebRequestDatas[].Code,int",
                 HighColor = Color.Green
             });
         }

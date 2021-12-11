@@ -32,10 +32,13 @@ namespace AutoTest.UI.WebTask
         private bool _readyFlag = false;
         private TestCaseData _testCaseData;
         private List<WebEvent> webEvents = new List<WebEvent>();
+        private List<TestScript> _globScripts;
+        private List<TestScript> _siteScripts;
 
-        public RunTestTask(string taskname, bool useProxy, TestSite testSite,TestLogin testLogin,
-            TestPage testPage, TestCase testCase,TestEnv testEnv,List<TestEnvParam> testEnvParams) 
-            : base(taskname,Util.ReplaceEvnParams(testPage.Url,testEnvParams), useProxy, false)
+        public RunTestTask(string taskname, bool useProxy, TestSite testSite, TestLogin testLogin,
+            TestPage testPage, TestCase testCase, TestEnv testEnv, List<TestEnvParam> testEnvParams,
+            List<TestScript> globScripts, List<TestScript> siteScripts)
+            : base(taskname, Util.ReplaceEvnParams(testPage.Url, testEnvParams), useProxy, false)
         {
 
             eventListener = new TestEventListener();
@@ -51,7 +54,9 @@ namespace AutoTest.UI.WebTask
             _testEnv = testEnv;
             _testEnvParams = testEnvParams;
             _testLogin = testLogin;
-            _testCaseData = BigEntityTableEngine.LocalEngine.Find<TestCaseData>(nameof(TestCaseData), nameof(TestCaseData.TestCaseId), new object[] { _testCase.Id}).FirstOrDefault();
+            _testCaseData = BigEntityTableEngine.LocalEngine.Find<TestCaseData>(nameof(TestCaseData), nameof(TestCaseData.TestCaseId), new object[] { _testCase.Id }).FirstOrDefault();
+            _globScripts = globScripts;
+            _siteScripts = siteScripts;
         }
 
         public override void DocumentCompletedHandler(IBrowser browser, IFrame frame, List<Cookie> cookies)
@@ -81,6 +86,23 @@ namespace AutoTest.UI.WebTask
             return GetTaskName();
         }
 
+        private void RegistTestScript(IBrowser browser, IFrame frame, TestScript testScript)
+        {
+            if (!testScript.Enable || string.IsNullOrWhiteSpace(testScript.Body))
+            {
+                return;
+            }
+
+            if (Regex.Match(testScript.Body.TrimStart(), "^(https?:|//)", RegexOptions.IgnoreCase).Success)
+            {
+                webBrowserTool.RegisterRomoteScript(browser, frame, testScript.Body.TrimStart());
+            }
+            else
+            {
+                webBrowserTool.ExecuteScript(browser, frame, testScript.Body);
+            }
+        }
+
         private void PrepareTest(IBrowser browser, IFrame frame,object userData)
         {
             if (!string.IsNullOrWhiteSpace(_testCase.TestCode) || !string.IsNullOrWhiteSpace(_testCase.ValidCode))
@@ -89,6 +111,21 @@ namespace AutoTest.UI.WebTask
                 webBrowserTool.AddJqueryLib(browser, frame);
 
                 //注入工具包
+                if (_globScripts != null && _globScripts.Count > 0)
+                {
+                    foreach(var s in _globScripts.OrderBy(p => p.Order))
+                    {
+                        RegistTestScript(browser, frame, s);
+                    }
+                }
+
+                if (_siteScripts != null && _siteScripts.Count > 0)
+                {
+                    foreach (var s in _siteScripts.OrderBy(p => p.Order))
+                    {
+                        RegistTestScript(browser, frame, s);
+                    }
+                }
 
                 //注入变量
                 SetVar(browser, frame, userData);
@@ -236,7 +273,7 @@ namespace AutoTest.UI.WebTask
                 {
                     flag = false;
                     var loginTask = new RunTestLoginTask(_testSite.Name + "登陆", UseProxy, _testSite, _testLogin, _testEnv, _testEnvParams);
-                    loginTask.SetNext(new RunTestTask(GetTaskName(), UseProxy, _testSite, _testLogin, _testPage, _testCase, _testEnv, _testEnvParams));
+                    loginTask.SetNext(new RunTestTask(GetTaskName(), UseProxy, _testSite, _testLogin, _testPage, _testCase, _testEnv, _testEnvParams,_globScripts,_siteScripts));
                     this.SetNext(loginTask);
                 }
             }

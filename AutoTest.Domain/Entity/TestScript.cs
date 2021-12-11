@@ -8,6 +8,8 @@ namespace AutoTest.Domain.Entity
 {
     public class TestScript
     {
+        public static readonly string Index3 = $"{nameof(SourceId)}_{nameof(SiteId)}_{nameof(ScriptName)}";
+
         public int Id
         {
             get;
