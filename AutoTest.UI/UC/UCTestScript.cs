@@ -2,23 +2,26 @@
 using AutoTest.Domain.Entity;
 using AutoTest.Domain;
 using LJC.FrameWorkV3.Data.EntityDataBase;
+using System;
 
 namespace AutoTest.UI.UC
 {
     public partial class UCTestScript : TabPage, ISaveAble
     {
         private TestScript _testScript;
+        private Action _callBack;
 
         public UCTestScript()
         {
             InitializeComponent();
         }
 
-        public UCTestScript(TestScript testScript)
+        public UCTestScript(TestScript testScript,Action callBack)
         {
             InitializeComponent();
 
             this._testScript = testScript;
+            this._callBack = callBack;
 
             this.TBName.Text = testScript.ScriptName;
             this.NUDNumber.Value = testScript.Order;
@@ -55,6 +58,8 @@ namespace AutoTest.UI.UC
                 BigEntityTableEngine.LocalEngine.Update(nameof(TestScript), _testScript);
                 Util.SendMsg(this, "更新脚本成功");
             }
+
+            _callBack?.Invoke();
         }
     }
 }

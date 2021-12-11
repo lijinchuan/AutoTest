@@ -220,7 +220,8 @@ namespace AutoTest.UI.UC
                                 var testPage = FindParentNode<TestPage>(selnode);
                                 var testCase = selnode.Tag as TestCase;
 
-                                Util.AddToMainTab(this, $"[{testSite.Name}]-{testPage.Name}-{testCase.CaseName}", new UC.UCAddCaseParam(testSite, testPage, testCase));
+                                Util.AddToMainTab(this, $"[{testSite.Name}]-{testPage.Name}-{testCase.CaseName}", new UC.UCAddCaseParam(testSite, testPage, testCase,
+                                    ()=>ReLoadDBObj(selnode.Parent)));
                             }
                             else if (selnode.Tag is TestPage)
                             {
@@ -262,7 +263,7 @@ namespace AutoTest.UI.UC
                                 var testResource = FindParentNode<TestSource>(selnode);
                                 var testSite = FindParentNode<TestSite>(selnode);
                                 Util.AddToMainTab(this, $"{testResource.SourceName}_{testSite?.Name}_{testScript.ScriptName}(脚本)",
-                                        new UC.UCTestScript(testScript));
+                                        new UC.UCTestScript(testScript,()=>ReLoadDBObj(selnode.Parent)));
                             }
                             break;
                         }
@@ -427,7 +428,8 @@ namespace AutoTest.UI.UC
                             if (step1dlg.ShowDialog() == DialogResult.OK)
                             {
                                 ReLoadDBObj(selnode);
-                                Util.AddToMainTab(this, $"[{testSite.Name}]-{testPage.Name}-{step1dlg.TestCase.CaseName}", new UC.UCAddCaseParam(testSite, testPage, step1dlg.TestCase));
+                                Util.AddToMainTab(this, $"[{testSite.Name}]-{testPage.Name}-{step1dlg.TestCase.CaseName}", new UC.UCAddCaseParam(testSite, testPage, step1dlg.TestCase,
+                                    () => ReLoadDBObj(selnode.Parent)));
                             }
                             break;
                         }
@@ -540,7 +542,7 @@ namespace AutoTest.UI.UC
                                     BigEntityTableEngine.LocalEngine.Insert(nameof(TestScript), testScript);
 
                                     Util.AddToMainTab(this, $"{testResource.SourceName}_{testSite?.Name}_{testScript.ScriptName}(脚本)",
-                                        new UC.UCTestScript(testScript));
+                                        new UC.UCTestScript(testScript, () => ReLoadDBObj(selnode.Parent)));
                                 }
                             }
                             break;

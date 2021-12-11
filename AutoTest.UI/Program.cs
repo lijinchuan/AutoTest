@@ -25,8 +25,24 @@ namespace AutoTest.UI
 
             BigEntityTableEngine.LocalEngine.CreateTable<TestPage>(p => p.Id, b => b.AddIndex(nameof(TestPage.SiteId), c => c.Asc(m => m.SiteId)));
 
-            BigEntityTableEngine.LocalEngine.CreateTable<TestCase>(p => p.Id, b => b.AddIndex(nameof(TestCase.PageId), c => c.Asc(m => m.PageId)));
-            
+            //BigEntityTableEngine.LocalEngine.CreateTable<TestCase>(p => p.Id, b => b.AddIndex(nameof(TestCase.PageId), c => c.Asc(m => m.PageId)));
+            BigEntityTableEngine.LocalEngine.Upgrade<AutoTest.Domain.Entity.OldVerion.TestCase, TestCase>(nameof(TestCase),
+                f => new TestCase
+                {
+                    BodyDataType=f.BodyDataType,
+                    AuthType=f.AuthType,
+                    ApiEnvId=f.ApiEnvId,
+                    ApplicationType=f.ApplicationType,
+                    CaseName=f.CaseName,
+                    Desc=f.Desc,
+                    Order=f.Order,
+                    PageId=f.PageId,
+                    TestCode=f.TestCode,
+                    Url=string.Empty,
+                    ValidCode=f.ValidCode,
+                    WebMethod=f.WebMethod
+                }, nameof(TestCase.Id), true, new IndexBuilder<TestCase>().AddIndex(nameof(TestCase.PageId), c => c.Asc(m => m.PageId)).Build());
+
             BigEntityTableEngine.LocalEngine.CreateTable<TestEnv>(p => p.Id, b => b.AddIndex(nameof(TestEnv.SiteId), p => p.Asc(q => q.SiteId)));
             BigEntityTableEngine.LocalEngine.CreateTable<TestEnvParam>(p => p.Id, p => p.AddIndex(nameof(TestEnvParam.SiteId), q => q.Asc(m => m.SiteId))
             .AddIndex("SiteId_EnvId", q => q.Asc(m => m.SiteId).Asc(m => m.EnvId))

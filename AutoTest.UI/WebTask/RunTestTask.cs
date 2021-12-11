@@ -38,7 +38,8 @@ namespace AutoTest.UI.WebTask
         public RunTestTask(string taskname, bool useProxy, TestSite testSite, TestLogin testLogin,
             TestPage testPage, TestCase testCase, TestEnv testEnv, List<TestEnvParam> testEnvParams,
             List<TestScript> globScripts, List<TestScript> siteScripts)
-            : base(taskname, Util.ReplaceEvnParams(testPage.Url, testEnvParams), useProxy, false)
+            : base(taskname, Util.ReplaceEvnParams(string.IsNullOrWhiteSpace(testCase.Url)?testPage.Url:testCase.Url, testEnvParams),
+                  useProxy, false)
         {
 
             eventListener = new TestEventListener();
@@ -188,6 +189,7 @@ namespace AutoTest.UI.WebTask
                         {
                             if (tryCount++ > 30)
                             {
+                                PublishMsg("超时");
                                 return await Task.FromResult(0);
                             }
                             Thread.Sleep(1000);
@@ -199,8 +201,10 @@ namespace AutoTest.UI.WebTask
                     }
                     catch (Exception ex)
                     {
+                        PublishMsg(ex.Message);
                         if (tryCount++ > 30)
                         {
+                            PublishMsg("超时");
                             return await Task.FromResult(0);
                         }
                         Thread.Sleep(1000);

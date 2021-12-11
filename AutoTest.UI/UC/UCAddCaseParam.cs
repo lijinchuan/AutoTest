@@ -53,6 +53,8 @@ namespace AutoTest.UI.UC
 
         private bool fromlogflag = false;
 
+        private Action _callBack;
+
         public UCAddCaseParam()
         {
             InitializeComponent();
@@ -61,7 +63,7 @@ namespace AutoTest.UI.UC
             rawTextBox.ScrollBars = ScrollBars.Both;
         }
 
-        public UCAddCaseParam(TestSite testSite,TestPage testPage,TestCase testCase)
+        public UCAddCaseParam(TestSite testSite,TestPage testPage,TestCase testCase,Action callBack)
         {
             InitializeComponent();
             //rawTextBox.TextChanged += RawTextBox_TextChanged;
@@ -71,6 +73,7 @@ namespace AutoTest.UI.UC
             _testSite = testSite;
             _testPage = testPage;
             _testCase = testCase;
+            _callBack = callBack;
 
             Bind();
             BindData();
@@ -844,7 +847,14 @@ namespace AutoTest.UI.UC
                 this.CBWebMethod.SelectedItem = _testCase.WebMethod.ToString();
                 this.CBApplicationType.SelectedItem = _testCase.ApplicationType.ToString();
                 this.CBAuthType.SelectedItem = _testCase.AuthType.ToString();
-                this.TBUrl.Text = _testPage.Url;
+                if (string.IsNullOrWhiteSpace(_testCase.Url))
+                {
+                    this.TBUrl.Text = _testPage.Url;
+                }
+                else
+                {
+                    this.TBUrl.Text = _testCase.Url;
+                }
                 this.TBName.Text = _testCase.CaseName;
                 this.NUDOrder.Value = _testCase.Order;
                 this.TBValidCode.Text = _testCase.ValidCode;
@@ -1254,6 +1264,15 @@ namespace AutoTest.UI.UC
                     _testCase.CaseName = TBName.Text.Trim();
                 }
 
+                if (TBUrl.Text != _testPage.Url)
+                {
+                    _testCase.Url = TBUrl.Text;
+                }
+                else
+                {
+                    _testCase.Url = string.Empty;
+                }
+
                 if (_testCase.Order != (int)NUDOrder.Value)
                 {
                     ischanged = true;
@@ -1400,6 +1419,11 @@ namespace AutoTest.UI.UC
                         BigEntityTableEngine.LocalEngine.Update<TestCaseData>(nameof(TestCaseData), this._testCaseData);
                         Util.SendMsg(this, "接口资源已更新");
                     }
+                }
+
+                if (ischanged || force)
+                {
+                    _callBack?.Invoke();
                 }
 
             }

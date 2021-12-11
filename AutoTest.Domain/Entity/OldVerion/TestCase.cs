@@ -4,12 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AutoTest.Domain.Entity
+namespace AutoTest.Domain.Entity.OldVerion
 {
     [Serializable]
-    /// <summary>
-    /// 测试实例
-    /// </summary>
     public class TestCase
     {
         public int Id
@@ -19,12 +16,6 @@ namespace AutoTest.Domain.Entity
         }
 
         public int PageId
-        {
-            get;
-            set;
-        }
-
-        public string Url
         {
             get;
             set;

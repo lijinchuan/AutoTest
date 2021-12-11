@@ -101,7 +101,8 @@ namespace AutoTest.Biz
                 });
             }
 
-            var testPageList = BigEntityTableEngine.LocalEngine.Find<TestPage>(nameof(TestPage), nameof(TestPage.SiteId), new object[] { siteId }).ToList();
+            var testPageList = BigEntityTableEngine.LocalEngine.Find<TestPage>(nameof(TestPage), nameof(TestPage.SiteId), new object[] { siteId })
+                .OrderBy(p=>p.Order).ToList();
 
             foreach (var page in testPageList)
             {
@@ -150,7 +151,8 @@ namespace AutoTest.Biz
         public static void LoadTestCase(Form parent, TreeNode pnode, int pageId)
         {
             List<TreeNode> treeNodes = new List<TreeNode>();
-            var testCaseList = BigEntityTableEngine.LocalEngine.Find<TestCase>(nameof(TestCase), nameof(TestCase.PageId), new object[] { pageId }).ToList();
+            var testCaseList = BigEntityTableEngine.LocalEngine.Find<TestCase>(nameof(TestCase), nameof(TestCase.PageId), new object[] { pageId })
+                .OrderBy(p => p.Order).ToList();
 
             foreach (var @case in testCaseList)
             {

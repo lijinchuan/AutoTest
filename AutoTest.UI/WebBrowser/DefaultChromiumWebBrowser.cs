@@ -130,6 +130,10 @@ namespace AutoTest.UI.WebBrowser
             {
                 _ = new Action(() =>
                 {
+                    while (IsLoading)
+                    {
+                        Thread.Sleep(10);
+                    }
                     DocumentLoadCompleted(e.Browser, e.Frame, GetCookie());
                 }).BeginInvoke(null, null);
             }
@@ -298,11 +302,13 @@ namespace AutoTest.UI.WebBrowser
 
                 if (!readyResetEvent.WaitOne(60000))
                 {
+                    this.OnMsgPublished($"任务超时:{webTask.GetTaskName()}");
                     WebTask_OnTaskCompleted(webTask);
                 }
             }
             catch (Exception)
             {
+                this.OnMsgPublished($"任务出错:{webTask.GetTaskName()}");
                 WebTask_OnTaskCompleted(webTask);
                 throw;
             }

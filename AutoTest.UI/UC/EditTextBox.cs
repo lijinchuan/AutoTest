@@ -516,7 +516,7 @@ namespace AutoTest.UI.UC
             int pi = curindex - charstartindex - 1;
 
             //判断是否是注释部分
-            var nodeindex = this.RichText.Lines[currline]?.IndexOf("--");
+            var nodeindex = this.RichText.Lines[currline]?.IndexOf("//");
             if (nodeindex > -1 && pi >= nodeindex)
             {
                 start = -1;
@@ -583,7 +583,7 @@ namespace AutoTest.UI.UC
             int pi = curindex - charstartindex - 1;
 
             //判断是否是注释部分
-            var nodeindex = this.RichText.Lines[currline]?.IndexOf("--");
+            var nodeindex = this.RichText.Lines[currline]?.IndexOf("//");
             if (nodeindex > -1 && pi >= nodeindex)
             {
                 word = string.Empty;
@@ -988,7 +988,7 @@ namespace AutoTest.UI.UC
                     {
                         _markedLines.Add(l);
 
-                        var nodeindex = express.IndexOf("--");
+                        var nodeindex = express.IndexOf("//");
                         if (nodeindex > -1)
                         {
                             DataRow row = tb.NewRow();
@@ -998,7 +998,7 @@ namespace AutoTest.UI.UC
                             tb.Rows.Add(row);
                             express = express.Substring(0, nodeindex + 1);
                         }
-                        foreach (var m in this.KeyWords.MatchKeyWord(express.ToLower()))
+                        foreach (var m in this.KeyWords.MatchKeyWord(express))
                         {
                             if ((m.PostionStart == 0 || "[]{},|%#!<>:=();+-*/\r\n 　".IndexOf(express[m.PostionStart - 1]) > -1)
                                 && (m.PostionEnd == express.Length - 1 || "[]{},|%#!<>:=();+-*/\r\n 　".IndexOf(express[m.PostionEnd + 1]) > -1))
