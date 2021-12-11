@@ -140,15 +140,15 @@ namespace AutoTest.Biz
             parent.Invoke(new Action(() => { pnode.Nodes.Clear(); pnode.Nodes.AddRange(treeNodes.ToArray()); pnode.Expand(); }));
         }
 
-        public static void LoadTestCaseAsync(Form parent, TreeNode tbNode, int pageId, AsyncCallback callback, object @object)
+        public static void LoadTestCaseAsync(Form parent, TreeNode tbNode, int pageId, int envId, AsyncCallback callback, object @object)
         {
             tbNode.Nodes.Add(new TreeNode("加载中...", 3, 3));
             tbNode.Expand();
 
-            new Action<Form, TreeNode, int>(LoadTestCase).BeginInvoke(parent, tbNode, pageId, callback, @object);
+            new Action<Form, TreeNode, int, int>(LoadTestCase).BeginInvoke(parent, tbNode, pageId, envId, callback, @object);
         }
 
-        public static void LoadTestCase(Form parent, TreeNode pnode, int pageId)
+        public static void LoadTestCase(Form parent, TreeNode pnode, int pageId,int envId)
         {
             List<TreeNode> treeNodes = new List<TreeNode>();
             var testCaseList = BigEntityTableEngine.LocalEngine.Find<TestCase>(nameof(TestCase), nameof(TestCase.PageId), new object[] { pageId })
@@ -156,14 +156,26 @@ namespace AutoTest.Biz
 
             foreach (var @case in testCaseList)
             {
+                var imageIndex = 18;
+
+                if (envId != 0)
+                {
+                    var testResult = BigEntityTableEngine.LocalEngine.Scan<TestResult>(nameof(TestResult), TestResult.Index_TestCaseId_EnvId_TestDate,
+                        new object[] { @case.Id, envId, DateTime.Now }, new object[] { @case.Id, envId, DateTime.MinValue }, 1, 1).FirstOrDefault();
+
+                    if (testResult != null)
+                    {
+                        imageIndex = testResult.Success ? 19 : 20;
+                    }
+                }
                 treeNodes.Add(new TreeNodeEx
                 {
                     Text = @case.CaseName,
                     Tag = @case,
-                    ImageIndex = 4,
-                    SelectedImageIndex = 4,
-                    CollapseImgIndex = 4,
-                    ExpandImgIndex = 4
+                    ImageIndex = imageIndex,
+                    SelectedImageIndex = imageIndex,
+                    CollapseImgIndex = imageIndex,
+                    ExpandImgIndex = imageIndex
                 });
             }
 

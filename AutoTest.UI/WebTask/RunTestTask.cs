@@ -19,6 +19,8 @@ namespace AutoTest.UI.WebTask
 {
     public class RunTestTask : WebTask
     {
+        private const int TestTimeOut = 60000;
+
         private readonly IEventListener eventListener = null;
         private readonly RequestAutoResetEvent pageRequestAutoResetEvent = null;
         private readonly IMapper mapper = null;
@@ -34,6 +36,7 @@ namespace AutoTest.UI.WebTask
         private List<WebEvent> webEvents = new List<WebEvent>();
         private List<TestScript> _globScripts;
         private List<TestScript> _siteScripts;
+        private TestResult _testResult;
 
         public RunTestTask(string taskname, bool useProxy, TestSite testSite, TestLogin testLogin,
             TestPage testPage, TestCase testCase, TestEnv testEnv, List<TestEnvParam> testEnvParams,
@@ -58,6 +61,16 @@ namespace AutoTest.UI.WebTask
             _testCaseData = BigEntityTableEngine.LocalEngine.Find<TestCaseData>(nameof(TestCaseData), nameof(TestCaseData.TestCaseId), new object[] { _testCase.Id }).FirstOrDefault();
             _globScripts = globScripts;
             _siteScripts = siteScripts;
+
+            _testResult = new TestResult
+            {
+                EnvId=_testEnv.Id,
+                TestCaseId=_testCase.Id,
+                Success=false,
+                TestStartDate=DateTime.Now,
+                TestEndDate=DateTime.Now,
+                IsTimeOut=false
+            };
         }
 
         public override void DocumentCompletedHandler(IBrowser browser, IFrame frame, List<Cookie> cookies)
@@ -172,9 +185,9 @@ namespace AutoTest.UI.WebTask
 
         private async Task<int> RunTestCode(IBrowser browser, IFrame frame)
         {
-            //
 
             dynamic bag = null;
+            int sleepMills = 1000;
             if (!string.IsNullOrWhiteSpace(_testCase.TestCode))
             {
                 var tryCount = 0;
@@ -187,12 +200,12 @@ namespace AutoTest.UI.WebTask
                         var ret = webBrowserTool.ExecutePromiseScript(browser, frame, Util.ReplaceEvnParams(_testCase.TestCode, _testEnvParams));
                         if (object.Equals(ret, false))
                         {
-                            if (tryCount++ > 30)
+                            if (tryCount++ >= TestTimeOut / sleepMills)
                             {
                                 PublishMsg("超时");
                                 return await Task.FromResult(0);
                             }
-                            Thread.Sleep(1000);
+                            Thread.Sleep(sleepMills);
                         }
                         else
                         {
@@ -202,12 +215,12 @@ namespace AutoTest.UI.WebTask
                     catch (Exception ex)
                     {
                         PublishMsg(ex.Message);
-                        if (tryCount++ > 30)
+                        if (tryCount++ > TestTimeOut / sleepMills)
                         {
                             PublishMsg("超时");
                             return await Task.FromResult(0);
                         }
-                        Thread.Sleep(1000);
+                        Thread.Sleep(sleepMills);
                     }
                     finally
                     {
@@ -225,44 +238,74 @@ namespace AutoTest.UI.WebTask
         {
             dynamic bag = null;
             int validResult = 0;
-            if (!string.IsNullOrWhiteSpace(_testCase.ValidCode))
+            int sleepMills = 1000;
+            try
             {
-                var tryCount = 0;
-
-                while (true)
+                if (!string.IsNullOrWhiteSpace(_testCase.ValidCode))
                 {
-                    try
+                    var tryCount = 0;
+
+                    while (true)
                     {
-                        PrepareTest(browser, frame, bag);
-                        var ret = webBrowserTool.TryExecuteScript(browser, frame, Util.ReplaceEvnParams(_testCase.ValidCode, _testEnvParams));
-                        if (ret == null)
+                        try
                         {
-                            if (tryCount++ > 30)
+                            PrepareTest(browser, frame, bag);
+                            var ret = webBrowserTool.TryExecuteScript(browser, frame, Util.ReplaceEvnParams(_testCase.ValidCode, _testEnvParams));
+                            if (ret == null)
                             {
+                                if (tryCount++ >= TestTimeOut / sleepMills)
+                                {
+                                    _testResult.IsTimeOut = true;
+                                    _testResult.FailMsg = "检查结果一直为NULL";
+                                    return await Task.FromResult(0);
+                                }
+                                Thread.Sleep(sleepMills);
+                            }
+                            else
+                            {
+                                validResult = object.Equals(ret, true) ? 1 : 0;
+                                _testResult.Success = object.Equals(ret, true);
+                                _testResult.FailMsg = "检查结果返回true/false";
+                                break;
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            if (tryCount++ >= TestTimeOut / sleepMills)
+                            {
+                                _testResult.IsTimeOut = true;
+                                _testResult.FailMsg = "检查出错：" + ex.Message;
                                 return await Task.FromResult(0);
                             }
-                            Thread.Sleep(1000);
+                            Thread.Sleep(sleepMills);
                         }
-                        else
+                        finally
                         {
-                            validResult = object.Equals(ret, true) ? 1 : 0;
-                            break;
+                            bag = GetUserVarData(browser, frame);
                         }
-                    }
-                    catch (Exception ex)
-                    {
-                        if (tryCount++ > 30)
-                        {
-                            return await Task.FromResult(0);
-                        }
-                        Thread.Sleep(1000);
-                    }
-                    finally
-                    {
-                        bag = GetUserVarData(browser, frame);
                     }
                 }
-
+                else
+                {
+                    _testResult.Success = true;
+                    _testResult.FailMsg = "没有验证脚本，默认为成功";
+                }
+            }
+            catch (Exception ex)
+            {
+                _testResult.Success = false;
+                _testResult.FailMsg = ex.Message;
+                PublishMsg(ex.Message);
+                throw ex;
+            }
+            finally
+            {
+                if (bag != null)
+                {
+                    _testResult.ResultContent = Newtonsoft.Json.JsonConvert.SerializeObject(bag);
+                }
+                _testResult.TestEndDate = DateTime.Now;
+                BigEntityTableEngine.LocalEngine.Insert(nameof(TestResult), _testResult);
             }
             return await Task.FromResult(validResult);
         }
@@ -290,6 +333,7 @@ namespace AutoTest.UI.WebTask
             {
                 return await Task.FromResult(0);
             }
+
             var ret = 0;
             try
             {

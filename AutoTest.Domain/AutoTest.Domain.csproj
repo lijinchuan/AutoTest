@@ -61,8 +61,10 @@
     <Compile Include="Entity\TestEnvParam.cs" />
     <Compile Include="Entity\TestLogin.cs" />
     <Compile Include="Entity\TestPage.cs" />
+    <Compile Include="Entity\TestResult.cs" />
     <Compile Include="Entity\TestScript.cs" />
     <Compile Include="Entity\TestSite.cs" />
+    <Compile Include="Entity\TestTask.cs" />
     <Compile Include="Entity\WebMethod.cs" />
     <Compile Include="INodeContents.cs" />
     <Compile Include="Model\WebRequestData.cs" />

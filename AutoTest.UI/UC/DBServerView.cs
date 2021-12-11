@@ -42,6 +42,9 @@ namespace AutoTest.UI.UC
             tv_DBServers.ImageList.Images.Add("USERLOGIN", Resources.Resource1.user_earth);
             tv_DBServers.ImageList.Images.Add("FORDERSELECTED", Resources.Resource1.folder_star);//16
             tv_DBServers.ImageList.Images.Add("SCRIPTCODE", Resources.Resource1.script_code);
+            tv_DBServers.ImageList.Images.Add("bullet_white", Resources.Resource1.bullet_white);
+            tv_DBServers.ImageList.Images.Add("bullet_green", Resources.Resource1.bullet_green);
+            tv_DBServers.ImageList.Images.Add("bullet_red", Resources.Resource1.bullet_red);
 
             tv_DBServers.Nodes.Add(new TreeNodeEx("资源管理器", 0, 1));
             tv_DBServers.BeforeExpand += Tv_DBServers_BeforeExpand;
@@ -152,7 +155,13 @@ namespace AutoTest.UI.UC
             else if (selNode.Tag is TestPage)
             {
                 var pid = (selNode.Tag as TestPage).Id;
-                Biz.UILoadHelper.LoadTestCaseAsync(this.ParentForm, selNode, pid, callback, selNode);
+                var envData= GetCurrEnvData(selNode);
+                var envId = 0;
+                if (envData.env != null)
+                {
+                    envId = envData.env.Id;
+                }
+                Biz.UILoadHelper.LoadTestCaseAsync(this.ParentForm, selNode, pid, envId, callback, selNode);
             }
             else if (selNode.Tag is INodeContents && (selNode.Tag as INodeContents).GetNodeContentType() == NodeContentType.ENVPARENT)
             {
@@ -190,6 +199,26 @@ namespace AutoTest.UI.UC
                 testEnvParams = BigEntityTableEngine.LocalEngine.Find<TestEnvParam>(nameof(TestEnvParam), "SiteId_EnvId", new object[] { testSite.Id, currentEnv.Id }).ToList();
             }
             return (currentEnv, testEnvParams);
+        }
+
+        private List<TreeNode> GetTestCaseTaskList(TreeNode node)
+        {
+            var list = new List<TreeNode>();
+
+            if(node.Tag is TestCase)
+            {
+                list.Add(node);
+            }
+
+            if (node.Nodes.Count > 0)
+            {
+                foreach(TreeNode n in node.Nodes)
+                {
+                    list.AddRange(GetTestCaseTaskList(n));
+                }
+            }
+
+            return list;
         }
 
         void OnMenuStrip_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -435,31 +464,48 @@ namespace AutoTest.UI.UC
                         }
                     case "运行测试":
                         {
-                            var testSource = FindParentNode<TestSource>(selnode);
-                            var testPage = FindParentNode<TestPage>(selnode);
-                            var testSite=FindParentNode<TestSite>(selnode);
-                            var testCase = FindParentNode<TestCase>(selnode);
-                            var testLogin = BigEntityTableEngine.LocalEngine.Find<TestLogin>(nameof(TestLogin), nameof(TestLogin.SiteId), new object[] { testSite.Id }).FirstOrDefault();
+                            var testCaseNodeList = GetTestCaseTaskList(selnode);
+                            var testTaskList = new List<TestTask>();
+                            foreach (var node in testCaseNodeList)
+                            {
+                                var testSource = FindParentNode<TestSource>(node);
+                                var testPage = FindParentNode<TestPage>(node);
+                                var testSite = FindParentNode<TestSite>(node);
+                                var testCase = FindParentNode<TestCase>(node);
+                                var testLogin = BigEntityTableEngine.LocalEngine.Find<TestLogin>(nameof(TestLogin), nameof(TestLogin.SiteId), new object[] { testSite.Id }).FirstOrDefault();
+                                var globalScripts = BigEntityTableEngine.LocalEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == testSource.Id && s.SiteId == 0).ToList();
+                                var siteScripts = BigEntityTableEngine.LocalEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == testSource.Id && s.SiteId == testSite.Id).ToList();
+                                var ep = GetCurrEnvData(node);
+                                testTaskList.Add(new TestTask
+                                {
+                                    TestSource = testSource,
+                                    SiteTestScripts = siteScripts,
+                                    GlobalTestScripts = globalScripts,
+                                    TestCase = testCase,
+                                    TestLogin = testLogin,
+                                    TestPage = testPage,
+                                    TestSite = testSite,
+                                    TestEnv = ep.env,
+                                    TestEnvParams = ep.envParams
+                                });
+                            }
 
-                            var testPanel = (TestPanel)Util.TryAddToMainTab(this, $"{testSite.Name}_", () =>
-                              {
-                                  var panel = new UC.TestPanel(testSite.Name);
-                                  panel.Load();
+                            var testPanel = (TestPanel)Util.TryAddToMainTab(this, $"执行测试", () =>
+                            {
+                                var panel = new UC.TestPanel("执行测试");
+                                panel.Load();
 
-                                  return panel;
-                              }, typeof(TestPanel));
+                                return panel;
+                            }, typeof(TestPanel));
 
-                            var ep = GetCurrEnvData(selnode);
 
                             LJC.FrameWorkV3.Comm.TaskHelper.SetInterval(1000, () =>
                             {
-                                var globalScripts= BigEntityTableEngine.LocalEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == testSource.Id && s.SiteId == 0).ToList();
-                                var siteScripts = BigEntityTableEngine.LocalEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == testSource.Id && s.SiteId == testSite.Id).ToList();
-
-                                this.BeginInvoke(new Action(() => testPanel.RunTest(new RunTestTask(testCase.CaseName, false, testSite, testLogin, testPage, testCase, ep.env, ep.envParams, globalScripts, siteScripts))));
+                                var runTaskList = testTaskList.Select(task => new RunTestTask(task.TestCase.CaseName, false, task.TestSite, task.TestLogin, task.TestPage, task.TestCase, task.TestEnv, task.TestEnvParams, task.GlobalTestScripts, task.SiteTestScripts));
+                                this.BeginInvoke(new Action(() => testPanel.RunTest(runTaskList)));
                                 return true;
                             }, runintime: false);
-                            
+
                             break;
                         }
                     case "添加登陆页":
@@ -656,13 +702,13 @@ namespace AutoTest.UI.UC
                     切换此环境ToolStripMenuItem.Visible = false;
                 }
 
-                if(node.Tag is TestSite)
+                if (node.Tag is TestSite)
                 {
                     添加测试页面ToolStripMenuItem.Visible = true;
                     bool hasLoginPage = false;
-                    foreach(TreeNode item in node.Nodes)
+                    foreach (TreeNode item in node.Nodes)
                     {
-                        if(item.Tag is TestLogin)
+                        if (item.Tag is TestLogin)
                         {
                             hasLoginPage = true;
                             break;
@@ -675,11 +721,14 @@ namespace AutoTest.UI.UC
                     添加测试页面ToolStripMenuItem.Visible = false;
                     添加登陆页ToolStripMenuItem.Visible = false;
                 }
-                
 
-                添加测试用例ToolStripMenuItem.Visible= node.Tag is TestPage;
 
-                运行测试ToolStripMenuItem.Visible = node.Tag is TestCase;
+                添加测试用例ToolStripMenuItem.Visible = node.Tag is TestPage;
+
+                运行测试ToolStripMenuItem.Visible = node.Tag is TestCase
+                    ||node.Tag is TestPage
+                    ||node.Tag is TestSite
+                    ||node.Tag is TestSource;
 
                 登陆ToolStripMenuItem.Visible = node.Tag is TestLogin;
 

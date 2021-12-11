@@ -30,6 +30,18 @@ namespace AutoTest.UI.UC
             _name = name;
         }
 
+        public async Task RunTest(IEnumerable<IWebTask> webTasks)
+        {
+            foreach (var webTask in webTasks)
+            {
+                this.webView.AddTask(webTask);
+            }
+            new Action(() =>
+            {
+                this.webView.RunTask();
+            }).BeginInvoke(null, null);
+        }
+
         public async Task RunTest(IWebTask webTask)
         {
             this.webView.AddTask(webTask);

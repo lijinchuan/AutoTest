@@ -756,6 +756,7 @@
     <Content Include="marked.min.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\bullet_white.png" />
     <Content Include="Resources\control_add.png" />
     <Content Include="Resources\control_remove.png" />
     <Content Include="Resources\date.png" />
