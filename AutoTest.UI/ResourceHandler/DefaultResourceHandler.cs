@@ -56,7 +56,9 @@ namespace AutoTest.UI.ResourceHandler
                             SourceUrl = request.Url,
                             DataType = response.MimeType,
                             ResponseChartSet =string.IsNullOrWhiteSpace(response.Charset)?"utf-8": response.Charset,
-                            StatusCode = response.StatusCode
+                            StatusCode = response.StatusCode,
+                            Browser=browser,
+                            Frame=frame
                         };
 
                         webevent.Content = filter.GetContent(webevent);

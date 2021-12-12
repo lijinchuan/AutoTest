@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CefSharp;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -60,6 +61,18 @@ namespace AutoTest.UI.EventListener
         /// 响应代码
         /// </summary>
         public int StatusCode
+        {
+            get;
+            set;
+        }
+
+        public IBrowser Browser
+        {
+            get;
+            set;
+        }
+
+        public IFrame Frame
         {
             get;
             set;

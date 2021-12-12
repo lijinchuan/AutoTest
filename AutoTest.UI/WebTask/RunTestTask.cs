@@ -37,10 +37,12 @@ namespace AutoTest.UI.WebTask
         private List<TestScript> _globScripts;
         private List<TestScript> _siteScripts;
         private TestResult _testResult;
+        private dynamic bag;
+        private event Action<TestResult> _notify;
 
         public RunTestTask(string taskname, bool useProxy, TestSite testSite, TestLogin testLogin,
             TestPage testPage, TestCase testCase, TestEnv testEnv, List<TestEnvParam> testEnvParams,
-            List<TestScript> globScripts, List<TestScript> siteScripts)
+            List<TestScript> globScripts, List<TestScript> siteScripts,Action<TestResult> notify)
             : base(taskname, Util.ReplaceEvnParams(string.IsNullOrWhiteSpace(testCase.Url)?testPage.Url:testCase.Url, testEnvParams),
                   useProxy, false)
         {
@@ -61,6 +63,7 @@ namespace AutoTest.UI.WebTask
             _testCaseData = BigEntityTableEngine.LocalEngine.Find<TestCaseData>(nameof(TestCaseData), nameof(TestCaseData.TestCaseId), new object[] { _testCase.Id }).FirstOrDefault();
             _globScripts = globScripts;
             _siteScripts = siteScripts;
+            _notify = notify;
 
             _testResult = new TestResult
             {
@@ -176,7 +179,7 @@ namespace AutoTest.UI.WebTask
 
             var code = $"var {WebVar.VarName}={WebVar.VarName}||{{}};\n";
 
-            code += $"{WebVar.VarName}.{nameof(WebVar.Bag)}={WebVar.VarName}.{nameof(WebVar.Bag)}||{Newtonsoft.Json.JsonConvert.SerializeObject(userData)}\n";
+            code += $"{WebVar.VarName}.{nameof(WebVar.Bag)}={Newtonsoft.Json.JsonConvert.SerializeObject(userData)}\n";
 
             code += $"{WebVar.VarName}.{nameof(WebVar.WebRequestDatas)}={Newtonsoft.Json.JsonConvert.SerializeObject(webRequestDatas)}\n";
 
@@ -185,8 +188,6 @@ namespace AutoTest.UI.WebTask
 
         private async Task<int> RunTestCode(IBrowser browser, IFrame frame)
         {
-
-            dynamic bag = null;
             int sleepMills = 1000;
             if (!string.IsNullOrWhiteSpace(_testCase.TestCode))
             {
@@ -224,7 +225,12 @@ namespace AutoTest.UI.WebTask
                     }
                     finally
                     {
-                        bag = GetUserVarData(browser, frame);
+                        //页面跳走了，可能拿不到变量
+                        var userData = GetUserVarData(browser, frame);
+                        if (userData != null)
+                        {
+                            bag = userData;
+                        }
                     }
                 }
 
@@ -236,7 +242,6 @@ namespace AutoTest.UI.WebTask
 
         private async Task<int> RunValidCode(IBrowser browser, IFrame frame)
         {
-            dynamic bag = null;
             int validResult = 0;
             int sleepMills = 1000;
             try
@@ -281,7 +286,11 @@ namespace AutoTest.UI.WebTask
                         }
                         finally
                         {
-                            bag = GetUserVarData(browser, frame);
+                            var userData = GetUserVarData(browser, frame);
+                            if (userData != null)
+                            {
+                                bag = userData;
+                            }
                         }
                     }
                 }
@@ -306,6 +315,8 @@ namespace AutoTest.UI.WebTask
                 }
                 _testResult.TestEndDate = DateTime.Now;
                 BigEntityTableEngine.LocalEngine.Insert(nameof(TestResult), _testResult);
+
+                _notify?.Invoke(_testResult);
             }
             return await Task.FromResult(validResult);
         }
@@ -320,7 +331,7 @@ namespace AutoTest.UI.WebTask
                 {
                     flag = false;
                     var loginTask = new RunTestLoginTask(_testSite.Name + "登陆", UseProxy, _testSite, _testLogin, _testEnv, _testEnvParams);
-                    loginTask.SetNext(new RunTestTask(GetTaskName(), UseProxy, _testSite, _testLogin, _testPage, _testCase, _testEnv, _testEnvParams,_globScripts,_siteScripts));
+                    loginTask.SetNext(new RunTestTask(GetTaskName(), UseProxy, _testSite, _testLogin, _testPage, _testCase, _testEnv, _testEnvParams,_globScripts,_siteScripts,_notify));
                     this.SetNext(loginTask);
                 }
             }

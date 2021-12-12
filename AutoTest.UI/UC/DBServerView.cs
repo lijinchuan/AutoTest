@@ -486,7 +486,24 @@ namespace AutoTest.UI.UC
                                     TestPage = testPage,
                                     TestSite = testSite,
                                     TestEnv = ep.env,
-                                    TestEnvParams = ep.envParams
+                                    TestEnvParams = ep.envParams,
+                                    ResultNotify = r =>
+                                    {
+                                        this.BeginInvoke(new Action(() =>
+                                        {
+                                            var nodeEx = (TreeNodeEx)node;
+                                            var imgIndex = 18;
+                                            if (r.Success)
+                                            {
+                                                imgIndex = 19;
+                                            }
+                                            else
+                                            {
+                                                imgIndex = 20;
+                                            }
+                                            nodeEx.SelectedImageIndex = nodeEx.ImageIndex = nodeEx.ExpandImgIndex = nodeEx.CollapseImgIndex = imgIndex;
+                                        }));
+                                    }
                                 });
                             }
 
@@ -501,7 +518,7 @@ namespace AutoTest.UI.UC
 
                             LJC.FrameWorkV3.Comm.TaskHelper.SetInterval(1000, () =>
                             {
-                                var runTaskList = testTaskList.Select(task => new RunTestTask(task.TestCase.CaseName, false, task.TestSite, task.TestLogin, task.TestPage, task.TestCase, task.TestEnv, task.TestEnvParams, task.GlobalTestScripts, task.SiteTestScripts));
+                                var runTaskList = testTaskList.Select(task => new RunTestTask(task.TestCase.CaseName, false, task.TestSite, task.TestLogin, task.TestPage, task.TestCase, task.TestEnv, task.TestEnvParams, task.GlobalTestScripts, task.SiteTestScripts,task.ResultNotify));
                                 this.BeginInvoke(new Action(() => testPanel.RunTest(runTaskList)));
                                 return true;
                             }, runintime: false);

@@ -60,5 +60,11 @@ namespace AutoTest.Domain.Entity
             get;
             set;
         }
+
+        public Action<TestResult> ResultNotify
+        {
+            get;
+            set;
+        }
     }
 }

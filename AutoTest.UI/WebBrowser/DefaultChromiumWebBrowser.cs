@@ -89,6 +89,7 @@ namespace AutoTest.UI.WebBrowser
             RequestContext = context;
 
             this.JsDialogHandler = new JsDialogHandler();
+
             FrameLoadStart += DefaultChromiumWebBrowser_FrameLoadStart;
             FrameLoadEnd += DefaultChromiumWebBrowser_FrameLoadEnd;
             LoadingStateChanged += DefaultChromiumWebBrowser_LoadingStateChanged;
@@ -98,11 +99,21 @@ namespace AutoTest.UI.WebBrowser
             RequestHandler = new DefaultRequestHandler();
         }
 
+        private void DefaultChromiumWebBrowser_AddressChanged(object sender, AddressChangedEventArgs e)
+        {
+            DocumentLoadStart?.BeginInvoke(e.Browser, e.Browser.MainFrame, null, null);
+        }
+
+        private void DefaultChromiumWebBrowser_DocumentLoadStart(IBrowser browser, IFrame frame)
+        {
+            //DocumentLoadStart?.BeginInvoke(browser, frame, null, null);
+        }
+
         private void DefaultChromiumWebBrowser_FrameLoadStart(object sender, FrameLoadStartEventArgs e)
         {
             
 
-            DocumentLoadStart?.BeginInvoke(e.Browser, e.Frame, null, null);
+            //DocumentLoadStart?.BeginInvoke(e.Browser, e.Frame, null, null);
         }
 
         private void DefaultChromiumWebBrowser_IsBrowserInitializedChanged(object sender, EventArgs e)
@@ -134,7 +145,7 @@ namespace AutoTest.UI.WebBrowser
                     {
                         Thread.Sleep(10);
                     }
-                    DocumentLoadCompleted(e.Browser, e.Frame, GetCookie());
+                    DocumentLoadCompleted?.Invoke(e.Browser, e.Frame, GetCookie());
                 }).BeginInvoke(null, null);
             }
         }

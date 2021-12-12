@@ -90,9 +90,8 @@ namespace AutoTest.UI.WebBrowser
         public bool RegisterRomoteScript(IBrowser browser,IFrame frame,string url)
         {
             var code = string.Format(REGISTERREMOTESCRIPTCODE, url);
-            var resp = browser.MainFrame.EvaluateScriptAsync(code).Result;
-
-            return resp.Success;
+            var resp = browser.MainFrame.EvaluateScriptAsync(code);
+            return resp.Result.Success;
         }
 
         public object ExecuteScript(IBrowser browser,IFrame frame,string code)

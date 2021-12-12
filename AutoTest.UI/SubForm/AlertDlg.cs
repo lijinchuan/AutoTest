@@ -13,7 +13,7 @@ namespace AutoTest.UI.SubForm
 {
     public partial class AlertDlg : SubBaseDlg
     {
-        private int ShowSecs = 10;
+        private int ShowSecs = 5;
 
         private Action<object> callBack;
 
@@ -22,7 +22,7 @@ namespace AutoTest.UI.SubForm
             InitializeComponent();
         }
 
-        public AlertDlg(string source,string msg,Action<object> callBack,int showSecs=10)
+        public AlertDlg(string source,string msg,Action<object> callBack,int showSecs=5)
         {
             InitializeComponent();
             this.Text = source;
