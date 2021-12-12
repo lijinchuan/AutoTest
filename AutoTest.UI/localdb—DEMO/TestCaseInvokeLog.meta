@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="utf-16"?>
+<BigEntityTableMeta xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <TableName>TestCaseInvokeLog</TableName>
+  <KeyName>Id</KeyName>
+  <KeyIndexInfo>
+    <IndexName>Id</IndexName>
+    <Indexs>
+      <IndexItem>
+        <Field>Id</Field>
+        <FieldType>INT32</FieldType>
+        <Direction>1</Direction>
+      </IndexItem>
+    </Indexs>
+  </KeyIndexInfo>
+  <IsAutoIncrKey>true</IsAutoIncrKey>
+  <LstAutoIncr>0</LstAutoIncr>
+  <IndexInfos>
+    <IndexInfo>
+      <IndexName>TestCaseId_CDate</IndexName>
+      <Indexs>
+        <IndexItem>
+          <Field>TestCaseId</Field>
+          <FieldType>INT32</FieldType>
+          <Direction>1</Direction>
+        </IndexItem>
+        <IndexItem>
+          <Field>CDate</Field>
+          <FieldType>DATETIME</FieldType>
+          <Direction>-1</Direction>
+        </IndexItem>
+      </Indexs>
+    </IndexInfo>
+    <IndexInfo>
+      <IndexName>TestCaseId_EnvId_CDate</IndexName>
+      <Indexs>
+        <IndexItem>
+          <Field>TestCaseId</Field>
+          <FieldType>INT32</FieldType>
+          <Direction>1</Direction>
+        </IndexItem>
+        <IndexItem>
+          <Field>EnvId</Field>
+          <FieldType>INT32</FieldType>
+          <Direction>1</Direction>
+        </IndexItem>
+        <IndexItem>
+          <Field>CDate</Field>
+          <FieldType>DATETIME</FieldType>
+          <Direction>-1</Direction>
+        </IndexItem>
+      </Indexs>
+    </IndexInfo>
+  </IndexInfos>
+  <CTime>2021-12-09T21:13:11.2382772+08:00</CTime>
+  <Version>2</Version>
+  <TypeString>AutoTest.Domain.Entity.TestCaseInvokeLog, AutoTest.Domain, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</TypeString>
+  <IndexMergeInfos />
+</BigEntityTableMeta>

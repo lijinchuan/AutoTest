@@ -20,9 +20,15 @@ namespace AutoTest.UI.UC
 
             dic.Add("var", Color.Blue);
             dic.Add("break", Color.Blue);
+            dic.Add("for", Color.Blue);
+            dic.Add("in", Color.Blue);
+            dic.Add("if", Color.Blue);
+            dic.Add("else", Color.Blue);
+            dic.Add("catch", Color.Blue);
             dic.Add("while", Color.Blue);
             dic.Add("undefined", Color.Blue);
             dic.Add("window", Color.Blue);
+            dic.Add("length", Color.Blue);
             dic.Add("alert", Color.Red);
             dic.Add("confirm", Color.Red);
             dic.Add("function", Color.Red);
@@ -54,6 +60,8 @@ namespace AutoTest.UI.UC
             dic.Add("big", Color.Red);
             dic.Add("blink", Color.Red);
             dic.Add("bold", Color.Red);
+            dic.Add("startsWith", Color.Red);
+            dic.Add("endsWith", Color.Red);
             dic.Add("charAt", Color.Red);
             dic.Add("fixed", Color.Red);
             dic.Add("fontcolor", Color.Red);

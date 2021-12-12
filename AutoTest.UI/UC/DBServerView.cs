@@ -489,7 +489,7 @@ namespace AutoTest.UI.UC
                                     TestEnvParams = ep.envParams,
                                     ResultNotify = r =>
                                     {
-                                        this.BeginInvoke(new Action(() =>
+                                        BeginInvoke(new Action(() =>
                                         {
                                             var nodeEx = (TreeNodeEx)node;
                                             var imgIndex = 18;
@@ -507,21 +507,25 @@ namespace AutoTest.UI.UC
                                 });
                             }
 
-                            var testPanel = (TestPanel)Util.TryAddToMainTab(this, $"执行测试", () =>
+                            if (new ConfirmDlg("询问", "执行测试吗？").ShowDialog() == DialogResult.OK)
                             {
-                                var panel = new UC.TestPanel("执行测试");
-                                panel.Load();
 
-                                return panel;
-                            }, typeof(TestPanel));
+                                var testPanel = (TestPanel)Util.TryAddToMainTab(this, $"执行测试", () =>
+                                {
+                                    var panel = new UC.TestPanel("执行测试");
+                                    panel.Load();
+
+                                    return panel;
+                                }, typeof(TestPanel));
 
 
-                            LJC.FrameWorkV3.Comm.TaskHelper.SetInterval(1000, () =>
-                            {
-                                var runTaskList = testTaskList.Select(task => new RunTestTask(task.GetTaskName(), false, task.TestSite, task.TestLogin, task.TestPage, task.TestCase, task.TestEnv, task.TestEnvParams, task.GlobalTestScripts, task.SiteTestScripts,task.ResultNotify));
-                                this.BeginInvoke(new Action(() => testPanel.RunTest(runTaskList)));
-                                return true;
-                            }, runintime: false);
+                                LJC.FrameWorkV3.Comm.TaskHelper.SetInterval(1000, () =>
+                                {
+                                    var runTaskList = testTaskList.Select(task => new RunTestTask(task.GetTaskName(), false, task.TestSite, task.TestLogin, task.TestPage, task.TestCase, task.TestEnv, task.TestEnvParams, task.GlobalTestScripts, task.SiteTestScripts, task.ResultNotify));
+                                    this.BeginInvoke(new Action(() => testPanel.RunTest(runTaskList)));
+                                    return true;
+                                }, runintime: false);
+                            }
 
                             break;
                         }

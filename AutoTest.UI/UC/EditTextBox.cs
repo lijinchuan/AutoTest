@@ -652,14 +652,18 @@ namespace AutoTest.UI.UC
                     this.RichText.Select(keywordindex - keyword.Length, keyword.Length);
                     //this.RichText.Text.Remove(this.RichText.SelectionStart - keyword.Length, keyword.Length);
 
-                    if (val.StartsWith(keyword))
+                    if (val.StartsWith(this.RichText.SelectedText, StringComparison.OrdinalIgnoreCase))
                     {
                         this.RichText.SelectedText = val;
                     }
                     else
                     {
-                        this.RichText.SelectedText = this.RichText.SelectedText + val ;
+                        if (this.RichText.SelectedText.IndexOf(".") != -1)
+                        {
+                            this.RichText.SelectedText = this.RichText.SelectedText.Remove(this.RichText.SelectedText.LastIndexOf(".")) + "." + val.Split('.').Last();
+                        }
                     }
+                    
                     //this.RichText.SelectionStart += val.Length - keyword.Length;
                     view.Visible = false;
                     this.RichText.LockPaint = false;

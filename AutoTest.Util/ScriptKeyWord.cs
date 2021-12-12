@@ -80,37 +80,51 @@ namespace AutoTest.Util
 
             KeyWordDic.Add(new ScriptKeyWord
             {
-                KeyWord = "Bag",
+                KeyWord = "$VewBag.Bag",
                 Desc = "页面用户自定义变量:$VewBag.Bag,object",
                 HighColor = Color.Green
             });
 
             KeyWordDic.Add(new ScriptKeyWord
             {
-                KeyWord = "WebRequestDatas",
+                KeyWord = "$VewBag.WebRequestDatas",
                 Desc = "网络数据，$VewBag.WebRequestDatas,Array",
                 HighColor = Color.Green
             });
 
             KeyWordDic.Add(new ScriptKeyWord
             {
-                KeyWord = "ResponseContent",
-                Desc = "网络数据响应内容，$VewBag.WebRequestDatas[].ResponseContent,string",
+                KeyWord = "$VewBag.WebRequestDatas[?].ResponseContent",
+                Desc = "网络数据响应内容，$VewBag.WebRequestDatas[?].ResponseContent,string",
                 HighColor = Color.Green
             });
 
             KeyWordDic.Add(new ScriptKeyWord
             {
-                KeyWord = "Url",
-                Desc = "网络请求地址，$VewBag.WebRequestDatas[].Url,string",
+                KeyWord = "$VewBag.WebRequestDatas[?].Url",
+                Desc = "网络请求地址，$VewBag.WebRequestDatas[?].Url,string",
                 HighColor = Color.Green
             });
 
             KeyWordDic.Add(new ScriptKeyWord
             {
-                KeyWord = "Code",
-                Desc = "网络请求状态码，$VewBag.WebRequestDatas[].Code,int",
+                KeyWord = "$VewBag.WebRequestDatas[?].Code",
+                Desc = "网络请求状态码，$VewBag.WebRequestDatas[?].Code,int",
                 HighColor = Color.Green
+            });
+
+            KeyWordDic.Add(new ScriptKeyWord
+            {
+                KeyWord = "startsWith",
+                Desc = "检测字符串是否以指定的前缀开始",
+                HighColor = Color.Red
+            });
+
+            KeyWordDic.Add(new ScriptKeyWord
+            {
+                KeyWord = "endsWith",
+                Desc = "测试字符串是否以指定的后缀结束",
+                HighColor = Color.Red
             });
         }
 

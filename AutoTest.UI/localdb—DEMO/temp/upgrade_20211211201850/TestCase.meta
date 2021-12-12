@@ -1,0 +1,33 @@
+﻿<?xml version="1.0" encoding="utf-16"?>
+<BigEntityTableMeta xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <TableName>TestCase</TableName>
+  <KeyName>Id</KeyName>
+  <KeyIndexInfo>
+    <IndexName>Id</IndexName>
+    <Indexs>
+      <IndexItem>
+        <Field>Id</Field>
+        <FieldType>INT32</FieldType>
+        <Direction>1</Direction>
+      </IndexItem>
+    </Indexs>
+  </KeyIndexInfo>
+  <IsAutoIncrKey>true</IsAutoIncrKey>
+  <LstAutoIncr>0</LstAutoIncr>
+  <IndexInfos>
+    <IndexInfo>
+      <IndexName>PageId</IndexName>
+      <Indexs>
+        <IndexItem>
+          <Field>PageId</Field>
+          <FieldType>INT32</FieldType>
+          <Direction>1</Direction>
+        </IndexItem>
+      </Indexs>
+    </IndexInfo>
+  </IndexInfos>
+  <CTime>2021-12-09T21:13:11.2092933+08:00</CTime>
+  <Version>2</Version>
+  <TypeString>AutoTest.Domain.Entity.TestCase, AutoTest.Domain, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</TypeString>
+  <IndexMergeInfos />
+</BigEntityTableMeta>

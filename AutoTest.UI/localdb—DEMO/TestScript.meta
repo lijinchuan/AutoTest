@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-16"?>
+<BigEntityTableMeta xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <TableName>TestScript</TableName>
+  <KeyName>Id</KeyName>
+  <KeyIndexInfo>
+    <IndexName>Id</IndexName>
+    <Indexs>
+      <IndexItem>
+        <Field>Id</Field>
+        <FieldType>INT32</FieldType>
+        <Direction>1</Direction>
+      </IndexItem>
+    </Indexs>
+  </KeyIndexInfo>
+  <IsAutoIncrKey>true</IsAutoIncrKey>
+  <LstAutoIncr>0</LstAutoIncr>
+  <IndexInfos>
+    <IndexInfo>
+      <IndexName>SourceId_SiteId_ScriptName</IndexName>
+      <Indexs>
+        <IndexItem>
+          <Field>SourceId</Field>
+          <FieldType>INT32</FieldType>
+          <Direction>1</Direction>
+        </IndexItem>
+        <IndexItem>
+          <Field>SiteId</Field>
+          <FieldType>INT32</FieldType>
+          <Direction>1</Direction>
+        </IndexItem>
+        <IndexItem>
+          <Field>ScriptName</Field>
+          <FieldType>STRING</FieldType>
+          <Direction>1</Direction>
+        </IndexItem>
+      </Indexs>
+    </IndexInfo>
+  </IndexInfos>
+  <CTime>2021-12-10T21:49:02.8224799+08:00</CTime>
+  <Version>2</Version>
+  <TypeString>AutoTest.Domain.Entity.TestScript, AutoTest.Domain, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</TypeString>
+  <IndexMergeInfos />
+</BigEntityTableMeta>

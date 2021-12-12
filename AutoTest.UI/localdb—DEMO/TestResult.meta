@@ -1,0 +1,43 @@
+﻿<?xml version="1.0" encoding="utf-16"?>
+<BigEntityTableMeta xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <TableName>TestResult</TableName>
+  <KeyName>Id</KeyName>
+  <KeyIndexInfo>
+    <IndexName>Id</IndexName>
+    <Indexs>
+      <IndexItem>
+        <Field>Id</Field>
+        <FieldType>INT32</FieldType>
+        <Direction>1</Direction>
+      </IndexItem>
+    </Indexs>
+  </KeyIndexInfo>
+  <IsAutoIncrKey>true</IsAutoIncrKey>
+  <LstAutoIncr>0</LstAutoIncr>
+  <IndexInfos>
+    <IndexInfo>
+      <IndexName>TestCaseId_EnvId_TestStartDate</IndexName>
+      <Indexs>
+        <IndexItem>
+          <Field>TestCaseId</Field>
+          <FieldType>INT32</FieldType>
+          <Direction>1</Direction>
+        </IndexItem>
+        <IndexItem>
+          <Field>EnvId</Field>
+          <FieldType>INT32</FieldType>
+          <Direction>1</Direction>
+        </IndexItem>
+        <IndexItem>
+          <Field>TestStartDate</Field>
+          <FieldType>DATETIME</FieldType>
+          <Direction>-1</Direction>
+        </IndexItem>
+      </Indexs>
+    </IndexInfo>
+  </IndexInfos>
+  <CTime>2021-12-11T21:49:24.3274516+08:00</CTime>
+  <Version>2</Version>
+  <TypeString>AutoTest.Domain.Entity.TestResult, AutoTest.Domain, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</TypeString>
+  <IndexMergeInfos />
+</BigEntityTableMeta>

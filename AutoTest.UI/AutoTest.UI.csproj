@@ -176,6 +176,12 @@
     <Compile Include="SubForm\AddTestSource.Designer.cs">
       <DependentUpon>AddTestSource.cs</DependentUpon>
     </Compile>
+    <Compile Include="SubForm\ConfirmDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SubForm\ConfirmDlg.Designer.cs">
+      <DependentUpon>ConfirmDlg.cs</DependentUpon>
+    </Compile>
     <Compile Include="SubForm\AlertDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -211,6 +217,12 @@
     </Compile>
     <Compile Include="SubForm\PopMessageDlg.Designer.cs">
       <DependentUpon>PopMessageDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SubForm\RunTestCaseConfirmDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SubForm\RunTestCaseConfirmDlg.Designer.cs">
+      <DependentUpon>RunTestCaseConfirmDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="SubForm\SubBaseDlg.cs">
       <SubType>Form</SubType>
@@ -423,6 +435,9 @@
     <EmbeddedResource Include="SubForm\AddTestSiteDlg.resx">
       <DependentUpon>AddTestSiteDlg.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="SubForm\ConfirmDlg.resx">
+      <DependentUpon>ConfirmDlg.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SubForm\AlertDlg.resx">
       <DependentUpon>AlertDlg.cs</DependentUpon>
     </EmbeddedResource>
@@ -431,6 +446,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SubForm\FindDlg.resx">
       <DependentUpon>FindDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SubForm\RunTestCaseConfirmDlg.resx">
+      <DependentUpon>RunTestCaseConfirmDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SubForm\TextBoxWin.resx">
       <DependentUpon>TextBoxWin.cs</DependentUpon>
