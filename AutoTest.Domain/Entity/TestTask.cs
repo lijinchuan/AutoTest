@@ -66,5 +66,10 @@ namespace AutoTest.Domain.Entity
             get;
             set;
         }
+
+        public string GetTaskName()
+        {
+            return this.TestSource.SourceName + "_" + this.TestSite.Name + "_" + this.TestPage.Name + "_" + this.TestCase.CaseName;
+        }
     }
 }

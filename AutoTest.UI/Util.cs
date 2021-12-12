@@ -300,5 +300,15 @@ namespace AutoTest.UI
             return dt;
         }
 
+        /// <summary>
+        /// 网络状态
+        /// </summary>
+        /// <param name="httpStatusCode"></param>
+        /// <returns></returns>
+        public static bool IsSuccessStatusCode(int httpStatusCode)
+        {
+            return httpStatusCode >= 200 && httpStatusCode < 300;
+        }
+
     }
 }

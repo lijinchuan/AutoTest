@@ -518,7 +518,7 @@ namespace AutoTest.UI.UC
 
                             LJC.FrameWorkV3.Comm.TaskHelper.SetInterval(1000, () =>
                             {
-                                var runTaskList = testTaskList.Select(task => new RunTestTask(task.TestCase.CaseName, false, task.TestSite, task.TestLogin, task.TestPage, task.TestCase, task.TestEnv, task.TestEnvParams, task.GlobalTestScripts, task.SiteTestScripts,task.ResultNotify));
+                                var runTaskList = testTaskList.Select(task => new RunTestTask(task.GetTaskName(), false, task.TestSite, task.TestLogin, task.TestPage, task.TestCase, task.TestEnv, task.TestEnvParams, task.GlobalTestScripts, task.SiteTestScripts,task.ResultNotify));
                                 this.BeginInvoke(new Action(() => testPanel.RunTest(runTaskList)));
                                 return true;
                             }, runintime: false);

@@ -10,6 +10,7 @@ namespace AutoTest.UI.WebBrowser
 {
     public class MenuHandler : IContextMenuHandler
     {
+        private bool isShowDevTool = false;
         void IContextMenuHandler.OnBeforeContextMenu(IWebBrowser browserControl, IBrowser browser, IFrame frame, IContextMenuParams parameters, IMenuModel model)
         {
             //主要修改代码在此处;如果需要完完全全重新添加菜单项,首先执行model.Clear()清空菜单列表即可.
@@ -18,8 +19,19 @@ namespace AutoTest.UI.WebBrowser
             {
                 model.AddSeparator();//添加分隔符;
             }
-            model.AddItem((CefMenuCommand)26501, "Show DevTools");
-            model.AddItem((CefMenuCommand)26502, "Close DevTools");
+            model.AddItem((CefMenuCommand)103, "刷新");
+            if (model.Count > 0)
+            {
+                model.AddSeparator();//添加分隔符;
+            }
+            if (!isShowDevTool)
+            {
+                model.AddItem((CefMenuCommand)26501, "显示开发工具");
+            }
+            else
+            {
+                model.AddItem((CefMenuCommand)26502, "隐藏开发工具");
+            }
         }
 
         bool IContextMenuHandler.OnContextMenuCommand(IWebBrowser browserControl, IBrowser browser, IFrame frame, IContextMenuParams parameters, CefMenuCommand commandId, CefEventFlags eventFlags)
@@ -28,11 +40,18 @@ namespace AutoTest.UI.WebBrowser
             if (commandId == (CefMenuCommand)26501)
             {
                 browser.GetHost().ShowDevTools();
+                isShowDevTool = true;
                 return true;
             }
-            if (commandId == (CefMenuCommand)26502)
+            else if (commandId == (CefMenuCommand)26502)
             {
                 browser.GetHost().CloseDevTools();
+                isShowDevTool = false;
+                return true;
+            }
+            else if (commandId == (CefMenuCommand)103)
+            {
+                browser.Reload(true);
                 return true;
             }
             return false;

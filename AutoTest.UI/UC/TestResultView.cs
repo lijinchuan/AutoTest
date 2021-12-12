@@ -91,6 +91,16 @@ namespace AutoTest.UI.UC
                 GVLog.Columns["时间"].Width = 120;
             }
 
+            if (GVLog.Columns.Contains("是否成功"))
+            {
+                GVLog.Columns["是否成功"].Width = 60;
+            }
+
+            if (GVLog.Columns.Contains("是否超时"))
+            {
+                GVLog.Columns["是否超时"].Width = 60;
+            }
+
             if (GVLog.Columns.Contains("用时"))
             {
                 GVLog.Columns["用时"].Width = 100;

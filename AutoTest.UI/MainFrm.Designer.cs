@@ -351,7 +351,7 @@ namespace AutoTest.UI
             this.Controls.Add(this.mainMenuBar);
             this.MainMenuStrip = this.mainMenuBar;
             this.Name = "MainFrm";
-            this.Text = "自动测试工具";
+            this.Text = "MyTest";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.mainMenuBar.ResumeLayout(false);
             this.mainMenuBar.PerformLayout();

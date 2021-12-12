@@ -186,6 +186,20 @@ namespace AutoTest.UI.WebTask
             var ret = webBrowserTool.ExecuteScript(browser, frame, code);
         }
 
+        private void AssertWebHasNoError()
+        {
+            var failRequestList = webEvents.Where(p => !Util.IsSuccessStatusCode(p.StatusCode)).ToList();
+            if (failRequestList.Any())
+            {
+                StringBuilder sb = new StringBuilder();
+                foreach (var item in failRequestList)
+                {
+                    sb.AppendLine($"{item.SourceUrl}返回错误状态:{item.StatusCode}");
+                }
+                throw new Exception($"请求出错：{sb}");
+            }
+        }
+
         private async Task<int> RunTestCode(IBrowser browser, IFrame frame)
         {
             int sleepMills = 1000;
@@ -195,6 +209,7 @@ namespace AutoTest.UI.WebTask
 
                 while (true)
                 {
+                    AssertWebHasNoError();
                     try
                     {
                         PrepareTest(browser, frame, bag);
@@ -252,6 +267,7 @@ namespace AutoTest.UI.WebTask
 
                     while (true)
                     {
+                        AssertWebHasNoError();
                         try
                         {
                             PrepareTest(browser, frame, bag);
@@ -296,6 +312,7 @@ namespace AutoTest.UI.WebTask
                 }
                 else
                 {
+                    AssertWebHasNoError();
                     _testResult.Success = true;
                     _testResult.FailMsg = "没有验证脚本，默认为成功";
                 }
@@ -307,17 +324,7 @@ namespace AutoTest.UI.WebTask
                 PublishMsg(ex.Message);
                 throw ex;
             }
-            finally
-            {
-                if (bag != null)
-                {
-                    _testResult.ResultContent = Newtonsoft.Json.JsonConvert.SerializeObject(bag);
-                }
-                _testResult.TestEndDate = DateTime.Now;
-                BigEntityTableEngine.LocalEngine.Insert(nameof(TestResult), _testResult);
-
-                _notify?.Invoke(_testResult);
-            }
+            
             return await Task.FromResult(validResult);
         }
 
@@ -364,7 +371,20 @@ namespace AutoTest.UI.WebTask
             }
             catch (Exception ex)
             {
+                _testResult.Success = false;
+                _testResult.FailMsg = ex.Message;
                 PublishMsg($"{_testCase.CaseName}出错:{ex.Message}");
+            }
+            finally
+            {
+                if (bag != null)
+                {
+                    _testResult.ResultContent = Newtonsoft.Json.JsonConvert.SerializeObject(bag);
+                }
+                _testResult.TestEndDate = DateTime.Now;
+                BigEntityTableEngine.LocalEngine.Insert(nameof(TestResult), _testResult);
+
+                _notify?.Invoke(_testResult);
             }
             return await Task.FromResult(ret);
         }
