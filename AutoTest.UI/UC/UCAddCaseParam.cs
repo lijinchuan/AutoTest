@@ -941,6 +941,8 @@ namespace AutoTest.UI.UC
             TPInvokeLog.ReInvoke += TPInvokeLog_ReInvoke;
             BtnSend.Click += BtnSend_Click;
 
+            UCTestResutView.VisibleChanged += UCTestResutView_VisibleChanged;
+
             this.CBWebMethod.Items.AddRange(Enum.GetNames(typeof(WebMethod)));
             this.CBApplicationType.Items.AddRange(Enum.GetNames(typeof(ApplicationType)));
             this.CBAuthType.Items.AddRange(Enum.GetNames(typeof(AuthType)));
@@ -1029,6 +1031,14 @@ namespace AutoTest.UI.UC
 
             TabResults.DoubleClick += TabResults_DoubleClick;
             Tabs.DoubleClick += Tabs_DoubleClick;
+        }
+
+        private void UCTestResutView_VisibleChanged(object sender, EventArgs e)
+        {
+            if (TPTestView.Visible && this._testCase != null)
+            {
+                UCTestResutView.Init(this._testCase.Id, this.GetEnvId());
+            }
         }
 
         private void TabResults_DoubleClick(object sender, EventArgs e)

@@ -324,6 +324,12 @@
     <Compile Include="UC\TestPanel.Designer.cs">
       <DependentUpon>TestPanel.cs</DependentUpon>
     </Compile>
+    <Compile Include="UC\TestResultView.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UC\TestResultView.Designer.cs">
+      <DependentUpon>TestResultView.cs</DependentUpon>
+    </Compile>
     <Compile Include="UC\TextBoxEx.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -452,6 +458,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UC\TestPanel.resx">
       <DependentUpon>TestPanel.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UC\TestResultView.resx">
+      <DependentUpon>TestResultView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UC\UCAddCaseParam.resx">
       <DependentUpon>UCAddCaseParam.cs</DependentUpon>
