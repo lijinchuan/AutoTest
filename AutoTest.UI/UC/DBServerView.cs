@@ -118,7 +118,7 @@ namespace AutoTest.UI.UC
         }
 
 
-        void ReLoadDBObj(TreeNode selNode, bool loadall = false)
+        void ReLoadDBObj(TreeNode selNode, bool loadall = true)
         {
             //TreeNode selNode = tv_DBServers.SelectedNode;
             if (selNode == null)
@@ -221,6 +221,56 @@ namespace AutoTest.UI.UC
             return list;
         }
 
+        private TreeNode FindNode(TreeNodeCollection topNodes,object tag)
+        {
+            foreach(TreeNode node in topNodes)
+            {
+                if (node.Tag != null)
+                {
+                    if (node.Tag.GetType() == tag.GetType()
+                        && (node.Tag as IComparable)!=null)
+                    {
+                        if ((node.Tag as IComparable).CompareTo(tag) == 0)
+                        {
+                            return node;
+                        }
+                    }
+                }
+
+                if (node.Nodes.Count > 0)
+                {
+                    var findNode = FindNode(node.Nodes, tag);
+                    if (findNode != null)
+                    {
+                        return findNode;
+                    }
+                }
+            }
+
+            return null;
+        }
+
+        private void FindParentAndReLoad(TreeNode treeNode)
+        {
+            if (treeNode.Parent != null)
+            {
+                ReLoadDBObj(treeNode.Parent);
+            }
+            else
+            {
+                if (treeNode.Tag == null)
+                {
+                    return;
+                }
+
+                var node = FindNode(tv_DBServers.Nodes, treeNode.Tag);
+                if (node != null)
+                {
+                    ReLoadDBObj(node.Parent);
+                }
+            }
+        }
+
         void OnMenuStrip_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
             try
@@ -250,7 +300,7 @@ namespace AutoTest.UI.UC
                                 var testCase = selnode.Tag as TestCase;
 
                                 Util.AddToMainTab(this, $"[{testSite.Name}]-{testPage.Name}-{testCase.CaseName}", new UC.UCAddCaseParam(testSite, testPage, testCase,
-                                    ()=>ReLoadDBObj(selnode.Parent)));
+                                    ()=> FindParentAndReLoad(selnode)));
                             }
                             else if (selnode.Tag is TestPage)
                             {
@@ -258,7 +308,7 @@ namespace AutoTest.UI.UC
                                 var dlg = new AddTestPageDlg(testSite.Id, (selnode.Tag as TestPage).Id);
                                 if (dlg.ShowDialog() == DialogResult.OK)
                                 {
-                                    ReLoadDBObj(selnode.Parent);
+                                    FindParentAndReLoad(selnode);
                                 }
                             }
                             else if (selnode.Tag is TestSite)
@@ -267,7 +317,7 @@ namespace AutoTest.UI.UC
                                 AddTestSiteDlg dlg = new AddTestSiteDlg(testSource.Id, (selnode.Tag as TestSite).Id);
                                 if (dlg.ShowDialog() == DialogResult.OK)
                                 {
-                                    ReLoadDBObj(selnode.Parent);
+                                    FindParentAndReLoad(selnode);
                                 }
                             }
                             else if (selnode.Tag is TestSource)
@@ -283,7 +333,7 @@ namespace AutoTest.UI.UC
                                 var dlg = new AddTestLoginDlg(testSite.Id);
                                 if (dlg.ShowDialog() == DialogResult.OK)
                                 {
-                                    ReLoadDBObj(selnode.Parent);
+                                    FindParentAndReLoad(selnode);
                                 }
                             }
                             else if (selnode.Tag is TestScript)
@@ -292,7 +342,7 @@ namespace AutoTest.UI.UC
                                 var testResource = FindParentNode<TestSource>(selnode);
                                 var testSite = FindParentNode<TestSite>(selnode);
                                 Util.AddToMainTab(this, $"{testResource.SourceName}_{testSite?.Name}_{testScript.ScriptName}(脚本)",
-                                        new UC.UCTestScript(testScript,()=>ReLoadDBObj(selnode.Parent)));
+                                        new UC.UCTestScript(testScript,()=> FindParentAndReLoad(selnode)));
                             }
                             break;
                         }
@@ -458,7 +508,7 @@ namespace AutoTest.UI.UC
                             {
                                 ReLoadDBObj(selnode);
                                 Util.AddToMainTab(this, $"[{testSite.Name}]-{testPage.Name}-{step1dlg.TestCase.CaseName}", new UC.UCAddCaseParam(testSite, testPage, step1dlg.TestCase,
-                                    () => ReLoadDBObj(selnode.Parent)));
+                                    () => FindParentAndReLoad(selnode)));
                             }
                             break;
                         }
@@ -609,7 +659,7 @@ namespace AutoTest.UI.UC
                                     BigEntityTableEngine.LocalEngine.Insert(nameof(TestScript), testScript);
 
                                     Util.AddToMainTab(this, $"{testResource.SourceName}_{testSite?.Name}_{testScript.ScriptName}(脚本)",
-                                        new UC.UCTestScript(testScript, () => ReLoadDBObj(selnode.Parent)));
+                                        new UC.UCTestScript(testScript, () => FindParentAndReLoad(selnode)));
                                 }
                             }
                             break;

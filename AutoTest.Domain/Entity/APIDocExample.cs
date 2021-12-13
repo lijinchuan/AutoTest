@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AutoTest.Domain.Entity
 {
-    public class TestCaseDocExample
+    public class TestCaseDocExample:IComparable
     {
         public int Id
         {
@@ -45,6 +45,16 @@ namespace AutoTest.Domain.Entity
         {
             get;
             set;
+        }
+
+        public int CompareTo(object obj)
+        {
+            if (obj is TestCaseDocExample)
+            {
+                return this.Id.CompareTo(((TestCaseDocExample)obj).Id);
+            }
+
+            return 1;
         }
     }
 }

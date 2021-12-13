@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AutoTest.Domain.Entity
 {
-    public class TestResult
+    public class TestResult:IComparable
     {
         public static readonly string Index_TestCaseId_EnvId_TestDate = $"{nameof(TestCaseId)}_{nameof(EnvId)}_{nameof(TestStartDate)}";
 
@@ -62,6 +62,16 @@ namespace AutoTest.Domain.Entity
         {
             get;
             set;
+        }
+
+        public int CompareTo(object obj)
+        {
+            if (obj is TestResult)
+            {
+                return this.Id.CompareTo(((TestResult)obj).Id);
+            }
+
+            return 1;
         }
     }
 }

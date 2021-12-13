@@ -9,7 +9,7 @@ namespace AutoTest.Domain.Entity
     /// <summary>
     /// 测试包
     /// </summary>
-    public class TestSource
+    public class TestSource:IComparable
     {
         public int Id
         {
@@ -27,6 +27,16 @@ namespace AutoTest.Domain.Entity
         {
             get;
             set;
+        }
+
+        public int CompareTo(object obj)
+        {
+            if (obj is TestSource)
+            {
+                return this.Id.CompareTo(((TestSource)obj).Id);
+            }
+
+            return 1;
         }
     }
 }

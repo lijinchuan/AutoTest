@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace AutoTest.Domain.Entity
 {
     [Serializable]
-    public class TestEnv : INodeContents
+    public class TestEnv : INodeContents,IComparable
     {
         public int Id
         {
@@ -37,6 +37,16 @@ namespace AutoTest.Domain.Entity
         {
             get;
             set;
+        }
+
+        public int CompareTo(object obj)
+        {
+            if (obj is TestEnv)
+            {
+                return this.Id.CompareTo(((TestEnv)obj).Id);
+            }
+
+            return 1;
         }
 
         public NodeContentType GetNodeContentType()

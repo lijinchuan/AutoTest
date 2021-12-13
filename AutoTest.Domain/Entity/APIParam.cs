@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AutoTest.Domain.Entity
 {
-    public class TestCaseParam : IEquatable<TestCaseParam>
+    public class TestCaseParam : IEquatable<TestCaseParam>,IComparable
     {
         public int Id
         {
@@ -69,6 +69,16 @@ namespace AutoTest.Domain.Entity
         {
             get;
             set;
+        }
+
+        public int CompareTo(object obj)
+        {
+            if (obj is TestCaseParam)
+            {
+                return this.Id.CompareTo(((TestCaseParam)obj).Id);
+            }
+
+            return 1;
         }
 
         public bool Equals(TestCaseParam other)

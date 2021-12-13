@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AutoTest.Domain.Entity
 {
-    public class TestScript
+    public class TestScript:IComparable
     {
         public static readonly string Index3 = $"{nameof(SourceId)}_{nameof(SiteId)}_{nameof(ScriptName)}";
 
@@ -56,6 +56,16 @@ namespace AutoTest.Domain.Entity
         {
             get;
             set;
+        }
+
+        public int CompareTo(object obj)
+        {
+            if (obj is TestScript)
+            {
+                return this.Id.CompareTo(((TestScript)obj).Id);
+            }
+
+            return 1;
         }
     }
 }

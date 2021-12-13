@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace AutoTest.Domain.Entity
 {
     [Serializable]
-    public class TestPage
+    public class TestPage:IComparable
     {
         public int Id
         {
@@ -37,6 +37,16 @@ namespace AutoTest.Domain.Entity
         {
             get;
             set;
+        }
+
+        public int CompareTo(object obj)
+        {
+            if (obj is TestPage)
+            {
+                return this.Id.CompareTo(((TestPage)obj).Id);
+            }
+
+            return 1;
         }
     }
 }

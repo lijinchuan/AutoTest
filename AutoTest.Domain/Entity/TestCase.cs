@@ -10,7 +10,7 @@ namespace AutoTest.Domain.Entity
     /// <summary>
     /// 测试实例
     /// </summary>
-    public class TestCase
+    public class TestCase:IComparable
     {
         public int Id
         {
