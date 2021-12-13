@@ -19,11 +19,16 @@ namespace AutoTest.UI.UC
             Dictionary<string, Color> dic = new Dictionary<string, Color>();
 
             dic.Add("var", Color.Blue);
+            dic.Add("await", Color.Blue);
+            dic.Add("async", Color.Blue);
+            dic.Add("console", Color.Blue);
+            dic.Add("log", Color.Blue);
             dic.Add("break", Color.Blue);
             dic.Add("for", Color.Blue);
             dic.Add("in", Color.Blue);
             dic.Add("if", Color.Blue);
             dic.Add("else", Color.Blue);
+            dic.Add("Promise", Color.Blue); 
             dic.Add("catch", Color.Blue);
             dic.Add("while", Color.Blue);
             dic.Add("undefined", Color.Blue);

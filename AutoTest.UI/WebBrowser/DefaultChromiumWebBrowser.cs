@@ -83,7 +83,7 @@ namespace AutoTest.UI.WebBrowser
             {
                 CachePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CefSharp\\Cache_" + name),
                 PersistSessionCookies = true,
-                PersistUserPreferences = true
+                PersistUserPreferences = true,
             };
             var context = new RequestContext(setting);
             RequestContext = context;
@@ -97,6 +97,14 @@ namespace AutoTest.UI.WebBrowser
             IsBrowserInitializedChanged += DefaultChromiumWebBrowser_IsBrowserInitializedChanged;
 
             RequestHandler = new DefaultRequestHandler();
+
+            //这个一定要开启，否则注入C#的对象无效
+            JavascriptObjectRepository.Settings.LegacyBindingEnabled = true;
+            //构造要注入的对象，参数为当前线程的调度上下文
+            var obj = new CSObj(SynchronizationContext.Current, this);
+            //注册C#对象
+            this.JavascriptObjectRepository.Register("cs", obj, false, BindingOptions.DefaultBinder);
+
         }
 
         private void DefaultChromiumWebBrowser_AddressChanged(object sender, AddressChangedEventArgs e)

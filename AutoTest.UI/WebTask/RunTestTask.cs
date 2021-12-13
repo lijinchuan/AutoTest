@@ -292,6 +292,10 @@ namespace AutoTest.UI.WebTask
                         }
                         catch (Exception ex)
                         {
+                            if (tryCount > 3)
+                            {
+                                PublishMsg("验证可能会失败："+ex.Message);
+                            }
                             if (tryCount++ >= TestTimeOut / sleepMills)
                             {
                                 _testResult.IsTimeOut = true;

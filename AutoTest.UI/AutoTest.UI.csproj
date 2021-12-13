@@ -395,6 +395,7 @@
     </Compile>
     <Compile Include="Util.cs" />
     <Compile Include="WebBrowser\CookieVisitor.cs" />
+    <Compile Include="WebBrowser\CSObj.cs" />
     <Compile Include="WebBrowser\DefaultChromiumWebBrowser.cs">
       <SubType>Component</SubType>
     </Compile>

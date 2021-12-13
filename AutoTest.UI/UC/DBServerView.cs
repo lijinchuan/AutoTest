@@ -652,13 +652,13 @@ namespace AutoTest.UI.UC
         {
             if (e.Node.Tag is TestEnvParam)
             {
-                var apisource = FindParentNode<TestSource>(e.Node);
+                var testSite = FindParentNode<TestSite>(e.Node);
                 var envparam = e.Node.Tag as TestEnvParam;
                 if (envparam.Id == 0)
                 {
-                    envparam = BigEntityTableEngine.LocalEngine.Find<TestEnvParam>(nameof(TestEnvParam), "APISourceId_Name", new object[] { apisource.Id, envparam.Name }).FirstOrDefault();
+                    envparam = BigEntityTableEngine.LocalEngine.Find<TestEnvParam>(nameof(TestEnvParam), "SiteId_Name", new object[] { testSite.Id, envparam.Name }).FirstOrDefault();
                 }
-                var dlg = new SubForm.AddTestEnvParamDlg(apisource.Id, envparam.Id);
+                var dlg = new SubForm.AddTestEnvParamDlg(testSite.Id, envparam.Id);
                 if (dlg.ShowDialog() == DialogResult.OK)
                 {
 
