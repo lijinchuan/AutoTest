@@ -126,6 +126,12 @@ namespace AutoTest.Util
                 Desc = "测试字符串是否以指定的后缀结束",
                 HighColor = Color.Red
             });
+
+            KeyWordDic.Add(new ScriptKeyWord
+            {
+                KeyWord= "ServerDriverClient",
+                Desc="后台客户端，可调用后台方法"
+            });
         }
 
         private static void Deal()
