@@ -29,6 +29,7 @@ namespace AutoTest.UI.SubForm
         /// </summary>
         private void InitializeComponent()
         {
+            this.components = new System.ComponentModel.Container();
             this.tabPage1 = new System.Windows.Forms.TabPage();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
@@ -44,9 +45,7 @@ namespace AutoTest.UI.SubForm
             this.TBName = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.tabPage8 = new System.Windows.Forms.TabPage();
-            this.TBCode = new System.Windows.Forms.TextBox();
             this.tabPage9 = new System.Windows.Forms.TabPage();
-            this.TBValidCode = new System.Windows.Forms.TextBox();
             this.tabPage4 = new System.Windows.Forms.TabPage();
             this.numericUpDown1 = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();
@@ -56,6 +55,10 @@ namespace AutoTest.UI.SubForm
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.tabPage6 = new System.Windows.Forms.TabPage();
             this.textBox3 = new System.Windows.Forms.TextBox();
+            this.label7 = new System.Windows.Forms.Label();
+            this.TBUrl = new System.Windows.Forms.TextBox();
+            this.TBCode = new AutoTest.UI.UC.JSCodeEditBox();
+            this.TBValidCode = new AutoTest.UI.UC.JSCodeEditBox();
             this.panel1.SuspendLayout();
             this.myTabControl1.SuspendLayout();
             this.tabPage7.SuspendLayout();
@@ -164,6 +167,8 @@ namespace AutoTest.UI.SubForm
             // 
             // tabPage7
             // 
+            this.tabPage7.Controls.Add(this.TBUrl);
+            this.tabPage7.Controls.Add(this.label7);
             this.tabPage7.Controls.Add(this.NUDOrder);
             this.tabPage7.Controls.Add(this.label5);
             this.tabPage7.Controls.Add(this.TBName);
@@ -179,7 +184,7 @@ namespace AutoTest.UI.SubForm
             // NUDOrder
             // 
             this.NUDOrder.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.NUDOrder.Location = new System.Drawing.Point(115, 83);
+            this.NUDOrder.Location = new System.Drawing.Point(115, 107);
             this.NUDOrder.Maximum = new decimal(new int[] {
             10000,
             0,
@@ -193,7 +198,7 @@ namespace AutoTest.UI.SubForm
             // 
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label5.Location = new System.Drawing.Point(39, 88);
+            this.label5.Location = new System.Drawing.Point(39, 112);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(56, 16);
             this.label5.TabIndex = 2;
@@ -228,16 +233,6 @@ namespace AutoTest.UI.SubForm
             this.tabPage8.Text = "脚本";
             this.tabPage8.UseVisualStyleBackColor = true;
             // 
-            // TBCode
-            // 
-            this.TBCode.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.TBCode.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.TBCode.Location = new System.Drawing.Point(3, 3);
-            this.TBCode.Multiline = true;
-            this.TBCode.Name = "TBCode";
-            this.TBCode.Size = new System.Drawing.Size(789, 359);
-            this.TBCode.TabIndex = 0;
-            // 
             // tabPage9
             // 
             this.tabPage9.Controls.Add(this.TBValidCode);
@@ -247,16 +242,6 @@ namespace AutoTest.UI.SubForm
             this.tabPage9.TabIndex = 2;
             this.tabPage9.Text = "验证";
             this.tabPage9.UseVisualStyleBackColor = true;
-            // 
-            // TBValidCode
-            // 
-            this.TBValidCode.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.TBValidCode.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.TBValidCode.Location = new System.Drawing.Point(0, 0);
-            this.TBValidCode.Multiline = true;
-            this.TBValidCode.Name = "TBValidCode";
-            this.TBValidCode.Size = new System.Drawing.Size(795, 365);
-            this.TBValidCode.TabIndex = 0;
             // 
             // tabPage4
             // 
@@ -352,6 +337,42 @@ namespace AutoTest.UI.SubForm
             this.textBox3.Size = new System.Drawing.Size(192, 74);
             this.textBox3.TabIndex = 0;
             // 
+            // label7
+            // 
+            this.label7.AutoSize = true;
+            this.label7.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label7.Location = new System.Drawing.Point(39, 71);
+            this.label7.Name = "label7";
+            this.label7.Size = new System.Drawing.Size(56, 16);
+            this.label7.TabIndex = 4;
+            this.label7.Text = "网址：";
+            // 
+            // TBUrl
+            // 
+            this.TBUrl.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.TBUrl.Location = new System.Drawing.Point(115, 68);
+            this.TBUrl.Name = "TBUrl";
+            this.TBUrl.Size = new System.Drawing.Size(638, 26);
+            this.TBUrl.TabIndex = 5;
+            // 
+            // TBCode
+            // 
+            this.TBCode.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.TBCode.Location = new System.Drawing.Point(3, 3);
+            this.TBCode.Name = "TBCode";
+            this.TBCode.SelectedText = "";
+            this.TBCode.Size = new System.Drawing.Size(789, 359);
+            this.TBCode.TabIndex = 0;
+            // 
+            // TBValidCode
+            // 
+            this.TBValidCode.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.TBValidCode.Location = new System.Drawing.Point(0, 0);
+            this.TBValidCode.Name = "TBValidCode";
+            this.TBValidCode.SelectedText = "";
+            this.TBValidCode.Size = new System.Drawing.Size(795, 365);
+            this.TBValidCode.TabIndex = 0;
+            // 
             // AddTestCaseDlg
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -369,9 +390,7 @@ namespace AutoTest.UI.SubForm
             this.tabPage7.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.NUDOrder)).EndInit();
             this.tabPage8.ResumeLayout(false);
-            this.tabPage8.PerformLayout();
             this.tabPage9.ResumeLayout(false);
-            this.tabPage9.PerformLayout();
             this.tabPage4.ResumeLayout(false);
             this.tabPage4.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
@@ -399,9 +418,7 @@ namespace AutoTest.UI.SubForm
         private System.Windows.Forms.TextBox TBName;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.TabPage tabPage8;
-        private System.Windows.Forms.TextBox TBCode;
         private System.Windows.Forms.TabPage tabPage9;
-        private System.Windows.Forms.TextBox TBValidCode;
         private System.Windows.Forms.TabPage tabPage4;
         private System.Windows.Forms.NumericUpDown numericUpDown1;
         private System.Windows.Forms.Label label3;
@@ -411,5 +428,9 @@ namespace AutoTest.UI.SubForm
         private System.Windows.Forms.TextBox textBox2;
         private System.Windows.Forms.TabPage tabPage6;
         private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.TextBox TBUrl;
+        private System.Windows.Forms.Label label7;
+        private UC.JSCodeEditBox TBCode;
+        private UC.JSCodeEditBox TBValidCode;
     }
 }

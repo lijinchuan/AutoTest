@@ -673,6 +673,22 @@ namespace AutoTest.UI.UC
                             }
                             break;
                         }
+                    case "复制":
+                        {
+                            if (selnode.Tag is TestCase)
+                            {
+                                var testSite = FindParentNode<TestSite>(selnode);
+                                var testPage = FindParentNode<TestPage>(selnode);
+                                var step1dlg = new AddTestCaseDlg(testPage.Id, 0, selnode.Tag as TestCase);
+                                if (step1dlg.ShowDialog() == DialogResult.OK)
+                                {
+                                    ReLoadDBObj(selnode);
+                                    Util.AddToMainTab(this, $"[{testSite.Name}]-{testPage.Name}-{step1dlg.TestCase.CaseName}", new UC.UCAddCaseParam(testSite, testPage, step1dlg.TestCase,
+                                        () => FindParentAndReLoad(selnode)));
+                                }
+                            }
+                            break;
+                        }
                     default:
                         {
                             MessageBox.Show(e.ClickedItem.Text);
@@ -813,6 +829,8 @@ namespace AutoTest.UI.UC
                 登陆ToolStripMenuItem.Visible = node.Tag is TestLogin;
 
                 添加脚本ToolStripMenuItem.Visible= (node.Tag as INodeContents)?.GetNodeContentType() == NodeContentType.SCRIPTPARENT;
+
+                复制ToolStripMenuItem.Visible = node.Tag is TestCase;
             }
 
         }

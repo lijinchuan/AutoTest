@@ -582,6 +582,12 @@ namespace AutoTest.UI.UC
             string pre = "", last = "";
             int pi = curindex - charstartindex - 1;
 
+            if (RichText.Lines.Length < currline)
+            {
+                word = string.Empty;
+                return -1;
+            }
+
             //判断是否是注释部分
             var nodeindex = this.RichText.Lines[currline]?.IndexOf("//");
             if (nodeindex > -1 && pi >= nodeindex)
@@ -826,6 +832,10 @@ namespace AutoTest.UI.UC
             #endregion
 
             int line = this.RichText.GetLineFromCharIndex(this.RichText.GetFirstCharIndexOfCurrentLine());
+            if (line > RichText.Lines.Length)
+            {
+                return;
+            }
             if (_lastInputChar == '\r' || _lastInputChar == '\n')
             {
                 _markedLines.RemoveAll(p => p == line || p == line - 1);

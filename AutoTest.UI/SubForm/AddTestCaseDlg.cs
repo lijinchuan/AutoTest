@@ -17,17 +17,18 @@ namespace AutoTest.UI.SubForm
     {
         private int _pageId;
         private int _caseId;
+        private TestCase _copyCase;
         public AddTestCaseDlg()
         {
             InitializeComponent();
         }
 
-        public AddTestCaseDlg(int pageId, int caseId)
+        public AddTestCaseDlg(int pageId, int caseId,TestCase copyCase=null)
         {
             InitializeComponent();
             _pageId = pageId;
             _caseId = caseId;
-
+            _copyCase = copyCase;
         }
 
         public TestCase TestCase
@@ -50,12 +51,24 @@ namespace AutoTest.UI.SubForm
                     return;
                 }
                 TBName.Text = testCase.CaseName;
+                TBUrl.Text = testCase.Url ?? string.Empty;
                 NUDOrder.Value = testCase.Order;
                 TBCode.Text = testCase.TestCode;
                 TBValidCode.Text = testCase.ValidCode;
             }
             else
             {
+                if (_copyCase != null)
+                {
+                    TBName.Text = _copyCase.CaseName;
+                    TBCode.Text = _copyCase.TestCode;
+                    TBValidCode.Text = _copyCase.ValidCode;
+                    if (!string.IsNullOrWhiteSpace(_copyCase.Url))
+                    {
+                        TBUrl.Text = _copyCase.Url;
+                    }
+                }
+
                 var cnt = BigEntityTableEngine.LocalEngine.Count(nameof(TestCase), nameof(TestCase.PageId), new object[] { _pageId });
                 NUDOrder.Value = cnt + 1;
             }
@@ -81,7 +94,8 @@ namespace AutoTest.UI.SubForm
                 CaseName = TBName.Text,
                 Order = (int)NUDOrder.Value,
                 TestCode = TBCode.Text,
-                ValidCode = TBValidCode.Text
+                ValidCode = TBValidCode.Text,
+                Url = TBUrl.Text
             };
             if (_caseId == 0)
             {

@@ -54,11 +54,12 @@ namespace AutoTest.UI.UC
             this.添加登陆页ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.登陆ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.切换此环境ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.添加脚本ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.ts_serchKey = new System.Windows.Forms.ToolStripComboBox();
             this.toolStripDropDownButton1 = new System.Windows.Forms.ToolStripButton();
             this.使用ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.添加脚本ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.复制ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.DBServerviewContextMenuStrip.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
@@ -108,9 +109,10 @@ namespace AutoTest.UI.UC
             this.添加登陆页ToolStripMenuItem,
             this.登陆ToolStripMenuItem,
             this.切换此环境ToolStripMenuItem,
-            this.添加脚本ToolStripMenuItem});
+            this.添加脚本ToolStripMenuItem,
+            this.复制ToolStripMenuItem});
             this.DBServerviewContextMenuStrip.Name = "DBServerviewContextMenuStrip";
-            this.DBServerviewContextMenuStrip.Size = new System.Drawing.Size(181, 510);
+            this.DBServerviewContextMenuStrip.Size = new System.Drawing.Size(181, 532);
             // 
             // 复制表名ToolStripMenuItem
             // 
@@ -238,6 +240,12 @@ namespace AutoTest.UI.UC
             this.切换此环境ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.切换此环境ToolStripMenuItem.Text = "切换此环境";
             // 
+            // 添加脚本ToolStripMenuItem
+            // 
+            this.添加脚本ToolStripMenuItem.Name = "添加脚本ToolStripMenuItem";
+            this.添加脚本ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.添加脚本ToolStripMenuItem.Text = "添加脚本";
+            // 
             // toolStrip1
             // 
             this.toolStrip1.AutoSize = false;
@@ -274,11 +282,11 @@ namespace AutoTest.UI.UC
             this.使用ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.使用ToolStripMenuItem.Text = "使用";
             // 
-            // 添加脚本ToolStripMenuItem
+            // 复制ToolStripMenuItem
             // 
-            this.添加脚本ToolStripMenuItem.Name = "添加脚本ToolStripMenuItem";
-            this.添加脚本ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.添加脚本ToolStripMenuItem.Text = "添加脚本";
+            this.复制ToolStripMenuItem.Name = "复制ToolStripMenuItem";
+            this.复制ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.复制ToolStripMenuItem.Text = "复制";
             // 
             // DBServerView
             // 
@@ -331,5 +339,6 @@ namespace AutoTest.UI.UC
         private System.Windows.Forms.ToolStripMenuItem 使用ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 切换此环境ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 添加脚本ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 复制ToolStripMenuItem;
     }
 }
