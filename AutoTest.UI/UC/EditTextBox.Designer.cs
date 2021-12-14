@@ -139,6 +139,7 @@
             this.RichText.Size = new System.Drawing.Size(625, 448);
             this.RichText.TabIndex = 1;
             this.RichText.Text = "";
+            this.RichText.WordWrap = false;
             this.RichText.SelectionChanged += new System.EventHandler(this.RichText_SelectionChanged);
             this.RichText.MouseHover += new System.EventHandler(this.RichText_MouseHover);
             // 

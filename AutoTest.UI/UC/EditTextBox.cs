@@ -582,7 +582,7 @@ namespace AutoTest.UI.UC
             string pre = "", last = "";
             int pi = curindex - charstartindex - 1;
 
-            if (RichText.Lines.Length < currline)
+            if (RichText.Lines.Length <= currline || pi >= RichText.Lines[currline].Length)
             {
                 word = string.Empty;
                 return -1;
@@ -832,7 +832,7 @@ namespace AutoTest.UI.UC
             #endregion
 
             int line = this.RichText.GetLineFromCharIndex(this.RichText.GetFirstCharIndexOfCurrentLine());
-            if (line > RichText.Lines.Length)
+            if (line >= RichText.Lines.Length)
             {
                 return;
             }
