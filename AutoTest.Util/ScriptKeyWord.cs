@@ -132,6 +132,36 @@ namespace AutoTest.Util
                 KeyWord= "ServerDriverClient",
                 Desc="后台客户端，可调用后台方法"
             });
+
+            KeyWordDic.Add(new ScriptKeyWord
+            {
+                KeyWord = "ServerDriverClient.sleep",
+                Desc = "休眠:ServerDriverClient.sleep(int ms)"
+            });
+
+            KeyWordDic.Add(new ScriptKeyWord
+            {
+                KeyWord = "ServerDriverClient.click",
+                Desc = "点击：ServerDriverClient.click(int x,int y)"
+            });
+
+            KeyWordDic.Add(new ScriptKeyWord
+            {
+                KeyWord = "ServerDriverClient.mouseUp",
+                Desc = "鼠标弹起:ServerDriverClient.mouseUp(int x,int y)"
+            });
+
+            KeyWordDic.Add(new ScriptKeyWord
+            {
+                KeyWord = "ServerDriverClient.mouseMove",
+                Desc = "鼠标移动:ServerDriverClient.mouseMove(int x,int y)"
+            });
+
+            KeyWordDic.Add(new ScriptKeyWord
+            {
+                KeyWord = "ServerDriverClient.mouseDown",
+                Desc = "鼠标按下:ServerDriverClient.mouseDown(int x,int y)"
+            });
         }
 
         private static void Deal()

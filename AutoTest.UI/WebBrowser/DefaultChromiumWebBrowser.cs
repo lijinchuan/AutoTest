@@ -458,6 +458,7 @@ namespace AutoTest.UI.WebBrowser
                 else
                 {
                     isRunningJob = false;
+                    WebTask_OnMsgPublish("所有测试完成");
                 }
 
             }

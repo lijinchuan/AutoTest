@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -26,6 +27,7 @@ namespace AutoTest.UI.WebBrowser
         public void Click(int x,int y)
         {
             MouseDown(x, y);
+            Thread.Sleep(2);
             MouseUp(x, y);
         }
 
@@ -51,6 +53,11 @@ namespace AutoTest.UI.WebBrowser
 
             var mouseMove = new MouseEvent(x, y, CefEventFlags.LeftMouseButton);
             host.SendMouseMoveEvent(mouseMove, false);
+        }
+
+        public void Sleep(int ms)
+        {
+            Thread.Sleep(ms);
         }
     }
 }

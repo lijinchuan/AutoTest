@@ -541,7 +541,16 @@ namespace AutoTest.UI.UC
                                     {
                                         BeginInvoke(new Action(() =>
                                         {
-                                            var nodeEx = (TreeNodeEx)node;
+                                            var lastNode = node;
+                                            if (lastNode.Parent == null)
+                                            {
+                                                lastNode = FindNode(tv_DBServers.Nodes, lastNode.Tag);
+                                            }
+                                            if (lastNode == null)
+                                            {
+                                                return;
+                                            }
+                                            var nodeEx = (TreeNodeEx)lastNode;
                                             var imgIndex = 18;
                                             if (r.Success)
                                             {

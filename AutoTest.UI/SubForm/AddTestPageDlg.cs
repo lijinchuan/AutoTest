@@ -46,6 +46,13 @@ namespace AutoTest.UI.SubForm
                 TBUrl.Text = testPage.Url;
                 NUDOrder.Value = testPage.Order;
             }
+            else
+            {
+                var testPageList = BigEntityTableEngine.LocalEngine.Find<TestPage>(nameof(TestPage), nameof(TestPage.SiteId),
+                    new object[] { _siteId }).ToList();
+
+                NUDOrder.Value = testPageList.Count + 1;
+            }
         }
 
         private void BtnCancel_Click(object sender, EventArgs e)
@@ -55,11 +62,26 @@ namespace AutoTest.UI.SubForm
 
         private void BtnOk_Click(object sender, EventArgs e)
         {
+            if (string.IsNullOrWhiteSpace(TBName.Text.Trim()))
+            {
+                new AlertDlg("添加测试页面", "名称不能为空", null).ShowDialog();
+                return;
+            }
+            var testPageList = BigEntityTableEngine.LocalEngine.Find<TestPage>(nameof(TestPage), nameof(TestPage.SiteId),
+                    new object[] { _siteId }).ToList();
+
+            if (testPageList.Any(p => p.Name == TBName.Text.Trim() && (_pageId == 0 || _pageId != p.Id)))
+            {
+                new AlertDlg("测试页面", $"名称{TBName.Text.Trim()}不能重复", null).ShowDialog();
+                return;
+            }
+
             if (_pageId == 0)
             {
+
                 BigEntityTableEngine.LocalEngine.Insert(nameof(TestPage), new TestPage
                 {
-                    Name = TBName.Text,
+                    Name = TBName.Text.Trim(),
                     Order = (int)NUDOrder.Value,
                     SiteId = _siteId,
                     Url = TBUrl.Text
@@ -69,8 +91,8 @@ namespace AutoTest.UI.SubForm
             {
                 BigEntityTableEngine.LocalEngine.Update(nameof(TestPage), new TestPage
                 {
-                    Id=_pageId,
-                    Name = TBName.Text,
+                    Id = _pageId,
+                    Name = TBName.Text.Trim(),
                     Order = (int)NUDOrder.Value,
                     SiteId = _siteId,
                     Url = TBUrl.Text

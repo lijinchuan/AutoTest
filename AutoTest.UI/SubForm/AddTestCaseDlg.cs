@@ -22,12 +22,12 @@ namespace AutoTest.UI.SubForm
             InitializeComponent();
         }
 
-        public AddTestCaseDlg(int pageId,int caseId)
+        public AddTestCaseDlg(int pageId, int caseId)
         {
             InitializeComponent();
             _pageId = pageId;
             _caseId = caseId;
-            
+
         }
 
         public TestCase TestCase
@@ -53,6 +53,11 @@ namespace AutoTest.UI.SubForm
                 NUDOrder.Value = testCase.Order;
                 TBCode.Text = testCase.TestCode;
                 TBValidCode.Text = testCase.ValidCode;
+            }
+            else
+            {
+                var cnt = BigEntityTableEngine.LocalEngine.Count(nameof(TestCase), nameof(TestCase.PageId), new object[] { _pageId });
+                NUDOrder.Value = cnt + 1;
             }
         }
 
@@ -80,7 +85,12 @@ namespace AutoTest.UI.SubForm
             };
             if (_caseId == 0)
             {
-
+                var list = BigEntityTableEngine.LocalEngine.Find<TestCase>(nameof(TestCase), nameof(TestCase.PageId), new object[] { _pageId });
+                if (list.Any(p => p.CaseName == TestCase.CaseName))
+                {
+                    new AlertDlg("添加测试用例", $"用例名[{TestCase.CaseName}]不能重复", null).ShowDialog();
+                    return;
+                }
                 BigEntityTableEngine.LocalEngine.Insert(nameof(TestCase), TestCase);
             }
             else

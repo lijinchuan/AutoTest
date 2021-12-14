@@ -57,7 +57,11 @@ namespace AutoTest.UI.WebBrowser
 
         public void AddJqueryLib(IBrowser browser, IFrame frame)
         {
-            _ = browser.MainFrame.EvaluateScriptAsync(ADDJQUERYLIBCODE).Result;
+            var resp = browser.MainFrame.EvaluateScriptAsync(ADDJQUERYLIBCODE);
+            if (!Task.WaitAll(new[] { resp }, 30000))
+            {
+                throw new TimeoutException("执行代码超时，请检查代码是否有问题");
+            }
             var script = @"$('#aaaaa').length";
             var start = DateTime.Now;
             while (true)
@@ -91,12 +95,20 @@ namespace AutoTest.UI.WebBrowser
         {
             var code = string.Format(REGISTERREMOTESCRIPTCODE, url);
             var resp = browser.MainFrame.EvaluateScriptAsync(code);
+            if (!Task.WaitAll(new[] { resp }, 30000))
+            {
+                throw new TimeoutException("执行代码超时，请检查代码是否有问题");
+            }
             return resp.Result.Success;
         }
 
         public object ExecuteScript(IBrowser browser,IFrame frame,string code)
         {
             var resp = browser.MainFrame.EvaluateScriptAsync(code);
+            if (!Task.WaitAll(new[] { resp }, 30000))
+            {
+                throw new TimeoutException("执行代码超时，请检查代码是否有问题");
+            }
             if (!resp.Result.Success)
             {
                 throw new ScriptException(resp.Result.Message);
@@ -107,6 +119,10 @@ namespace AutoTest.UI.WebBrowser
         public object ExecutePromiseScript(IBrowser browser, IFrame frame, string code)
         {
             var resp = browser.MainFrame.EvaluateScriptAsPromiseAsync(code);
+            if(!Task.WaitAll(new[] { resp }, 30000))
+            {
+                throw new TimeoutException("执行代码超时，请检查代码是否有问题");
+            }
             if (!resp.Result.Success)
             {
                 throw new ScriptException(resp.Result.Message);

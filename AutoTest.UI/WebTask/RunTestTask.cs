@@ -120,21 +120,26 @@ namespace AutoTest.UI.WebTask
             }
         }
 
-        private void PrepareTest(IBrowser browser, IFrame frame,object userData)
+        private void PrepareTest(IBrowser browser, IFrame frame, object userData)
         {
-            if (!string.IsNullOrWhiteSpace(_testCase.TestCode) || !string.IsNullOrWhiteSpace(_testCase.ValidCode))
+            if ((!string.IsNullOrWhiteSpace(_testCase.TestCode) || !string.IsNullOrWhiteSpace(_testCase.ValidCode)))
             {
                 //注入JQUERY
                 webBrowserTool.AddJqueryLib(browser, frame);
 
+                PublishMsg("注入JQUERY");
+
                 //注入工具包
                 if (_globScripts != null && _globScripts.Count > 0)
                 {
-                    foreach(var s in _globScripts.OrderBy(p => p.Order))
+                    foreach (var s in _globScripts.OrderBy(p => p.Order))
                     {
                         RegistTestScript(browser, frame, s);
                     }
                 }
+
+                PublishMsg("注入全局工具包");
+
 
                 if (_siteScripts != null && _siteScripts.Count > 0)
                 {
@@ -144,8 +149,12 @@ namespace AutoTest.UI.WebTask
                     }
                 }
 
+                PublishMsg("注入通用工具包");
+
                 //注入变量
                 SetVar(browser, frame, userData);
+
+                PublishMsg("注入变量");
             }
         }
 
@@ -203,6 +212,7 @@ namespace AutoTest.UI.WebTask
         private async Task<int> RunTestCode(IBrowser browser, IFrame frame)
         {
             int sleepMills = 1000;
+            string lastErr = string.Empty;
             if (!string.IsNullOrWhiteSpace(_testCase.TestCode))
             {
                 var tryCount = 0;
@@ -230,7 +240,12 @@ namespace AutoTest.UI.WebTask
                     }
                     catch (Exception ex)
                     {
-                        PublishMsg(ex.Message);
+                        if (ex.Message != lastErr)
+                        {
+                            lastErr = ex.Message;
+                            PublishMsg(ex.Message);
+                        }
+                        
                         if (tryCount++ > TestTimeOut / sleepMills)
                         {
                             PublishMsg("超时");
@@ -259,6 +274,7 @@ namespace AutoTest.UI.WebTask
         {
             int validResult = 0;
             int sleepMills = 1000;
+            string lastErr = string.Empty;
             try
             {
                 if (!string.IsNullOrWhiteSpace(_testCase.ValidCode))
@@ -268,10 +284,15 @@ namespace AutoTest.UI.WebTask
                     while (true)
                     {
                         AssertWebHasNoError();
+                        PublishMsg("检查请求没有异常");
                         try
                         {
                             PrepareTest(browser, frame, bag);
+
+                            PublishMsg("开始执行验证代码");
                             var ret = webBrowserTool.TryExecuteScript(browser, frame, Util.ReplaceEvnParams(_testCase.ValidCode, _testEnvParams));
+
+                            PublishMsg("执行验证代码,结果:" + ret);
                             if (ret == null)
                             {
                                 if (tryCount++ >= TestTimeOut / sleepMills)
@@ -292,10 +313,12 @@ namespace AutoTest.UI.WebTask
                         }
                         catch (Exception ex)
                         {
-                            if (tryCount > 3)
+                            if (ex.Message != lastErr)
                             {
-                                PublishMsg("验证可能会失败："+ex.Message);
+                                lastErr = ex.Message;
+                                PublishMsg("验证可能会失败：" + ex.Message);
                             }
+
                             if (tryCount++ >= TestTimeOut / sleepMills)
                             {
                                 _testResult.IsTimeOut = true;
@@ -311,6 +334,7 @@ namespace AutoTest.UI.WebTask
                             {
                                 bag = userData;
                             }
+                            PublishMsg("读取用户变量");
                         }
                     }
                 }
@@ -319,6 +343,8 @@ namespace AutoTest.UI.WebTask
                     AssertWebHasNoError();
                     _testResult.Success = true;
                     _testResult.FailMsg = "没有验证脚本，默认为成功";
+
+                    PublishMsg("没有验证脚本，默认为成功");
                 }
             }
             catch (Exception ex)
@@ -359,9 +385,11 @@ namespace AutoTest.UI.WebTask
             var ret = 0;
             try
             {
+                PublishMsg($"{_testCase.CaseName}执行代码");
                 ret = await RunTestCode(browser, frame);
                 if (ret == 1)
                 {
+                    PublishMsg($"{_testCase.CaseName}执行代码成功，准备验证");
                     ret = await RunValidCode(browser, frame);
                     if (ret == 1)
                     {
