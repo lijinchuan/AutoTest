@@ -162,6 +162,30 @@ namespace AutoTest.Util
                 KeyWord = "ServerDriverClient.mouseDown",
                 Desc = "鼠标按下:ServerDriverClient.mouseDown(int x,int y)"
             });
+
+            KeyWordDic.Add(new ScriptKeyWord
+            {
+                KeyWord= "ServerDriverClient.saveFile",
+                Desc= "ServerDriverClient.SaveFile(string fileName,bool replace,string content)"
+            });
+
+            KeyWordDic.Add(new ScriptKeyWord
+            {
+                KeyWord = "ServerDriverClient.readFile",
+                Desc = "ServerDriverClient.ReadFile(string fileName)"
+            });
+
+            KeyWordDic.Add(new ScriptKeyWord
+            {
+                KeyWord = "JSON.parse",
+                Desc = "将json字符串转换成json对象"
+            });
+
+            KeyWordDic.Add(new ScriptKeyWord
+            {
+                KeyWord = "JSON.stringify",
+                Desc = "将json对象转换成json对符串"
+            });
         }
 
         private static void Deal()

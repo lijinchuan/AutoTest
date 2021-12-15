@@ -2,6 +2,7 @@
 using CefSharp.WinForms;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -14,6 +15,18 @@ namespace AutoTest.UI.WebBrowser
     {
         private System.Threading.SynchronizationContext context;
         private ChromiumWebBrowser browser;
+
+        private static string userFileDir = "userData\\";
+
+        static CSObj()
+        {
+            if (!Directory.Exists(userFileDir))
+            {
+                Directory.CreateDirectory(userFileDir);
+            }
+
+        }
+
         public CSObj(System.Threading.SynchronizationContext context, ChromiumWebBrowser browser)
         {
             this.context = context;
@@ -58,6 +71,31 @@ namespace AutoTest.UI.WebBrowser
         public void Sleep(int ms)
         {
             Thread.Sleep(ms);
+        }
+
+        public bool SaveFile(string fileName,bool replace,string content)
+        {
+            var path = userFileDir + fileName;
+            if (File.Exists(path) &&!replace)
+            {
+                return false;
+            }
+
+            File.WriteAllText(path, content, Encoding.UTF8);
+            return true;
+        }
+
+        public string ReadFile(string fileName)
+        {
+            var path = userFileDir + fileName;
+            if (File.Exists(path))
+            {
+                return File.ReadAllText(path);
+            }
+            else
+            {
+                return string.Empty;
+            }
         }
     }
 }
