@@ -317,7 +317,10 @@ namespace AutoTest.UI.WebBrowser
                 //}
 
                 this.OnMsgPublished($"开始任务:{webTask.GetTaskName()},地址:{webTask.GetStartPageUrl()}");
-                GetBrowser().MainFrame.LoadUrl(webTask.GetStartPageUrl());
+                using (var taskRequest = webTask.GetTestRequest(this.GetBrowser().MainFrame.CreateRequest()))
+                {
+                    GetBrowser().MainFrame.LoadRequest(taskRequest);
+                }
 
                 if (!readyResetEvent.WaitOne(60000))
                 {

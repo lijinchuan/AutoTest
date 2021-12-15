@@ -53,6 +53,13 @@ namespace AutoTest.UI.WebTask
         string GetStartPageUrl();
 
         /// <summary>
+        /// 构造一个测试请求
+        /// </summary>
+        /// <param name="request"></param>
+        /// <returns></returns>
+        IRequest GetTestRequest(IRequest request);
+
+        /// <summary>
         /// 从数据库拿网站的COOKIE
         /// </summary>
         /// <returns></returns>

@@ -185,5 +185,12 @@ namespace AutoTest.UI.WebTask
             
 
         }
+
+        public virtual IRequest GetTestRequest(IRequest request)
+        {
+            request.Url = GetStartPageUrl();
+            request.Method = "GET";
+            return request;
+        }
     }
 }
