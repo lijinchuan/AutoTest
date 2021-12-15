@@ -9,7 +9,7 @@ namespace AutoTest.Domain.Entity
     /// <summary>
     /// 测试包
     /// </summary>
-    public class TestSource:IComparable
+    public class TestSource : IComparable, ISearch
     {
         public int Id
         {
@@ -37,6 +37,12 @@ namespace AutoTest.Domain.Entity
             }
 
             return 1;
+        }
+
+        public bool Search(string wd)
+        {
+            return (this.SourceName ?? string.Empty).IndexOf(wd, StringComparison.OrdinalIgnoreCase) > -1
+                || (this.Desc ?? string.Empty).IndexOf(wd, StringComparison.OrdinalIgnoreCase) > -1;
         }
     }
 }

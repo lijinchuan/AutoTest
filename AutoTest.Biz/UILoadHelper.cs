@@ -165,7 +165,22 @@ namespace AutoTest.Biz
 
                     if (testResult != null)
                     {
-                        imageIndex = testResult.Success ? 19 : 20;
+                        if (testResult.Success)
+                        {
+                            if (testResult.HasWarn)
+                            {
+                                imageIndex = 21;
+                            }
+                            else
+                            {
+                                imageIndex = 19;
+                            }
+                        }
+                        else
+                        {
+                            imageIndex = 20;
+                        }
+                       
                     }
                 }
                 treeNodes.Add(new TreeNodeEx

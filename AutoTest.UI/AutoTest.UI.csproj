@@ -785,6 +785,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="Resources\bullet_white.png" />
+    <None Include="Resources\bullet_yellow.png" />
     <Content Include="Resources\control_add.png" />
     <Content Include="Resources\control_remove.png" />
     <Content Include="Resources\date.png" />

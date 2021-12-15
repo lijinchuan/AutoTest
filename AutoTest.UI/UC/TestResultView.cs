@@ -101,6 +101,12 @@ namespace AutoTest.UI.UC
                 GVLog.Columns["是否超时"].Width = 60;
             }
 
+            //是否警告
+            if (GVLog.Columns.Contains("是否警告"))
+            {
+                GVLog.Columns["是否警告"].Width = 60;
+            }
+
             if (GVLog.Columns.Contains("用时"))
             {
                 GVLog.Columns["用时"].Width = 100;
@@ -310,6 +316,8 @@ namespace AutoTest.UI.UC
                                 是否超时 = p.IsTimeOut,
                                 是否成功 = p.Success,
                                 结果描述 = p.FailMsg,
+                                是否警告 = p.HasWarn,
+                                警告消息 = p.WainMsg,
                                 返回数据 = p.ResultContent,
                                 用时 = p.TestEndDate.Subtract(p.TestStartDate).TotalMilliseconds + "ms"
                             }).ToList();
@@ -329,6 +337,8 @@ namespace AutoTest.UI.UC
                             是否超时 = p.IsTimeOut,
                             是否成功 = p.Success,
                             结果描述 = p.FailMsg,
+                            是否警告 = p.HasWarn,
+                            警告消息 = p.WainMsg,
                             返回数据 = p.ResultContent,
                             用时 = p.TestEndDate.Subtract(p.TestStartDate).TotalMilliseconds + "ms"
                         }).ToList();

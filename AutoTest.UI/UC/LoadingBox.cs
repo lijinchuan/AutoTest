@@ -92,7 +92,10 @@ namespace AutoTest.UI.UC
                 }
                 finally
                 {
-                    parent.Invoke(new Action(() => parent.Controls.Remove(this)));
+                    if (!parent.IsDisposed)
+                    {
+                        parent.Invoke(new Action(() => parent.Controls.Remove(this)));
+                    }
                     TaskThread = null;
                 }
             }));
@@ -123,7 +126,10 @@ namespace AutoTest.UI.UC
                 }
                 finally
                 {
-                    parent.Invoke(new Action(() => parent.Controls.Remove(this)));
+                    if (!parent.IsDisposed)
+                    {
+                        parent.Invoke(new Action(() => parent.Controls.Remove(this)));
+                    }
                     TaskThread = null;
                 }
             }));

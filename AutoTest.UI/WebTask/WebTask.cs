@@ -72,6 +72,12 @@ namespace AutoTest.UI.WebTask
             private set; 
         }
 
+        protected bool IsDebug
+        {
+            get;
+            set;
+        }
+
         protected WebTask(string strTaskName, string strStartPageUrl, bool useProxy,bool clearCookies)
         {
             taskName = strTaskName;
@@ -134,6 +140,14 @@ namespace AutoTest.UI.WebTask
         protected void PublishMsg(string msg)
         {
             OnMsgPublish?.Invoke(msg);
+        }
+
+        protected void PublishDebugMsg(string msg)
+        {
+            if (IsDebug)
+            {
+                OnMsgPublish?.Invoke(msg);
+            }
         }
 
         public string GetTaskName()

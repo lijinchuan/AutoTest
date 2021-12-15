@@ -44,7 +44,8 @@ namespace AutoTest.UI.UC
             tv_DBServers.ImageList.Images.Add("SCRIPTCODE", Resources.Resource1.script_code);
             tv_DBServers.ImageList.Images.Add("bullet_white", Resources.Resource1.bullet_white);
             tv_DBServers.ImageList.Images.Add("bullet_green", Resources.Resource1.bullet_green);
-            tv_DBServers.ImageList.Images.Add("bullet_red", Resources.Resource1.bullet_red);
+            tv_DBServers.ImageList.Images.Add("bullet_red", Resources.Resource1.bullet_red);//20
+            tv_DBServers.ImageList.Images.Add("bullet_yellow", Resources.Resource1.bullet_yellow);
 
             tv_DBServers.Nodes.Add(new TreeNodeEx("资源管理器", 0, 1));
             tv_DBServers.BeforeExpand += Tv_DBServers_BeforeExpand;
@@ -299,8 +300,13 @@ namespace AutoTest.UI.UC
                                 var testPage = FindParentNode<TestPage>(selnode);
                                 var testCase = selnode.Tag as TestCase;
 
-                                Util.AddToMainTab(this, $"[{testSite.Name}]-{testPage.Name}-{testCase.CaseName}", new UC.UCAddCaseParam(testSite, testPage, testCase,
+                                var tab= (UCAddCaseParam)Util.TryAddToMainTab(this, $"[{testSite.Name}]-{testPage.Name}-{testCase.CaseName}",()=> new UCAddCaseParam(testSite, testPage, testCase,
                                     ()=> FindParentAndReLoad(selnode)));
+
+                                if (tab.CallBack == null)
+                                {
+                                    tab.CallBack = () => FindParentAndReLoad(selnode);
+                                }
                             }
                             else if (selnode.Tag is TestPage)
                             {
@@ -551,10 +557,13 @@ namespace AutoTest.UI.UC
                                                 return;
                                             }
                                             var nodeEx = (TreeNodeEx)lastNode;
-                                            var imgIndex = 18;
+                                            var imgIndex = 19;
                                             if (r.Success)
                                             {
-                                                imgIndex = 19;
+                                                if (r.HasWarn)
+                                                {
+                                                    imgIndex = 21;
+                                                }
                                             }
                                             else
                                             {
@@ -568,6 +577,11 @@ namespace AutoTest.UI.UC
 
                             if (new ConfirmDlg("询问", "执行测试吗？").ShowDialog() == DialogResult.OK)
                             {
+                                foreach(var n in testCaseNodeList)
+                                {
+                                    var nodeEx = n as TreeNodeEx;
+                                    nodeEx.SelectedImageIndex = nodeEx.ImageIndex = nodeEx.ExpandImgIndex = nodeEx.CollapseImgIndex = 18;
+                                }
 
                                 var testPanel = (TestPanel)Util.TryAddToMainTab(this, $"执行测试", () =>
                                 {
@@ -896,6 +910,10 @@ namespace AutoTest.UI.UC
             var find = matchall ? text.Equals(txt, StringComparison.OrdinalIgnoreCase) : text.IndexOf(txt, StringComparison.OrdinalIgnoreCase) > -1;
             if (!find)
             {
+                if((nodeStart.Tag as ISearch)!=null)
+                {
+                    find = (nodeStart.Tag as ISearch).Search(txt);
+                }
             }
             if (!find)
             {

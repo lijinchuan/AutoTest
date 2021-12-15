@@ -46,6 +46,18 @@ namespace AutoTest.Domain.Entity
             set;
         }
 
+        public bool HasWarn
+        {
+            get;
+            set;
+        }
+
+        public string WainMsg
+        {
+            get;
+            set;
+        }
+
         public bool IsTimeOut
         {
             get;

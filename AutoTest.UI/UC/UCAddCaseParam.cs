@@ -55,6 +55,18 @@ namespace AutoTest.UI.UC
 
         private Action _callBack;
 
+        public Action CallBack
+        {
+            get
+            {
+                return _callBack;
+            }
+            set
+            {
+                _callBack = value;
+            }
+        }
+
         public UCAddCaseParam()
         {
             InitializeComponent();
@@ -1433,6 +1445,10 @@ namespace AutoTest.UI.UC
 
                 if (ischanged || force)
                 {
+                    if (_callBack == null)
+                    {
+                        Util.SendMsg(this, $"注意：{this._testCase.CaseName}用例已保存成功，运行测试前请手动刷新左边列表。", 30);
+                    }
                     _callBack?.Invoke();
                 }
 

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace AutoTest.Domain.Entity
 {
     [Serializable]
-    public class TestSite:IComparable
+    public class TestSite:IComparable,ISearch
     {
         public int Id
         {
@@ -41,6 +41,12 @@ namespace AutoTest.Domain.Entity
             }
 
             return 1;
+        }
+
+        public bool Search(string wd)
+        {
+            return (this.Name ?? string.Empty).IndexOf(wd, StringComparison.OrdinalIgnoreCase) > -1
+                || (this.CheckLoginCode ?? string.Empty).IndexOf(wd, StringComparison.OrdinalIgnoreCase) > -1;
         }
     }
 }

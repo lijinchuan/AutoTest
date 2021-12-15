@@ -10,7 +10,7 @@ namespace AutoTest.Domain.Entity
     /// <summary>
     /// 测试实例
     /// </summary>
-    public class TestCase:IComparable
+    public class TestCase:IComparable,ISearch
     {
         public int Id
         {
@@ -103,6 +103,15 @@ namespace AutoTest.Domain.Entity
         public NodeContentType GetNodeContentType()
         {
             return NodeContentType.TESTCASE;
+        }
+
+        public bool Search(string wd)
+        {
+            return (this.Url ?? string.Empty).IndexOf(wd, StringComparison.OrdinalIgnoreCase) > -1
+                || (this.CaseName ?? string.Empty).IndexOf(wd, StringComparison.OrdinalIgnoreCase) > -1
+                || (this.TestCode ?? string.Empty).IndexOf(wd, StringComparison.OrdinalIgnoreCase) > -1
+                || (this.ValidCode ?? string.Empty).IndexOf(wd, StringComparison.OrdinalIgnoreCase) > -1;
+
         }
     }
 }

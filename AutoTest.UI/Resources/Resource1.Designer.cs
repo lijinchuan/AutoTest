@@ -47,8 +47,8 @@ namespace AutoTest.UI.Resources {
         }
         
         /// <summary>
-        ///   重写当前线程的 CurrentUICulture 属性，对
-        ///   使用此强类型资源类的所有资源查找执行重写。
+        ///   重写当前线程的 CurrentUICulture 属性
+        ///   重写当前线程的 CurrentUICulture 属性。
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
         internal static global::System.Globalization.CultureInfo Culture {
@@ -186,6 +186,16 @@ namespace AutoTest.UI.Resources {
         internal static System.Drawing.Bitmap bullet_white {
             get {
                 object obj = ResourceManager.GetObject("bullet_white", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
+        internal static System.Drawing.Bitmap bullet_yellow {
+            get {
+                object obj = ResourceManager.GetObject("bullet_yellow", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

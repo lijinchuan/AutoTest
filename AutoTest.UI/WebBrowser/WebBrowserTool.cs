@@ -50,25 +50,43 @@ namespace AutoTest.UI.WebBrowser
                                 }"";
                                 document.getElementsByTagName('head')[0].appendChild(script);";
 
+        private const int SCRIPT_TIMEOUT = 30000;
+
         public void AddEvalFuntion(IBrowser browser, IFrame frame)
         {
-            _ = browser.MainFrame.EvaluateScriptAsync(ADDEVALFUNCTIONCODE).Result;
+            var resp = browser.MainFrame.EvaluateScriptAsync(ADDEVALFUNCTIONCODE);
+            Task.WaitAll(new[] { resp }, SCRIPT_TIMEOUT);
+        }
+
+        private void AssertJavaScriptResult(Task<JavascriptResponse> resp,int timeOut=0)
+        {
+            if (timeOut <= 0)
+            {
+                timeOut = SCRIPT_TIMEOUT;
+            }
+            if (!Task.WaitAll(new[] { resp }, timeOut))
+            {
+                throw new TimeoutException("执行代码超时，请检查代码是否有问题");
+            }
+
+            if (!resp.Result.Success)
+            {
+                throw new ScriptException(resp.Result.Message);
+            }
         }
 
         public void AddJqueryLib(IBrowser browser, IFrame frame)
         {
             var resp = browser.MainFrame.EvaluateScriptAsync(ADDJQUERYLIBCODE);
-            if (!Task.WaitAll(new[] { resp }, 30000))
-            {
-                throw new TimeoutException("执行代码超时，请检查代码是否有问题");
-            }
+            AssertJavaScriptResult(resp);
             var script = @"$('#aaaaa').length";
             var start = DateTime.Now;
             while (true)
             {
-                var changetabresult = browser.MainFrame.EvaluateScriptAsync(script).Result;
+                var changetabresult = browser.MainFrame.EvaluateScriptAsync(script);
+                Task.WaitAll(new[] { changetabresult }, SCRIPT_TIMEOUT);
                 //这里要确认JQUERY加载成功
-                if (changetabresult.Success)
+                if (changetabresult.Result.Success)
                 {
                     break;
                 }
@@ -86,47 +104,30 @@ namespace AutoTest.UI.WebBrowser
 
         public bool AddCookeManagerFunction(IBrowser browser, IFrame frame)
         {
-            var resp = browser.MainFrame.EvaluateScriptAsync(ADDCOOKIEMANAGERFUNCTION).Result;
-
-            return resp.Success;
+            var resp = browser.MainFrame.EvaluateScriptAsync(ADDCOOKIEMANAGERFUNCTION);
+            AssertJavaScriptResult(resp);
+            return resp.Result.Success;
         }
 
         public bool RegisterRomoteScript(IBrowser browser,IFrame frame,string url)
         {
             var code = string.Format(REGISTERREMOTESCRIPTCODE, url);
             var resp = browser.MainFrame.EvaluateScriptAsync(code);
-            if (!Task.WaitAll(new[] { resp }, 30000))
-            {
-                throw new TimeoutException("执行代码超时，请检查代码是否有问题");
-            }
+            AssertJavaScriptResult(resp);
             return resp.Result.Success;
         }
 
         public object ExecuteScript(IBrowser browser,IFrame frame,string code)
         {
             var resp = browser.MainFrame.EvaluateScriptAsync(code);
-            if (!Task.WaitAll(new[] { resp }, 30000))
-            {
-                throw new TimeoutException("执行代码超时，请检查代码是否有问题");
-            }
-            if (!resp.Result.Success)
-            {
-                throw new ScriptException(resp.Result.Message);
-            }
+            AssertJavaScriptResult(resp);
             return resp.Result.Result;
         }
 
         public object ExecutePromiseScript(IBrowser browser, IFrame frame, string code)
         {
             var resp = browser.MainFrame.EvaluateScriptAsPromiseAsync(code);
-            if(!Task.WaitAll(new[] { resp }, 30000))
-            {
-                throw new TimeoutException("执行代码超时，请检查代码是否有问题");
-            }
-            if (!resp.Result.Success)
-            {
-                throw new ScriptException(resp.Result.Message);
-            }
+            AssertJavaScriptResult(resp);
             return resp.Result.Result;
         }
 

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace AutoTest.Domain.Entity
 {
     [Serializable]
-    public class TestPage:IComparable
+    public class TestPage:IComparable,ISearch
     {
         public int Id
         {
@@ -47,6 +47,12 @@ namespace AutoTest.Domain.Entity
             }
 
             return 1;
+        }
+
+        public bool Search(string wd)
+        {
+            return (this.Url ?? string.Empty).IndexOf(wd, StringComparison.OrdinalIgnoreCase) > -1
+                || (this.Name ?? string.Empty).IndexOf(wd, StringComparison.OrdinalIgnoreCase) > -1;
         }
     }
 }

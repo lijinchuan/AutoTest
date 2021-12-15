@@ -40,6 +40,11 @@ namespace AutoTest.UI.WebTask
         private dynamic bag;
         private event Action<TestResult> _notify;
 
+        /// <summary>
+        /// 出错只警告
+        /// </summary>
+        private static string[] warnFileExt = new string[] { ".txt", ".css", ".js" , ".woff2" };
+
         public RunTestTask(string taskname, bool useProxy, TestSite testSite, TestLogin testLogin,
             TestPage testPage, TestCase testCase, TestEnv testEnv, List<TestEnvParam> testEnvParams,
             List<TestScript> globScripts, List<TestScript> siteScripts,Action<TestResult> notify)
@@ -127,7 +132,7 @@ namespace AutoTest.UI.WebTask
                 //注入JQUERY
                 webBrowserTool.AddJqueryLib(browser, frame);
 
-                PublishMsg("注入JQUERY");
+                PublishDebugMsg("注入JQUERY");
 
                 //注入工具包
                 if (_globScripts != null && _globScripts.Count > 0)
@@ -138,7 +143,7 @@ namespace AutoTest.UI.WebTask
                     }
                 }
 
-                PublishMsg("注入全局工具包");
+                PublishDebugMsg("注入全局工具包");
 
 
                 if (_siteScripts != null && _siteScripts.Count > 0)
@@ -149,12 +154,12 @@ namespace AutoTest.UI.WebTask
                     }
                 }
 
-                PublishMsg("注入通用工具包");
+                PublishDebugMsg("注入通用工具包");
 
                 //注入变量
                 SetVar(browser, frame, userData);
 
-                PublishMsg("注入变量");
+                PublishDebugMsg("注入变量");
             }
         }
 
@@ -197,15 +202,40 @@ namespace AutoTest.UI.WebTask
 
         private void AssertWebHasNoError()
         {
+            StringBuilder sbError = new StringBuilder(), sbWarn = new StringBuilder();
+            
             var failRequestList = webEvents.Where(p => !Util.IsSuccessStatusCode(p.StatusCode)).ToList();
             if (failRequestList.Any())
             {
-                StringBuilder sb = new StringBuilder();
+                
                 foreach (var item in failRequestList)
                 {
-                    sb.AppendLine($"{item.SourceUrl}返回错误状态:{item.StatusCode}");
+                    if (isWarn(item.SourceUrl))
+                    {
+                        sbWarn.AppendLine($"{item.SourceUrl}返回错误状态:{item.StatusCode}");
+                    }
+                    else
+                    {
+                        sbError.AppendLine($"{item.SourceUrl}返回错误状态:{item.StatusCode}");
+                    }
+                    
                 }
-                throw new Exception($"请求出错：{sb}");
+            }
+
+            if (sbWarn.Length > 0)
+            {
+                _testResult.HasWarn = true;
+                _testResult.WainMsg = sbWarn.ToString();
+            }
+
+            if (sbError.Length > 0)
+            {
+                throw new Exception($"请求出错：{sbError}");
+            }
+
+            bool isWarn(string url)
+            {
+                return warnFileExt.Any(p => url.EndsWith(p, StringComparison.OrdinalIgnoreCase) || url.ToLower().Contains($"{p}?"));
             }
         }
 
@@ -284,15 +314,15 @@ namespace AutoTest.UI.WebTask
                     while (true)
                     {
                         AssertWebHasNoError();
-                        PublishMsg("检查请求没有异常");
+                        PublishDebugMsg("检查请求没有异常");
                         try
                         {
                             PrepareTest(browser, frame, bag);
 
-                            PublishMsg("开始执行验证代码");
+                            PublishDebugMsg("开始执行验证代码");
                             var ret = webBrowserTool.TryExecuteScript(browser, frame, Util.ReplaceEvnParams(_testCase.ValidCode, _testEnvParams));
 
-                            PublishMsg("执行验证代码,结果:" + ret);
+                            PublishDebugMsg("执行验证代码,结果:" + ret);
                             if (ret == null)
                             {
                                 if (tryCount++ >= TestTimeOut / sleepMills)
@@ -334,7 +364,7 @@ namespace AutoTest.UI.WebTask
                             {
                                 bag = userData;
                             }
-                            PublishMsg("读取用户变量");
+                            PublishDebugMsg("读取用户变量");
                         }
                     }
                 }
@@ -344,7 +374,7 @@ namespace AutoTest.UI.WebTask
                     _testResult.Success = true;
                     _testResult.FailMsg = "没有验证脚本，默认为成功";
 
-                    PublishMsg("没有验证脚本，默认为成功");
+                    PublishDebugMsg("没有验证脚本，默认为成功");
                 }
             }
             catch (Exception ex)
@@ -385,11 +415,11 @@ namespace AutoTest.UI.WebTask
             var ret = 0;
             try
             {
-                PublishMsg($"{_testCase.CaseName}执行代码");
+                PublishDebugMsg($"{_testCase.CaseName}执行代码");
                 ret = await RunTestCode(browser, frame);
                 if (ret == 1)
                 {
-                    PublishMsg($"{_testCase.CaseName}执行代码成功，准备验证");
+                    PublishDebugMsg($"{_testCase.CaseName}执行代码成功，准备验证");
                     ret = await RunValidCode(browser, frame);
                     if (ret == 1)
                     {

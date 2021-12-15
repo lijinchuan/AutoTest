@@ -67,6 +67,7 @@
     <Compile Include="Entity\TestTask.cs" />
     <Compile Include="Entity\WebMethod.cs" />
     <Compile Include="INodeContents.cs" />
+    <Compile Include="ISearch.cs" />
     <Compile Include="Model\WebRequestData.cs" />
     <Compile Include="Model\WebVar.cs" />
     <Compile Include="NodeContents.cs" />
