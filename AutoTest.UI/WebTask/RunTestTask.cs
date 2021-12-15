@@ -69,16 +69,6 @@ namespace AutoTest.UI.WebTask
             _globScripts = globScripts;
             _siteScripts = siteScripts;
             _notify = notify;
-
-            _testResult = new TestResult
-            {
-                EnvId=_testEnv.Id,
-                TestCaseId=_testCase.Id,
-                Success=false,
-                TestStartDate=DateTime.Now,
-                TestEndDate=DateTime.Now,
-                IsTimeOut=false
-            };
         }
 
         public override void DocumentCompletedHandler(IBrowser browser, IFrame frame, List<Cookie> cookies)
@@ -88,6 +78,17 @@ namespace AutoTest.UI.WebTask
                 if (!_readyFlag)
                 {
                     _readyFlag = true;
+
+                    _testResult = new TestResult
+                    {
+                        EnvId = _testEnv.Id,
+                        TestCaseId = _testCase.Id,
+                        Success = false,
+                        TestStartDate = DateTime.Now,
+                        TestEndDate = DateTime.Now,
+                        IsTimeOut = false
+                    };
+
                     FireTaskReady();
                 }
             }

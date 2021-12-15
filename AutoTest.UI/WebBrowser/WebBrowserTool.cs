@@ -133,6 +133,10 @@ namespace AutoTest.UI.WebBrowser
 
         public object TryExecuteScript(IBrowser browser, IFrame frame, string code)
         {
+            if (code.IndexOf("return", StringComparison.OrdinalIgnoreCase) == -1)
+            {
+                return ExecuteScript(browser, frame, code);
+            }
             return ExecutePromiseScript(browser, frame, code) 
                 ?? ExecuteScript(browser, frame, code);
         }
