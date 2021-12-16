@@ -76,7 +76,7 @@ namespace AutoTest.UI.WebTask
         {
             get;
             set;
-        }
+        } = false;
 
         protected WebTask(string strTaskName, string strStartPageUrl, bool useProxy,bool clearCookies)
         {

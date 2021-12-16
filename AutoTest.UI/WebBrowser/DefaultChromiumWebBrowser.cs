@@ -74,6 +74,9 @@ namespace AutoTest.UI.WebBrowser
         /// </summary>
         private readonly object localLocker = new object();
 
+        private static JsDialogHandler commonJsDialogHandler = new JsDialogHandler();
+        private static SilenceJsDialogHandler silenceJsDialogHandler = new SilenceJsDialogHandler();
+
 
         public DefaultChromiumWebBrowser(string name, string address)
             : base(address)
@@ -88,7 +91,7 @@ namespace AutoTest.UI.WebBrowser
             var context = new RequestContext(setting);
             RequestContext = context;
 
-            this.JsDialogHandler = new JsDialogHandler();
+            this.JsDialogHandler = silenceJsDialogHandler;
 
             FrameLoadStart += DefaultChromiumWebBrowser_FrameLoadStart;
             FrameLoadEnd += DefaultChromiumWebBrowser_FrameLoadEnd;
@@ -290,8 +293,9 @@ namespace AutoTest.UI.WebBrowser
                 {
                     throw new NotSupportedException($"存在未清理的任务:{DocumentLoadCompleted?.GetInvocationList().Length}个");
                 }
-                
+
                 //this.ShowDevTools();
+                (JsDialogHandler as JsDialogHandler)?.Clear();
                 DocumentLoadCompleted += webTask.DocumentCompletedHandler;
                 DocumentLoadStart += webTask.DocumentLoadStartHandler;
                 AddEventListener(webTask.GetEventListener());
@@ -317,7 +321,7 @@ namespace AutoTest.UI.WebBrowser
                 //}
 
                 this.OnMsgPublished($"开始任务:{webTask.GetTaskName()},地址:{webTask.GetStartPageUrl()}");
-                using (var taskRequest = webTask.GetTestRequest(this.GetBrowser().MainFrame.CreateRequest()))
+                using (var taskRequest = webTask.GetTestRequest(this.GetBrowser().MainFrame.CreateRequest(false)))
                 {
                     GetBrowser().MainFrame.LoadRequest(taskRequest);
                 }

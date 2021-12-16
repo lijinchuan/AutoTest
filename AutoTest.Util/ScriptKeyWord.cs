@@ -177,6 +177,12 @@ namespace AutoTest.Util
 
             KeyWordDic.Add(new ScriptKeyWord
             {
+                KeyWord = "ServerDriverClient.getLastAlertMsg",
+                Desc="获取页面上最后一个提示信息"
+            });
+
+            KeyWordDic.Add(new ScriptKeyWord
+            {
                 KeyWord = "JSON.parse",
                 Desc = "将json字符串转换成json对象"
             });

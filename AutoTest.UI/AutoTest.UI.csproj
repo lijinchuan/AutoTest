@@ -402,8 +402,10 @@
     <Compile Include="WebBrowser\IWebBrowserTool.cs" />
     <Compile Include="WebBrowser\JsDialogHandler.cs" />
     <Compile Include="WebBrowser\MenuHandler.cs" />
+    <Compile Include="WebBrowser\SilenceJsDialogHandler.cs" />
     <Compile Include="WebBrowser\WebBrowserTool.cs" />
     <Compile Include="WebTask\IWebTask.cs" />
+    <Compile Include="WebTask\RunAPITestTask.cs" />
     <Compile Include="WebTask\RunTestLoginTask.cs" />
     <Compile Include="WebTask\RunTestTask.cs" />
     <Compile Include="WebTask\WebTask.cs" />
