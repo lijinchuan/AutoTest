@@ -158,7 +158,7 @@ namespace AutoTest.Biz
             {
                 var imageIndex = 18;
 
-                if (envId != 0)
+                //if (envId != 0)
                 {
                     var testResult = BigEntityTableEngine.LocalEngine.Scan<TestResult>(nameof(TestResult), TestResult.Index_TestCaseId_EnvId_TestDate,
                         new object[] { @case.Id, envId, DateTime.Now }, new object[] { @case.Id, envId, DateTime.MinValue }, 1, 1).FirstOrDefault();
