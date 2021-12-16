@@ -618,7 +618,7 @@ namespace AutoTest.UI.UC
                             var testLogin = FindParentNode<TestLogin>(selnode);
                             var ep = GetCurrEnvData(selnode);
 
-                            var testPanel = (TestPanel)Util.TryAddToMainTab(this, $"{testSite.Name}_", () =>
+                            var testPanel = (TestPanel)Util.TryAddToMainTab(this, $"执行测试", () =>
                             {
                                 var panel = new UC.TestPanel(testSite.Name);
                                 panel.Load();
@@ -631,6 +631,36 @@ namespace AutoTest.UI.UC
                                 this.BeginInvoke(new Action(() => testPanel.RunTest(new RunTestLoginTask(testLogin.Url, false, testSite, testLogin, ep.env, ep.envParams))));
                                 return true;
                             }, runintime: false);
+                            break;
+                        }
+                    case "退出":
+                        {
+                            var testSite = FindParentNode<TestSite>(selnode);
+                           
+                            var testLogin = FindParentNode<TestLogin>(selnode);
+                            var ep = GetCurrEnvData(selnode);
+                            var testPanel = (TestPanel)Util.TryAddToMainTab(this, $"执行测试", () => null, typeof(TestPanel));
+                            if (testPanel != null)
+                            {
+                                if (new ConfirmDlg(testSite.Name, "退出吗？", 30).ShowDialog() != DialogResult.OK)
+                                {
+                                    return;
+                                }
+                                var loginTask = new RunTestLoginTask(testLogin.Url, false, testSite, testLogin, ep.env, ep.envParams);
+                                if (testPanel.ClearCookie(loginTask.GetStartPageUrl()))
+                                {
+                                    Util.SendMsg(this, "cookie清理成功");
+                                }
+                                else
+                                {
+                                    Util.SendMsg(this, "cookie清理失败");
+                                }
+                            }
+                            else
+                            {
+                                new AlertDlg(testSite.Name, "cookie清理失败，执行窗口未开启", null).ShowDialog();
+                            }
+
                             break;
                         }
                     case "切换此环境":
@@ -840,7 +870,7 @@ namespace AutoTest.UI.UC
                     ||node.Tag is TestSite
                     ||node.Tag is TestSource;
 
-                登陆ToolStripMenuItem.Visible = node.Tag is TestLogin;
+                登陆ToolStripMenuItem.Visible = 退出ToolStripMenuItem.Visible = node.Tag is TestLogin;
 
                 添加脚本ToolStripMenuItem.Visible= (node.Tag as INodeContents)?.GetNodeContentType() == NodeContentType.SCRIPTPARENT;
 

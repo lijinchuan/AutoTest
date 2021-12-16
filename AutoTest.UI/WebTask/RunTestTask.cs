@@ -81,7 +81,7 @@ namespace AutoTest.UI.WebTask
 
                     _testResult = new TestResult
                     {
-                        EnvId = _testEnv.Id,
+                        EnvId = _testEnv == null ? 0 : _testEnv.Id,
                         TestCaseId = _testCase.Id,
                         Success = false,
                         TestStartDate = DateTime.Now,

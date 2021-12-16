@@ -236,8 +236,13 @@ namespace AutoTest.UI.WebBrowser
             if (webTask.ClearCookies)
             {
                 //删除所有的COOKIE
-                _ = this.GetCookieManager().DeleteCookies(webTask.GetSite());
+                _ = ClearCookie(webTask.GetStartPageUrl());
             }
+        }
+
+        public bool ClearCookie(string url)
+        {
+            return this.GetCookieManager().DeleteCookies(url);
         }
 
         public bool AddTask(IWebTask webTask)

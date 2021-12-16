@@ -311,12 +311,15 @@ namespace AutoTest.UI
             if (!isExists)
             {
                 addpage = func();
-                if (string.IsNullOrWhiteSpace(addpage.Text))
+                if (addpage != null)
                 {
-                    addpage.Text = title;
+                    if (string.IsNullOrWhiteSpace(addpage.Text))
+                    {
+                        addpage.Text = title;
+                    }
+                    TabControl.TabPages.Add(addpage);
+                    TabControl.SelectedTab = addpage;
                 }
-                TabControl.TabPages.Add(addpage);
-                TabControl.SelectedTab = addpage;
             }
 
             return addpage;

@@ -85,6 +85,11 @@ namespace AutoTest.UI.UC
             LoadWebBrowser();
         }
 
+        public bool ClearCookie(string url)
+        {
+            return webView.ClearCookie(url);
+        }
+
         //protected override void OnLoad(EventArgs e)
         //{
         //    base.OnLoad(e);
