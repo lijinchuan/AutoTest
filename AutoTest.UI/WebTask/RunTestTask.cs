@@ -5,11 +5,13 @@ using AutoTest.UI.EventListener;
 using AutoTest.UI.WebBrowser;
 using AutoTest.Util;
 using CefSharp;
+using LJC.FrameWorkV3.Comm;
 using LJC.FrameWorkV3.Data.EntityDataBase;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -71,7 +73,7 @@ namespace AutoTest.UI.WebTask
             _notify = notify;
         }
 
-        public override void DocumentCompletedHandler(IBrowser browser, IFrame frame, List<Cookie> cookies)
+        public override void DocumentCompletedHandler(IBrowser browser, IFrame frame, List<CefSharp.Cookie> cookies)
         {
             //if (browser.MainFrame.Url.IndexOf(this.GetStartPageUrl(), StringComparison.OrdinalIgnoreCase) > -1)
             {
@@ -94,9 +96,25 @@ namespace AutoTest.UI.WebTask
             }
         }
 
-        public override IEnumerable<Cookie> GetCookieList()
+        public override IEnumerable<CefSharp.Cookie> GetCookieList()
         {
-            return new List<Cookie>();
+            if (_testCaseData.Cookies?.Count > 0)
+            {
+                foreach (var cookie in _testCaseData.Cookies)
+                {
+                    if (cookie.Checked)
+                    {
+                        yield return new CefSharp.Cookie
+                        {
+                            Domain = new Uri(GetStartPageUrl()).Host,
+                            Name = Util.ReplaceEvnParams(cookie.Name, _testEnvParams),
+                            Value = Util.ReplaceEvnParams(cookie.Value, _testEnvParams),
+                            Expires = DateTime.Now.AddYears(1),
+                            Path = "/"
+                        };
+                    }
+                }
+            }
         }
 
         public override IEventListener GetEventListener()
@@ -480,7 +498,141 @@ namespace AutoTest.UI.WebTask
 
                 url += string.Join("&", paramlist2.Select(p => $"{System.Net.WebUtility.UrlEncode(Util.ReplaceEvnParams(p.Name, _testEnvParams))}={System.Net.WebUtility.UrlEncode(Util.ReplaceEvnParams(p.Value, _testEnvParams))}"));
             }
+
+            if (_testCase.AuthType == AuthType.ApiKey)
+            {
+                if (_testCaseData.ApiKeyAddTo != 0)
+                {
+                    if (url.IndexOf('?') == -1)
+                    {
+                        url += $"?{Util.ReplaceEvnParams(_testCaseData.ApiKeyName, _testEnvParams)}={Util.ReplaceEvnParams(_testCaseData.ApiKeyValue, _testEnvParams)}";
+                    }
+                    else
+                    {
+                        url += $"&{Util.ReplaceEvnParams(_testCaseData.ApiKeyName, _testEnvParams)}={Util.ReplaceEvnParams(_testCaseData.ApiKeyValue, _testEnvParams)}";
+                    }
+                }
+            }
+
             return url;
+        }
+
+        public override IRequest GetTestRequest(IRequest request)
+        {
+            if (_testCaseData.Headers?.Count() > 0)
+            {
+                foreach (var header in _testCaseData.Headers)
+                {
+                    if (!header.Checked)
+                    {
+                        continue;
+                    }
+
+                    request.Headers.Add(Util.ReplaceEvnParams(header.Name, _testEnvParams), Util.ReplaceEvnParams(header.Value, _testEnvParams));
+
+                }
+            }
+
+            if (_testCase.AuthType == AuthType.Bearer)
+            {
+                request.Headers.Add("Authorization", $"Bearer {Util.ReplaceEvnParams(_testCaseData.BearToken, _testEnvParams)}");
+            }
+            else if (_testCase.AuthType == AuthType.ApiKey)
+            {
+                if (_testCaseData.ApiKeyAddTo == 0)
+                {
+                    request.Headers.Add(Util.ReplaceEvnParams(_testCaseData.ApiKeyName, _testEnvParams), Util.ReplaceEvnParams(_testCaseData.ApiKeyValue, _testEnvParams));
+                }
+            }
+            else if (_testCase.AuthType == AuthType.Basic)
+            {
+                request.Headers.Add("Authorization", $"Basic {Convert.ToBase64String(Encoding.UTF8.GetBytes($"{Util.ReplaceEvnParams(_testCaseData.BasicUserName, _testEnvParams)}:{Util.ReplaceEvnParams(_testCaseData.BasicUserPwd, _testEnvParams)}"))}");
+            }
+
+            var bodydataType = _testCase.BodyDataType;
+
+            if (bodydataType == BodyDataType.none&&_testCase.WebMethod==WebMethod.GET)
+            {
+                return base.GetTestRequest(request);
+            }
+            else
+            {
+                request.InitializePostData();
+                byte[] data = null;
+                if (bodydataType == BodyDataType.formdata)
+                {
+                    var dic = _testCaseData.FormDatas.Where(p => p.Checked).ToDictionary(p => Util.ReplaceEvnParams(p.Name, _testEnvParams), q => Util.ReplaceEvnParams(q.Value, _testEnvParams));
+                    data =Encoding.UTF8.GetBytes(string.Join("&", dic.Select(p => $"{p.Key}={p.Value}")));
+                }
+                else if (bodydataType == BodyDataType.xwwwformurlencoded)
+                {
+                    var sdata = string.Join("&", _testCaseData.XWWWFormUrlEncoded.Where(p => p.Checked).Select(p => $"{Util.ReplaceEvnParams(p.Name, _testEnvParams)}={System.Net.WebUtility.UrlEncode(Util.ReplaceEvnParams(p.Value, _testEnvParams))}"));
+                    data = Encoding.UTF8.GetBytes(sdata);
+                }
+                else if (bodydataType == BodyDataType.raw)
+                {
+                    data = Encoding.UTF8.GetBytes(Util.ReplaceEvnParams(_testCaseData.RawText, _testEnvParams));
+                    request.SetHeaderByName("content-type", $"application/{_testCase.ApplicationType}",true);
+                }
+                else if (bodydataType == BodyDataType.wcf)
+                {
+                    data = Encoding.UTF8.GetBytes(Util.ReplaceEvnParams(_testCaseData.RawText, _testEnvParams));
+                    request.SetHeaderByName("content-type", $"text/{_testCase.ApplicationType}", true);
+                }
+                else if (bodydataType == BodyDataType.binary)
+                {
+                    List<FormItemModel> formItems = new List<FormItemModel>();
+                    foreach (var item in _testCaseData.Multipart_form_data)
+                    {
+                        var @value = Util.ReplaceEvnParams(item.Value, _testEnvParams);
+                        var name = Util.ReplaceEvnParams(item.Name, _testEnvParams);
+                        if (item.Checked)
+                        {
+                            if (@value?.StartsWith("[file]") == true)
+                            {
+                                var filename = @value.Replace("[file]", string.Empty);
+                                request.PostData.AddFile(filename);
+                            }
+                            else if (item.Value?.StartsWith("[base64]") == true)
+                            {
+                                var filename = @value.Replace("[base64]", string.Empty);
+                                if (!File.Exists(filename))
+                                {
+                                    throw new FileNotFoundException($"文件不存在;{filename}");
+                                }
+
+                                throw new NotImplementedException();
+                            }
+                            else
+                            {
+                                formItems.Add(new FormItemModel
+                                {
+                                    FileName = name,
+                                    Key = name,
+                                    Value = @value
+                                });
+                            }
+                        }
+                    }
+
+                    if (formItems.Count > 0)
+                    {
+                        var sdata = string.Join("&", formItems.Select(p => $"{p.Key}={System.Net.WebUtility.UrlEncode(p.Value)}"));
+                        data = Encoding.UTF8.GetBytes(sdata);
+                    }
+                }
+
+                if (data != null)
+                {
+                    var element = request.PostData.CreatePostDataElement();
+                    element.Bytes = data;
+                    request.PostData.AddElement(element);
+                }
+
+                request.Url = GetStartPageUrl();
+                request.Method = _testCase.WebMethod.ToString();
+                return request;
+            }
         }
     }
 }
