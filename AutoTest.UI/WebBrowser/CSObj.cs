@@ -97,5 +97,10 @@ namespace AutoTest.UI.WebBrowser
                 return string.Empty;
             }
         }
+
+        public string GetLastAlertMsg()
+        {
+            return (browser.JsDialogHandler as JsDialogHandler)?.LastAlertMsg;
+        }
     }
 }

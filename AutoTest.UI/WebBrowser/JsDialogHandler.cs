@@ -11,21 +11,53 @@ namespace AutoTest.UI.WebBrowser
 {
     public class JsDialogHandler : IJsDialogHandler
     {
+        public string LastAlertMsg
+        {
+            get;
+            private set;
+        }
+
+        public string LastConfirmMsg
+        {
+            get;
+            private set;
+        }
+
+        public void Clear()
+        {
+            LastAlertMsg = null;
+            LastConfirmMsg = null;
+        }
+
+        protected virtual void DealAlert(string originUrl,string messageText)
+        {
+            new AlertDlg(originUrl, messageText, null).ShowDialog();
+        }
+
+        protected virtual DialogResult DealComfirm(string messageText)
+        {
+            var dr = MessageBox.Show(messageText, "提示", MessageBoxButtons.YesNo);
+
+            return dr;
+        }
+
         public bool OnJSDialog(IWebBrowser browserControl, IBrowser browser, string originUrl, CefJsDialogType dialogType, string messageText, string defaultPromptText, IJsDialogCallback callback, ref bool suppressMessage)
         {
             switch (dialogType)
             {
                 case CefSharp.CefJsDialogType.Alert:
                     {
+                        LastAlertMsg = messageText;
                         //MessageBox.Show(messageText, "提示");
-                        
-                        new AlertDlg(originUrl, messageText,null).ShowDialog();
+                        DealAlert(originUrl, messageText);
+
                         callback.Continue(true, string.Empty);
                         suppressMessage = false;
                         return false;
                     }
                 case CefSharp.CefJsDialogType.Confirm:
-                    var dr = MessageBox.Show(messageText, "提示", MessageBoxButtons.YesNo);
+                    LastConfirmMsg = messageText;
+                    var dr = DealComfirm(messageText);
                     if (dr == DialogResult.Yes)
                     {
                         callback.Continue(true, string.Empty);
