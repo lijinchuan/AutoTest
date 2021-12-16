@@ -404,6 +404,7 @@
     <Compile Include="WebBrowser\MenuHandler.cs" />
     <Compile Include="WebBrowser\WebBrowserTool.cs" />
     <Compile Include="WebTask\IWebTask.cs" />
+    <Compile Include="WebTask\RunAPITestTask.cs" />
     <Compile Include="WebTask\RunTestLoginTask.cs" />
     <Compile Include="WebTask\RunTestTask.cs" />
     <Compile Include="WebTask\WebTask.cs" />
@@ -785,7 +786,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="Resources\bullet_white.png" />
-    <None Include="Resources\bullet_yellow.png" />
     <Content Include="Resources\control_add.png" />
     <Content Include="Resources\control_remove.png" />
     <Content Include="Resources\date.png" />
