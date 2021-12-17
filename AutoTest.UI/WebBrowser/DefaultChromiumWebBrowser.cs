@@ -260,6 +260,69 @@ namespace AutoTest.UI.WebBrowser
             return false;
         }
 
+        private void PepareTask(IWebTask webTask)
+        {
+            //第一步，更新COOKIE
+            var cooklist = webTask.GetCookieList();
+            if (cooklist.Any())
+            {
+                var cookmanager = this.GetCookieManager();
+                foreach (var c in cooklist)
+                {
+                    var oldcookie = cookiecontainer.FirstOrDefault(p => p.Name == c.Name && p.Domain == c.Domain);
+                    if (oldcookie != null && oldcookie.Value != c.Value)
+                    {
+                        _ = cookmanager.DeleteCookies(webTask.GetSite(), c.Name);
+                    }
+                    if (oldcookie == null || oldcookie.Value != c.Value)
+                    {
+                        _ = cookmanager.SetCookie(webTask.GetSite(), new CefSharp.Cookie()
+                        {
+                            Domain = c.Domain,
+                            Name = c.Name,
+                            Value = c.Value,
+                            Expires = DateTime.Now.AddYears(1),
+                            Path = "/"
+                        });
+                    }
+                }
+            }
+
+            DocumentLoadCompleted += webTask.DocumentCompletedHandler;
+            DocumentLoadStart += webTask.DocumentLoadStartHandler;
+            AddEventListener(webTask.GetEventListener());
+            webTask.OnTaskCompleted += WebTask_OnTaskCompleted;
+            _ = readyResetEvent.Reset();
+            webTask.OnTaskReady += WebTask_OnTaskReady;
+        }
+
+
+        private void ResetUrl(string url)
+        {
+            var ar = new AutoResetEvent(false);
+            DocumentLoadCompleted += DefaultChromiumWebBrowser_DocumentLoadCompleted;
+            try
+            {
+                GetBrowser().MainFrame.LoadUrl(url);
+                if (!ar.WaitOne(30000))
+                {
+
+                    throw new TimeoutException("重定向失败");
+                }
+
+            }
+            finally
+            {
+                DocumentLoadCompleted -= DefaultChromiumWebBrowser_DocumentLoadCompleted;
+            }
+
+            void DefaultChromiumWebBrowser_DocumentLoadCompleted(IBrowser arg1, IFrame arg2, List<Cookie> arg3)
+            {
+                ar.Set();
+            }
+        }
+
+
         /// <summary>
         /// 执行任务
         /// </summary>
@@ -269,44 +332,15 @@ namespace AutoTest.UI.WebBrowser
             try
             {
                 webTask.OnMsgPublish += WebTask_OnMsgPublish;
-                //第一步，更新COOKIE
-                var cooklist = webTask.GetCookieList();
-                if (cooklist.Any())
-                {
-                    var cookmanager = this.GetCookieManager();
-                    foreach (var c in cooklist)
-                    {
-                        var oldcookie = cookiecontainer.FirstOrDefault(p => p.Name == c.Name && p.Domain == c.Domain);
-                        if (oldcookie != null && oldcookie.Value != c.Value)
-                        {
-                            _ = cookmanager.DeleteCookies(webTask.GetSite(), c.Name);
-                        }
-                        if (oldcookie == null || oldcookie.Value != c.Value)
-                        {
-                            _ = cookmanager.SetCookie(webTask.GetSite(), new CefSharp.Cookie()
-                            {
-                                Domain = c.Domain,
-                                Name = c.Name,
-                                Value = c.Value,
-                                Expires = DateTime.Now.AddYears(1),
-                                Path = "/"
-                            });
-                        }
-                    }
-                }
+               
                 if (DocumentLoadCompleted?.GetInvocationList().Length > 0)
                 {
                     throw new NotSupportedException($"存在未清理的任务:{DocumentLoadCompleted?.GetInvocationList().Length}个");
                 }
 
-                //this.ShowDevTools();
                 (JsDialogHandler as JsDialogHandler)?.Clear();
-                DocumentLoadCompleted += webTask.DocumentCompletedHandler;
-                DocumentLoadStart += webTask.DocumentLoadStartHandler;
-                AddEventListener(webTask.GetEventListener());
-                webTask.OnTaskCompleted += WebTask_OnTaskCompleted;
-                _ = readyResetEvent.Reset();
-                webTask.OnTaskReady += WebTask_OnTaskReady;
+
+                
 
                 //if (webTask.UseProxy)
                 //{
@@ -326,20 +360,40 @@ namespace AutoTest.UI.WebBrowser
                 //}
 
                 this.OnMsgPublished($"开始任务:{webTask.GetTaskName()},地址:{webTask.GetStartPageUrl()}");
-                using (var taskRequest = webTask.GetTestRequest(this.GetBrowser().MainFrame.CreateRequest(false)))
+                var frame = GetBrowser().MainFrame;
+                using (var taskRequest = webTask.GetTestRequest(frame.CreateRequest(false)))
                 {
-                    GetBrowser().MainFrame.LoadRequest(taskRequest);
+                    if ("get".Equals(taskRequest.Method, StringComparison.OrdinalIgnoreCase)
+                        && taskRequest.PostData == null
+                        && taskRequest.Headers.Count == 0
+                        && string.IsNullOrWhiteSpace(taskRequest.ReferrerUrl))
+                    {
+                        PepareTask(webTask);
+                        GetBrowser().MainFrame.LoadUrl(taskRequest.Url);
+                    }
+                    else
+                    {
+                        var uri = new Uri(taskRequest.Url);
+                        if (!new Uri(frame.Url).Host.Equals(uri.Host, StringComparison.OrdinalIgnoreCase))
+                        {
+                            var firstUrl = $"{uri.Scheme}://{uri.Host}:{uri.Port}/_forResetRequest";
+                            ResetUrl(firstUrl);
+                        }
+
+                        PepareTask(webTask);
+                        GetBrowser().MainFrame.LoadRequest(taskRequest);
+                    }
                 }
 
                 if (!readyResetEvent.WaitOne(60000))
                 {
-                    this.OnMsgPublished($"任务超时:{webTask.GetTaskName()}");
+                    OnMsgPublished($"任务超时:{webTask.GetTaskName()}");
                     WebTask_OnTaskCompleted(webTask);
                 }
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                this.OnMsgPublished($"任务出错:{webTask.GetTaskName()}");
+                this.OnMsgPublished($"任务出错:{webTask.GetTaskName()},{ex.Message}");
                 WebTask_OnTaskCompleted(webTask);
                 throw;
             }
