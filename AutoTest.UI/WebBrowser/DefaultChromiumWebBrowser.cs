@@ -105,6 +105,7 @@ namespace AutoTest.UI.WebBrowser
             JavascriptObjectRepository.Settings.LegacyBindingEnabled = true;
             //构造要注入的对象，参数为当前线程的调度上下文
             var obj = new CSObj(SynchronizationContext.Current, this);
+            obj.OnPublishMsg += this.WebTask_OnMsgPublish;
             //注册C#对象
             this.JavascriptObjectRepository.Register("ServerDriverClient", obj, false, BindingOptions.DefaultBinder);
 

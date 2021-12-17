@@ -135,6 +135,12 @@ namespace AutoTest.Util
 
             KeyWordDic.Add(new ScriptKeyWord
             {
+                KeyWord = "ServerDriverClient.ehco",
+                Desc = "输出信息到控制台：ServerDriverClient.ehco(string msg)"
+            });
+
+            KeyWordDic.Add(new ScriptKeyWord
+            {
                 KeyWord = "ServerDriverClient.sleep",
                 Desc = "休眠:ServerDriverClient.sleep(int ms)"
             });

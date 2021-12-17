@@ -18,6 +18,8 @@ namespace AutoTest.UI.WebBrowser
 
         private static string userFileDir = "userData\\";
 
+        public Action<string> OnPublishMsg;
+
         static CSObj()
         {
             if (!Directory.Exists(userFileDir))
@@ -101,6 +103,11 @@ namespace AutoTest.UI.WebBrowser
         public string GetLastAlertMsg()
         {
             return (browser.JsDialogHandler as JsDialogHandler)?.LastAlertMsg;
+        }
+
+        public void Ehco(string msg)
+        {
+            this.OnPublishMsg?.Invoke(msg);
         }
     }
 }
