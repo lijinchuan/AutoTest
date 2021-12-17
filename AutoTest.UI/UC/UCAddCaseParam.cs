@@ -1270,6 +1270,7 @@ namespace AutoTest.UI.UC
 
         private void Save(bool force = false)
         {
+            var adjustOrder = false;
             if (_testCase != null)
             {
                 bool ischanged = false;
@@ -1298,6 +1299,7 @@ namespace AutoTest.UI.UC
                 if (_testCase.Order != (int)NUDOrder.Value)
                 {
                     ischanged = true;
+                    adjustOrder = true;
                     _testCase.Order = (int)NUDOrder.Value;
                 }
 
@@ -1433,13 +1435,31 @@ namespace AutoTest.UI.UC
                 {
                     if (this._testCaseData.Id == 0)
                     {
-                        BigEntityTableEngine.LocalEngine.Insert<TestCaseData>(nameof(TestCaseData), this._testCaseData);
+                        adjustOrder = true;
+                        BigEntityTableEngine.LocalEngine.Insert(nameof(TestCaseData), _testCaseData);
                         Util.SendMsg(this, "接口资源已添加");
                     }
                     else
                     {
-                        BigEntityTableEngine.LocalEngine.Update<TestCaseData>(nameof(TestCaseData), this._testCaseData);
+                        BigEntityTableEngine.LocalEngine.Update(nameof(TestCaseData), this._testCaseData);
                         Util.SendMsg(this, "接口资源已更新");
+                    }
+                }
+
+                if (adjustOrder)
+                {
+                    var caseList = BigEntityTableEngine.LocalEngine.Find<TestCase>(nameof(TestCase), nameof(TestCase.PageId), new object[] { _testPage.Id })
+                        .Where(p => p.Order >= _testCase.Order && p.Id != _testCase.Id).OrderBy(p => p.Order).ToList();
+
+                    if (caseList.Any()&&caseList.First().Order==_testCase.Order)
+                    {
+                        var nextOrder = _testCase.Order + 1;
+                        foreach(var @case in caseList)
+                        {
+                            @case.Order = nextOrder;
+                            BigEntityTableEngine.LocalEngine.Update(nameof(TestCase), @case);
+                            nextOrder += 1;
+                        }
                     }
                 }
 
@@ -1452,6 +1472,7 @@ namespace AutoTest.UI.UC
                     _callBack?.Invoke();
                 }
 
+                
             }
         }
 

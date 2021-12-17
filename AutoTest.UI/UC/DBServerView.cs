@@ -513,7 +513,7 @@ namespace AutoTest.UI.UC
                             if (step1dlg.ShowDialog() == DialogResult.OK)
                             {
                                 ReLoadDBObj(selnode);
-                                Util.AddToMainTab(this, $"[{testSite.Name}]-{testPage.Name}-{step1dlg.TestCase.CaseName}", new UC.UCAddCaseParam(testSite, testPage, step1dlg.TestCase,
+                                Util.AddToMainTab(this, $"[{testSite.Name}]-{testPage.Name}-{step1dlg.TestCase.CaseName}", new UCAddCaseParam(testSite, testPage, step1dlg.TestCase,
                                     () => FindParentAndReLoad(selnode)));
                             }
                             break;

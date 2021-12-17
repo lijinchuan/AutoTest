@@ -41,6 +41,7 @@ namespace AutoTest.UI.WebTask
         private TestResult _testResult;
         private dynamic bag;
         private event Action<TestResult> _notify;
+        private object _locker = new object();
 
         /// <summary>
         /// 出错只警告
@@ -75,7 +76,7 @@ namespace AutoTest.UI.WebTask
 
         public override void DocumentCompletedHandler(IBrowser browser, IFrame frame, List<CefSharp.Cookie> cookies)
         {
-            //if (browser.MainFrame.Url.IndexOf(this.GetStartPageUrl(), StringComparison.OrdinalIgnoreCase) > -1)
+            lock(_locker)
             {
                 if (!_readyFlag)
                 {
@@ -271,6 +272,10 @@ namespace AutoTest.UI.WebTask
                     AssertWebHasNoError();
                     try
                     {
+                        while (browser.IsLoading)
+                        {
+                            Thread.Sleep(10);
+                        }
                         PrepareTest(browser, frame, bag);
                         var ret = webBrowserTool.ExecutePromiseScript(browser, frame, Util.ReplaceEvnParams(_testCase.TestCode, _testEnvParams));
                         if (object.Equals(ret, false))
