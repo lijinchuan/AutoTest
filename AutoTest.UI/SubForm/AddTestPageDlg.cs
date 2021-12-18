@@ -78,14 +78,15 @@ namespace AutoTest.UI.SubForm
 
             if (_pageId == 0)
             {
-
-                BigEntityTableEngine.LocalEngine.Insert(nameof(TestPage), new TestPage
+                var page = new TestPage
                 {
                     Name = TBName.Text.Trim(),
                     Order = (int)NUDOrder.Value,
                     SiteId = _siteId,
                     Url = TBUrl.Text
-                });
+                };
+                BigEntityTableEngine.LocalEngine.Insert(nameof(TestPage), page);
+                _pageId = page.Id;
             }
             else
             {
@@ -98,6 +99,19 @@ namespace AutoTest.UI.SubForm
                     Url = TBUrl.Text
                 });
             }
+
+            var order = (int)NUDOrder.Value;
+            var adjustPageList = testPageList.Where(p => p.Order >= order && p.Id != _pageId).OrderBy(p => p.Order).ToList();
+            if (adjustPageList.Any() && adjustPageList.First().Order == order)
+            {
+                foreach(var p in adjustPageList)
+                {
+                    p.Order = ++order;
+
+                    BigEntityTableEngine.LocalEngine.Update(nameof(TestPage), p);
+                }
+            }
+
             this.DialogResult = DialogResult.OK;
         }
     }
