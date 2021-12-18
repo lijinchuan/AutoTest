@@ -11,14 +11,14 @@ using System.Windows.Forms;
 
 namespace AutoTest.UI.WebBrowser
 {
-    public class CSObj
+    public class CSObj:IDisposable
     {
         private System.Threading.SynchronizationContext context;
         private ChromiumWebBrowser browser;
 
         private static string userFileDir = "userData\\";
 
-        public Action<string> OnPublishMsg;
+        public event Action<string> OnPublishMsg;
 
         static CSObj()
         {
@@ -108,6 +108,11 @@ namespace AutoTest.UI.WebBrowser
         public void Ehco(string msg)
         {
             this.OnPublishMsg?.Invoke(msg);
+        }
+
+        public void Dispose()
+        {
+            this.OnPublishMsg = null;
         }
     }
 }

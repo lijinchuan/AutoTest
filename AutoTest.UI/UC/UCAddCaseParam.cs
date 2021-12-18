@@ -12,6 +12,7 @@ using System.IO;
 using Newtonsoft.Json;
 using System.Text.RegularExpressions;
 using AutoTest.Domain;
+using LJC.FrameWorkV3.LogManager;
 
 namespace AutoTest.UI.UC
 {
@@ -1347,7 +1348,8 @@ namespace AutoTest.UI.UC
 
                 if (ischanged || force)
                 {
-                    BigEntityTableEngine.LocalEngine.Update<TestCase>(nameof(TestCase), this._testCase);
+                    BigEntityTableEngine.LocalEngine.Update(nameof(TestCase), _testCase);
+                    LogHelper.Instance.Info($"保存TESTCASE：{JsonConvert.SerializeObject(_testCase)}");
                     Util.SendMsg(this, "接口资源信息已更新");
                 }
 
@@ -1444,6 +1446,8 @@ namespace AutoTest.UI.UC
                         BigEntityTableEngine.LocalEngine.Update(nameof(TestCaseData), this._testCaseData);
                         Util.SendMsg(this, "接口资源已更新");
                     }
+
+                    LogHelper.Instance.Info($"保存TESTCASEDATA：{Newtonsoft.Json.JsonConvert.SerializeObject(this._testCaseData)}");
                 }
 
                 if (adjustOrder)

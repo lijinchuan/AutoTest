@@ -46,18 +46,18 @@ namespace AutoTest.UI.SubForm
                 }
                 source.SourceName = TBSourceName.Text.Trim();
                 source.Desc = TBSourceDesc.Text.Trim();
-                BigEntityTableEngine.LocalEngine.Update<TestSource>(nameof(TestSource), source);
+                BigEntityTableEngine.LocalEngine.Update(nameof(TestSource), source);
             }
             else
             {
-                BigEntityTableEngine.LocalEngine.Insert<TestSource>(nameof(TestSource), new TestSource
+                BigEntityTableEngine.LocalEngine.Insert(nameof(TestSource), new TestSource
                 {
                     SourceName = TBSourceName.Text.Trim(),
                     Desc = TBSourceDesc.Text.Trim()
                 });
             }
 
-            this.DialogResult = DialogResult.OK;
+            DialogResult = DialogResult.OK;
         }
 
         private void BtnCancel_Click(object sender, EventArgs e)

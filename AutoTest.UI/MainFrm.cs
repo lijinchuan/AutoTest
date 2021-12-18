@@ -13,6 +13,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using AutoTest.Domain.Entity;
+using System.Diagnostics;
+using CefSharp;
 
 namespace AutoTest.UI
 {
@@ -129,6 +131,11 @@ namespace AutoTest.UI
 
         protected override void OnClosing(CancelEventArgs e)
         {
+            if ((e as FormClosingEventArgs)?.CloseReason == CloseReason.TaskManagerClosing)
+            {
+                e.Cancel = true;
+                return;
+            }
             if (MessageBox.Show("要退出吗？", "询问", MessageBoxButtons.YesNo, MessageBoxIcon.Question, MessageBoxDefaultButton.Button2) == DialogResult.No)
             {
                 e.Cancel = true;
@@ -169,6 +176,16 @@ namespace AutoTest.UI
             {
                 wdlg.Msg = "其它工作...";
                 BigEntityTableEngine.LocalEngine.ShutDown();
+            }
+            catch
+            {
+
+            }
+
+            try
+            {
+                KillBrowserSubprocess();//杀死进程
+                Cef.Shutdown();//释放资源
             }
             catch
             {
@@ -424,6 +441,45 @@ namespace AutoTest.UI
             SubForm.URLEncodeDlg dlg = new URLEncodeDlg();
 
             dlg.Show();
+        }
+
+        /// <summary>
+        /// 清理CefSharp.BrowserSubprocess
+        /// </summary>
+        private void KillBrowserSubprocess()
+        {
+            try
+            {
+                string SYSPath = System.AppDomain.CurrentDomain.BaseDirectory;
+                Process[] processs = Process.GetProcessesByName("CefSharp.BrowserSubprocess");
+                if (processs != null && processs.Length > 0)
+                {
+                    for (int i = 0; i < processs.Length; i++)
+                    {
+                        Process process = processs[i];
+
+                        bool bKill = false;
+                        if (process.MainModule != null)
+                        {
+                            string FileName = process.MainModule.FileName;
+                            if (SYSPath.Contains(FileName) || FileName.Contains(SYSPath))
+                            {
+                                bKill = true;
+                            }
+                        }
+                        if (bKill)
+                        {
+                            process.Kill();
+                        }
+
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.ToString(), "清理CefSharp.BrowserSubprocess异常");
+            }
+
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using AutoTest.Domain;
 using CefSharp;
 using System;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -131,14 +132,19 @@ namespace AutoTest.UI.WebBrowser
             return resp.Result.Result;
         }
 
+        public static bool IsPromiseScript(string code)
+        {
+            return Regex.IsMatch(code, @"([^\w]|^)return([\r\n\s]+|$)", RegexOptions.IgnoreCase);
+        }
+
         public object TryExecuteScript(IBrowser browser, IFrame frame, string code)
         {
-            if (code.IndexOf("return", StringComparison.OrdinalIgnoreCase) == -1)
+            if (IsPromiseScript(code))
             {
-                return ExecuteScript(browser, frame, code);
+                return ExecutePromiseScript(browser, frame, code);
             }
-            return ExecutePromiseScript(browser, frame, code) 
-                ?? ExecuteScript(browser, frame, code);
+
+            return ExecuteScript(browser, frame, code);
         }
 
 

@@ -7,10 +7,12 @@ using CefSharp.WinForms;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace AutoTest.UI.WebBrowser
 {
@@ -74,7 +76,6 @@ namespace AutoTest.UI.WebBrowser
         /// </summary>
         private readonly object localLocker = new object();
 
-        private static JsDialogHandler commonJsDialogHandler = new JsDialogHandler();
         private static SilenceJsDialogHandler silenceJsDialogHandler = new SilenceJsDialogHandler();
 
 
@@ -92,6 +93,7 @@ namespace AutoTest.UI.WebBrowser
             RequestContext = context;
 
             this.JsDialogHandler = silenceJsDialogHandler;
+            silenceJsDialogHandler.OnAlert += WebTask_OnMsgPublish;
 
             FrameLoadStart += DefaultChromiumWebBrowser_FrameLoadStart;
             FrameLoadEnd += DefaultChromiumWebBrowser_FrameLoadEnd;
@@ -580,6 +582,19 @@ namespace AutoTest.UI.WebBrowser
         public bool IsRunningJob()
         {
             return isRunningJob;
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            // Cleanup managed objects by calling their
+            // Dispose() methods.
+
+            OnMsgPublished = null;
+
+            JavascriptObjectRepository.UnRegisterAll();//解绑对象 高版本才有
+            GetBrowser().CloseBrowser(false);//关闭浏览器
+
+            base.Dispose(disposing);
         }
     }
 }

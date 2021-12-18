@@ -1,6 +1,7 @@
 ﻿using AutoTest.UI.WebBrowser;
 using AutoTest.UI.WebTask;
 using AutoTest.Util;
+using LJC.FrameWorkV3.LogManager;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -61,6 +62,7 @@ namespace AutoTest.UI.UC
                 tbMsg.Text = "";
                 webView.OnMsgPublished += (msg =>
                 {
+                    LogHelper.Instance.Debug(msg);
                     _ = BeginInvoke(new Action(() =>
                     {
                         if (tbMsg.Text.Length > 1024 * 100)

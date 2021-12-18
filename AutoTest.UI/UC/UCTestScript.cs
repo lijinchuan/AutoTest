@@ -3,6 +3,8 @@ using AutoTest.Domain.Entity;
 using AutoTest.Domain;
 using LJC.FrameWorkV3.Data.EntityDataBase;
 using System;
+using LJC.FrameWorkV3.LogManager;
+using Newtonsoft.Json;
 
 namespace AutoTest.UI.UC
 {
@@ -58,6 +60,8 @@ namespace AutoTest.UI.UC
                 BigEntityTableEngine.LocalEngine.Update(nameof(TestScript), _testScript);
                 Util.SendMsg(this, "更新脚本成功");
             }
+
+            LogHelper.Instance.Info($"保存testScript：{JsonConvert.SerializeObject(_testScript)}");
 
             _callBack?.Invoke();
         }

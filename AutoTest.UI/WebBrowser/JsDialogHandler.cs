@@ -11,6 +11,8 @@ namespace AutoTest.UI.WebBrowser
 {
     public class JsDialogHandler : IJsDialogHandler
     {
+        public event Action<string> OnAlert;
+
         public string LastAlertMsg
         {
             get;
@@ -47,6 +49,7 @@ namespace AutoTest.UI.WebBrowser
             {
                 case CefSharp.CefJsDialogType.Alert:
                     {
+                        OnAlert?.Invoke(originUrl+"提示："+messageText);
                         LastAlertMsg = messageText;
                         //MessageBox.Show(messageText, "提示");
                         DealAlert(originUrl, messageText);

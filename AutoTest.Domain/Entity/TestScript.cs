@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AutoTest.Domain.Entity
 {
-    public class TestScript:IComparable
+    public class TestScript:IComparable,ISearch
     {
         public static readonly string Index3 = $"{nameof(SourceId)}_{nameof(SiteId)}_{nameof(ScriptName)}";
 
@@ -66,6 +66,12 @@ namespace AutoTest.Domain.Entity
             }
 
             return 1;
+        }
+
+        public bool Search(string wd)
+        {
+            return (this.Body ?? string.Empty).IndexOf(wd, StringComparison.OrdinalIgnoreCase) > -1
+                || (this.Desc ?? string.Empty).IndexOf(wd, StringComparison.OrdinalIgnoreCase) > -1;
         }
     }
 }

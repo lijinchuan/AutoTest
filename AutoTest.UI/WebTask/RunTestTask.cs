@@ -46,7 +46,7 @@ namespace AutoTest.UI.WebTask
         /// <summary>
         /// 出错只警告
         /// </summary>
-        private static string[] warnFileExt = new string[] { ".txt", ".css", ".js" , ".woff2" };
+        private static string[] warnFileExt = new string[] { ".txt", ".css", ".js" , ".woff2", ".gif", ".png",".jpg",".jpeg" };
 
         public RunTestTask(string taskname, bool useProxy, TestSite testSite, TestLogin testLogin,
             TestPage testPage, TestCase testCase, TestEnv testEnv, List<TestEnvParam> testEnvParams,
