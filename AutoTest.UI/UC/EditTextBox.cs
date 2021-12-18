@@ -283,6 +283,11 @@ namespace AutoTest.UI.UC
 
             backtimer = new System.Threading.Timer(new System.Threading.TimerCallback((o) =>
             {
+                if (this.Visible)
+                {
+                    if (RichText.AutoWordSelection)
+                        RichText.AutoWordSelection = false;
+                }
                 if (this.Visible && !view.Visible && _currpt != Point.Empty && DateTime.Now.Subtract(_pointtiptime).TotalMilliseconds >= 1000)
                 {
                     _pointtiptime = DateTime.MaxValue;
