@@ -14,7 +14,37 @@ namespace AutoTest.Domain.Entity
             set;
         }
 
+        public string TestName
+        {
+            get;
+            set;
+        }
+
         public DateTime TestTime
+        {
+            get;
+            set;
+        }
+
+        public int SourceId
+        {
+            get;
+            set;
+        }
+
+        public int SiteId
+        {
+            get;
+            set;
+        }
+
+        public int PageId
+        {
+            get;
+            set;
+        }
+
+        public int CaseId
         {
             get;
             set;

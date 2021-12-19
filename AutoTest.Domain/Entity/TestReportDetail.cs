@@ -62,6 +62,12 @@ namespace AutoTest.Domain.Entity
             set;
         }
 
+        public TestCaseData TestCaseData
+        {
+            get;
+            set;
+        }
+
         public TestResult TestResult
         {
             get;
