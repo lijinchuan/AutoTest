@@ -5,6 +5,10 @@ using LJC.FrameWorkV3.Data.EntityDataBase;
 using System;
 using LJC.FrameWorkV3.LogManager;
 using Newtonsoft.Json;
+using System.Collections.Generic;
+using System.Linq;
+using AutoTest.Util;
+using System.Drawing;
 
 namespace AutoTest.UI.UC
 {
@@ -12,18 +16,31 @@ namespace AutoTest.UI.UC
     {
         private TestScript _testScript;
         private Action _callBack;
+        private List<TestScript> _testScripts;
 
         public UCTestScript()
         {
             InitializeComponent();
         }
 
-        public UCTestScript(TestScript testScript,Action callBack)
+        public UCTestScript(TestScript testScript,Action callBack,List<TestScript> testScripts)
         {
             InitializeComponent();
 
             this._testScript = testScript;
             this._callBack = callBack;
+            _testScripts = testScripts;
+
+            if (_testScripts != null && _testScripts.Count > 0)
+            {
+                var keyWords = _testScripts.Select(p => new ScriptKeyWord
+                {
+                     Desc=p.Desc,
+                     HighColor=Color.Red,
+                     KeyWord=p.ScriptName
+                }).ToList();
+                this.TBBody.Init(keyWords);
+            }
 
             this.TBName.Text = testScript.ScriptName;
             this.NUDNumber.Value = testScript.Order;

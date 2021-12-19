@@ -255,7 +255,7 @@ namespace AutoTest.UI.UC
         {
             if (treeNode.Parent != null)
             {
-                ReLoadDBObj(treeNode.Parent);
+                ReLoadDBObj(treeNode.Parent,false);
             }
             else
             {
@@ -267,7 +267,7 @@ namespace AutoTest.UI.UC
                 var node = FindNode(tv_DBServers.Nodes, treeNode.Tag);
                 if (node != null)
                 {
-                    ReLoadDBObj(node.Parent);
+                    ReLoadDBObj(node.Parent,false);
                 }
             }
         }
@@ -347,8 +347,10 @@ namespace AutoTest.UI.UC
                                 var testScript = selnode.Tag as TestScript;
                                 var testResource = FindParentNode<TestSource>(selnode);
                                 var testSite = FindParentNode<TestSite>(selnode);
+                                var scripts = BigEntityTableEngine.LocalEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == testSite.SourceId && s.SiteId == 0).ToList();
+
                                 Util.AddToMainTab(this, $"{testResource.SourceName}_{testSite?.Name}_{testScript.ScriptName}(脚本)",
-                                        new UC.UCTestScript(testScript,()=> FindParentAndReLoad(selnode)));
+                                        new UC.UCTestScript(testScript,()=> FindParentAndReLoad(selnode), scripts));
                             }
                             break;
                         }
@@ -507,9 +509,14 @@ namespace AutoTest.UI.UC
                         }
                     case "添加测试用例":
                         {
+                            var testSource = FindParentNode<TestSource>(selnode);
                             var testSite = FindParentNode<TestSite>(selnode);
                             var testPage = FindParentNode<TestPage>(selnode);
-                            var step1dlg = new AddTestCaseDlg(testPage.Id,0);
+                            var scripts = BigEntityTableEngine.LocalEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == testSource.Id && s.SiteId == 0).ToList();
+                            var siteScripts = BigEntityTableEngine.LocalEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == testSource.Id && s.SiteId == testSite.Id).ToList();
+                            scripts.AddRange(siteScripts);
+                            var step1dlg = new AddTestCaseDlg(testPage.Id, 0, scripts);
+                            
                             if (step1dlg.ShowDialog() == DialogResult.OK)
                             {
                                 ReLoadDBObj(selnode);
@@ -522,15 +529,38 @@ namespace AutoTest.UI.UC
                         {
                             var testCaseNodeList = GetTestCaseTaskList(selnode);
                             var testTaskList = new List<TestTask>();
+                            var scriptsDic = new Dictionary<object, List<TestScript>>();
+                            var loginDic = new Dictionary<object, TestLogin>();
                             foreach (var node in testCaseNodeList)
                             {
                                 var testSource = FindParentNode<TestSource>(node);
                                 var testPage = FindParentNode<TestPage>(node);
                                 var testSite = FindParentNode<TestSite>(node);
                                 var testCase = FindParentNode<TestCase>(node);
-                                var testLogin = BigEntityTableEngine.LocalEngine.Find<TestLogin>(nameof(TestLogin), nameof(TestLogin.SiteId), new object[] { testSite.Id }).FirstOrDefault();
-                                var globalScripts = BigEntityTableEngine.LocalEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == testSource.Id && s.SiteId == 0).ToList();
-                                var siteScripts = BigEntityTableEngine.LocalEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == testSource.Id && s.SiteId == testSite.Id).ToList();
+
+                                TestLogin testLogin;
+                                var key = "testLogin_" + testSource.Id + "_" + testSite.Id;
+                                if (!loginDic.TryGetValue(key, out testLogin))
+                                {
+                                    testLogin = BigEntityTableEngine.LocalEngine.Find<TestLogin>(nameof(TestLogin), nameof(TestLogin.SiteId), new object[] { testSite.Id }).FirstOrDefault();
+                                    loginDic.Add(key, testLogin);
+                                }
+
+                                key = "globalScripts_" + testSource.Id;
+                                List<TestScript> globalScripts = null;
+                                if (!scriptsDic.TryGetValue(key, out globalScripts))
+                                {
+                                    globalScripts = BigEntityTableEngine.LocalEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == testSource.Id && s.SiteId == 0).ToList();
+                                    scriptsDic.Add(key, globalScripts);
+                                }
+
+                                key = "siteScripts_" + testSource.Id + "_" + testSite.Id;
+                                List<TestScript> siteScripts = null;
+                                if (!scriptsDic.TryGetValue(key, out siteScripts))
+                                {
+                                    siteScripts = BigEntityTableEngine.LocalEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == testSource.Id && s.SiteId == testSite.Id).ToList();
+                                    scriptsDic.Add(key, siteScripts);
+                                }
                                 var ep = GetCurrEnvData(node);
                                 testTaskList.Add(new TestTask
                                 {
@@ -710,9 +740,10 @@ namespace AutoTest.UI.UC
                                     };
 
                                     BigEntityTableEngine.LocalEngine.Insert(nameof(TestScript), testScript);
+                                    var scripts = BigEntityTableEngine.LocalEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == testSite.SourceId && s.SiteId == 0).ToList();
 
                                     Util.AddToMainTab(this, $"{testResource.SourceName}_{testSite?.Name}_{testScript.ScriptName}(脚本)",
-                                        new UC.UCTestScript(testScript, () => FindParentAndReLoad(selnode)));
+                                        new UC.UCTestScript(testScript, () => FindParentAndReLoad(selnode), scripts));
                                 }
                             }
                             break;
@@ -721,9 +752,14 @@ namespace AutoTest.UI.UC
                         {
                             if (selnode.Tag is TestCase)
                             {
+                                var testSource = FindParentNode<TestSource>(selnode);
                                 var testSite = FindParentNode<TestSite>(selnode);
                                 var testPage = FindParentNode<TestPage>(selnode);
-                                var step1dlg = new AddTestCaseDlg(testPage.Id, 0, selnode.Tag as TestCase);
+                                var scripts = BigEntityTableEngine.LocalEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == testSource.Id && s.SiteId == 0).ToList();
+                                var siteScripts = BigEntityTableEngine.LocalEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == testSource.Id && s.SiteId == testSite.Id).ToList();
+                                scripts.AddRange(siteScripts);
+
+                                var step1dlg = new AddTestCaseDlg(testPage.Id, 0, scripts, selnode.Tag as TestCase);
                                 if (step1dlg.ShowDialog() == DialogResult.OK)
                                 {
                                     ReLoadDBObj(selnode);

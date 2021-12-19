@@ -18,17 +18,31 @@ namespace AutoTest.UI.SubForm
         private int _pageId;
         private int _caseId;
         private TestCase _copyCase;
+        private List<TestScript> _testScripts;
         public AddTestCaseDlg()
         {
             InitializeComponent();
         }
 
-        public AddTestCaseDlg(int pageId, int caseId,TestCase copyCase=null)
+        public AddTestCaseDlg(int pageId, int caseId, List<TestScript> testScripts,TestCase copyCase=null)
         {
             InitializeComponent();
             _pageId = pageId;
             _caseId = caseId;
             _copyCase = copyCase;
+            _testScripts = testScripts;
+
+            if (testScripts != null)
+            {
+                var keyWords = testScripts.Select(p => new AutoTest.Util.ScriptKeyWord
+                {
+                    Desc = p.Desc,
+                    KeyWord = p.ScriptName,
+                    HighColor = Color.Red
+                }).ToList();
+                TBCode.Init(keyWords);
+                TBValidCode.Init(keyWords);
+            }
         }
 
         public TestCase TestCase

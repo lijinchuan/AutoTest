@@ -24,7 +24,7 @@ namespace AutoTest.Util
         public Color HighColor
         {
             get;
-            internal set;
+            set;
         }
 
 
@@ -130,73 +130,85 @@ namespace AutoTest.Util
             KeyWordDic.Add(new ScriptKeyWord
             {
                 KeyWord= "ServerDriverClient",
-                Desc="后台客户端，可调用后台方法"
+                Desc="后台客户端，可调用后台方法",
+                HighColor = Color.Green
             });
 
             KeyWordDic.Add(new ScriptKeyWord
             {
                 KeyWord = "ServerDriverClient.ehco",
-                Desc = "输出信息到控制台：ServerDriverClient.ehco(string msg)"
+                Desc = "输出信息到控制台：ServerDriverClient.ehco(string msg)",
+                HighColor = Color.Red
             });
 
             KeyWordDic.Add(new ScriptKeyWord
             {
                 KeyWord = "ServerDriverClient.sleep",
-                Desc = "休眠:ServerDriverClient.sleep(int ms)"
+                Desc = "休眠:ServerDriverClient.sleep(int ms)",
+                HighColor = Color.Red
             });
 
             KeyWordDic.Add(new ScriptKeyWord
             {
                 KeyWord = "ServerDriverClient.click",
-                Desc = "点击：ServerDriverClient.click(int x,int y)"
+                Desc = "点击：ServerDriverClient.click(int x,int y)",
+                HighColor = Color.Red
             });
 
             KeyWordDic.Add(new ScriptKeyWord
             {
                 KeyWord = "ServerDriverClient.mouseUp",
-                Desc = "鼠标弹起:ServerDriverClient.mouseUp(int x,int y)"
+                Desc = "鼠标弹起:ServerDriverClient.mouseUp(int x,int y)",
+                HighColor = Color.Red
             });
 
             KeyWordDic.Add(new ScriptKeyWord
             {
                 KeyWord = "ServerDriverClient.mouseMove",
-                Desc = "鼠标移动:ServerDriverClient.mouseMove(int x,int y)"
+                Desc = "鼠标移动:ServerDriverClient.mouseMove(int x,int y)",
+                HighColor = Color.Red
             });
 
             KeyWordDic.Add(new ScriptKeyWord
             {
                 KeyWord = "ServerDriverClient.mouseDown",
-                Desc = "鼠标按下:ServerDriverClient.mouseDown(int x,int y)"
+                Desc = "鼠标按下:ServerDriverClient.mouseDown(int x,int y)",
+                HighColor = Color.Red
             });
 
             KeyWordDic.Add(new ScriptKeyWord
             {
                 KeyWord= "ServerDriverClient.saveFile",
-                Desc= "ServerDriverClient.SaveFile(string fileName,bool replace,string content)"
+                Desc= "ServerDriverClient.SaveFile(string fileName,bool replace,string content)",
+                HighColor = Color.Red
             });
 
             KeyWordDic.Add(new ScriptKeyWord
             {
                 KeyWord = "ServerDriverClient.readFile",
-                Desc = "ServerDriverClient.ReadFile(string fileName)"
+                Desc = "ServerDriverClient.ReadFile(string fileName)",
+                HighColor = Color.Red
             });
 
             KeyWordDic.Add(new ScriptKeyWord
             {
                 KeyWord = "ServerDriverClient.getLastAlertMsg",
-                Desc="获取页面上最后一个提示信息"
+                Desc="获取页面上最后一个提示信息",
+                HighColor = Color.Red
             });
 
             KeyWordDic.Add(new ScriptKeyWord
             {
                 KeyWord = "JSON.parse",
-                Desc = "将json字符串转换成json对象"
+                Desc = "将json字符串转换成json对象",
+                HighColor = Color.Red
             });
 
             KeyWordDic.Add(new ScriptKeyWord
             {
                 KeyWord = "JSON.stringify",
-                Desc = "将json对象转换成json对符串"
+                Desc = "将json对象转换成json对符串",
+                HighColor = Color.Red
             });
         }
 

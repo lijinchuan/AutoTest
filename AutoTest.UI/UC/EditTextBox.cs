@@ -231,6 +231,38 @@ namespace AutoTest.UI.UC
             }
         }
 
+        public void Init(IEnumerable<ScriptKeyWord> scriptKeyWords)
+        {
+            if (ThinkInfoLib == null)
+            {
+                ThinkInfoLib = new List<ThinkInfo>();
+
+                foreach (var o in ScriptKeyWordHelper.GetKeyWordList())
+                {
+                    ThinkInfoLib.Add(new ThinkInfo
+                    {
+                        Type = 0,
+                        Desc = o.Desc,
+                        ObjectName = o.KeyWord
+                    });
+                }
+            }
+
+            if (scriptKeyWords != null)
+            {
+                foreach(var item in scriptKeyWords)
+                {
+                    ThinkInfoLib.Add(new ThinkInfo
+                    {
+                        Desc=item.Desc,
+                        ObjectName=item.KeyWord,
+                        Type=0
+                    });
+                    KeyWords.AddKeyWord(item.KeyWord, item.HighColor);
+                }
+            }
+        }
+
         public EditTextBox()
         {
             InitializeComponent();
@@ -1019,8 +1051,8 @@ namespace AutoTest.UI.UC
                         }
                         foreach (var m in this.KeyWords.MatchKeyWord(express))
                         {
-                            if ((m.PostionStart == 0 || "[]{},|%#!<>:=();+-*/\r\n 　".IndexOf(express[m.PostionStart - 1]) > -1)
-                                && (m.PostionEnd == express.Length - 1 || "[]{},|%#!<>:=();+-*/\r\n 　".IndexOf(express[m.PostionEnd + 1]) > -1))
+                            if ((m.PostionStart == 0 || "[]{},|%#!<>:=();+-*./\r\n 　".IndexOf(express[m.PostionStart - 1]) > -1)
+                                && (m.PostionEnd == express.Length - 1 || "[]{},|%#!<>:=();+-*./\r\n 　".IndexOf(express[m.PostionEnd + 1]) > -1))
                             {
                                 DataRow row = tb.NewRow();
                                 row[0] = totalIndex + m.PostionStart;

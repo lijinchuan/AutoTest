@@ -13,6 +13,8 @@ using Newtonsoft.Json;
 using System.Text.RegularExpressions;
 using AutoTest.Domain;
 using LJC.FrameWorkV3.LogManager;
+using AutoTest.Util;
+using System.Drawing;
 
 namespace AutoTest.UI.UC
 {
@@ -87,6 +89,18 @@ namespace AutoTest.UI.UC
             _testPage = testPage;
             _testCase = testCase;
             _callBack = callBack;
+
+            var scripts = BigEntityTableEngine.LocalEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == testSite.SourceId && s.SiteId == 0).ToList();
+            var siteScripts = BigEntityTableEngine.LocalEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == testSite.SourceId && s.SiteId == testSite.Id).ToList();
+            scripts.AddRange(siteScripts);
+            var keyWords = scripts.Select(p => new ScriptKeyWord
+            {
+                Desc=p.Desc,
+                HighColor=Color.Red,
+                KeyWord=p.ScriptName
+            }).ToList();
+            TBCode.Init(keyWords);
+            TBValidCode.Init(keyWords);
 
             Bind();
             BindData();
