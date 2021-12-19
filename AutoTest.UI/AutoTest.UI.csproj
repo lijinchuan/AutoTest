@@ -140,6 +140,12 @@
     <Compile Include="ResponseFilters\JsonResponseFilter.cs" />
     <Compile Include="ResponseFilters\ResponseFilterFactory.cs" />
     <Compile Include="ResponseFilters\TextResponseFilter.cs" />
+    <Compile Include="SubForm\AboutDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SubForm\AboutDlg.Designer.cs">
+      <DependentUpon>AboutDlg.cs</DependentUpon>
+    </Compile>
     <Compile Include="SubForm\AddEnvDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -425,6 +431,9 @@
     <EmbeddedResource Include="Resources\Resource1.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resource1.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SubForm\AboutDlg.resx">
+      <DependentUpon>AboutDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SubForm\AddTestCaseDlg.resx">
       <DependentUpon>AddTestCaseDlg.cs</DependentUpon>
@@ -787,6 +796,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <None Include="Resources\bullet_white.png" />
+    <Content Include="Resources\bullet_yellow.png" />
     <Content Include="Resources\control_add.png" />
     <Content Include="Resources\control_remove.png" />
     <Content Include="Resources\date.png" />
@@ -796,6 +806,7 @@
     <Content Include="Resources\text_ab.png" />
     <Content Include="Resources\text_bold.png" />
     <Content Include="Resources\text_underline.png" />
+    <None Include="Resources\wx.jpg" />
     <Content Include="worker-xml.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
