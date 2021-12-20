@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using AutoTest.Domain.Entity;
+using AutoTest.Domain.Exceptions;
 using AutoTest.Domain.Model;
 using AutoTest.UI.EventListener;
 using AutoTest.UI.WebBrowser;
@@ -309,6 +310,10 @@ namespace AutoTest.UI.WebTask
                             break;
                         }
                     }
+                    catch (JSException)
+                    {
+                        throw;
+                    }
                     catch (Exception ex)
                     {
                         UpdateUserVarData(browser, frame);
@@ -317,7 +322,7 @@ namespace AutoTest.UI.WebTask
                             lastErr = ex.Message;
                             PublishMsg(ex.Message);
                         }
-                        
+
                         if (tryCount++ > TestTimeOut / sleepMills)
                         {
                             PublishMsg("超时");
@@ -373,6 +378,10 @@ namespace AutoTest.UI.WebTask
                                 _testResult.FailMsg = "检查结果返回true/false";
                                 break;
                             }
+                        }
+                        catch (JSException)
+                        {
+                            throw;
                         }
                         catch (Exception ex)
                         {

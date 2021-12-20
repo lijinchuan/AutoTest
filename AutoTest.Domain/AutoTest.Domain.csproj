@@ -68,6 +68,8 @@
     <Compile Include="Entity\TestSite.cs" />
     <Compile Include="Entity\TestTask.cs" />
     <Compile Include="Entity\WebMethod.cs" />
+    <Compile Include="Exceptions\JSException.cs" />
+    <Compile Include="Exceptions\JSSyntaxError.cs" />
     <Compile Include="INodeContents.cs" />
     <Compile Include="IOrder.cs" />
     <Compile Include="ISearch.cs" />

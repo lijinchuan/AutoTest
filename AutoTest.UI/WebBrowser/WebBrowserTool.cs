@@ -1,4 +1,5 @@
 ﻿using AutoTest.Domain;
+using AutoTest.Domain.Exceptions;
 using CefSharp;
 using System;
 using System.Text.RegularExpressions;
@@ -72,6 +73,10 @@ namespace AutoTest.UI.WebBrowser
 
             if (!resp.Result.Success)
             {
+                if (resp.Result.Message.IndexOf("SyntaxError", StringComparison.OrdinalIgnoreCase)>-1)
+                {
+                    throw new JSSyntaxError(resp.Result.Message);
+                }
                 throw new ScriptException(resp.Result.Message);
             }
         }
