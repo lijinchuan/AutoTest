@@ -197,6 +197,22 @@ namespace AutoTest.UI.WebTask
             return webBrowserTool.ExecutePromiseScript(browser, frame, code) as dynamic;
         }
 
+        /// <summary>
+        /// 获取用户变量数据
+        /// </summary>
+        /// <param name="browser"></param>
+        /// <param name="frame"></param>
+        /// <returns></returns>
+        private void UpdateUserVarData(IBrowser browser, IFrame frame)
+        {
+            var userData = GetUserVarData(browser, frame);
+
+            if (userData != null)
+            {
+                bag = userData;
+            }
+        }
+
         private void SetVar(IBrowser browser, IFrame frame, object userData)
         {
             var webRequestDatas = webEvents.Select(p => new WebRequestData
@@ -278,6 +294,7 @@ namespace AutoTest.UI.WebTask
                         }
                         PrepareTest(browser, frame, bag);
                         var ret = webBrowserTool.ExecutePromiseScript(browser, frame, Util.ReplaceEvnParams(_testCase.TestCode, _testEnvParams));
+                        UpdateUserVarData(browser, frame);
                         if (object.Equals(ret, false))
                         {
                             if (tryCount++ >= TestTimeOut / sleepMills)
@@ -294,6 +311,7 @@ namespace AutoTest.UI.WebTask
                     }
                     catch (Exception ex)
                     {
+                        UpdateUserVarData(browser, frame);
                         if (ex.Message != lastErr)
                         {
                             lastErr = ex.Message;
@@ -306,15 +324,6 @@ namespace AutoTest.UI.WebTask
                             return await Task.FromResult(0);
                         }
                         Thread.Sleep(sleepMills);
-                    }
-                    finally
-                    {
-                        //页面跳走了，可能拿不到变量
-                        var userData = GetUserVarData(browser, frame);
-                        if (userData != null)
-                        {
-                            bag = userData;
-                        }
                     }
                 }
 
@@ -345,7 +354,7 @@ namespace AutoTest.UI.WebTask
 
                             PublishDebugMsg("开始执行验证代码");
                             var ret = webBrowserTool.TryExecuteScript(browser, frame, Util.ReplaceEvnParams(_testCase.ValidCode, _testEnvParams));
-
+                            UpdateUserVarData(browser, frame);
                             PublishDebugMsg("执行验证代码,结果:" + ret);
                             if (ret == null)
                             {
@@ -367,6 +376,7 @@ namespace AutoTest.UI.WebTask
                         }
                         catch (Exception ex)
                         {
+                            UpdateUserVarData(browser, frame);
                             if (ex.Message != lastErr)
                             {
                                 lastErr = ex.Message;
@@ -380,15 +390,6 @@ namespace AutoTest.UI.WebTask
                                 return await Task.FromResult(0);
                             }
                             Thread.Sleep(sleepMills);
-                        }
-                        finally
-                        {
-                            var userData = GetUserVarData(browser, frame);
-                            if (userData != null)
-                            {
-                                bag = userData;
-                            }
-                            PublishDebugMsg("读取用户变量");
                         }
                     }
                 }

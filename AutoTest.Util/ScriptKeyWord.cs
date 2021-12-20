@@ -210,6 +210,62 @@ namespace AutoTest.Util
                 Desc = "将json对象转换成json对符串",
                 HighColor = Color.Red
             });
+
+            KeyWordDic.Add(new ScriptKeyWord
+            {
+                KeyWord = "location",
+                Desc = "location 对象包含有关当前 URL 的信息",
+                HighColor = Color.Blue
+            });
+
+            KeyWordDic.Add(new ScriptKeyWord
+            {
+                KeyWord = "location.host",
+                Desc = "设置或返回主机名和当前 URL 的端口号",
+                HighColor = Color.Blue
+            });
+
+            KeyWordDic.Add(new ScriptKeyWord
+            {
+                KeyWord = "location.hostname",
+                Desc = "设置或返回当前 URL 的主机名",
+                HighColor = Color.Blue
+            });
+
+            KeyWordDic.Add(new ScriptKeyWord
+            {
+                KeyWord = "location.href",
+                Desc = "设置或返回完整的 URL",
+                HighColor = Color.Blue
+            });
+
+            KeyWordDic.Add(new ScriptKeyWord
+            {
+                KeyWord = "location.pathname",
+                Desc = "设置或返回当前 URL 的路径部分",
+                HighColor = Color.Blue
+            });
+
+            KeyWordDic.Add(new ScriptKeyWord
+            {
+                KeyWord = "location.port",
+                Desc = "设置或返回当前 URL 的端口号",
+                HighColor = Color.Blue
+            });
+
+            KeyWordDic.Add(new ScriptKeyWord
+            {
+                KeyWord = "location.protocol",
+                Desc = "设置或返回当前 URL 的协议",
+                HighColor = Color.Blue
+            });
+
+            KeyWordDic.Add(new ScriptKeyWord
+            {
+                KeyWord = "location.search",
+                Desc = "设置或返回从问号 (?) 开始的 URL（查询部分）",
+                HighColor = Color.Blue
+            });
         }
 
         private static void Deal()

@@ -72,7 +72,8 @@ namespace AutoTest.UI.WebBrowser
 
         public void Sleep(int ms)
         {
-            Thread.Sleep(ms);
+            var task = Task.Delay(ms);
+            task.Wait();
         }
 
         public bool SaveFile(string fileName,bool replace,string content)
