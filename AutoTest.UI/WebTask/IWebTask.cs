@@ -1,4 +1,5 @@
-﻿using AutoTest.UI.EventListener;
+﻿using AutoTest.Domain.Model;
+using AutoTest.UI.EventListener;
 using CefSharp;
 using System;
 using System.Collections.Generic;
@@ -97,5 +98,7 @@ namespace AutoTest.UI.WebTask
         void SetTestMode(bool isTestMode);
 
         IWebTask GetNext();
+
+        List<WebRequestData> GetWebRequestData(string url);
     }
 }

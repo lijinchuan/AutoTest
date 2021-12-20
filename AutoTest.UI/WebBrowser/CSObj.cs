@@ -1,4 +1,6 @@
-﻿using CefSharp;
+﻿using AutoTest.Domain.Model;
+using AutoTest.UI.WebTask;
+using CefSharp;
 using CefSharp.WinForms;
 using System;
 using System.Collections.Generic;
@@ -13,8 +15,9 @@ namespace AutoTest.UI.WebBrowser
 {
     public class CSObj:IDisposable
     {
-        private System.Threading.SynchronizationContext context;
+        private SynchronizationContext context;
         private ChromiumWebBrowser browser;
+        private IWebTask currentWebTask;
 
         private static string userFileDir = "userData\\";
 
@@ -29,7 +32,12 @@ namespace AutoTest.UI.WebBrowser
 
         }
 
-        public CSObj(System.Threading.SynchronizationContext context, ChromiumWebBrowser browser)
+        public void SetWebTask(IWebTask webTask)
+        {
+            currentWebTask = webTask;
+        }
+
+        public CSObj(SynchronizationContext context, ChromiumWebBrowser browser)
         {
             this.context = context;
             this.browser = browser;
@@ -109,6 +117,15 @@ namespace AutoTest.UI.WebBrowser
         public void Ehco(string msg)
         {
             this.OnPublishMsg?.Invoke(msg);
+        }
+
+        public string GetWebRequestData(string url)
+        {
+            if (currentWebTask == null)
+            {
+                return Newtonsoft.Json.JsonConvert.SerializeObject(new List<WebRequestData>());
+            }
+            return Newtonsoft.Json.JsonConvert.SerializeObject(currentWebTask.GetWebRequestData(url));
         }
 
         public void Dispose()

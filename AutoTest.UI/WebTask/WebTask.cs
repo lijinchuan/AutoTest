@@ -1,4 +1,5 @@
-﻿using AutoTest.UI.EventListener;
+﻿using AutoTest.Domain.Model;
+using AutoTest.UI.EventListener;
 using AutoTest.UI.WebBrowser;
 using CefSharp;
 using System;
@@ -57,6 +58,8 @@ namespace AutoTest.UI.WebTask
         /// 
         /// </summary>
         protected readonly WebBrowserTool webBrowserTool;
+
+        protected List<WebEvent> webEvents = new List<WebEvent>();
 
         /// <summary>
         /// 是否使用代理
@@ -191,6 +194,18 @@ namespace AutoTest.UI.WebTask
             request.Url = GetStartPageUrl();
             request.Method = "GET";
             return request;
+        }
+
+        public List<WebRequestData> GetWebRequestData(string url)
+        {
+            var list = webEvents.Where(p => p.SourceUrl.IndexOf(url, StringComparison.OrdinalIgnoreCase) > -1).ToList();
+
+            return list.Select(p => new WebRequestData
+            {
+                Code = p.StatusCode,
+                ResponseContent = p.Content,
+                Url = p.SourceUrl
+            }).ToList();
         }
     }
 }

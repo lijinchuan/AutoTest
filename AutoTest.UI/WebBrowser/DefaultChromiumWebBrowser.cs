@@ -78,6 +78,8 @@ namespace AutoTest.UI.WebBrowser
 
         private static SilenceJsDialogHandler silenceJsDialogHandler = new SilenceJsDialogHandler();
 
+        private CSObj cSObj = null;
+
 
         public DefaultChromiumWebBrowser(string name, string address)
             : base(address)
@@ -106,10 +108,10 @@ namespace AutoTest.UI.WebBrowser
             //这个一定要开启，否则注入C#的对象无效
             JavascriptObjectRepository.Settings.LegacyBindingEnabled = true;
             //构造要注入的对象，参数为当前线程的调度上下文
-            var obj = new CSObj(SynchronizationContext.Current, this);
-            obj.OnPublishMsg += this.WebTask_OnMsgPublish;
+            cSObj = new CSObj(SynchronizationContext.Current, this);
+            cSObj.OnPublishMsg += this.WebTask_OnMsgPublish;
             //注册C#对象
-            this.JavascriptObjectRepository.Register("ServerDriverClient", obj, false, BindingOptions.DefaultBinder);
+            this.JavascriptObjectRepository.Register("ServerDriverClient", cSObj, false, BindingOptions.DefaultBinder);
 
         }
 
@@ -297,6 +299,7 @@ namespace AutoTest.UI.WebBrowser
             webTask.OnTaskCompleted += WebTask_OnTaskCompleted;
             _ = readyResetEvent.Reset();
             webTask.OnTaskReady += WebTask_OnTaskReady;
+            cSObj.SetWebTask(webTask);
         }
 
 

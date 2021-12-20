@@ -36,7 +36,7 @@ namespace AutoTest.UI.WebTask
         private List<TestEnvParam> _testEnvParams;
         private bool _readyFlag = false;
         private TestCaseData _testCaseData;
-        private List<WebEvent> webEvents = new List<WebEvent>();
+        
         private List<TestScript> _globScripts;
         private List<TestScript> _siteScripts;
         private TestResult _testResult;
@@ -212,7 +212,7 @@ namespace AutoTest.UI.WebTask
             {
                 bag = userData;
             }
-        }
+        }        
 
         private void SetVar(IBrowser browser, IFrame frame, object userData)
         {
@@ -232,7 +232,7 @@ namespace AutoTest.UI.WebTask
 
             code += $"{WebVar.VarName}.{nameof(WebVar.Bag)}={Newtonsoft.Json.JsonConvert.SerializeObject(userData)}\n";
 
-            code += $"{WebVar.VarName}.{nameof(WebVar.WebRequestDatas)}={Newtonsoft.Json.JsonConvert.SerializeObject(webRequestDatas)}\n";
+            //code += $"{WebVar.VarName}.{nameof(WebVar.WebRequestDatas)}={Newtonsoft.Json.JsonConvert.SerializeObject(webRequestDatas)}\n";
 
             var ret = webBrowserTool.ExecuteScript(browser, frame, code);
         }

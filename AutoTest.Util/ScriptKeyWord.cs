@@ -85,33 +85,33 @@ namespace AutoTest.Util
                 HighColor = Color.Green
             });
 
-            KeyWordDic.Add(new ScriptKeyWord
-            {
-                KeyWord = "$VewBag.WebRequestDatas",
-                Desc = "网络数据，$VewBag.WebRequestDatas,Array",
-                HighColor = Color.Green
-            });
+            //KeyWordDic.Add(new ScriptKeyWord
+            //{
+            //    KeyWord = "$VewBag.WebRequestDatas",
+            //    Desc = "网络数据，$VewBag.WebRequestDatas,Array",
+            //    HighColor = Color.Green
+            //});
 
-            KeyWordDic.Add(new ScriptKeyWord
-            {
-                KeyWord = "$VewBag.WebRequestDatas[?].ResponseContent",
-                Desc = "网络数据响应内容，$VewBag.WebRequestDatas[?].ResponseContent,string",
-                HighColor = Color.Green
-            });
+            //KeyWordDic.Add(new ScriptKeyWord
+            //{
+            //    KeyWord = "$VewBag.WebRequestDatas[?].ResponseContent",
+            //    Desc = "网络数据响应内容，$VewBag.WebRequestDatas[?].ResponseContent,string",
+            //    HighColor = Color.Green
+            //});
 
-            KeyWordDic.Add(new ScriptKeyWord
-            {
-                KeyWord = "$VewBag.WebRequestDatas[?].Url",
-                Desc = "网络请求地址，$VewBag.WebRequestDatas[?].Url,string",
-                HighColor = Color.Green
-            });
+            //KeyWordDic.Add(new ScriptKeyWord
+            //{
+            //    KeyWord = "$VewBag.WebRequestDatas[?].Url",
+            //    Desc = "网络请求地址，$VewBag.WebRequestDatas[?].Url,string",
+            //    HighColor = Color.Green
+            //});
 
-            KeyWordDic.Add(new ScriptKeyWord
-            {
-                KeyWord = "$VewBag.WebRequestDatas[?].Code",
-                Desc = "网络请求状态码，$VewBag.WebRequestDatas[?].Code,int",
-                HighColor = Color.Green
-            });
+            //KeyWordDic.Add(new ScriptKeyWord
+            //{
+            //    KeyWord = "$VewBag.WebRequestDatas[?].Code",
+            //    Desc = "网络请求状态码，$VewBag.WebRequestDatas[?].Code,int",
+            //    HighColor = Color.Green
+            //});
 
             KeyWordDic.Add(new ScriptKeyWord
             {
@@ -195,6 +195,35 @@ namespace AutoTest.Util
                 KeyWord = "ServerDriverClient.getLastAlertMsg",
                 Desc="获取页面上最后一个提示信息",
                 HighColor = Color.Red
+            });
+
+            KeyWordDic.Add(new ScriptKeyWord
+            {
+                KeyWord= "ServerDriverClient.getWebRequestData",
+                Desc= "获取请求数据，需要再转换为JSON:ServerDriverClient.getWebRequestData(string url)",
+                HighColor=Color.Red
+                
+            });
+
+            KeyWordDic.Add(new ScriptKeyWord
+            {
+                KeyWord = "ServerDriverClient.getWebRequestData[?].ResponseContent",
+                Desc = "网络数据响应内容，$VewBag.WebRequestDatas[?].ResponseContent,string",
+                HighColor = Color.Green
+            });
+
+            KeyWordDic.Add(new ScriptKeyWord
+            {
+                KeyWord = "ServerDriverClient.getWebRequestData[?].Url",
+                Desc = "网络请求地址，ServerDriverClient.getWebRequestData[?].Url,string",
+                HighColor = Color.Green
+            });
+
+            KeyWordDic.Add(new ScriptKeyWord
+            {
+                KeyWord = "ServerDriverClient.getWebRequestData[?].Code",
+                Desc = "网络请求状态码，ServerDriverClient.getWebRequestData[?].Code,int",
+                HighColor = Color.Green
             });
 
             KeyWordDic.Add(new ScriptKeyWord
