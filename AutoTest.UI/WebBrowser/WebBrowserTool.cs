@@ -2,6 +2,8 @@
 using AutoTest.Domain.Exceptions;
 using CefSharp;
 using System;
+using System.IO;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,18 +12,20 @@ namespace AutoTest.UI.WebBrowser
 {
     public class WebBrowserTool : IWebBrowserTool
     {
-        private static string ADDJQUERYLIBCODE = @"if(typeof jQuery == 'undefined'){
-                var script = document.createElement(""script"");
-                script.type = ""text/javascript"";
-                script.src = ""https://code.jquery.com/jquery-1.12.4.min.js"";//script.src=""jquery-1.12.4.min.js"";
-                document.getElementsByTagName('head')[0].appendChild(script);
-                var script2 = document.createElement(""script"");
-                script2.type = ""text/javascript"";
-                script2.body = ""var $_jq = jQuery.noConflict()"";
-                document.getElementsByTagName('head')[0].appendChild(script2);
-               }else{
-                   var $_jq=jQuery;
-               }";
+        //private static string ADDJQUERYLIBCODE = @"if(typeof jQuery == 'undefined'){
+        //        var script = document.createElement(""script"");
+        //        script.type = ""text/javascript"";
+        //        script.src = ""https://code.jquery.com/jquery-1.12.4.min.js"";//script.src=""jquery-1.12.4.min.js"";
+        //        document.getElementsByTagName('head')[0].appendChild(script);
+        //        var script2 = document.createElement(""script"");
+        //        script2.type = ""text/javascript"";
+        //        script2.text = ""var $jq=jQuery.noConflict(true);"";
+        //        document.getElementsByTagName('head')[0].appendChild(script2);
+        //       }else{
+        //           var $jq=jQuery;
+        //       }";
+
+        private static readonly string ADDJQUERYLIBCODE = File.ReadAllText("jquery-1.12.4.min.js", Encoding.UTF8);
 
         private static string REGISTERREMOTESCRIPTCODE = @"var script = document.createElement(""script"");
                 script.type = ""text/javascript"";
@@ -92,27 +96,6 @@ namespace AutoTest.UI.WebBrowser
         {
             var resp = browser.MainFrame.EvaluateScriptAsync(ADDJQUERYLIBCODE);
             AssertJavaScriptResult(resp);
-            var script = @"$('#aaaaa').length";
-            var start = DateTime.Now;
-            while (true)
-            {
-                var changetabresult = browser.MainFrame.EvaluateScriptAsync(script);
-                Task.WaitAll(new[] { changetabresult }, SCRIPT_TIMEOUT);
-                //这里要确认JQUERY加载成功
-                if (changetabresult.Result.Success)
-                {
-                    break;
-                }
-                else
-                {
-                    if (DateTime.Now.Subtract(start).TotalSeconds > 30)
-                    {
-                        throw new TimeoutException("加载JQUERY类库超时");
-                    }
-                    Thread.Sleep(10);
-                }
-
-            }
         }
 
         public bool AddCookeManagerFunction(IBrowser browser, IFrame frame)
