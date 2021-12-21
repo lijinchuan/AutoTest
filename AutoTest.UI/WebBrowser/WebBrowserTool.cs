@@ -14,7 +14,14 @@ namespace AutoTest.UI.WebBrowser
                 var script = document.createElement(""script"");
                 script.type = ""text/javascript"";
                 script.src = ""https://code.jquery.com/jquery-1.12.4.min.js"";//script.src=""jquery-1.12.4.min.js"";
-                document.getElementsByTagName('head')[0].appendChild(script);}";
+                document.getElementsByTagName('head')[0].appendChild(script);
+                var script2 = document.createElement(""script"");
+                script2.type = ""text/javascript"";
+                script2.body = ""var $_jq = jQuery.noConflict()"";
+                document.getElementsByTagName('head')[0].appendChild(script2);
+               }else{
+                   var $_jq=jQuery;
+               }";
 
         private static string REGISTERREMOTESCRIPTCODE = @"var script = document.createElement(""script"");
                 script.type = ""text/javascript"";
