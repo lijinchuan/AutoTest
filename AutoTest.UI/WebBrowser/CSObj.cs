@@ -128,6 +128,11 @@ namespace AutoTest.UI.WebBrowser
             return Newtonsoft.Json.JsonConvert.SerializeObject(currentWebTask.GetWebRequestData(url));
         }
 
+        public void AddJqueryLib(bool force)
+        {
+            new WebBrowserTool().AddJqueryLib(browser.GetBrowser(), browser.GetMainFrame(), force);
+        }
+
         public void Dispose()
         {
             this.OnPublishMsg = null;

@@ -73,6 +73,13 @@ namespace AutoTest.Util
         {
             KeyWordDic.Add(new ScriptKeyWord
             {
+                KeyWord = "$1_12_4",
+                Desc = "jquery引用变量",
+                HighColor = Color.Green
+            });
+
+            KeyWordDic.Add(new ScriptKeyWord
+            {
                 KeyWord = "$VewBag",
                 Desc = "页面变量",
                 HighColor=Color.Green
@@ -132,6 +139,13 @@ namespace AutoTest.Util
                 KeyWord= "ServerDriverClient",
                 Desc="后台客户端，可调用后台方法",
                 HighColor = Color.Green
+            });
+
+            KeyWordDic.Add(new ScriptKeyWord
+            {
+                KeyWord= "ServerDriverClient.addJqueryLib",
+                Desc = "后台客户端，加载JQUERY库：ServerDriverClient.addJqueryLib(bool force)",
+                HighColor = Color.Red
             });
 
             KeyWordDic.Add(new ScriptKeyWord

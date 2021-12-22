@@ -347,7 +347,7 @@ namespace AutoTest.UI.UC
                                 var testScript = selnode.Tag as TestScript;
                                 var testResource = FindParentNode<TestSource>(selnode);
                                 var testSite = FindParentNode<TestSite>(selnode);
-                                var scripts = BigEntityTableEngine.LocalEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == testSite.SourceId && s.SiteId == 0).ToList();
+                                var scripts = BigEntityTableEngine.LocalEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == testResource.Id && s.SiteId == 0).ToList();
 
                                 Util.AddToMainTab(this, $"{testResource.SourceName}_{testSite?.Name}_{testScript.ScriptName}(脚本)",
                                         new UC.UCTestScript(testScript,()=> FindParentAndReLoad(selnode), scripts));
@@ -740,7 +740,7 @@ namespace AutoTest.UI.UC
                                     };
 
                                     BigEntityTableEngine.LocalEngine.Insert(nameof(TestScript), testScript);
-                                    var scripts = BigEntityTableEngine.LocalEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == testSite.SourceId && s.SiteId == 0).ToList();
+                                    var scripts = BigEntityTableEngine.LocalEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == testResource.Id && s.SiteId == 0).ToList();
 
                                     Util.AddToMainTab(this, $"{testResource.SourceName}_{testSite?.Name}_{testScript.ScriptName}(脚本)",
                                         new UC.UCTestScript(testScript, () => FindParentAndReLoad(selnode), scripts));

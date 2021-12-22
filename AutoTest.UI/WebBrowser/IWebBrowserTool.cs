@@ -12,7 +12,7 @@ namespace AutoTest.UI.WebBrowser
         /// <summary>
         /// 加载JQUERY库
         /// </summary>
-        void AddJqueryLib(IBrowser browser, IFrame frame);
+        void AddJqueryLib(IBrowser browser, IFrame frame,bool force);
 
         /// <summary>
         /// 创建一个万能函数

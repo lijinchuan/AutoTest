@@ -92,10 +92,18 @@ namespace AutoTest.UI.WebBrowser
             }
         }
 
-        public void AddJqueryLib(IBrowser browser, IFrame frame)
+        public void AddJqueryLib(IBrowser browser, IFrame frame,bool force=false)
         {
-            var resp = browser.MainFrame.EvaluateScriptAsync(ADDJQUERYLIBCODE);
-            AssertJavaScriptResult(resp);
+            if (!force)
+            {
+                var resp = browser.MainFrame.EvaluateScriptAsync(ADDJQUERYLIBCODE);
+                AssertJavaScriptResult(resp);
+            }
+            else
+            {
+                var resp = browser.MainFrame.EvaluateScriptAsync(ADDJQUERYLIBCODE.Replace("if (typeof jQuery === 'undefined') {", "if (true) {"));
+                AssertJavaScriptResult(resp);
+            }
         }
 
         public bool AddCookeManagerFunction(IBrowser browser, IFrame frame)

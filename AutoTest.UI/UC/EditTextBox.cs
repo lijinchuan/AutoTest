@@ -421,7 +421,7 @@ namespace AutoTest.UI.UC
                 {
                     using (var g = view.CreateGraphics())
                     {
-                        var mwidth = col.DefaultCellStyle.Padding.Left + (int)g.MeasureString(row.Cells[col.Name].Value.ToString() + col.Name, view.Font).Width + 20;
+                        var mwidth = col.DefaultCellStyle.Padding.Left + (int)g.MeasureString(row.Cells[col.Name].Value?.ToString() + col.Name, view.Font).Width + 20;
                         if (mwidth > maxwidth)
                         {
                             maxwidth = mwidth;
