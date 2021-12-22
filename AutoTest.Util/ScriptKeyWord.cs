@@ -143,8 +143,15 @@ namespace AutoTest.Util
 
             KeyWordDic.Add(new ScriptKeyWord
             {
-                KeyWord= "ServerDriverClient.addJqueryLib",
-                Desc = "后台客户端，加载JQUERY库：ServerDriverClient.addJqueryLib(bool force)",
+                KeyWord= "ServerDriverClient.reload",
+                Desc = "重新刷新：ServerDriverClient.reload(bool ignoreCache)",
+                HighColor = Color.Red
+            });
+
+            KeyWordDic.Add(new ScriptKeyWord
+            {
+                KeyWord = "ServerDriverClient.loadUrl",
+                Desc = "加载URL：ServerDriverClient.loadUrl(string url)",
                 HighColor = Color.Red
             });
 
