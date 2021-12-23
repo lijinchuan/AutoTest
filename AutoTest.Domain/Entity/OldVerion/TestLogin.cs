@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AutoTest.Domain.Entity
+namespace AutoTest.Domain.Entity.OldVerion
 {
     public class TestLogin : IComparable, ISearch
     {
@@ -42,24 +42,6 @@ namespace AutoTest.Domain.Entity
         /// 是否人工
         /// </summary>
         public bool IsMannual
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// 帐号说明
-        /// </summary>
-        public string AccountInfo
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// 是否使用
-        /// </summary>
-        public bool Used
         {
             get;
             set;

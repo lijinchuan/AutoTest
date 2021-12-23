@@ -13,7 +13,7 @@
     </Indexs>
   </KeyIndexInfo>
   <IsAutoIncrKey>true</IsAutoIncrKey>
-  <LstAutoIncr>0</LstAutoIncr>
+  <LstAutoIncr>1</LstAutoIncr>
   <IndexInfos>
     <IndexInfo>
       <IndexName>SiteId</IndexName>
@@ -26,8 +26,9 @@
       </Indexs>
     </IndexInfo>
   </IndexInfos>
-  <CTime>2021-12-09T21:13:11.1953018+08:00</CTime>
+  <CTime>2021-12-23T18:37:21.9243932+08:00</CTime>
   <Version>2</Version>
   <TypeString>AutoTest.Domain.Entity.TestLogin, AutoTest.Domain, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null</TypeString>
   <IndexMergeInfos />
+  <UpgradeFrom>AutoTest.Domain.Entity.OldVerion.TestLogin</UpgradeFrom>
 </BigEntityTableMeta>

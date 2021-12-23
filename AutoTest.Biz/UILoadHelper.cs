@@ -92,7 +92,7 @@ namespace AutoTest.Biz
             {
                 treeNodes.Add(new TreeNodeEx
                 {
-                    Text = "登陆",
+                    Text = testLogin.AccountInfo,
                     Tag = testLogin,
                     ImageIndex = 15,
                     SelectedImageIndex = 15,

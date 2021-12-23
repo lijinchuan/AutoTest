@@ -184,14 +184,14 @@ namespace AutoTest.UI.UC
 
         }
 
-        private (TestEnv env,List<TestEnvParam> envParams) GetCurrEnvData(TreeNode node)
+        private (TestEnv env, List<TestEnvParam> envParams, bool hasEvn) GetCurrEnvData(TreeNode node)
         {
             var testSite = FindParentNode<TestSite>(node);
             if (testSite == null)
             {
-                return (null,null);
+                return (null, null, false);
             }
-            
+
             var testEnvs = BigEntityTableEngine.LocalEngine.Find<TestEnv>(nameof(TestEnv), nameof(TestEnv.SiteId), new object[] { testSite.Id });
             var currentEnv = testEnvs.FirstOrDefault(p => p.Used);
             List<TestEnvParam> testEnvParams = null;
@@ -199,7 +199,7 @@ namespace AutoTest.UI.UC
             {
                 testEnvParams = BigEntityTableEngine.LocalEngine.Find<TestEnvParam>(nameof(TestEnvParam), "SiteId_EnvId", new object[] { testSite.Id, currentEnv.Id }).ToList();
             }
-            return (currentEnv, testEnvParams);
+            return (currentEnv, testEnvParams, true);
         }
 
         private List<TreeNode> GetTestCaseTaskList(TreeNode node)
@@ -336,7 +336,7 @@ namespace AutoTest.UI.UC
                             else if (selnode.Tag is TestLogin)
                             {
                                 var testSite = FindParentNode<TestSite>(selnode);
-                                var dlg = new AddTestLoginDlg(testSite.Id);
+                                var dlg = new AddTestLoginDlg(testSite.Id, selnode.Tag as TestLogin);
                                 if (dlg.ShowDialog() == DialogResult.OK)
                                 {
                                     FindParentAndReLoad(selnode);
@@ -531,6 +531,7 @@ namespace AutoTest.UI.UC
                             var testTaskList = new List<TestTask>();
                             var scriptsDic = new Dictionary<object, List<TestScript>>();
                             var loginDic = new Dictionary<object, TestLogin>();
+                            var envDic = new Dictionary<object, (TestEnv env, List<TestEnvParam> envParams, bool hasEvn)>();
                             foreach (var node in testCaseNodeList)
                             {
                                 var testSource = FindParentNode<TestSource>(node);
@@ -542,7 +543,17 @@ namespace AutoTest.UI.UC
                                 var key = "testLogin_" + testSource.Id + "_" + testSite.Id;
                                 if (!loginDic.TryGetValue(key, out testLogin))
                                 {
-                                    testLogin = BigEntityTableEngine.LocalEngine.Find<TestLogin>(nameof(TestLogin), nameof(TestLogin.SiteId), new object[] { testSite.Id }).FirstOrDefault();
+                                    var testLoginList = BigEntityTableEngine.LocalEngine.Find<TestLogin>(nameof(TestLogin), nameof(TestLogin.SiteId), new object[] { testSite.Id });
+                                    if (testLoginList.Any())
+                                    {
+                                        if(!testLoginList.Any(p => p.Used))
+                                        {
+                                            MessageBox.Show("请选择一个测试帐号");
+                                            return;
+                                        }
+                                        testLogin = testLoginList.First(p => p.Used);
+                                    }
+                                    
                                     loginDic.Add(key, testLogin);
                                 }
 
@@ -561,7 +572,17 @@ namespace AutoTest.UI.UC
                                     siteScripts = BigEntityTableEngine.LocalEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == testSource.Id && s.SiteId == testSite.Id).ToList();
                                     scriptsDic.Add(key, siteScripts);
                                 }
-                                var ep = GetCurrEnvData(node);
+                                (TestEnv env, List<TestEnvParam> envParams, bool hasEvn) ep;
+                                if (!envDic.TryGetValue(testSite.Id, out ep))
+                                {
+                                    ep = GetCurrEnvData(node);
+                                    envDic.Add(testSite.Id, ep);
+                                }
+                                if (ep.hasEvn && ep.env == null)
+                                {
+                                    MessageBox.Show("请选择一个测试环境");
+                                    return;
+                                }
                                 testTaskList.Add(new TestTask
                                 {
                                     TestSource = testSource,
@@ -635,7 +656,7 @@ namespace AutoTest.UI.UC
                     case "添加登陆页":
                         {
                             var testSite = FindParentNode<TestSite>(selnode);
-                            var dlg = new AddTestLoginDlg(testSite.Id);
+                            var dlg = new AddTestLoginDlg(testSite.Id, null);
                             if (dlg.ShowDialog() == DialogResult.OK)
                             {
                                 ReLoadDBObj(selnode);
@@ -767,6 +788,26 @@ namespace AutoTest.UI.UC
                                         () => FindParentAndReLoad(selnode)));
                                 }
                             }
+                            else if (selnode.Tag is TestLogin)
+                            {
+                                var testSite = FindParentNode<TestSite>(selnode);
+                                var currentTestLogin = selnode.Tag as TestLogin;
+                                var testLogin = new TestLogin
+                                {
+                                    LoginCode = currentTestLogin.LoginCode,
+                                    IsMannual = currentTestLogin.IsMannual,
+                                    SiteId = currentTestLogin.SiteId,
+                                    Url = currentTestLogin.Url,
+                                    ValidCode = currentTestLogin.ValidCode,
+                                    //AccountInfo=currentTestLogin.AccountInfo
+                                };
+                                var dlg = new AddTestLoginDlg(testSite.Id, testLogin);
+
+                                if (dlg.ShowDialog() == DialogResult.OK)
+                                {
+                                    FindParentAndReLoad(selnode);
+                                }
+                            }
                             break;
                         }
                     default:
@@ -881,16 +922,7 @@ namespace AutoTest.UI.UC
                 if (node.Tag is TestSite)
                 {
                     添加测试页面ToolStripMenuItem.Visible = true;
-                    bool hasLoginPage = false;
-                    foreach (TreeNode item in node.Nodes)
-                    {
-                        if (item.Tag is TestLogin)
-                        {
-                            hasLoginPage = true;
-                            break;
-                        }
-                    }
-                    添加登陆页ToolStripMenuItem.Visible = !hasLoginPage;
+                    添加登陆页ToolStripMenuItem.Visible = true;
                 }
                 else
                 {
@@ -910,7 +942,7 @@ namespace AutoTest.UI.UC
 
                 添加脚本ToolStripMenuItem.Visible= (node.Tag as INodeContents)?.GetNodeContentType() == NodeContentType.SCRIPTPARENT;
 
-                复制ToolStripMenuItem.Visible = node.Tag is TestCase;
+                复制ToolStripMenuItem.Visible = node.Tag is TestCase || node.Tag is TestLogin;
             }
 
         }

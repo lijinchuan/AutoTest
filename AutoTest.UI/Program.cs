@@ -21,7 +21,18 @@ namespace AutoTest.UI
             BigEntityTableEngine.LocalEngine.CreateTable<TestSite>(p => p.Id, b => b.AddIndex(nameof(TestSite.Name), c => c.Asc(m => m.Name))
             .AddIndex(nameof(TestSite.SourceId), c => c.Asc(m => m.SourceId)));
 
-            BigEntityTableEngine.LocalEngine.CreateTable<TestLogin>(p => p.Id, b => b.AddIndex(nameof(TestLogin.SiteId), c => c.Asc(m => m.SiteId)));
+            //BigEntityTableEngine.LocalEngine.CreateTable<TestLogin>(p => p.Id, b => b.AddIndex(nameof(TestLogin.SiteId), c => c.Asc(m => m.SiteId)));
+            BigEntityTableEngine.LocalEngine.Upgrade<AutoTest.Domain.Entity.OldVerion.TestLogin, TestLogin>(nameof(TestLogin), f => new TestLogin
+            {
+                AccountInfo = "默认帐号",
+                IsMannual = f.IsMannual,
+                LoginCode = f.LoginCode,
+                SiteId = f.SiteId,
+                Url = f.Url,
+                Used = false,
+                ValidCode = f.ValidCode
+            },nameof(TestLogin.Id),true,
+            new IndexBuilder<TestLogin>().AddIndex(nameof(TestLogin.SiteId), c => c.Asc(m => m.SiteId)).Build());
 
             BigEntityTableEngine.LocalEngine.CreateTable<TestPage>(p => p.Id, b => b.AddIndex(nameof(TestPage.SiteId), c => c.Asc(m => m.SiteId)));
 

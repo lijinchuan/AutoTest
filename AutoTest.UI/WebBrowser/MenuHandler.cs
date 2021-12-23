@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace AutoTest.UI.WebBrowser
 {
@@ -20,6 +21,7 @@ namespace AutoTest.UI.WebBrowser
                 model.AddSeparator();//添加分隔符;
             }
             model.AddItem((CefMenuCommand)103, "刷新");
+            model.AddItem((CefMenuCommand.CustomFirst + 1), "复制URL");
             if (model.Count > 0)
             {
                 model.AddSeparator();//添加分隔符;
@@ -52,6 +54,12 @@ namespace AutoTest.UI.WebBrowser
             else if (commandId == (CefMenuCommand)103)
             {
                 browser.Reload(true);
+                return true;
+            }
+            else if (commandId == (CefMenuCommand.CustomFirst + 1))
+            {
+                Clipboard.SetText(browser.MainFrame.Url);
+                MessageBox.Show("URL已复制到剪切板");
                 return true;
             }
             return false;
