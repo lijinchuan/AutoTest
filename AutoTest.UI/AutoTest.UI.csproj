@@ -803,6 +803,7 @@
     <Content Include="Resources\control_add.png" />
     <Content Include="Resources\control_remove.png" />
     <Content Include="Resources\date.png" />
+    <None Include="Resources\group.png" />
     <Content Include="Resources\number.png" />
     <Content Include="Resources\record_blue.png" />
     <Content Include="Resources\record_green.png" />
@@ -810,6 +811,7 @@
     <Content Include="Resources\text_bold.png" />
     <Content Include="Resources\text_underline.png" />
     <None Include="Resources\wx.jpg" />
+    <None Include="Resources\user_star.png" />
     <Content Include="worker-xml.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

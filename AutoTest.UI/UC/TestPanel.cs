@@ -19,6 +19,7 @@ namespace AutoTest.UI.UC
     {
         private string _name = string.Empty;
         private DefaultChromiumWebBrowser webView = null;
+        public event Action<IWebTask> OnTaskStart;
 
         public TestPanel()
         {
@@ -79,7 +80,13 @@ namespace AutoTest.UI.UC
                         }
                     }));
                 });
+                webView.OnTaskStart += WebView_OnTaskStart;
             }
+        }
+
+        private void WebView_OnTaskStart(IWebTask task)
+        {
+            OnTaskStart?.Invoke(task);
         }
 
         public void Load()

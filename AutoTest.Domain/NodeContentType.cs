@@ -18,7 +18,7 @@ namespace AutoTest.Domain
         DOC,
         LOGICMAPParent,
         LOGICMAP,
-        LOGINPAGE,
+        LOGINACCOUNTS,
         TESTSITE,
         TESTPAGE,
         TESTCASE,

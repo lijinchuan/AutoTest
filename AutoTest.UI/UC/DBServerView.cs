@@ -18,6 +18,7 @@ namespace AutoTest.UI.UC
 {
     public partial class DBServerView : UserControl
     {
+        private static TestLogin currentTestLogin = null;
         public DBServerView()
         {
             InitializeComponent();
@@ -46,6 +47,8 @@ namespace AutoTest.UI.UC
             tv_DBServers.ImageList.Images.Add("bullet_green", Resources.Resource1.bullet_green);
             tv_DBServers.ImageList.Images.Add("bullet_red", Resources.Resource1.bullet_red);//20
             tv_DBServers.ImageList.Images.Add("bullet_yellow", Resources.Resource1.bullet_yellow);
+            tv_DBServers.ImageList.Images.Add("user_star", Resources.Resource1.user_star);
+            tv_DBServers.ImageList.Images.Add("group", Resources.Resource1.group);
 
             tv_DBServers.Nodes.Add(new TreeNodeEx("资源管理器", 0, 1));
             tv_DBServers.BeforeExpand += Tv_DBServers_BeforeExpand;
@@ -180,6 +183,11 @@ namespace AutoTest.UI.UC
                 var sid = FindParentNode<TestSource>(selNode).Id;
                 var testSite = FindParentNode<TestSite>(selNode);
                 Biz.UILoadHelper.LoadTestScriptAsync(this.ParentForm, selNode, sid, testSite == null ? 0 : testSite.Id, callback, selNode);
+            }
+            else if (selNode.Tag is INodeContents && (selNode.Tag as INodeContents).GetNodeContentType() == NodeContentType.LOGINACCOUNTS)
+            {
+                var testSite = FindParentNode<TestSite>(selNode);
+                Biz.UILoadHelper.LoadLoginAccountsAsync(this.ParentForm, selNode, testSite.Id, callback, selNode);
             }
 
         }
@@ -642,6 +650,15 @@ namespace AutoTest.UI.UC
                                     return panel;
                                 }, typeof(TestPanel));
 
+                                testPanel.OnTaskStart += t =>
+                                {
+                                    var rt = t as RunTestTask;
+                                    if (rt != null && rt.TestLogin != null && (currentTestLogin == null || currentTestLogin.Id != rt.TestLogin.Id))
+                                    {
+                                        currentTestLogin = rt.TestLogin;
+                                        testPanel.ClearCookie(rt.TestLogin.Url);
+                                    }
+                                };
 
                                 LJC.FrameWorkV3.Comm.TaskHelper.SetInterval(1000, () =>
                                 {
@@ -714,25 +731,47 @@ namespace AutoTest.UI.UC
 
                             break;
                         }
-                    case "切换此环境":
+                    case "切换":
                         {
-                            
-                            var currEnv = selnode.Tag as TestEnv;
-                            if (!currEnv.Used)
+                            if (selnode.Tag is TestEnv)
                             {
-                                var testSite = FindParentNode<TestSite>(selnode);
-                                
-                                var envList = BigEntityTableEngine.LocalEngine.Find<TestEnv>(nameof(TestEnv), nameof(TestEnv.SiteId), new object[] { testSite.Id });
-                                foreach(var envUse in envList.Where(p => p.Used))
+                                var currEnv = selnode.Tag as TestEnv;
+                                if (!currEnv.Used)
                                 {
-                                    envUse.Used = false;
-                                    BigEntityTableEngine.LocalEngine.Update(nameof(TestEnv), envUse);
+                                    var testSite = FindParentNode<TestSite>(selnode);
+
+                                    var envList = BigEntityTableEngine.LocalEngine.Find<TestEnv>(nameof(TestEnv), nameof(TestEnv.SiteId), new object[] { testSite.Id });
+                                    foreach (var envUse in envList.Where(p => p.Used))
+                                    {
+                                        envUse.Used = false;
+                                        BigEntityTableEngine.LocalEngine.Update(nameof(TestEnv), envUse);
+                                    }
+
+                                    currEnv.Used = true;
+                                    BigEntityTableEngine.LocalEngine.Update(nameof(TestEnv), currEnv);
+
+                                    ReLoadDBObj(selnode.Parent);
                                 }
+                            }
+                            else if (selnode.Tag is TestLogin)
+                            {
+                                var currTestLogin = selnode.Tag as TestLogin;
+                                if (!currTestLogin.Used)
+                                {
+                                    var testSite = FindParentNode<TestSite>(selnode);
 
-                                currEnv.Used = true;
-                                BigEntityTableEngine.LocalEngine.Update(nameof(TestEnv), currEnv);
+                                    var testLoginList = BigEntityTableEngine.LocalEngine.Find<TestLogin>(nameof(TestLogin), nameof(TestLogin.SiteId), new object[] { testSite.Id });
+                                    foreach (var testLoginUse in testLoginList.Where(p => p.Used))
+                                    {
+                                        testLoginUse.Used = false;
+                                        BigEntityTableEngine.LocalEngine.Update(nameof(TestLogin), testLoginUse);
+                                    }
 
-                                ReLoadDBObj(selnode.Parent);
+                                    currTestLogin.Used = true;
+                                    BigEntityTableEngine.LocalEngine.Update(nameof(TestLogin), currTestLogin);
+
+                                    ReLoadDBObj(selnode.Parent);
+                                }
                             }
                             
                             break;
@@ -911,25 +950,25 @@ namespace AutoTest.UI.UC
                 if ((node.Tag as INodeContents)?.GetNodeContentType() == NodeContentType.ENV)
                 {
                     批量复制引用ToolStripMenuItem.Visible = true;
-                    切换此环境ToolStripMenuItem.Visible = !(node.Tag as TestEnv).Used;
                 }
                 else
                 {
                     批量复制引用ToolStripMenuItem.Visible = false;
-                    切换此环境ToolStripMenuItem.Visible = false;
                 }
+
+                切换ToolStripMenuItem.Visible = node.Tag is TestEnv
+                    || node.Tag is TestLogin;
 
                 if (node.Tag is TestSite)
                 {
                     添加测试页面ToolStripMenuItem.Visible = true;
-                    添加登陆页ToolStripMenuItem.Visible = true;
                 }
                 else
                 {
                     添加测试页面ToolStripMenuItem.Visible = false;
-                    添加登陆页ToolStripMenuItem.Visible = false;
                 }
 
+                添加登陆页ToolStripMenuItem.Visible = (node.Tag as INodeContents)?.GetNodeContentType() == NodeContentType.LOGINACCOUNTS; ;
 
                 添加测试用例ToolStripMenuItem.Visible = node.Tag is TestPage;
 

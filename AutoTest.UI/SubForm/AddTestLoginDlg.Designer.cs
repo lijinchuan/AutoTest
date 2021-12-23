@@ -33,7 +33,6 @@
             this.TBUrl = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
-            this.CBManual = new System.Windows.Forms.CheckBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.BtnOk = new System.Windows.Forms.Button();
             this.BtnCancel = new System.Windows.Forms.Button();
@@ -41,13 +40,14 @@
             this.TBValidCode = new AutoTest.UI.UC.JSCodeEditBox();
             this.label4 = new System.Windows.Forms.Label();
             this.TBAccountName = new System.Windows.Forms.TextBox();
+            this.CBManual = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // label1
             // 
             this.label1.AutoSize = true;
             this.label1.Font = new System.Drawing.Font("宋体", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label1.Location = new System.Drawing.Point(81, 128);
+            this.label1.Location = new System.Drawing.Point(80, 59);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(66, 19);
             this.label1.TabIndex = 0;
@@ -56,7 +56,7 @@
             // TBUrl
             // 
             this.TBUrl.Font = new System.Drawing.Font("宋体", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.TBUrl.Location = new System.Drawing.Point(157, 125);
+            this.TBUrl.Location = new System.Drawing.Point(156, 56);
             this.TBUrl.Name = "TBUrl";
             this.TBUrl.Size = new System.Drawing.Size(664, 29);
             this.TBUrl.TabIndex = 1;
@@ -65,7 +65,7 @@
             // 
             this.label2.AutoSize = true;
             this.label2.Font = new System.Drawing.Font("宋体", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label2.Location = new System.Drawing.Point(12, 198);
+            this.label2.Location = new System.Drawing.Point(53, 103);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(109, 20);
             this.label2.TabIndex = 2;
@@ -75,27 +75,15 @@
             // 
             this.label3.AutoSize = true;
             this.label3.Font = new System.Drawing.Font("宋体", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label3.Location = new System.Drawing.Point(0, 478);
+            this.label3.Location = new System.Drawing.Point(42, 278);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(109, 20);
             this.label3.TabIndex = 4;
             this.label3.Text = "验证脚本：";
             // 
-            // CBManual
-            // 
-            this.CBManual.AutoSize = true;
-            this.CBManual.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.CBManual.Location = new System.Drawing.Point(18, 501);
-            this.CBManual.Name = "CBManual";
-            this.CBManual.Size = new System.Drawing.Size(91, 20);
-            this.CBManual.TabIndex = 6;
-            this.CBManual.Text = "人工处理";
-            this.CBManual.UseVisualStyleBackColor = true;
-            this.CBManual.CheckedChanged += new System.EventHandler(this.CBManual_CheckedChanged);
-            // 
             // groupBox1
             // 
-            this.groupBox1.Location = new System.Drawing.Point(-3, 702);
+            this.groupBox1.Location = new System.Drawing.Point(-2, 528);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(1320, 10);
             this.groupBox1.TabIndex = 7;
@@ -104,7 +92,7 @@
             // BtnOk
             // 
             this.BtnOk.Font = new System.Drawing.Font("宋体", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.BtnOk.Location = new System.Drawing.Point(1048, 722);
+            this.BtnOk.Location = new System.Drawing.Point(809, 548);
             this.BtnOk.Name = "BtnOk";
             this.BtnOk.Size = new System.Drawing.Size(75, 36);
             this.BtnOk.TabIndex = 8;
@@ -115,7 +103,7 @@
             // BtnCancel
             // 
             this.BtnCancel.Font = new System.Drawing.Font("宋体", 15F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.BtnCancel.Location = new System.Drawing.Point(1145, 722);
+            this.BtnCancel.Location = new System.Drawing.Point(906, 548);
             this.BtnCancel.Name = "BtnCancel";
             this.BtnCancel.Size = new System.Drawing.Size(75, 36);
             this.BtnCancel.TabIndex = 9;
@@ -125,25 +113,25 @@
             // 
             // TBLoginCode
             // 
-            this.TBLoginCode.Location = new System.Drawing.Point(115, 198);
+            this.TBLoginCode.Location = new System.Drawing.Point(168, 103);
             this.TBLoginCode.Name = "TBLoginCode";
             this.TBLoginCode.SelectedText = "";
-            this.TBLoginCode.Size = new System.Drawing.Size(1109, 243);
+            this.TBLoginCode.Size = new System.Drawing.Size(816, 149);
             this.TBLoginCode.TabIndex = 10;
             // 
             // TBValidCode
             // 
-            this.TBValidCode.Location = new System.Drawing.Point(115, 472);
+            this.TBValidCode.Location = new System.Drawing.Point(168, 278);
             this.TBValidCode.Name = "TBValidCode";
             this.TBValidCode.SelectedText = "";
-            this.TBValidCode.Size = new System.Drawing.Size(1109, 224);
+            this.TBValidCode.Size = new System.Drawing.Size(817, 224);
             this.TBValidCode.TabIndex = 12;
             // 
             // label4
             // 
             this.label4.AutoSize = true;
             this.label4.Font = new System.Drawing.Font("宋体", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label4.Location = new System.Drawing.Point(43, 70);
+            this.label4.Location = new System.Drawing.Point(42, 15);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(104, 19);
             this.label4.TabIndex = 15;
@@ -152,16 +140,28 @@
             // TBAccountName
             // 
             this.TBAccountName.Font = new System.Drawing.Font("宋体", 14.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.TBAccountName.Location = new System.Drawing.Point(157, 67);
+            this.TBAccountName.Location = new System.Drawing.Point(156, 12);
             this.TBAccountName.Name = "TBAccountName";
             this.TBAccountName.Size = new System.Drawing.Size(326, 29);
             this.TBAccountName.TabIndex = 16;
+            // 
+            // CBManual
+            // 
+            this.CBManual.AutoSize = true;
+            this.CBManual.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.CBManual.Location = new System.Drawing.Point(55, 126);
+            this.CBManual.Name = "CBManual";
+            this.CBManual.Size = new System.Drawing.Size(91, 20);
+            this.CBManual.TabIndex = 19;
+            this.CBManual.Text = "人工处理";
+            this.CBManual.UseVisualStyleBackColor = true;
             // 
             // AddTestLoginDlg
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1315, 775);
+            this.ClientSize = new System.Drawing.Size(1006, 590);
+            this.Controls.Add(this.CBManual);
             this.Controls.Add(this.TBAccountName);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.TBValidCode);
@@ -169,7 +169,6 @@
             this.Controls.Add(this.BtnCancel);
             this.Controls.Add(this.BtnOk);
             this.Controls.Add(this.groupBox1);
-            this.Controls.Add(this.CBManual);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.TBUrl);
@@ -187,7 +186,6 @@
         private System.Windows.Forms.TextBox TBUrl;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label3;
-        private System.Windows.Forms.CheckBox CBManual;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Button BtnOk;
         private System.Windows.Forms.Button BtnCancel;
@@ -195,5 +193,6 @@
         private UC.JSCodeEditBox TBValidCode;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox TBAccountName;
+        private System.Windows.Forms.CheckBox CBManual;
     }
 }

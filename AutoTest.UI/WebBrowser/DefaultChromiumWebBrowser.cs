@@ -80,6 +80,8 @@ namespace AutoTest.UI.WebBrowser
 
         private CSObj cSObj = null;
 
+        public event Action<IWebTask> OnTaskStart;
+
 
         public DefaultChromiumWebBrowser(string name, string address)
             : base(address)
@@ -337,13 +339,14 @@ namespace AutoTest.UI.WebBrowser
         {
             try
             {
-                webTask.OnMsgPublish += WebTask_OnMsgPublish;
-               
                 if (DocumentLoadCompleted?.GetInvocationList().Length > 0)
                 {
                     throw new NotSupportedException($"存在未清理的任务:{DocumentLoadCompleted?.GetInvocationList().Length}个");
                 }
 
+                OnTaskStart?.Invoke(webTask);
+
+                webTask.OnMsgPublish += WebTask_OnMsgPublish;
                 (JsDialogHandler as JsDialogHandler)?.Clear();
 
                 

@@ -14,13 +14,14 @@ namespace AutoTest.Biz
     {
         public static void LoadTestResurceAsync(Form parent, TreeNode tbNode, AsyncCallback callback, object @object)
         {
+            var isExpanded = tbNode.IsExpanded;
             tbNode.Nodes.Add(new TreeNode("加载中...", 3, 3));
             tbNode.Expand();
 
-            new Action<Form, TreeNode>(LoadTestResurce).BeginInvoke(parent, tbNode, callback, @object);
+            new Action<Form, TreeNode,bool>(LoadTestResurce).BeginInvoke(parent, tbNode, isExpanded, callback, @object);
         }
 
-        public static void LoadTestResurce(Form parent, TreeNode pnode)
+        public static void LoadTestResurce(Form parent, TreeNode pnode, bool isExpanded)
         {
             List<TreeNode> treeNodes = new List<TreeNode>();
             var aPISources = BigEntityTableEngine.LocalEngine.List<TestSource>(nameof(TestSource), 1, int.MaxValue);
@@ -32,17 +33,18 @@ namespace AutoTest.Biz
 
                 treeNodes.Add(node);
             }
-            parent.Invoke(new Action(() => { pnode.Nodes.Clear(); pnode.Nodes.AddRange(treeNodes.ToArray()); pnode.Expand(); }));
+            parent.Invoke(new Action(() => { pnode.Nodes.Clear(); pnode.Nodes.AddRange(treeNodes.ToArray()); if (!isExpanded) pnode.Collapse(); }));
         }
 
         public static void LoadTestSiteAsync(Form parent, TreeNode tbNode, int sourceId, AsyncCallback callback, object @object)
         {
+            var isExpanded = tbNode.IsExpanded;
             tbNode.Nodes.Add(new TreeNode("加载中...", 3, 3));
             tbNode.Expand();
 
-            new Action<Form, TreeNode,int>(LoadTestSite).BeginInvoke(parent, tbNode, sourceId, callback, @object);
+            new Action<Form, TreeNode,int,bool >(LoadTestSite).BeginInvoke(parent, tbNode, sourceId,isExpanded, callback, @object);
         }
-        public static void LoadTestSite(Form parent, TreeNode pnode, int sourceId)
+        public static void LoadTestSite(Form parent, TreeNode pnode, int sourceId,bool isExpanded)
         {
             List<TreeNode> treeNodes = new List<TreeNode>();
 
@@ -72,34 +74,25 @@ namespace AutoTest.Biz
                 ExpandImgIndex = 2
             });
 
-            parent.Invoke(new Action(() => { pnode.Nodes.Clear(); pnode.Nodes.AddRange(treeNodes.ToArray()); pnode.Expand(); }));
+            parent.Invoke(new Action(() => { pnode.Nodes.Clear(); pnode.Nodes.AddRange(treeNodes.ToArray()); if (!isExpanded) pnode.Collapse(); }));
         }
 
         public static void LoadTestPageAsync(Form parent, TreeNode tbNode, int siteId, AsyncCallback callback, object @object)
         {
+            var isExpanded = tbNode.IsExpanded;
             tbNode.Nodes.Add(new TreeNode("加载中...", 3, 3));
             tbNode.Expand();
 
-            new Action<Form, TreeNode, int>(LoadTestPage).BeginInvoke(parent, tbNode, siteId, callback, @object);
+            new Action<Form, TreeNode, int,bool>(LoadTestPage).BeginInvoke(parent, tbNode, siteId,isExpanded, callback, @object);
         }
 
-        public static void LoadTestPage(Form parent, TreeNode pnode, int siteId)
+        public static void LoadTestPage(Form parent, TreeNode pnode, int siteId,bool isExpanded)
         {
             List<TreeNode> treeNodes = new List<TreeNode>();
 
-            var testLoginList = BigEntityTableEngine.LocalEngine.Find<TestLogin>(nameof(TestLogin), nameof(TestLogin.SiteId), new object[] { siteId });
-            foreach(var testLogin in testLoginList)
-            {
-                treeNodes.Add(new TreeNodeEx
-                {
-                    Text = testLogin.AccountInfo,
-                    Tag = testLogin,
-                    ImageIndex = 15,
-                    SelectedImageIndex = 15,
-                    CollapseImgIndex = 15,
-                    ExpandImgIndex = 15
-                });
-            }
+            TreeNode usersNode = new TreeNodeEx("登陆账号", 23, 23);
+            usersNode.Tag = new NodeContents(NodeContentType.LOGINACCOUNTS);
+            treeNodes.Add(usersNode);
 
             var testPageList = BigEntityTableEngine.LocalEngine.Find<TestPage>(nameof(TestPage), nameof(TestPage.SiteId), new object[] { siteId })
                 .OrderBy(p=>p.Order).ToList();
@@ -137,18 +130,19 @@ namespace AutoTest.Biz
                 ExpandImgIndex = 13
             });
 
-            parent.Invoke(new Action(() => { pnode.Nodes.Clear(); pnode.Nodes.AddRange(treeNodes.ToArray()); pnode.Expand(); }));
+            parent.Invoke(new Action(() => { pnode.Nodes.Clear(); pnode.Nodes.AddRange(treeNodes.ToArray()); if (!isExpanded) pnode.Collapse(); }));
         }
 
         public static void LoadTestCaseAsync(Form parent, TreeNode tbNode, int pageId, int envId, AsyncCallback callback, object @object)
         {
+            var isExpanded = tbNode.IsExpanded;
             tbNode.Nodes.Add(new TreeNode("加载中...", 3, 3));
             tbNode.Expand();
 
-            new Action<Form, TreeNode, int, int>(LoadTestCase).BeginInvoke(parent, tbNode, pageId, envId, callback, @object);
+            new Action<Form, TreeNode, int, int,bool>(LoadTestCase).BeginInvoke(parent, tbNode, pageId, envId,isExpanded, callback, @object);
         }
 
-        public static void LoadTestCase(Form parent, TreeNode pnode, int pageId,int envId)
+        public static void LoadTestCase(Form parent, TreeNode pnode, int pageId,int envId,bool isExpanded)
         {
             List<TreeNode> treeNodes = new List<TreeNode>();
             var testCaseList = BigEntityTableEngine.LocalEngine.Find<TestCase>(nameof(TestCase), nameof(TestCase.PageId), new object[] { pageId })
@@ -194,18 +188,19 @@ namespace AutoTest.Biz
                 });
             }
 
-            parent.Invoke(new Action(() => { pnode.Nodes.Clear(); pnode.Nodes.AddRange(treeNodes.ToArray()); pnode.Expand(); }));
+            parent.Invoke(new Action(() => { pnode.Nodes.Clear(); pnode.Nodes.AddRange(treeNodes.ToArray()); if (!isExpanded) pnode.Collapse(); }));
         }
 
         public static void LoadTestEnvAsync(Form parent, TreeNode pnode, int siteId, AsyncCallback callback, object @object)
         {
+            var isExpanded = pnode.IsExpanded;
             pnode.Nodes.Add(new TreeNode("加载中...", 3, 3));
             pnode.Expand();
 
-            new Action<Form, TreeNode, int>(LoadTestEnv).BeginInvoke(parent, pnode, siteId, callback, @object);
+            new Action<Form, TreeNode, int,bool>(LoadTestEnv).BeginInvoke(parent, pnode, siteId,isExpanded, callback, @object);
         }
 
-        public static void LoadTestEnv(Form parent, TreeNode pnode, int siteId)
+        public static void LoadTestEnv(Form parent, TreeNode pnode, int siteId,bool isExpanded)
         {
             List<TreeNode> treeNodes = new List<TreeNode>();
             var envlist = BigEntityTableEngine.LocalEngine.Find<TestEnv>(nameof(TestEnv), nameof(TestEnv.SiteId), new object[] { siteId }).ToList();
@@ -222,18 +217,19 @@ namespace AutoTest.Biz
 
                 treeNodes.Add(node);
             }
-            parent.Invoke(new Action(() => { pnode.Nodes.Clear(); pnode.Nodes.AddRange(treeNodes.ToArray()); pnode.Expand(); }));
+            parent.Invoke(new Action(() => { pnode.Nodes.Clear(); pnode.Nodes.AddRange(treeNodes.ToArray()); if (!isExpanded) pnode.Collapse(); }));
         }
 
         public static void LoadTestEnvParamsAsync(Form parent, TreeNode pnode, int sourceid, int envid, AsyncCallback callback, object @object)
         {
+            var isExpanded = pnode.IsExpanded;
             pnode.Nodes.Add(new TreeNode("加载中...", 3, 3));
             pnode.Expand();
 
-            new Action<Form, TreeNode, int, int>(LoadTestEnvParams).BeginInvoke(parent, pnode, sourceid, envid, callback, @object);
+            new Action<Form, TreeNode, int, int,bool>(LoadTestEnvParams).BeginInvoke(parent, pnode, sourceid, envid,isExpanded, callback, @object);
         }
 
-        public static void LoadTestEnvParams(Form parent, TreeNode pnode, int siteId, int envid)
+        public static void LoadTestEnvParams(Form parent, TreeNode pnode, int siteId, int envid, bool isExpanded)
         {
             try
             {
@@ -264,7 +260,7 @@ namespace AutoTest.Biz
                     treeNodes.Add(node);
 
                 }
-                parent.Invoke(new Action(() => { pnode.Nodes.Clear(); pnode.Nodes.AddRange(treeNodes.ToArray()); pnode.Expand(); }));
+                parent.Invoke(new Action(() => { pnode.Nodes.Clear(); pnode.Nodes.AddRange(treeNodes.ToArray()); if (!isExpanded) pnode.Collapse(); }));
             }
             catch (Exception ex)
             {
@@ -274,13 +270,14 @@ namespace AutoTest.Biz
 
         public static void LoadTestScriptAsync(Form parent, TreeNode pnode, int sourceid, int siteId, AsyncCallback callback, object @object)
         {
+            var isExpanded = pnode.IsExpanded;
             pnode.Nodes.Add(new TreeNode("加载中...", 3, 3));
             pnode.Expand();
 
-            new Action<Form, TreeNode, int, int>(LoadTestScrip).BeginInvoke(parent, pnode, sourceid, siteId, callback, @object);
+            new Action<Form, TreeNode, int, int, bool>(LoadTestScrip).BeginInvoke(parent, pnode, sourceid, siteId, isExpanded, callback, @object);
         }
 
-        public static void LoadTestScrip(Form parent, TreeNode pnode, int sourceid, int siteId)
+        public static void LoadTestScrip(Form parent, TreeNode pnode, int sourceid, int siteId,bool isExpanded)
         {
             try
             {
@@ -297,7 +294,45 @@ namespace AutoTest.Biz
                     treeNodes.Add(node);
 
                 }
-                parent.Invoke(new Action(() => { pnode.Nodes.Clear(); pnode.Nodes.AddRange(treeNodes.ToArray()); pnode.Expand(); }));
+                parent.Invoke(new Action(() => { pnode.Nodes.Clear(); pnode.Nodes.AddRange(treeNodes.ToArray()); if (!isExpanded) pnode.Collapse(); }));
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        public static void LoadLoginAccountsAsync(Form parent, TreeNode pnode, int siteId, AsyncCallback callback, object @object)
+        {
+            var isExpanded = pnode.IsExpanded;
+            pnode.Nodes.Add(new TreeNode("加载中...", 3, 3));
+            pnode.Expand();
+
+            new Action<Form, TreeNode, int,bool>(LoadLoginAccounts).BeginInvoke(parent, pnode, siteId, isExpanded, callback, @object);
+        }
+
+        public static void LoadLoginAccounts(Form parent, TreeNode pnode, int siteId,bool isExpanded)
+        {
+            try
+            {
+                List<TreeNode> treeNodes = new List<TreeNode>();
+                var testLoginList = BigEntityTableEngine.LocalEngine.Find<TestLogin>(nameof(TestLogin), nameof(TestLogin.SiteId), new object[] { siteId });
+
+                foreach (var testLogin in testLoginList)
+                {
+                    var imgIndex = testLogin.Used ? 22 : 15;
+                    treeNodes.Add(new TreeNodeEx
+                    {
+                        Text = testLogin.AccountInfo,
+                        Tag = testLogin,
+                        ImageIndex = imgIndex,
+                        SelectedImageIndex = imgIndex,
+                        CollapseImgIndex = imgIndex,
+                        ExpandImgIndex = imgIndex
+                    });
+                }
+
+                parent.Invoke(new Action(() => { pnode.Nodes.Clear(); pnode.Nodes.AddRange(treeNodes.ToArray()); if (!isExpanded) pnode.Collapse(); }));
             }
             catch (Exception ex)
             {

@@ -523,6 +523,16 @@ namespace AutoTest.UI.Resources {
         /// <summary>
         ///   查找 System.Drawing.Bitmap 类型的本地化资源。
         /// </summary>
+        internal static System.Drawing.Bitmap group {
+            get {
+                object obj = ResourceManager.GetObject("group", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
         internal static System.Drawing.Bitmap help {
             get {
                 object obj = ResourceManager.GetObject("help", resourceCulture);
@@ -846,6 +856,16 @@ namespace AutoTest.UI.Resources {
         internal static System.Drawing.Bitmap user_earth {
             get {
                 object obj = ResourceManager.GetObject("user_earth", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   查找 System.Drawing.Bitmap 类型的本地化资源。
+        /// </summary>
+        internal static System.Drawing.Bitmap user_star {
+            get {
+                object obj = ResourceManager.GetObject("user_star", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
