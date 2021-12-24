@@ -236,6 +236,12 @@
     <Compile Include="SubForm\SubBaseDlg.Designer.cs">
       <DependentUpon>SubBaseDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="SubForm\TestCaseSelectorDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SubForm\TestCaseSelectorDlg.Designer.cs">
+      <DependentUpon>TestCaseSelectorDlg.cs</DependentUpon>
+    </Compile>
     <Compile Include="SubForm\TextBoxWin.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -381,6 +387,12 @@
     <Compile Include="UC\UCProxy.Designer.cs">
       <DependentUpon>UCProxy.cs</DependentUpon>
     </Compile>
+    <Compile Include="UC\UCTestCaseSelector.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UC\UCTestCaseSelector.Designer.cs">
+      <DependentUpon>UCTestCaseSelector.cs</DependentUpon>
+    </Compile>
     <Compile Include="UC\UCTestCaseSetting.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -462,6 +474,9 @@
     <EmbeddedResource Include="SubForm\RunTestCaseConfirmDlg.resx">
       <DependentUpon>RunTestCaseConfirmDlg.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="SubForm\TestCaseSelectorDlg.resx">
+      <DependentUpon>TestCaseSelectorDlg.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SubForm\TextBoxWin.resx">
       <DependentUpon>TextBoxWin.cs</DependentUpon>
     </EmbeddedResource>
@@ -504,6 +519,9 @@
     <EmbeddedResource Include="UC\UCParamsTable.resx">
       <DependentUpon>UCParamsTable.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UC\UCTestCaseSelector.resx">
+      <DependentUpon>UCTestCaseSelector.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UC\UCTestCaseSetting.resx">
       <DependentUpon>UCTestCaseSetting.cs</DependentUpon>
     </EmbeddedResource>
@@ -514,6 +532,18 @@
       <DependentUpon>WebTab.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="configfile.json" />
+    <Content Include="HTML\JqTableTree\extend.func.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HTML\JqTableTree\jquery-1.10.2.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HTML\JqTableTree\jquery.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HTML\JqTableTree\jquery.treetable.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <None Include="jsonview.html.tpl">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
@@ -785,6 +815,21 @@
     </Content>
     <Content Include="help.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HTML\JqTableTree\index.html">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HTML\JqTableTree\jquery.min.js">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HTML\JqTableTree\jquery.treetable.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HTML\JqTableTree\jquery.treetable.theme.default.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HTML\JqTableTree\screen.css">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
     <Content Include="jquery-1.12.4.min.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

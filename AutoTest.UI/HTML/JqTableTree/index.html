@@ -1,0 +1,50 @@
+﻿<!DOCTYPE html>
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <title>jQuery treetable</title>
+    <link rel="stylesheet" href="./jquery.treetable.css">
+    <link rel="stylesheet" href="./jquery.treetable.theme.default.css">
+  </head>
+  <body style="">
+    <div id="main">
+      <h1>jQuery treetable</h1>   
+
+
+      <table id="example-advanced" class="treetable">
+        <caption>
+          <a onclick="jQuery('#example-advanced').treetable('expandAll'); return false;">Expand all</a>
+          <a onclick="jQuery('#example-advanced').treetable('collapseAll'); return false;">Collapse all</a>
+        </caption>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Kind</th>
+            <th>Size</th>
+          </tr>
+        </thead>
+        <tbody>
+        </tbody>
+      </table>
+
+      <pre class="listing"></pre>
+
+     
+    </div>
+
+    <script src="./jquery.min.js"></script>
+    <script src="./jquery.treetable.js"></script>
+    <script>
+        function showTable(trs) {
+            $("#example-advanced tbody")
+                .html(trs)
+                .on("mousedown", "tr", function () {
+                    $(".selected").not(this).removeClass("selected");
+                    $(this).toggleClass("selected");
+                });
+
+            $("#example-advanced").treetable({ expandable: true });
+        }
+    </script>
+  
+
+</body></html>

@@ -540,12 +540,35 @@ namespace AutoTest.UI.UC
                             var scriptsDic = new Dictionary<object, List<TestScript>>();
                             var loginDic = new Dictionary<object, TestLogin>();
                             var envDic = new Dictionary<object, (TestEnv env, List<TestEnvParam> envParams, bool hasEvn)>();
+
+                            List<TestSource> sources = new List<TestSource>();
+                            List<TestSite> testSites = new List<TestSite>();
+                            List<TestPage> testPages = new List<TestPage>();
+                            List<TestCase> testCases = new List<TestCase>();
+
                             foreach (var node in testCaseNodeList)
                             {
                                 var testSource = FindParentNode<TestSource>(node);
                                 var testPage = FindParentNode<TestPage>(node);
                                 var testSite = FindParentNode<TestSite>(node);
                                 var testCase = FindParentNode<TestCase>(node);
+
+                                if (!sources.Any(p => p.Id == testSource.Id))
+                                {
+                                    sources.Add(testSource);
+                                }
+
+                                if (!testSites.Any(p => p.Id == testSite.Id))
+                                {
+                                    testSites.Add(testSite);
+                                }
+
+                                if (!testPages.Any(p => p.Id == testPage.Id))
+                                {
+                                    testPages.Add(testPage);
+                                }
+
+                                testCases.Add(testCase);
 
                                 TestLogin testLogin;
                                 var key = "testLogin_" + testSource.Id + "_" + testSite.Id;
@@ -632,6 +655,11 @@ namespace AutoTest.UI.UC
                                         }));
                                     }
                                 });
+                            }
+
+                            if (new SubForm.TestCaseSelectorDlg().Init(sources, testSites, testPages, testCases).ShowDialog() == DialogResult.Cancel)
+                            {
+                                return;
                             }
 
                             if (new ConfirmDlg("询问", "执行测试吗？").ShowDialog() == DialogResult.OK)
