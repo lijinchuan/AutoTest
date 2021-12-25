@@ -17,6 +17,7 @@ namespace AutoTest.UI.UC
         public TestCaseTaskView()
         {
             InitializeComponent();
+            BtnCancel.Enabled = false;
         }
 
         public TestCaseTaskView Init(List<TestSource> testSources, List<TestSite> testSites, List<TestPage> testPages, List<TestTask> testCases, List<int> testCasesChoose)
@@ -37,15 +38,23 @@ namespace AutoTest.UI.UC
             {
                 return;
             }
+            TestPanel testPanel = null;
             if (new ConfirmDlg("询问", "执行测试吗？").ShowDialog() == DialogResult.OK)
             {
-                var testPanel = (TestPanel)Util.TryAddToMainTab(this, $"执行测试", () =>
+                UCTestCaseSelector1.Reset();
+                testPanel = (TestPanel)Util.TryAddToMainTab(this, $"执行测试", () =>
                 {
                     var panel = new TestPanel("执行测试");
                     panel.Load();
 
                     return panel;
                 }, typeof(TestPanel));
+
+                if (testPanel.IsRunning())
+                {
+                    Util.SendMsg(this, "正在执行测试，请稍后再试");
+                    return;
+                }
 
                 if (!testPanel.Reset())
                 {
@@ -63,7 +72,9 @@ namespace AutoTest.UI.UC
                     OnTaskStart?.Invoke(t);
                 };
 
-                foreach(var tk in tasks)
+
+
+                foreach (var tk in tasks)
                 {
                     tk.ResultNotify += r =>
                     {
@@ -71,18 +82,39 @@ namespace AutoTest.UI.UC
                     };
                 }
 
+                this.BtnOk.Enabled = false;
+                BtnCancel.Enabled = true;
+
+                BtnCancel.Click += BtnCancel_Click;
+
                 LJC.FrameWorkV3.Comm.TaskHelper.SetInterval(1000, () =>
                 {
                     var runTaskList = tasks.Select(task => new RunTestTask(task.GetTaskName(), false, task.TestSite, task.TestLogin, task.TestPage, task.TestCase, task.TestEnv, task.TestEnvParams, task.GlobalTestScripts, task.SiteTestScripts, task.ResultNotify));
-                    this.BeginInvoke(new Action(() => testPanel.RunTest(runTaskList)));
+                    BeginInvoke(new Action(() => testPanel.RunTest(runTaskList)));
+                    LJC.FrameWorkV3.Comm.TaskHelper.SetInterval(1000, () =>
+                    {
+                        if (testPanel.IsDisposed || !testPanel.IsRunning())
+                        {
+                            BeginInvoke(new Action(() => { BtnOk.Enabled = true; BtnCancel.Enabled = false; BtnCancel.Click -= BtnCancel_Click; }));
+                            return true;
+                        }
+                        return false;
+                    }, runintime: false);
                     return true;
                 }, runintime: false);
             }
-        }
 
-        private void BtnCancel_Click(object sender, EventArgs e)
-        {
-
+            void BtnCancel_Click(object ss, EventArgs ee)
+            {
+                if (new ConfirmDlg("停止任务提示", "要停止任务吗？", timeOutOk: false).ShowDialog() != DialogResult.OK)
+                {
+                    return;
+                }
+                if (!testPanel.IsDisposed)
+                {
+                    testPanel.CancelTasks();
+                }
+            }
         }
     }
 }

@@ -82,6 +82,28 @@ namespace AutoTest.UI.WebBrowser
 
         public event Action<IWebTask> OnTaskStart;
 
+        private volatile bool cancelFlag = false;
+
+        private IWebTask lastTask = null;
+
+        WebBrowserTool webBrowserTool = new WebBrowserTool();
+
+        public bool CancelTasks()
+        {
+            if (isRunningJob && !cancelFlag)
+            {
+                ClearTask();
+                readyResetEvent.Set();
+                cancelFlag = true;
+
+                if (lastTask != null)
+                {
+                    lastTask.Cancel();
+                }
+            }
+            return true;
+        }
+
 
         public DefaultChromiumWebBrowser(string name, string address)
             : base(address)
@@ -140,7 +162,7 @@ namespace AutoTest.UI.WebBrowser
             {
                 if (!isInit)
                 {
-                    MenuHandler = new MenuHandler();
+                    MenuHandler = new MenuHandler().Init(this);
 
                     var cookieManager = this.GetCookieManager();
                     CookieVisitor visitor = new CookieVisitor();
@@ -159,10 +181,7 @@ namespace AutoTest.UI.WebBrowser
             {
                 _ = new Action(() =>
                 {
-                    while (IsLoading)
-                    {
-                        Thread.Sleep(10);
-                    }
+                    webBrowserTool.WaitLoading(GetBrowser(), cancelFlag);
                     DocumentLoadCompleted?.Invoke(e.Browser, e.Frame, GetCookie());
                 }).BeginInvoke(null, null);
             }
@@ -267,6 +286,57 @@ namespace AutoTest.UI.WebBrowser
             return false;
         }
 
+        public bool ClearTask()
+        {
+            lock (webTaskList)
+            {
+                while (webTaskList.TryDequeue(out IWebTask tempTask))
+                {
+                    webTaskListHash.Remove(tempTask.GetTaskName());
+                }
+            }
+
+            return false;
+        }
+
+        public IWebTask GetOne()
+        {
+            IWebTask task;
+            lock (webTaskList)
+            {
+                if (!webTaskList.TryDequeue(out task))
+                {
+                    task = null;
+                }
+            }
+            return task;
+        }
+
+        public void InsertOne(IWebTask insertOne,int pos)
+        {
+            lock (webTaskList)
+            {
+                webTaskList.ToList().Insert(pos, insertOne);
+
+                List<IWebTask> list = new List<IWebTask>();
+                list.Add(insertOne);
+                while (true)
+                {
+                    IWebTask webTask1;
+                    if (!webTaskList.TryDequeue(out webTask1))
+                    {
+                        break;
+                    }
+                    list.Add(webTask1);
+                }
+
+                foreach (var item in list)
+                {
+                    webTaskList.Enqueue(item);
+                }
+            }
+        }
+
         private void PepareTask(IWebTask webTask)
         {
             //第一步，更新COOKIE
@@ -294,7 +364,7 @@ namespace AutoTest.UI.WebBrowser
                     }
                 }
             }
-
+            webTask.IsDebug = OpenTaskDebug;
             DocumentLoadCompleted += webTask.DocumentCompletedHandler;
             DocumentLoadStart += webTask.DocumentLoadStartHandler;
             AddEventListener(webTask.GetEventListener());
@@ -343,7 +413,7 @@ namespace AutoTest.UI.WebBrowser
                 {
                     throw new NotSupportedException($"存在未清理的任务:{DocumentLoadCompleted?.GetInvocationList().Length}个");
                 }
-
+                lastTask = webTask;
                 OnTaskStart?.Invoke(webTask);
 
                 webTask.OnMsgPublish += WebTask_OnMsgPublish;
@@ -397,6 +467,13 @@ namespace AutoTest.UI.WebBrowser
                 if (!readyResetEvent.WaitOne(60000))
                 {
                     OnMsgPublished($"任务超时:{webTask.GetTaskName()}");
+                    webTask.ForceCancel("超时");
+                    WebTask_OnTaskCompleted(webTask);
+                }
+
+                if (cancelFlag)
+                {
+                    OnMsgPublished($"任务取消:{webTask.GetTaskName()}");
                     WebTask_OnTaskCompleted(webTask);
                 }
             }
@@ -452,20 +529,13 @@ namespace AutoTest.UI.WebBrowser
                 {
                     return true;
                 }
-
+                cancelFlag = false;
                 isRunningJob = true;
             }
 
             OnMsgPublished?.Invoke(Consts.CMDCLEARMSG);
 
-            IWebTask task;
-            lock (webTaskList)
-            {
-                if (!webTaskList.TryDequeue(out task))
-                {
-                    task = null;
-                }
-            }
+            IWebTask task = GetOne();
             if (task != null)
             {
                 return await RunTask(task);
@@ -482,34 +552,13 @@ namespace AutoTest.UI.WebBrowser
             try
             {
                 this.Stop();
-                while (IsLoading)
-                {
-                    Thread.Sleep(10);
-                }
+                webBrowserTool.WaitLoading(GetBrowser(), cancelFlag);
                 Clear(webTask);
 
                 if (webTask.GetNext() != null)
                 {
-                    webTaskList.ToList().Insert(0,webTask.GetNext());
-
-                    List<IWebTask> list = new List<IWebTask>();
-                    list.Add(webTask.GetNext());
-                    IWebTask webTask1 = null;
-                    while (true)
-                    {
-                        if(!webTaskList.TryDequeue(out webTask1))
-                        {
-                            break;
-                        }
-                        list.Add(webTask1);
-                    }
-
-                    foreach(var item in list)
-                    {
-                        webTaskList.Enqueue(item);
-                    }
+                    InsertOne(webTask.GetNext(), 0);
                 }
-                
             }
             catch (Exception ex)
             {
@@ -517,23 +566,25 @@ namespace AutoTest.UI.WebBrowser
             }
             finally
             {
-                IWebTask task;
-                lock (webTaskList)
+                if (cancelFlag)
                 {
-                    if (!webTaskList.TryDequeue(out task))
-                    {
-                        task = null;
-                    }
-                }
-
-                if (task != null)
-                {
-                    _ = RunTask(task);
+                    ClearTask();
+                    isRunningJob = false;
+                    cancelFlag = false;
+                    WebTask_OnMsgPublish("测试取消");
                 }
                 else
                 {
-                    isRunningJob = false;
-                    WebTask_OnMsgPublish("所有测试完成");
+                    IWebTask task = GetOne();
+                    if (task != null)
+                    {
+                        _ = RunTask(task);
+                    }
+                    else
+                    {
+                        isRunningJob = false;
+                        WebTask_OnMsgPublish("所有测试完成");
+                    }
                 }
 
             }
@@ -588,6 +639,23 @@ namespace AutoTest.UI.WebBrowser
         public bool IsRunningJob()
         {
             return isRunningJob;
+        }
+
+        private bool _taskDebug = false;
+        public bool OpenTaskDebug
+        {
+            get
+            {
+                return _taskDebug;
+            }
+            set
+            {
+                if (lastTask != null)
+                {
+                    lastTask.IsDebug = value;
+                }
+                _taskDebug = value;
+            }
         }
 
         protected override void Dispose(bool disposing)

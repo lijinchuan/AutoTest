@@ -184,5 +184,19 @@ namespace AutoTest.UI.WebBrowser
                 Task.Delay(30).Wait();
             }
         }
+
+        public void WaitLoading(IBrowser browser,bool breakFlag, int timeOutMs = 120000)
+        {
+            int ms = 0;
+            while (browser.IsLoading && !breakFlag)
+            {
+                Thread.Sleep(10);
+                ms += 10;
+                if (ms > timeOutMs)
+                {
+                    throw new TimeoutException($"{browser.MainFrame.Url}加载超时");
+                }
+            }
+        }
     }
 }

@@ -44,6 +44,11 @@ namespace AutoTest.UI.UC
             }).BeginInvoke(null, null);
         }
 
+        public bool IsRunning()
+        {
+            return this.webView.IsRunningJob();
+        }
+
         public async Task RunTest(IWebTask webTask)
         {
             this.webView.AddTask(webTask);
@@ -51,6 +56,11 @@ namespace AutoTest.UI.UC
             {
                 this.webView.RunTask();
             }).BeginInvoke(null, null);
+        }
+
+        public void CancelTasks()
+        {
+            webView.CancelTasks();
         }
 
         private void LoadWebBrowser()

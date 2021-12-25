@@ -20,8 +20,6 @@ namespace AutoTest.UI.UC
         private List<TestPage> _testPages = null;
         private List<TestTask> _testCases = null;
         private List<int> _testCasesChoose = null;
-
-        private bool _isLoad = false;
         
         public UCTestCaseSelector()
         {
@@ -36,11 +34,11 @@ namespace AutoTest.UI.UC
             _testPages = testPages;
             _testCases = testCases;
             _testCasesChoose = testCasesChoose;
+        }
 
-            if (_isLoad)
-            {
-                this.CBBroswer.GetBrowser().MainFrame.EvaluateScriptAsync($"clearResults()");
-            }
+        public void Reset()
+        {
+            this.CBBroswer.GetBrowser().MainFrame.EvaluateScriptAsync($"clearResults()");
         }
 
         protected override void OnLoad(EventArgs e)
@@ -55,7 +53,6 @@ namespace AutoTest.UI.UC
         {
             //CBBroswer.GetBrowser().GetHost().ShowDevTools();
             ShowTable();
-            _isLoad = true;
         }
 
         public List<TestTask> GetSelecteCase()
@@ -78,7 +75,7 @@ namespace AutoTest.UI.UC
         {
             var flg = 4;
             var msg = string.Empty;
-            
+
             if (testResult.Success && testResult.HasWarn)
             {
                 msg = testResult.WainMsg;
@@ -91,7 +88,7 @@ namespace AutoTest.UI.UC
             }
             else if (!testResult.Success)
             {
-                msg = testResult.FailMsg??"未有错误信息";
+                msg = testResult.FailMsg ?? "未有错误信息";
                 flg = 3;
             }
             else if (testResult.IsTimeOut)
@@ -99,7 +96,7 @@ namespace AutoTest.UI.UC
                 msg = "超时";
                 flg = 4;
             }
-
+            msg += $"({testResult.TestEndDate.Subtract(testResult.TestStartDate).TotalMilliseconds}ms)";
             msg = msg.Replace("\r\n", "<br/>").Replace("\n", "<br/>").Replace("'", "\'");
             CBBroswer.GetBrowser().MainFrame.EvaluateScriptAsync($"setTestCaseMsg('{testResult.TestCaseId}',{flg},'{msg}')");
         }

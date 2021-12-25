@@ -36,6 +36,12 @@ namespace AutoTest.UI.WebTask
             get;
         }
 
+        bool IsDebug
+        {
+            get;
+            set;
+        }
+
         /// <summary>
         /// 任务名称，防止重复
         /// </summary>
@@ -100,5 +106,9 @@ namespace AutoTest.UI.WebTask
         IWebTask GetNext();
 
         List<WebRequestData> GetWebRequestData(string url);
+
+        void Cancel();
+
+        void ForceCancel(string reason);
     }
 }

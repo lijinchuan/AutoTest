@@ -75,11 +75,13 @@ namespace AutoTest.UI.WebTask
             private set; 
         }
 
-        protected bool IsDebug
+        public bool IsDebug
         {
             get;
             set;
         } = false;
+
+        protected volatile bool _cancelFlag = false;
 
         protected WebTask(string strTaskName, string strStartPageUrl, bool useProxy,bool clearCookies)
         {
@@ -206,6 +208,15 @@ namespace AutoTest.UI.WebTask
                 ResponseContent = p.Content,
                 Url = p.SourceUrl
             }).ToList();
+        }
+
+        public void Cancel()
+        {
+            _cancelFlag = true;
+        }
+
+        public virtual void ForceCancel(string reason)
+        {
         }
     }
 }

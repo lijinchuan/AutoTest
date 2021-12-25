@@ -64,7 +64,6 @@ namespace AutoTest.UI.UC
             this.BtnCancel.TabIndex = 2;
             this.BtnCancel.Text = "停止";
             this.BtnCancel.UseVisualStyleBackColor = true;
-            this.BtnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
             // 
             // TestCaseTaskView
             // 

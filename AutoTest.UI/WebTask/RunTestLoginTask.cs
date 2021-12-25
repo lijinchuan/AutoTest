@@ -26,7 +26,6 @@ namespace AutoTest.UI.WebTask
         private List<TestEnvParam> _testEnvParams;
         private bool _readyFlag;
         private dynamic bag;
-        private List<WebEvent> webEvents = new List<WebEvent>();
 
         public RunTestLoginTask(string taskname, bool useProxy, TestSite testSite, 
             TestLogin testLogin,TestEnv testEnv, List<TestEnvParam> testEnvParams) 
@@ -127,6 +126,10 @@ namespace AutoTest.UI.WebTask
 
                 while (true)
                 {
+                    if (_cancelFlag)
+                    {
+                        throw new Exception("任务取消");
+                    }
                     try
                     {
                         PrepareTest(browser, frame, bag);
@@ -172,6 +175,10 @@ namespace AutoTest.UI.WebTask
 
                 while (true)
                 {
+                    if (_cancelFlag)
+                    {
+                        throw new Exception("任务取消");
+                    }
                     try
                     {
                         PrepareTest(browser, frame, bag);

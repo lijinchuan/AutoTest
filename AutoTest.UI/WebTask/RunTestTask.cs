@@ -89,6 +89,16 @@ namespace AutoTest.UI.WebTask
             _globScripts = globScripts;
             _siteScripts = siteScripts;
             _notify = notify;
+
+            _testResult = new TestResult
+            {
+                EnvId = _testEnv == null ? 0 : _testEnv.Id,
+                TestCaseId = _testCase.Id,
+                Success = false,
+                TestStartDate = DateTime.Now,
+                TestEndDate = DateTime.Now,
+                IsTimeOut = false
+            };
         }
 
         public override void DocumentCompletedHandler(IBrowser browser, IFrame frame, List<CefSharp.Cookie> cookies)
@@ -99,15 +109,7 @@ namespace AutoTest.UI.WebTask
                 {
                     _readyFlag = true;
 
-                    _testResult = new TestResult
-                    {
-                        EnvId = _testEnv == null ? 0 : _testEnv.Id,
-                        TestCaseId = _testCase.Id,
-                        Success = false,
-                        TestStartDate = DateTime.Now,
-                        TestEndDate = DateTime.Now,
-                        IsTimeOut = false
-                    };
+                    _testResult.TestStartDate = DateTime.Now;
 
                     FireTaskReady();
                 }
@@ -116,6 +118,8 @@ namespace AutoTest.UI.WebTask
 
         public override IEnumerable<CefSharp.Cookie> GetCookieList()
         {
+            _testResult.TestStartDate = DateTime.Now;
+
             if (_testCaseData.Cookies?.Count > 0)
             {
                 foreach (var cookie in _testCaseData.Cookies)
@@ -302,13 +306,14 @@ namespace AutoTest.UI.WebTask
 
                 while (true)
                 {
+                    if (_cancelFlag)
+                    {
+                        throw new Exception("任务取消");
+                    }
                     AssertWebHasNoError();
+                    webBrowserTool.WaitLoading(browser, _cancelFlag);
                     try
                     {
-                        while (browser.IsLoading)
-                        {
-                            Thread.Sleep(10);
-                        }
                         PrepareTest(browser, frame, bag);
                         var ret = webBrowserTool.ExecutePromiseScript(browser, frame, Util.ReplaceEvnParams(_testCase.TestCode, _testEnvParams));
                         UpdateUserVarData(browser, frame);
@@ -367,6 +372,11 @@ namespace AutoTest.UI.WebTask
 
                     while (true)
                     {
+                        if (_cancelFlag)
+                        {
+                            throw new Exception("任务取消");
+                        }
+
                         AssertWebHasNoError();
                         PublishDebugMsg("检查请求没有异常");
                         try
@@ -469,10 +479,7 @@ namespace AutoTest.UI.WebTask
                 ret = await RunTestCode(browser, frame);
                 if (ret == 1)
                 {
-                    while (browser.IsLoading)
-                    {
-                        Thread.Sleep(10);
-                    }
+                    webBrowserTool.WaitLoading(browser, _cancelFlag);
                     PublishDebugMsg($"{_testCase.CaseName}执行代码成功，准备验证");
                     ret = await RunValidCode(browser, frame);
                     if (ret == 1)
@@ -497,12 +504,17 @@ namespace AutoTest.UI.WebTask
                 {
                     _testResult.ResultContent = Newtonsoft.Json.JsonConvert.SerializeObject(bag);
                 }
-                _testResult.TestEndDate = DateTime.Now;
-                BigEntityTableEngine.LocalEngine.Insert(nameof(TestResult), _testResult);
-
-                _notify?.Invoke(_testResult);
+                FinishTest();
             }
             return await Task.FromResult(ret);
+        }
+
+        private void FinishTest()
+        {
+            _testResult.TestEndDate = DateTime.Now;
+            BigEntityTableEngine.LocalEngine.Insert(nameof(TestResult), _testResult);
+
+            _notify?.Invoke(_testResult);
         }
 
         /// <summary>
@@ -664,6 +676,15 @@ namespace AutoTest.UI.WebTask
                 request.Method = _testCase.WebMethod.ToString();
                 return request;
             }
+        }
+
+        public override void ForceCancel(string reason)
+        {
+            PublishMsg($"{GetTaskName()}强制终止:{reason}");
+            _testResult.TestEndDate = DateTime.Now;
+            _testResult.IsTimeOut = !_readyFlag;
+            _testResult.FailMsg = reason;
+            FinishTest();
         }
     }
 }
