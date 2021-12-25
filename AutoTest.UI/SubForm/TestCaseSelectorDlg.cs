@@ -11,16 +11,16 @@ using System.Windows.Forms;
 
 namespace AutoTest.UI.SubForm
 {
-    public partial class TestCaseSelectorDlg : Form
+    public partial class TestCaseSelectorDlg : SubBaseDlg
     {
         public TestCaseSelectorDlg()
         {
             InitializeComponent();
         }
 
-        public TestCaseSelectorDlg Init(List<TestSource> testSources, List<TestSite> testSites, List<TestPage> testPages, List<TestCase> testCases)
+        public TestCaseSelectorDlg Init(List<TestSource> testSources, List<TestSite> testSites, List<TestPage> testPages, List<TestTask> testCases)
         {
-            UCTestCaseSelector.Init(testSources, testSites, testPages, testCases);
+            UCTestCaseSelector.Init(testSources, testSites, testPages, testCases,testCases.Select(p=>p.TestCase.Id).ToList());
             return this;
         }
 
@@ -31,6 +31,7 @@ namespace AutoTest.UI.SubForm
 
         private void BtnOk_Click(object sender, EventArgs e)
         {
+            var list = UCTestCaseSelector.GetSelecteCase();
             this.DialogResult = DialogResult.OK;
         }
     }

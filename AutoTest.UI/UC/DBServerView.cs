@@ -234,10 +234,10 @@ namespace AutoTest.UI.UC
         {
             foreach(TreeNode node in topNodes)
             {
-                if (node.Tag != null)
+                if (node.Tag != null && tag != null)
                 {
                     if (node.Tag.GetType() == tag.GetType()
-                        && (node.Tag as IComparable)!=null)
+                        && (node.Tag as IComparable) != null)
                     {
                         if ((node.Tag as IComparable).CompareTo(tag) == 0)
                         {
@@ -577,14 +577,14 @@ namespace AutoTest.UI.UC
                                     var testLoginList = BigEntityTableEngine.LocalEngine.Find<TestLogin>(nameof(TestLogin), nameof(TestLogin.SiteId), new object[] { testSite.Id });
                                     if (testLoginList.Any())
                                     {
-                                        if(!testLoginList.Any(p => p.Used))
+                                        if (!testLoginList.Any(p => p.Used))
                                         {
                                             MessageBox.Show("请选择一个测试帐号");
                                             return;
                                         }
                                         testLogin = testLoginList.First(p => p.Used);
                                     }
-                                    
+
                                     loginDic.Add(key, testLogin);
                                 }
 
@@ -657,44 +657,20 @@ namespace AutoTest.UI.UC
                                 });
                             }
 
-                            if (new SubForm.TestCaseSelectorDlg().Init(sources, testSites, testPages, testCases).ShowDialog() == DialogResult.Cancel)
+                            var testTasksView = (TestCaseTaskView)Util.TryAddToMainTab(this, $"任务列表{sources[0].SourceName}", () =>
+                              {
+                                  var panel = new UC.TestCaseTaskView();
+                                  return panel;
+                              }, typeof(TestCaseTaskView));
+                            testTasksView.OnTaskStart += t =>
                             {
-                                return;
-                            }
-
-                            if (new ConfirmDlg("询问", "执行测试吗？").ShowDialog() == DialogResult.OK)
-                            {
-                                foreach(var n in testCaseNodeList)
+                                var nodeEx = FindNode(tv_DBServers.Nodes, (t as RunTestTask)?.TestCase) as TreeNodeEx;
+                                if (nodeEx != null)
                                 {
-                                    var nodeEx = n as TreeNodeEx;
                                     nodeEx.SelectedImageIndex = nodeEx.ImageIndex = nodeEx.ExpandImgIndex = nodeEx.CollapseImgIndex = 18;
                                 }
-
-                                var testPanel = (TestPanel)Util.TryAddToMainTab(this, $"执行测试", () =>
-                                {
-                                    var panel = new UC.TestPanel("执行测试");
-                                    panel.Load();
-
-                                    return panel;
-                                }, typeof(TestPanel));
-
-                                testPanel.OnTaskStart += t =>
-                                {
-                                    var rt = t as RunTestTask;
-                                    if (rt != null && rt.TestLogin != null && (currentTestLogin == null || currentTestLogin.Id != rt.TestLogin.Id))
-                                    {
-                                        currentTestLogin = rt.TestLogin;
-                                        testPanel.ClearCookie(rt.TestLogin.Url);
-                                    }
-                                };
-
-                                LJC.FrameWorkV3.Comm.TaskHelper.SetInterval(1000, () =>
-                                {
-                                    var runTaskList = testTaskList.Select(task => new RunTestTask(task.GetTaskName(), false, task.TestSite, task.TestLogin, task.TestPage, task.TestCase, task.TestEnv, task.TestEnvParams, task.GlobalTestScripts, task.SiteTestScripts, task.ResultNotify));
-                                    this.BeginInvoke(new Action(() => testPanel.RunTest(runTaskList)));
-                                    return true;
-                                }, runintime: false);
-                            }
+                            };
+                            testTasksView.Init(sources, testSites, testPages, testTaskList, testTaskList.Select(p => p.TestCase.Id).ToList());
 
                             break;
                         }

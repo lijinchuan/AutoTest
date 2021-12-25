@@ -342,6 +342,12 @@
       <DependentUpon>Scale.cs</DependentUpon>
     </Compile>
     <Compile Include="UC\TabTableTabEx.cs" />
+    <Compile Include="UC\TestCaseTaskView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UC\TestCaseTaskView.Designer.cs">
+      <DependentUpon>TestCaseTaskView.cs</DependentUpon>
+    </Compile>
     <Compile Include="UC\TestPanel.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -501,6 +507,9 @@
     <EmbeddedResource Include="UC\Scale.resx">
       <DependentUpon>Scale.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="UC\TestCaseTaskView.resx">
+      <DependentUpon>TestCaseTaskView.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="UC\TestPanel.resx">
       <DependentUpon>TestPanel.cs</DependentUpon>
     </EmbeddedResource>
@@ -532,6 +541,21 @@
       <DependentUpon>WebTab.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="configfile.json" />
+    <Content Include="HTML\JqTableTree\bullet_black.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HTML\JqTableTree\bullet_green.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HTML\JqTableTree\bullet_red.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HTML\JqTableTree\bullet_white.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="HTML\JqTableTree\bullet_yellow.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="HTML\JqTableTree\extend.func.js">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

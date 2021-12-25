@@ -99,6 +99,17 @@ namespace AutoTest.UI.UC
             return webView.ClearCookie(url);
         }
 
+        public bool Reset()
+        {
+            if (!webView.IsRunningJob())
+            {
+                this.OnTaskStart = null;
+                return true;
+            }
+
+            return false;
+        }
+
         //protected override void OnLoad(EventArgs e)
         //{
         //    base.OnLoad(e);

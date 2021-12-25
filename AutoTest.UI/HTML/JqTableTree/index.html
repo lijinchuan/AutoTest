@@ -1,26 +1,70 @@
 ﻿<!DOCTYPE html>
 <html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     
-    <title>jQuery treetable</title>
+    <title>TestCase选择期</title>
     <link rel="stylesheet" href="./jquery.treetable.css">
     <link rel="stylesheet" href="./jquery.treetable.theme.default.css">
+    <style type="text/css">
+        .testresult {
+            width: 400px;
+            max-width: 400px;
+            background-color: lightcyan;
+        }
+        .tv_error {
+            background-image: url(bullet_red.png);
+            background-position-x: left;
+            background-position-y: center;
+            background-repeat: no-repeat;
+            padding-left: 20px !important;
+        }
+
+        .tv_ready {
+            background-image: url(bullet_white.png);
+            background-position-x: left;
+            background-position-y: center;
+            background-repeat: no-repeat;
+            padding-left: 20px !important;
+        }
+
+        .tv_warn {
+            background-image: url(bullet_yellow.png);
+            background-position-x: left;
+            background-position-y: center;
+            background-repeat: no-repeat;
+            padding-left: 20px !important;
+        }
+
+        .tv_success {
+            background-image: url(bullet_green.png);
+            background-position-x: left;
+            background-position-y: center;
+            background-repeat: no-repeat;
+            padding-left: 20px !important;
+        }
+
+        .tv_timeout {
+            background-image: url(bullet_black.png);
+            background-position-x: left;
+            background-position-y: center;
+            background-repeat: no-repeat;
+            padding-left: 20px !important;
+        }
+    </style>
   </head>
   <body style="">
     <div id="main">
-      <h1>jQuery treetable</h1>   
-
-
+      <h1></h1>
       <table id="example-advanced" class="treetable">
         <caption>
-          <a onclick="jQuery('#example-advanced').treetable('expandAll'); return false;">Expand all</a>
-          <a onclick="jQuery('#example-advanced').treetable('collapseAll'); return false;">Collapse all</a>
+          <a href="#" onclick="jQuery('#example-advanced').treetable('expandAll'); return false;">全部展开</a>
+          <a href="#" onclick="jQuery('#example-advanced').treetable('collapseAll'); return false;">全部收缩</a>
         </caption>
         <thead>
-          <tr>
-            <th>Name</th>
-            <th>Kind</th>
-            <th>Size</th>
-          </tr>
+            <tr>
+                <th>Case名称</th>
+                <th>类型</th>
+                <th>测试结果</th>
+            </tr>
         </thead>
         <tbody>
         </tbody>
@@ -34,7 +78,8 @@
     <script src="./jquery.min.js"></script>
     <script src="./jquery.treetable.js"></script>
     <script>
-        function showTable(trs) {
+        function showTable(title, trs) {
+            $("#main>h1").html(title);
             $("#example-advanced tbody")
                 .html(trs)
                 .on("mousedown", "tr", function () {
@@ -42,7 +87,143 @@
                     $(this).toggleClass("selected");
                 });
 
-            $("#example-advanced").treetable({ expandable: true });
+            $("#example-advanced").treetable({ expandable: true }).treetable('expandAll');
+
+            $(".casecb").click(function () {
+                var dataid = $(this).parents("tr").attr("data-tt-id");
+                var parentid = $(this).parents("tr").attr("data-tt-parent-id");
+                if ($(this)[0].checked) {
+                    //下级全部选中
+                    $("tr[data-tt-parent-id='" + dataid + "'] .casecb").prop('checked', true);
+                    $("tr[data-tt-parent-id^='" + dataid + "-'] .casecb").prop('checked', true);
+                    //上级检查是否全部选中了
+                    var pid = parentid;
+                    while ($("tr[data-tt-parent-id='" + pid + "'] .casecb:not(:checked)").length === 0) {
+                        $("tr[data-tt-id='" + pid + "'] .casecb").prop('checked', true);
+                        if (pid.lastIndexOf('-') ==-1) {
+                            break
+                        }
+                        pid = pid.substr(0, pid.lastIndexOf('-'))
+                    }
+                } else {
+                    //下级全部不选中
+                    $("tr[data-tt-parent-id='" + dataid + "'] .casecb").prop('checked', false);
+                    $("tr[data-tt-parent-id^='" + dataid + "-'] .casecb").prop('checked', false);
+                    //上级全部不选中
+                    var pid = parentid;
+                    $("tr[data-tt-id='" + pid + "'] .casecb").prop('checked', false);
+                    while (pid.lastIndexOf('-') > 0) {
+                        pid = pid.substr(0, pid.lastIndexOf('-'))
+                        $("tr[data-tt-id='" + pid + "'] .casecb").prop('checked', false);
+                    }
+                }
+            })
+        }
+
+        function getSelCaseId() {
+            var ret=[]
+            $("tr[case-id]").filter(function () {
+                var boo = $(this).find('.casecb').is(':checked')
+                if (boo) {
+                    ret.push(parseInt($(this).attr("case-id")))
+                }
+                return boo
+            })
+            return ret
+        }
+
+        function setTestCaseMsg(caseid, result, msg) {
+            var resultBox = $("tr[case-id='" + caseid + "'] .testresult")
+            resultBox.removeClass("tv_success").removeClass("tv_ready").removeClass("tv_warn").removeClass("tv_error").removeClass("tv_timeout")
+            var cls ="tv_success"
+            switch (result) {
+                case 0:
+                    {
+                        cls = "tv_ready"
+                        breakl
+                    }
+                case 1:
+                    {
+                        cls = "tv_success"
+                        break;
+                    }
+                case 2:
+                    {
+                        cls = "tv_warn"
+                        break;
+                    }
+                case 3:
+                    {
+                        cls = "tv_error"
+                        break;
+                    }
+                case 4:
+                    {
+                        cls = "tv_timeout"
+                        break;
+                    }
+            }
+            resultBox.addClass(cls).html(msg)
+
+            function filterCheckedCase($tr) {
+                return $tr.filter(function () {
+                    if ($tr[0].tagName == "TR") {
+                        return $(this).find('.casecb').is(':checked')
+                    } else {
+                        var p = $(this).parent()
+                        while (p.length > 0 && p[0].tagName !== "TR") {
+                            p = p.parent()
+                        }
+                        return p.find('.casecb').is(':checked')
+                    }
+                })
+            }
+
+            var pid = resultBox.parents("tr").attr("data-tt-parent-id");
+            while (true) {
+                var caselen = filterCheckedCase($("tr[data-tt-parent-id='" + pid + "'][case-id]")).length + filterCheckedCase($("tr[data-tt-parent-id^='" + pid + "-'][case-id]")).length;
+                var casesuccesslen = filterCheckedCase($("tr[data-tt-parent-id='" + pid + "'][case-id] .tv_success")).length + filterCheckedCase($("tr[data-tt-parent-id^='" + pid + "-'][case-id] .tv_success")).length;
+                var caseerrorlen = filterCheckedCase($("tr[data-tt-parent-id='" + pid + "'][case-id] .tv_error")).length + filterCheckedCase($("tr[data-tt-parent-id^='" + pid + "-'][case-id] .tv_error")).length;
+                var casewarnlen = filterCheckedCase($("tr[data-tt-parent-id='" + pid + "'][case-id] .tv_warn")).length + filterCheckedCase($("tr[data-tt-parent-id^='" + pid + "-'][case-id] .tv_warn")).length;
+                var casetimelen = filterCheckedCase($("tr[data-tt-parent-id='" + pid + "'][case-id] .tv_timeout")).length + filterCheckedCase($("tr[data-tt-parent-id^='" + pid + "-'][case-id] .tv_timeout")).length;
+                var parenttr = $("tr[data-tt-id='" + pid + "']")
+                parenttr.find(".testresult").removeClass("tv_success").removeClass("tv_ready").removeClass("tv_warn").removeClass("tv_error").removeClass("tv_timeout")
+                cls = "tv_ready"
+                msg = "测试中"
+                if (caseerrorlen > 0) {
+                    cls = 'tv_error'
+                    msg = "有错误信息(" + caseerrorlen+")"
+                } else if (casetimelen > 0) {
+                    cls = 'tv_timeout'
+                    msg = "有超时未完成(" + casetimelen + ")"
+                } else if (casewarnlen > 0) {
+                    cls = 'tv_warn'
+                    msg = "有警告信息(" + casewarnlen + ")"
+                } else if (casesuccesslen === caselen) {
+                    cls = 'tv_success'
+                    msg = "全部成功(" + casesuccesslen + ")"
+                }
+                msg = "成功(" + casesuccesslen + ") 错误(" + caseerrorlen + ") 超时(" + casetimelen + ") 警告(" + casewarnlen + ") 等待(" + (caselen - casesuccesslen - casetimelen - casewarnlen - caseerrorlen) + ")";
+                parenttr.find(".testresult").addClass(cls).html(msg)
+
+                if (pid.lastIndexOf('-') == -1) {
+                    break;
+                }
+                pid = pid.substr(0, pid.lastIndexOf('-'))
+            }
+        }
+
+        function chooseTestCases(ids) {
+            if (ids && ids.length) {
+                for (var i in ids) {
+                    $("tr[case-id=" + ids[i] + "] .casecb")[0].click()
+                }
+            }
+        }
+
+        function clearResults(){
+            $(".testresult").removeClass("tv_success").removeClass("tv_ready").removeClass("tv_warn").removeClass("tv_error").removeClass("tv_timeout")
+                .addClass("tv_ready").html("")
         }
     </script>
   
