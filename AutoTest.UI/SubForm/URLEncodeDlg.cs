@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace AutoTest.UI.SubForm
 {
-    public partial class URLEncodeDlg : Form
+    public partial class URLEncodeDlg : SubBaseDlg
     {
         public URLEncodeDlg()
         {

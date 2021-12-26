@@ -29,6 +29,7 @@ namespace AutoTest.UI.SubForm
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SubBaseDlg));
             this.SuspendLayout();
             // 
             // SubBaseDlg
@@ -39,10 +40,10 @@ namespace AutoTest.UI.SubForm
             this.ClientSize = new System.Drawing.Size(427, 246);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "SubBaseDlg";
-            this.ShowIcon = false;
             this.Text = "SubBaseDlg";
             this.ResumeLayout(false);
 

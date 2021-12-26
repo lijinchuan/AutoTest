@@ -10,7 +10,7 @@ using System.Windows.Forms;
 
 namespace AutoTest.UI.SubForm
 {
-    public partial class MD5Dlg : Form
+    public partial class MD5Dlg : SubBaseDlg
     {
         public MD5Dlg()
         {

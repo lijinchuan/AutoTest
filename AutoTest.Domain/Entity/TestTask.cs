@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+using System.Xml.Serialization;
 
 namespace AutoTest.Domain.Entity
 {
+    [Serializable]
     public class TestTask
     {
         public TestSource TestSource
@@ -60,11 +63,19 @@ namespace AutoTest.Domain.Entity
             get;
             set;
         }
-
+        [NonSerialized]
+        private Action<TestResult> _resultNotify;
+        [XmlIgnore]
         public Action<TestResult> ResultNotify
         {
-            get;
-            set;
+            get
+            {
+                return _resultNotify;
+            }
+            set
+            {
+                _resultNotify = value;
+            }
         }
 
         public bool Check

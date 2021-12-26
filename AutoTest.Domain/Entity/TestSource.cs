@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace AutoTest.Domain.Entity
 {
+    [Serializable]
     /// <summary>
     /// 测试包
     /// </summary>

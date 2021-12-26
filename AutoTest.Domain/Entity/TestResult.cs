@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 
 namespace AutoTest.Domain.Entity
 {
+    [Serializable]
     public class TestResult:IComparable
     {
         public static readonly string Index_TestCaseId_EnvId_TestDate = $"{nameof(TestCaseId)}_{nameof(EnvId)}_{nameof(TestStartDate)}";

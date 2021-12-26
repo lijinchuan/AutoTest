@@ -1,4 +1,5 @@
-﻿using AutoTest.Domain.Entity;
+﻿using AutoTest.Domain;
+using AutoTest.Domain.Entity;
 using AutoTest.UI.SubForm;
 using AutoTest.UI.WebTask;
 using System;
@@ -9,10 +10,16 @@ using System.Windows.Forms;
 
 namespace AutoTest.UI.UC
 {
-    public partial class TestCaseTaskView : TabPage
+    public partial class TestCaseTaskView : TabPage, IRecoverAble
     {
         private static TestLogin currentTestLogin = null;
         public event Action<IWebTask> OnTaskStart;
+
+        private List<TestSource> _testSources = null;
+        private List<TestSite> _testSites = null;
+        private List<TestPage> _testPages = null;
+        private List<TestTask> _testCases = null;
+        private List<int> _testCasesChoose = null;
 
         public TestCaseTaskView()
         {
@@ -22,6 +29,11 @@ namespace AutoTest.UI.UC
 
         public TestCaseTaskView Init(List<TestSource> testSources, List<TestSite> testSites, List<TestPage> testPages, List<TestTask> testCases, List<int> testCasesChoose)
         {
+            _testSources = testSources;
+            _testSites = testSites;
+            _testPages = testPages;
+            _testCases = testCases;
+            _testCasesChoose = testCasesChoose;
             UCTestCaseSelector1.Init(testSources, testSites, testPages, testCases, testCasesChoose);
             return this;
         }
@@ -115,6 +127,24 @@ namespace AutoTest.UI.UC
                     testPanel.CancelTasks();
                 }
             }
+        }
+
+        public object[] GetRecoverData()
+        {
+            _testCasesChoose = GetSelecteCase().Select(p => p.TestCase.Id).ToList();
+            return new object[] {_testSources, _testSites, _testPages, _testCases, _testCasesChoose,Text};
+        }
+
+        public IRecoverAble Recover(object[] recoverData)
+        {
+            Text = (string)recoverData[5];
+            _testSources = (List<TestSource>)recoverData[0];
+            _testSites = (List<TestSite>)recoverData[1];
+            _testPages = (List<TestPage>)recoverData[2];
+            _testCases = (List<TestTask>)recoverData[3];
+            _testCasesChoose = (List<int>)recoverData[4];
+            UCTestCaseSelector1.Init(_testSources, _testSites, _testPages, _testCases, _testCasesChoose);
+            return this;
         }
     }
 }

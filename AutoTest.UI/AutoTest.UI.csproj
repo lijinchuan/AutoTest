@@ -37,6 +37,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <ApplicationIcon>main.ico</ApplicationIcon>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Autofac, Version=6.3.0.0, Culture=neutral, PublicKeyToken=17863af14b0044da, processorArchitecture=MSIL">
       <HintPath>..\packages\Autofac.6.3.0\lib\netstandard2.0\Autofac.dll</HintPath>
@@ -477,14 +480,23 @@
     <EmbeddedResource Include="SubForm\FindDlg.resx">
       <DependentUpon>FindDlg.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="SubForm\MD5Dlg.resx">
+      <DependentUpon>MD5Dlg.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SubForm\RunTestCaseConfirmDlg.resx">
       <DependentUpon>RunTestCaseConfirmDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SubForm\SubBaseDlg.resx">
+      <DependentUpon>SubBaseDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SubForm\TestCaseSelectorDlg.resx">
       <DependentUpon>TestCaseSelectorDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SubForm\TextBoxWin.resx">
       <DependentUpon>TextBoxWin.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SubForm\URLEncodeDlg.resx">
+      <DependentUpon>URLEncodeDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UC\Auth\UCApiKey.resx">
       <DependentUpon>UCApiKey.cs</DependentUpon>
@@ -864,6 +876,7 @@
     <Content Include="jsonviewer.html">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="main.ico" />
     <Content Include="marked.min.js">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

@@ -29,7 +29,7 @@ namespace AutoTest.Biz
 
         public static void SaveRecoverInstance()
         {
-            if (iRecoverAbleLs.Count > 0)
+            if (iRecoverAbleLs?.Count > 0)
             {
                 LJC.FrameWorkV3.Comm.SerializerHelper.BinarySave(recoverpath, iRecoverAbleLs);
             }

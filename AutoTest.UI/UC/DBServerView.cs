@@ -280,6 +280,37 @@ namespace AutoTest.UI.UC
             }
         }
 
+        private string GetTestTaskName(TreeNode selnode)
+        {
+
+            var source = FindParentNode<TestSource>(selnode);
+            var page = FindParentNode<TestPage>(selnode);
+            var site = FindParentNode<TestSite>(selnode);
+            var @case = FindParentNode<TestCase>(selnode);
+            if (source == null)
+            {
+                return null;
+            }
+            var listName = source.SourceName;
+
+            if (site != null)
+            {
+                listName += "_" + site.Name;
+            }
+
+            if (page != null)
+            {
+                listName += "_" + page.Name;
+            }
+
+            if (@case != null)
+            {
+                listName += "_" + @case.CaseName;
+            }
+
+            return listName;
+        }
+
         void OnMenuStrip_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
             try
@@ -656,8 +687,8 @@ namespace AutoTest.UI.UC
                                     }
                                 });
                             }
-
-                            var testTasksView = (TestCaseTaskView)Util.TryAddToMainTab(this, $"任务列表{sources[0].SourceName}", () =>
+                            
+                            var testTasksView = (TestCaseTaskView)Util.TryAddToMainTab(this, $"测试_{GetTestTaskName(selnode)}", () =>
                               {
                                   var panel = new UC.TestCaseTaskView();
                                   return panel;

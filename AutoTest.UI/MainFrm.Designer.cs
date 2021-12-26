@@ -30,6 +30,7 @@ namespace AutoTest.UI
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainFrm));
             this.mainMenuBar = new System.Windows.Forms.MenuStrip();
             this.MenItem_File = new System.Windows.Forms.ToolStripMenuItem();
             this.最近ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -349,9 +350,10 @@ namespace AutoTest.UI
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.dbServerView1);
             this.Controls.Add(this.mainMenuBar);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.MainMenuStrip = this.mainMenuBar;
             this.Name = "MainFrm";
-            this.Text = "MyTest";
+            this.Text = "测试管理";
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.mainMenuBar.ResumeLayout(false);
             this.mainMenuBar.PerformLayout();
