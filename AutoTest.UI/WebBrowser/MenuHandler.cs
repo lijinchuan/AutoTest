@@ -44,7 +44,7 @@ namespace AutoTest.UI.WebBrowser
                 model.AddItem((CefMenuCommand)26502, "隐藏开发工具");
             }
             if (defaultChromiumWebBrowserContext != null)
-            {
+            {             
                 model.AddSeparator();//添加分隔符;
                 if (defaultChromiumWebBrowserContext.OpenTaskDebug)
                 {
@@ -53,6 +53,12 @@ namespace AutoTest.UI.WebBrowser
                 else
                 {
                     model.AddItem((CefMenuCommand.CustomFirst + 2), "打开调试任务");
+                }
+
+                if (defaultChromiumWebBrowserContext.IsRunningJob())
+                {
+                    model.AddSeparator();//添加分隔符;
+                    model.AddItem((CefMenuCommand.CustomFirst + 3), "停止任务");
                 }
             }
         }
@@ -88,6 +94,16 @@ namespace AutoTest.UI.WebBrowser
                 if (defaultChromiumWebBrowserContext != null)
                 {
                     defaultChromiumWebBrowserContext.OpenTaskDebug = !defaultChromiumWebBrowserContext.OpenTaskDebug;
+                }
+            }
+            else if (commandId == (CefMenuCommand.CustomFirst + 3))
+            {
+                if (defaultChromiumWebBrowserContext != null && defaultChromiumWebBrowserContext.IsRunningJob())
+                {
+                    if (new SubForm.ConfirmDlg("取消任务确认", "确认取消任务吗？", timeOutOk: false).ShowDialog() != DialogResult.Cancel)
+                    {
+                        defaultChromiumWebBrowserContext.CancelTasks();
+                    }
                 }
             }
             return false;

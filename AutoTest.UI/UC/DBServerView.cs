@@ -311,6 +311,191 @@ namespace AutoTest.UI.UC
             return listName;
         }
 
+        void RunTest(TreeNode selnode)
+        {
+            var testCaseNodeList = GetTestCaseTaskList(selnode);
+            var testTaskList = new List<TestTask>();
+            var scriptsDic = new Dictionary<object, List<TestScript>>();
+            var loginDic = new Dictionary<object, TestLogin>();
+            var envDic = new Dictionary<object, (TestEnv env, List<TestEnvParam> envParams, bool hasEvn)>();
+
+            List<TestSource> sources = new List<TestSource>();
+            List<TestSite> testSites = new List<TestSite>();
+            List<TestPage> testPages = new List<TestPage>();
+            List<TestCase> testCases = new List<TestCase>();
+
+            foreach (var node in testCaseNodeList)
+            {
+                var testSource = FindParentNode<TestSource>(node);
+                var testPage = FindParentNode<TestPage>(node);
+                var testSite = FindParentNode<TestSite>(node);
+                var testCase = FindParentNode<TestCase>(node);
+
+                if (!sources.Any(p => p.Id == testSource.Id))
+                {
+                    sources.Add(testSource);
+                }
+
+                if (!testSites.Any(p => p.Id == testSite.Id))
+                {
+                    testSites.Add(testSite);
+                }
+
+                if (!testPages.Any(p => p.Id == testPage.Id))
+                {
+                    testPages.Add(testPage);
+                }
+
+                testCases.Add(testCase);
+
+                TestLogin testLogin;
+                var key = "testLogin_" + testSource.Id + "_" + testSite.Id;
+                if (!loginDic.TryGetValue(key, out testLogin))
+                {
+                    var testLoginList = BigEntityTableEngine.LocalEngine.Find<TestLogin>(nameof(TestLogin), nameof(TestLogin.SiteId), new object[] { testSite.Id });
+                    if (testLoginList.Any())
+                    {
+                        if (!testLoginList.Any(p => p.Used))
+                        {
+                            MessageBox.Show("请选择一个测试帐号");
+                            return;
+                        }
+                        testLogin = testLoginList.First(p => p.Used);
+                    }
+
+                    loginDic.Add(key, testLogin);
+                }
+
+                key = "globalScripts_" + testSource.Id;
+                List<TestScript> globalScripts = null;
+                if (!scriptsDic.TryGetValue(key, out globalScripts))
+                {
+                    globalScripts = BigEntityTableEngine.LocalEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == testSource.Id && s.SiteId == 0).ToList();
+                    scriptsDic.Add(key, globalScripts);
+                }
+
+                key = "siteScripts_" + testSource.Id + "_" + testSite.Id;
+                List<TestScript> siteScripts = null;
+                if (!scriptsDic.TryGetValue(key, out siteScripts))
+                {
+                    siteScripts = BigEntityTableEngine.LocalEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == testSource.Id && s.SiteId == testSite.Id).ToList();
+                    scriptsDic.Add(key, siteScripts);
+                }
+                (TestEnv env, List<TestEnvParam> envParams, bool hasEvn) ep;
+                if (!envDic.TryGetValue(testSite.Id, out ep))
+                {
+                    ep = GetCurrEnvData(node);
+                    envDic.Add(testSite.Id, ep);
+                }
+                if (ep.hasEvn && ep.env == null)
+                {
+                    MessageBox.Show("请选择一个测试环境");
+                    return;
+                }
+                testTaskList.Add(new TestTask
+                {
+                    TestSource = testSource,
+                    SiteTestScripts = siteScripts,
+                    GlobalTestScripts = globalScripts,
+                    TestCase = testCase,
+                    TestLogin = testLogin,
+                    TestPage = testPage,
+                    TestSite = testSite,
+                    TestEnv = ep.env,
+                    TestEnvParams = ep.envParams,
+                    ResultNotify = r =>
+                    {
+                        BeginInvoke(new Action(() =>
+                        {
+                            var lastNode = node;
+                            if (lastNode.Parent == null)
+                            {
+                                lastNode = FindNode(tv_DBServers.Nodes, lastNode.Tag);
+                            }
+                            if (lastNode == null)
+                            {
+                                return;
+                            }
+                            var nodeEx = (TreeNodeEx)lastNode;
+                            var imgIndex = 19;
+                            if (r.Success)
+                            {
+                                if (r.HasWarn)
+                                {
+                                    imgIndex = 21;
+                                }
+                            }
+                            else
+                            {
+                                imgIndex = 20;
+                            }
+                            nodeEx.SelectedImageIndex = nodeEx.ImageIndex = nodeEx.ExpandImgIndex = nodeEx.CollapseImgIndex = imgIndex;
+                        }));
+                    }
+                });
+            }
+
+            if (selnode.Tag is TestCase)
+            {
+                if (new ConfirmDlg("询问", "执行测试吗？").ShowDialog() == DialogResult.OK)
+                {
+                    var testPanel = (TestPanel)Util.TryAddToMainTab(this, $"执行单个测试", () =>
+                    {
+                        var panel = new TestPanel("执行单个测试");
+                        panel.Load();
+
+                        return panel;
+                    }, null);
+
+                    if (testPanel.IsRunning())
+                    {
+                        Util.SendMsg(this, "正在执行测试，请稍后再试");
+                        return;
+                    }
+
+                    if (!testPanel.Reset())
+                    {
+                        Util.SendMsg(this, "任务未开始，有测试在执行");
+                        return;
+                    }
+                    testPanel.OnTaskStart += t =>
+                    {
+                        var rt = t as RunTestTask;
+                        if (rt != null && rt.TestLogin != null && (currentTestLogin == null || currentTestLogin.Id != rt.TestLogin.Id))
+                        {
+                            currentTestLogin = rt.TestLogin;
+                            testPanel.ClearCookie(rt.TestLogin.Url);
+                        }
+                    };
+
+
+                    LJC.FrameWorkV3.Comm.TaskHelper.SetInterval(1000, () =>
+                    {
+                        var runTaskList = testTaskList.Select(task => new RunTestTask(task.GetTaskName(), false, task.TestSite, task.TestLogin, task.TestPage, task.TestCase, task.TestEnv, task.TestEnvParams, task.GlobalTestScripts, task.SiteTestScripts, task.ResultNotify));
+                        BeginInvoke(new Action(() => testPanel.RunTest(runTaskList)));
+                        return true;
+                    }, runintime: false);
+                }
+            }
+            else
+            {
+                var testTasksView = (TestCaseTaskView)Util.TryAddToMainTab(this, $"测试_{GetTestTaskName(selnode)}", () =>
+                {
+                    var panel = new UC.TestCaseTaskView();
+                    return panel;
+                }, null);
+                testTasksView.OnTaskStart += t =>
+                {
+                    var nodeEx = FindNode(tv_DBServers.Nodes, (t as RunTestTask)?.TestCase) as TreeNodeEx;
+                    if (nodeEx != null)
+                    {
+                        nodeEx.SelectedImageIndex = nodeEx.ImageIndex = nodeEx.ExpandImgIndex = nodeEx.CollapseImgIndex = 18;
+                    }
+                };
+                testTasksView.Init(sources, testSites, testPages, testTaskList, testTaskList.Select(p => p.TestCase.Id).ToList());
+            }
+        }
+
         void OnMenuStrip_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
         {
             try
@@ -566,143 +751,7 @@ namespace AutoTest.UI.UC
                         }
                     case "运行测试":
                         {
-                            var testCaseNodeList = GetTestCaseTaskList(selnode);
-                            var testTaskList = new List<TestTask>();
-                            var scriptsDic = new Dictionary<object, List<TestScript>>();
-                            var loginDic = new Dictionary<object, TestLogin>();
-                            var envDic = new Dictionary<object, (TestEnv env, List<TestEnvParam> envParams, bool hasEvn)>();
-
-                            List<TestSource> sources = new List<TestSource>();
-                            List<TestSite> testSites = new List<TestSite>();
-                            List<TestPage> testPages = new List<TestPage>();
-                            List<TestCase> testCases = new List<TestCase>();
-
-                            foreach (var node in testCaseNodeList)
-                            {
-                                var testSource = FindParentNode<TestSource>(node);
-                                var testPage = FindParentNode<TestPage>(node);
-                                var testSite = FindParentNode<TestSite>(node);
-                                var testCase = FindParentNode<TestCase>(node);
-
-                                if (!sources.Any(p => p.Id == testSource.Id))
-                                {
-                                    sources.Add(testSource);
-                                }
-
-                                if (!testSites.Any(p => p.Id == testSite.Id))
-                                {
-                                    testSites.Add(testSite);
-                                }
-
-                                if (!testPages.Any(p => p.Id == testPage.Id))
-                                {
-                                    testPages.Add(testPage);
-                                }
-
-                                testCases.Add(testCase);
-
-                                TestLogin testLogin;
-                                var key = "testLogin_" + testSource.Id + "_" + testSite.Id;
-                                if (!loginDic.TryGetValue(key, out testLogin))
-                                {
-                                    var testLoginList = BigEntityTableEngine.LocalEngine.Find<TestLogin>(nameof(TestLogin), nameof(TestLogin.SiteId), new object[] { testSite.Id });
-                                    if (testLoginList.Any())
-                                    {
-                                        if (!testLoginList.Any(p => p.Used))
-                                        {
-                                            MessageBox.Show("请选择一个测试帐号");
-                                            return;
-                                        }
-                                        testLogin = testLoginList.First(p => p.Used);
-                                    }
-
-                                    loginDic.Add(key, testLogin);
-                                }
-
-                                key = "globalScripts_" + testSource.Id;
-                                List<TestScript> globalScripts = null;
-                                if (!scriptsDic.TryGetValue(key, out globalScripts))
-                                {
-                                    globalScripts = BigEntityTableEngine.LocalEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == testSource.Id && s.SiteId == 0).ToList();
-                                    scriptsDic.Add(key, globalScripts);
-                                }
-
-                                key = "siteScripts_" + testSource.Id + "_" + testSite.Id;
-                                List<TestScript> siteScripts = null;
-                                if (!scriptsDic.TryGetValue(key, out siteScripts))
-                                {
-                                    siteScripts = BigEntityTableEngine.LocalEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == testSource.Id && s.SiteId == testSite.Id).ToList();
-                                    scriptsDic.Add(key, siteScripts);
-                                }
-                                (TestEnv env, List<TestEnvParam> envParams, bool hasEvn) ep;
-                                if (!envDic.TryGetValue(testSite.Id, out ep))
-                                {
-                                    ep = GetCurrEnvData(node);
-                                    envDic.Add(testSite.Id, ep);
-                                }
-                                if (ep.hasEvn && ep.env == null)
-                                {
-                                    MessageBox.Show("请选择一个测试环境");
-                                    return;
-                                }
-                                testTaskList.Add(new TestTask
-                                {
-                                    TestSource = testSource,
-                                    SiteTestScripts = siteScripts,
-                                    GlobalTestScripts = globalScripts,
-                                    TestCase = testCase,
-                                    TestLogin = testLogin,
-                                    TestPage = testPage,
-                                    TestSite = testSite,
-                                    TestEnv = ep.env,
-                                    TestEnvParams = ep.envParams,
-                                    ResultNotify = r =>
-                                    {
-                                        BeginInvoke(new Action(() =>
-                                        {
-                                            var lastNode = node;
-                                            if (lastNode.Parent == null)
-                                            {
-                                                lastNode = FindNode(tv_DBServers.Nodes, lastNode.Tag);
-                                            }
-                                            if (lastNode == null)
-                                            {
-                                                return;
-                                            }
-                                            var nodeEx = (TreeNodeEx)lastNode;
-                                            var imgIndex = 19;
-                                            if (r.Success)
-                                            {
-                                                if (r.HasWarn)
-                                                {
-                                                    imgIndex = 21;
-                                                }
-                                            }
-                                            else
-                                            {
-                                                imgIndex = 20;
-                                            }
-                                            nodeEx.SelectedImageIndex = nodeEx.ImageIndex = nodeEx.ExpandImgIndex = nodeEx.CollapseImgIndex = imgIndex;
-                                        }));
-                                    }
-                                });
-                            }
-                            
-                            var testTasksView = (TestCaseTaskView)Util.TryAddToMainTab(this, $"测试_{GetTestTaskName(selnode)}", () =>
-                              {
-                                  var panel = new UC.TestCaseTaskView();
-                                  return panel;
-                              }, null);
-                            testTasksView.OnTaskStart += t =>
-                            {
-                                var nodeEx = FindNode(tv_DBServers.Nodes, (t as RunTestTask)?.TestCase) as TreeNodeEx;
-                                if (nodeEx != null)
-                                {
-                                    nodeEx.SelectedImageIndex = nodeEx.ImageIndex = nodeEx.ExpandImgIndex = nodeEx.CollapseImgIndex = 18;
-                                }
-                            };
-                            testTasksView.Init(sources, testSites, testPages, testTaskList, testTaskList.Select(p => p.TestCase.Id).ToList());
-
+                            RunTest(selnode);
                             break;
                         }
                     case "添加登陆页":
@@ -933,6 +982,10 @@ namespace AutoTest.UI.UC
                 {
 
                 }
+            }
+            else if (e.Node.Tag is TestCase)
+            {
+                RunTest(e.Node);
             }
         }
 
