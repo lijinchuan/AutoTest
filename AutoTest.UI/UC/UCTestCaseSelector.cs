@@ -65,15 +65,21 @@ namespace AutoTest.UI.UC
 
         public List<TestTask> GetSelecteCase()
         {
-            var ret=CBBroswer.GetBrowser().MainFrame.EvaluateScriptAsync("getSelCaseId()").Result;
-
-            if (ret.Success)
+            List<int> idList = _testCasesChoose;
+            if (CBBroswer.IsBrowserInitialized)
             {
-                var idList = (ret.Result as List<object>)?.Select(p => (int)p).ToList();
-                if (idList != null && idList.Count > 0)
+                var ret = CBBroswer.GetBrowser().MainFrame.EvaluateScriptAsync("getSelCaseId()").Result;
+
+                if (ret.Success)
                 {
-                    return _testCases.Where(p => idList.Contains(p.TestCase.Id)).ToList();
+                    idList = (ret.Result as List<object>)?.Select(p => (int)p).ToList();
                 }
+
+            }
+
+            if (idList != null && idList.Count > 0)
+            {
+                return _testCases.Where(p => idList.Contains(p.TestCase.Id)).ToList();
             }
 
             return new List<TestTask>();
@@ -115,19 +121,19 @@ namespace AutoTest.UI.UC
 
             foreach(var s in _testSources.OrderBy(p => p.SourceName))
             {
-                sb.Append($"<tr data-tt-id='{s.Id}' class='branch collapsed'><td><span class='folder'><input class='casecb' type='checkbox' />{s.SourceName}</span></td><td>资源</td><td class='testresult'></td></tr>");
+                sb.Append($"<tr data-tt-id='{s.Id}' class='branch collapsed'><td><span class='folder'><input class='casecb' type='checkbox' />{s.SourceName}</span></td><td></td><td></td><td class='testresult'></td></tr>");
 
                 foreach(var t in _testSites.Where(p => p.SourceId == s.Id).OrderBy(p => p.Name))
                 {
-                    sb.Append($"<tr data-tt-id='{s.Id}-{t.Id}' data-tt-parent-id='{s.Id}' class='branch' style='display:none;'><td><span class='indenter'></span><span class='folder'><input class='casecb' type='checkbox' />{t.Name}</span></td><td>测试站点</td><td class='testresult'></td></tr>");
+                    sb.Append($"<tr data-tt-id='{s.Id}-{t.Id}' data-tt-parent-id='{s.Id}' class='branch' style='display:none;'><td><span class='indenter'></span><span class='folder'><input class='casecb' type='checkbox' />{t.Name}</span></td><td></td><td></td><td class='testresult'></td></tr>");
 
                     foreach (var g in _testPages.Where(p => p.SiteId == t.Id).OrderBy(p => p.Order))
                     {
-                        sb.Append($"<tr data-tt-id='{s.Id}-{t.Id}-{g.Id}' data-tt-parent-id='{s.Id}-{t.Id}' class='branch' style='display:none;'><td><span class='indenter'></span><span class='folder'><input class='casecb' type='checkbox' />{g.Name}</span></td><td>页面</td><td class='testresult'></td></tr>");
+                        sb.Append($"<tr data-tt-id='{s.Id}-{t.Id}-{g.Id}' data-tt-parent-id='{s.Id}-{t.Id}' class='branch' style='display:none;'><td><span class='indenter'></span><span class='folder'><input class='casecb' type='checkbox' />{g.Name}</span></td><td></td><td></td><td class='testresult'></td></tr>");
 
                         foreach(var c in _testCases.Where(p => p.TestCase.PageId == g.Id).OrderBy(p => p.TestCase.Order))
                         {
-                            sb.Append($"<tr data-tt-id='{s.Id}-{t.Id}-{g.Id}-{c.TestCase.Id}' case-id='{c.TestCase.Id}' data-tt-parent-id='{s.Id}-{t.Id}-{g.Id}' class='leaf' style='display:none;'><td><span class='indenter'></span><span class='file'><input class='casecb' type='checkbox' />{c.TestCase.CaseName}</span></td><td>测试用例</td><td class='testresult tv_ready'></td></tr>");
+                            sb.Append($"<tr data-tt-id='{s.Id}-{t.Id}-{g.Id}-{c.TestCase.Id}' case-id='{c.TestCase.Id}' data-tt-parent-id='{s.Id}-{t.Id}-{g.Id}' class='leaf' style='display:none;'><td><span class='indenter'></span><span class='file'><input class='casecb' type='checkbox' />{c.TestCase.CaseName}</span></td><td class='testaccount'>{c.TestLogin?.AccountInfo}</td><td class='testenv'>{c.TestEnv?.EnvName}</td><td class='testresult tv_ready'></td></tr>");
                         }
                     }
                 }
