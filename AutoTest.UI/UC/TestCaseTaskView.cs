@@ -156,7 +156,7 @@ namespace AutoTest.UI.UC
                 var sites = BigEntityTableEngine.LocalEngine.FindBatch<TestSite>(nameof(TestSite), _testSites.Select(p => (object)p.Id));
                 var pages = BigEntityTableEngine.LocalEngine.FindBatch<TestPage>(nameof(TestPage), _testPages.Select(p => (object)p.Id));
                 var cases = BigEntityTableEngine.LocalEngine.FindBatch<TestCase>(nameof(TestCase), _testCases.Select(p => (object)p.TestCase.Id));
-                var testLogins = BigEntityTableEngine.LocalEngine.FindBatch<TestLogin>(nameof(TestLogin), _testCases.Select(p => (object)p.TestLogin.Id));
+                var testLogins = BigEntityTableEngine.LocalEngine.FindBatch<TestLogin>(nameof(TestLogin), _testCases.Where(p => p.TestLogin != null).Select(p => (object)p.TestLogin.Id));
 
                 var scriptsDic = new Dictionary<object, List<TestScript>>();
                 var loginDic = new Dictionary<object, TestLogin>();
@@ -175,7 +175,7 @@ namespace AutoTest.UI.UC
                     c.TestPage = pages.FirstOrDefault(p => p.Id == c.TestPage.Id);
                     c.TestCase = BigEntityTableEngine.LocalEngine.Find<TestCase>(nameof(TestCase), c.TestCase.Id);
 
-                    c.TestLogin = testLogins.FirstOrDefault(p => p.Id == c.TestLogin.Id);
+                    c.TestLogin = c.TestLogin == null ? null : testLogins.FirstOrDefault(p => p.Id == c.TestLogin.Id);
 
                     var key = "globalScripts_" + c.TestSource.Id;
                     List<TestScript> globalScripts = null;
