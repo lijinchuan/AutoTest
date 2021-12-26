@@ -32,6 +32,7 @@ namespace AutoTest.UI.UC
             this.UCTestCaseSelector1 = new AutoTest.UI.UC.UCTestCaseSelector();
             this.BtnOk = new System.Windows.Forms.Button();
             this.BtnCancel = new System.Windows.Forms.Button();
+            this.BtnRefrash = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // UCTestCaseSelector1
@@ -65,12 +66,23 @@ namespace AutoTest.UI.UC
             this.BtnCancel.Text = "停止";
             this.BtnCancel.UseVisualStyleBackColor = true;
             // 
+            // BtnRefrash
+            // 
+            this.BtnRefrash.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.BtnRefrash.Location = new System.Drawing.Point(297, 335);
+            this.BtnRefrash.Name = "BtnRefrash";
+            this.BtnRefrash.Size = new System.Drawing.Size(75, 30);
+            this.BtnRefrash.TabIndex = 3;
+            this.BtnRefrash.Text = "更新";
+            this.BtnRefrash.UseVisualStyleBackColor = true;
+            this.BtnRefrash.Click += new System.EventHandler(this.BtnRefrash_Click);
+            // 
             // TestCaseTaskView
             // 
+            this.Controls.Add(this.BtnRefrash);
             this.Controls.Add(this.BtnCancel);
             this.Controls.Add(this.BtnOk);
             this.Controls.Add(this.UCTestCaseSelector1);
-            this.Name = "TestCaseTaskView";
             this.Size = new System.Drawing.Size(546, 371);
             this.ResumeLayout(false);
 
@@ -81,5 +93,6 @@ namespace AutoTest.UI.UC
         private UCTestCaseSelector UCTestCaseSelector1;
         private System.Windows.Forms.Button BtnOk;
         private System.Windows.Forms.Button BtnCancel;
+        private System.Windows.Forms.Button BtnRefrash;
     }
 }

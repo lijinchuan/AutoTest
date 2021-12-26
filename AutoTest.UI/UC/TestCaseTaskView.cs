@@ -2,6 +2,7 @@
 using AutoTest.Domain.Entity;
 using AutoTest.UI.SubForm;
 using AutoTest.UI.WebTask;
+using LJC.FrameWorkV3.Data.EntityDataBase;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -132,7 +133,7 @@ namespace AutoTest.UI.UC
         public object[] GetRecoverData()
         {
             _testCasesChoose = GetSelecteCase().Select(p => p.TestCase.Id).ToList();
-            return new object[] {_testSources, _testSites, _testPages, _testCases, _testCasesChoose,Text};
+            return new object[] { _testSources, _testSites, _testPages, _testCases, _testCasesChoose, Text };
         }
 
         public IRecoverAble Recover(object[] recoverData)
@@ -146,5 +147,70 @@ namespace AutoTest.UI.UC
             UCTestCaseSelector1.Init(_testSources, _testSites, _testPages, _testCases, _testCasesChoose);
             return this;
         }
+
+        private void BtnRefrash_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                var sources = BigEntityTableEngine.LocalEngine.FindBatch<TestSource>(nameof(TestSource), _testSources.Select(p => (object)p.Id));
+                var sites = BigEntityTableEngine.LocalEngine.FindBatch<TestSite>(nameof(TestSite), _testSites.Select(p => (object)p.Id));
+                var pages = BigEntityTableEngine.LocalEngine.FindBatch<TestPage>(nameof(TestPage), _testPages.Select(p => (object)p.Id));
+                var cases = BigEntityTableEngine.LocalEngine.FindBatch<TestCase>(nameof(TestCase), _testCases.Select(p => (object)p.TestCase.Id));
+                var testLogins = BigEntityTableEngine.LocalEngine.FindBatch<TestLogin>(nameof(TestLogin), _testCases.Select(p => (object)p.TestLogin.Id));
+
+                var scriptsDic = new Dictionary<object, List<TestScript>>();
+                var loginDic = new Dictionary<object, TestLogin>();
+                Dictionary<int, (TestEnv env, List<TestEnvParam> envParams, bool hasEvn)> ep = new Dictionary<int, (TestEnv env, List<TestEnvParam> envParams, bool hasEvn)>();
+                foreach (var item in _testCases.Where(p => p.TestEnv != null).Select(p => p.TestEnv.Id).Distinct())
+                {
+                    var env = BigEntityTableEngine.LocalEngine.Find<TestEnv>(nameof(TestEnv), item);
+                    var envParams = BigEntityTableEngine.LocalEngine.Find<TestEnvParam>(nameof(TestEnvParam), "SiteId_EnvId", new object[] { env.SiteId, env.Id });
+                    ep.Add(env.Id, (env, envParams.ToList(), true));
+                }
+
+                foreach (var c in _testCases)
+                {
+                    c.TestSource = sources.FirstOrDefault(p => p.Id == c.TestSource.Id);
+                    c.TestSite = sites.FirstOrDefault(p => p.Id == c.TestSite.Id);
+                    c.TestPage = pages.FirstOrDefault(p => p.Id == c.TestPage.Id);
+                    c.TestCase = BigEntityTableEngine.LocalEngine.Find<TestCase>(nameof(TestCase), c.TestCase.Id);
+
+                    c.TestLogin = testLogins.FirstOrDefault(p => p.Id == c.TestLogin.Id);
+
+                    var key = "globalScripts_" + c.TestSource.Id;
+                    List<TestScript> globalScripts = null;
+                    if (!scriptsDic.TryGetValue(key, out globalScripts))
+                    {
+                        globalScripts = BigEntityTableEngine.LocalEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == c.TestSource.Id && s.SiteId == 0).ToList();
+                        scriptsDic.Add(key, globalScripts);
+                    }
+
+                    key = "siteScripts_" + c.TestSource.Id + "_" + c.TestSite.Id;
+                    List<TestScript> siteScripts = null;
+                    if (!scriptsDic.TryGetValue(key, out siteScripts))
+                    {
+                        siteScripts = BigEntityTableEngine.LocalEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == c.TestSource.Id && s.SiteId == c.TestSite.Id).ToList();
+                        scriptsDic.Add(key, siteScripts);
+                    }
+
+                    c.GlobalTestScripts = globalScripts;
+                    c.SiteTestScripts = siteScripts;
+
+                    c.TestEnv = c.TestEnv == null ? null : ep.FirstOrDefault(p => p.Key == c.TestEnv.Id).Value.env;
+                    c.TestEnvParams = c.TestEnv == null ? null : ep.FirstOrDefault(p => p.Key == c.TestEnv.Id).Value.envParams;
+                }
+                _testCasesChoose = GetSelecteCase().Select(p => p.TestCase.Id).ToList();
+                UCTestCaseSelector1.Init(_testSources, _testSites, _testPages, _testCases, _testCasesChoose);
+
+                Util.SendMsg(this, "刷新成功");
+
+            }
+            catch(Exception ex)
+            {
+                Util.SendMsg(this, ex.Message);
+            }
+
+        }
+
     }
 }

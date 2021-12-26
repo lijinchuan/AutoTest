@@ -20,6 +20,8 @@ namespace AutoTest.UI.UC
         private List<TestPage> _testPages = null;
         private List<TestTask> _testCases = null;
         private List<int> _testCasesChoose = null;
+
+        private volatile bool _load = false;
         
         public UCTestCaseSelector()
         {
@@ -34,6 +36,11 @@ namespace AutoTest.UI.UC
             _testPages = testPages;
             _testCases = testCases;
             _testCasesChoose = testCasesChoose;
+
+            if (_load)
+            {
+                ReLoad();
+            }
         }
 
         public void Reset()
@@ -53,6 +60,7 @@ namespace AutoTest.UI.UC
         {
             //CBBroswer.GetBrowser().GetHost().ShowDevTools();
             ShowTable();
+            _load = true;
         }
 
         public List<TestTask> GetSelecteCase()
@@ -128,6 +136,11 @@ namespace AutoTest.UI.UC
             this.CBBroswer.GetBrowser().MainFrame.EvaluateScriptAsync($"showTable(\"\",\"{sb}\")");
             this.CBBroswer.GetBrowser().MainFrame.EvaluateScriptAsync("chooseTestCases("+JsonConvert.SerializeObject(_testCasesChoose) +")");
 
+        }
+
+        public void ReLoad()
+        {
+            this.CBBroswer.GetBrowser().Reload(true);
         }
 
     }

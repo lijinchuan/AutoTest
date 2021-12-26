@@ -214,6 +214,7 @@
         }
 
         function chooseTestCases(ids) {
+            $(".casecb").prop('checked', false);
             if (ids && ids.length) {
                 for (var i in ids) {
                     $("tr[case-id=" + ids[i] + "] .casecb")[0].click()
