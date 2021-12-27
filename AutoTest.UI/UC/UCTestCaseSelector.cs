@@ -25,6 +25,7 @@ namespace AutoTest.UI.UC
         private List<int> _testCasesChoose = null;
 
         public Action<int> ReTestCaseAction;
+        public Action<int> SelectTestCaseAction;
         private Dictionary<int, TestResult> _testResults = null;
 
         private volatile bool _load = false;
@@ -176,6 +177,11 @@ namespace AutoTest.UI.UC
         public void ReTestCase(int caseid)
         {
             ReTestCaseAction?.BeginInvoke(caseid, null, null);
+        }
+
+        public void SelectTestCase(int caseid)
+        {
+            SelectTestCaseAction?.BeginInvoke(caseid, null, null);
         }
     }
 }

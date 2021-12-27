@@ -36,5 +36,10 @@ namespace AutoTest.UI.WebBrowser
         {
             selector.ReTestCase(caseid);
         }
+
+        public void SelectTestCase(int caseid)
+        {
+            selector.SelectTestCase(caseid);
+        }
     }
 }

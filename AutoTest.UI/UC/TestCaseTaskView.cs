@@ -23,11 +23,14 @@ namespace AutoTest.UI.UC
         private List<int> _testCasesChoose = null;
         private Dictionary<int, TestResult> _testResults = new Dictionary<int, TestResult>();
 
+        public Action<int> SelectTestCaseAction;
+
         public TestCaseTaskView()
         {
             InitializeComponent();
             BtnCancel.Enabled = false;
             UCTestCaseSelector1.ReTestCaseAction += ReTestCase;
+            UCTestCaseSelector1.SelectTestCaseAction += SelectTestCase;
         }
 
         public TestCaseTaskView Init(List<TestSource> testSources, List<TestSite> testSites, List<TestPage> testPages, List<TestTask> testCases, List<int> testCasesChoose)
@@ -230,6 +233,11 @@ namespace AutoTest.UI.UC
         {
             var tasks = _testCases.Where(p => p.TestCase.Id == caseid).ToList();
             this.BeginInvoke(new Action(() => RunTest(tasks, false)));
+        }
+
+        public void SelectTestCase(int caseid)
+        {
+            SelectTestCaseAction?.BeginInvoke(caseid, null, null);
         }
     }
 }

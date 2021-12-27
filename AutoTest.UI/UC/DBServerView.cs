@@ -484,6 +484,14 @@ namespace AutoTest.UI.UC
                     var panel = new UC.TestCaseTaskView();
                     return panel;
                 }, null);
+                testTasksView.SelectTestCaseAction += id =>
+                {
+                    var node = FindNode(tv_DBServers.Nodes, new TestCase { Id = id });
+                    if (node != null)
+                    {
+                        tv_DBServers.SelectedNode = node;
+                    }
+                };
                 testTasksView.OnTaskStart += t =>
                 {
                     var nodeEx = FindNode(tv_DBServers.Nodes, (t as RunTestTask)?.TestCase) as TreeNodeEx;

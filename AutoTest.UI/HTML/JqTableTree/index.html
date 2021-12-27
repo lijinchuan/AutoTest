@@ -244,6 +244,9 @@
 
                   $("#example-advanced .testcasename").contextmenu(function (e) {
                       showMenu(e.originalEvent)
+                  }).dblclick(function(){
+                      var caseid = parseInt($(this).parents().filter("[case-id]").attr('case-id'))
+                      sc.selectTestCase(caseid)
                   })
               }
 
