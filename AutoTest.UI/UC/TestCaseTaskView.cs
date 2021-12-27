@@ -143,7 +143,19 @@ namespace AutoTest.UI.UC
         private void BtnOk_Click(object sender, EventArgs e)
         {
             var tasks = GetSelecteCase();
-            RunTest(tasks,true);
+            if (tasks.Count() > _testResults.Count())
+            {
+                if(new ConfirmDlg("未完成测试询问", "继续测试吗?是-继续，否-全部重新测试").ShowDialog() == DialogResult.OK)
+                {
+                    RunTest(tasks.Where(p=>!_testResults.ContainsKey(p.TestCase.Id)).ToList(), false);
+                    return;
+                }
+                else
+                {
+                    _testResults.Clear();
+                }
+            }
+            RunTest(tasks, true);
         }
 
         public object[] GetRecoverData()
