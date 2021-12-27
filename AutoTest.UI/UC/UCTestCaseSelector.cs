@@ -10,6 +10,9 @@ using System.Windows.Forms;
 using AutoTest.Domain.Entity;
 using AutoTest.UI.WebBrowser;
 using Newtonsoft.Json;
+using CefSharp.Internals;
+using System.Threading;
+using CefSharp;
 
 namespace AutoTest.UI.UC
 {
@@ -21,11 +24,20 @@ namespace AutoTest.UI.UC
         private List<TestTask> _testCases = null;
         private List<int> _testCasesChoose = null;
 
+        public Action<int> ReTestCaseAction;
+
         private volatile bool _load = false;
         
         public UCTestCaseSelector()
         {
             InitializeComponent();
+
+            //这个一定要开启，否则注入C#的对象无效
+            this.CBBroswer.JavascriptObjectRepository.Settings.LegacyBindingEnabled = true;
+            //构造要注入的对象，参数为当前线程的调度上下文
+            var cSObj = new CSUCTestCaseSelector(SynchronizationContext.Current, this);
+            //注册C#对象
+            this.CBBroswer.JavascriptObjectRepository.Register("sc", cSObj, false, BindingOptions.DefaultBinder);
         }
 
         public void Init(List<TestSource> testSources, List<TestSite> testSites, List<TestPage> testPages, List<TestTask> testCases,
@@ -53,7 +65,9 @@ namespace AutoTest.UI.UC
             base.OnLoad(e);
             CBBroswer.MenuHandler = new MenuHandler();
             CBBroswer.FrameLoadEnd += CBBroswer_FrameLoadEnd;
+            
             CBBroswer.LoadUrl($@"{LJC.FrameWorkV3.Comm.CommFun.GetCurrentAppForder()}HTML\JqTableTree\index.html");
+
         }
 
         private void CBBroswer_FrameLoadEnd(object sender, CefSharp.FrameLoadEndEventArgs e)
@@ -133,7 +147,7 @@ namespace AutoTest.UI.UC
 
                         foreach(var c in _testCases.Where(p => p.TestCase.PageId == g.Id).OrderBy(p => p.TestCase.Order))
                         {
-                            sb.Append($"<tr data-tt-id='{s.Id}-{t.Id}-{g.Id}-{c.TestCase.Id}' case-id='{c.TestCase.Id}' data-tt-parent-id='{s.Id}-{t.Id}-{g.Id}' class='leaf' style='display:none;'><td><span class='indenter'></span><span class='file'><input class='casecb' type='checkbox' />{c.TestCase.CaseName}</span></td><td class='testaccount'>{c.TestLogin?.AccountInfo}</td><td class='testenv'>{c.TestEnv?.EnvName}</td><td class='testresult tv_ready'></td></tr>");
+                            sb.Append($"<tr data-tt-id='{s.Id}-{t.Id}-{g.Id}-{c.TestCase.Id}' case-id='{c.TestCase.Id}' data-tt-parent-id='{s.Id}-{t.Id}-{g.Id}' class='leaf' style='display:none;'><td><span class='indenter'></span><span class='file testcasename'><input class='casecb' type='checkbox' />{c.TestCase.CaseName}</span></td><td class='testaccount'>{c.TestLogin?.AccountInfo}</td><td class='testenv'>{c.TestEnv?.EnvName}</td><td class='testresult tv_ready'></td></tr>");
                         }
                     }
                 }
@@ -149,5 +163,9 @@ namespace AutoTest.UI.UC
             this.CBBroswer.GetBrowser().Reload(true);
         }
 
+        public void ReTestCase(int caseid)
+        {
+            ReTestCaseAction?.BeginInvoke(caseid, null, null);
+        }
     }
 }

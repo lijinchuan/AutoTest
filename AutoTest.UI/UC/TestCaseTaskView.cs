@@ -26,6 +26,7 @@ namespace AutoTest.UI.UC
         {
             InitializeComponent();
             BtnCancel.Enabled = false;
+            UCTestCaseSelector1.ReTestCaseAction += ReTestCase;
         }
 
         public TestCaseTaskView Init(List<TestSource> testSources, List<TestSite> testSites, List<TestPage> testPages, List<TestTask> testCases, List<int> testCasesChoose)
@@ -36,6 +37,7 @@ namespace AutoTest.UI.UC
             _testCases = testCases;
             _testCasesChoose = testCasesChoose;
             UCTestCaseSelector1.Init(testSources, testSites, testPages, testCases, testCasesChoose);
+            
             return this;
         }
 
@@ -44,9 +46,8 @@ namespace AutoTest.UI.UC
             return UCTestCaseSelector1.GetSelecteCase();
         }
 
-        private void BtnOk_Click(object sender, EventArgs e)
+        private void RunTest(List<TestTask> tasks,bool resetResult)
         {
-            var tasks = GetSelecteCase();
             if (!tasks.Any())
             {
                 return;
@@ -128,6 +129,12 @@ namespace AutoTest.UI.UC
                     testPanel.CancelTasks();
                 }
             }
+        }
+
+        private void BtnOk_Click(object sender, EventArgs e)
+        {
+            var tasks = GetSelecteCase();
+            RunTest(tasks,true);
         }
 
         public object[] GetRecoverData()
@@ -212,5 +219,10 @@ namespace AutoTest.UI.UC
 
         }
 
+        private void ReTestCase(int caseid)
+        {
+            var tasks = _testCases.Where(p => p.TestCase.Id == caseid).ToList();
+            this.BeginInvoke(new Action(() => RunTest(tasks, false)));
+        }
     }
 }
