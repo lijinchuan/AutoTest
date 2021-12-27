@@ -68,12 +68,13 @@ namespace AutoTest.UI.UC
             // 
             // BtnRefrash
             // 
-            this.BtnRefrash.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.BtnRefrash.Location = new System.Drawing.Point(297, 335);
+
+            this.BtnRefrash.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.BtnRefrash.Location = new System.Drawing.Point(3, 334);
             this.BtnRefrash.Name = "BtnRefrash";
-            this.BtnRefrash.Size = new System.Drawing.Size(75, 30);
+            this.BtnRefrash.Size = new System.Drawing.Size(199, 30);
             this.BtnRefrash.TabIndex = 3;
-            this.BtnRefrash.Text = "更新";
+            this.BtnRefrash.Text = "测试填写数据有变化，手动更新下";
             this.BtnRefrash.UseVisualStyleBackColor = true;
             this.BtnRefrash.Click += new System.EventHandler(this.BtnRefrash_Click);
             // 

@@ -25,6 +25,7 @@ namespace AutoTest.UI.UC
         private List<int> _testCasesChoose = null;
 
         public Action<int> ReTestCaseAction;
+        private Dictionary<int, TestResult> _testResults = null;
 
         private volatile bool _load = false;
         
@@ -41,13 +42,14 @@ namespace AutoTest.UI.UC
         }
 
         public void Init(List<TestSource> testSources, List<TestSite> testSites, List<TestPage> testPages, List<TestTask> testCases,
-            List<int> testCasesChoose)
+            List<int> testCasesChoose, Dictionary<int, TestResult> testResults)
         {
             _testSources = testSources;
             _testSites = testSites;
             _testPages = testPages;
             _testCases = testCases;
             _testCasesChoose = testCasesChoose;
+            _testResults = testResults;
 
             if (_load)
             {
@@ -147,7 +149,7 @@ namespace AutoTest.UI.UC
 
                         foreach(var c in _testCases.Where(p => p.TestCase.PageId == g.Id).OrderBy(p => p.TestCase.Order))
                         {
-                            sb.Append($"<tr data-tt-id='{s.Id}-{t.Id}-{g.Id}-{c.TestCase.Id}' case-id='{c.TestCase.Id}' data-tt-parent-id='{s.Id}-{t.Id}-{g.Id}' class='leaf' style='display:none;'><td><span class='indenter'></span><span class='file testcasename'><input class='casecb' type='checkbox' />{c.TestCase.CaseName}</span></td><td class='testaccount'>{c.TestLogin?.AccountInfo}</td><td class='testenv'>{c.TestEnv?.EnvName}</td><td class='testresult tv_ready'></td></tr>");
+                            sb.Append($"<tr data-tt-id='{s.Id}-{t.Id}-{g.Id}-{c.TestCase.Id}' case-id='{c.TestCase.Id}' data-tt-parent-id='{s.Id}-{t.Id}-{g.Id}' class='leaf' style='display:none;'><td class='testcasename'><span class='indenter'></span><span class='file'><input class='casecb' type='checkbox' />{c.TestCase.CaseName}</span></td><td class='testaccount'>{c.TestLogin?.AccountInfo}</td><td class='testenv'>{c.TestEnv?.EnvName}</td><td class='testresult tv_ready'></td></tr>");
                         }
                     }
                 }
@@ -155,6 +157,14 @@ namespace AutoTest.UI.UC
 
             this.CBBroswer.GetBrowser().MainFrame.EvaluateScriptAsync($"showTable(\"\",\"{sb}\")");
             this.CBBroswer.GetBrowser().MainFrame.EvaluateScriptAsync("chooseTestCases("+JsonConvert.SerializeObject(_testCasesChoose) +")");
+
+            if (_testResults != null)
+            {
+                foreach(var r in _testResults)
+                {
+                    SetTestResult(r.Value);
+                }
+            }
 
         }
 

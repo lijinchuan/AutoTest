@@ -20,7 +20,7 @@ namespace AutoTest.UI.SubForm
 
         public TestCaseSelectorDlg Init(List<TestSource> testSources, List<TestSite> testSites, List<TestPage> testPages, List<TestTask> testCases)
         {
-            UCTestCaseSelector.Init(testSources, testSites, testPages, testCases,testCases.Select(p=>p.TestCase.Id).ToList());
+            UCTestCaseSelector.Init(testSources, testSites, testPages, testCases,testCases.Select(p=>p.TestCase.Id).ToList(),null);
             return this;
         }
 

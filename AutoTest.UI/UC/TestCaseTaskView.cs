@@ -21,6 +21,7 @@ namespace AutoTest.UI.UC
         private List<TestPage> _testPages = null;
         private List<TestTask> _testCases = null;
         private List<int> _testCasesChoose = null;
+        private Dictionary<int, TestResult> _testResults = new Dictionary<int, TestResult>();
 
         public TestCaseTaskView()
         {
@@ -36,7 +37,7 @@ namespace AutoTest.UI.UC
             _testPages = testPages;
             _testCases = testCases;
             _testCasesChoose = testCasesChoose;
-            UCTestCaseSelector1.Init(testSources, testSites, testPages, testCases, testCasesChoose);
+            UCTestCaseSelector1.Init(testSources, testSites, testPages, testCases, testCasesChoose, _testResults);
             
             return this;
         }
@@ -55,7 +56,10 @@ namespace AutoTest.UI.UC
             TestPanel testPanel = null;
             if (new ConfirmDlg("询问", "执行测试吗？").ShowDialog() == DialogResult.OK)
             {
-                UCTestCaseSelector1.Reset();
+                if (resetResult)
+                {
+                    UCTestCaseSelector1.Reset();
+                }
                 testPanel = (TestPanel)Util.TryAddToMainTab(this, $"执行测试", () =>
                 {
                     var panel = new TestPanel("执行测试");
@@ -92,11 +96,13 @@ namespace AutoTest.UI.UC
                 {
                     tk.ResultNotify += r =>
                     {
+                        _testResults[r.TestCaseId] = r;
                         UCTestCaseSelector1.SetTestResult(r);
                     };
                 }
 
                 this.BtnOk.Enabled = false;
+                BtnRefrash.Enabled = false;
                 BtnCancel.Enabled = true;
 
                 BtnCancel.Click += BtnCancel_Click;
@@ -109,7 +115,7 @@ namespace AutoTest.UI.UC
                     {
                         if (testPanel.IsDisposed || !testPanel.IsRunning())
                         {
-                            BeginInvoke(new Action(() => { BtnOk.Enabled = true; BtnCancel.Enabled = false; BtnCancel.Click -= BtnCancel_Click; }));
+                            BeginInvoke(new Action(() => {BtnOk.Enabled = true; BtnCancel.Enabled = false;BtnRefrash.Enabled = true; BtnCancel.Click -= BtnCancel_Click; Util.SelectedTab(this, this); }));
                             return true;
                         }
                         return false;
@@ -140,7 +146,7 @@ namespace AutoTest.UI.UC
         public object[] GetRecoverData()
         {
             _testCasesChoose = GetSelecteCase().Select(p => p.TestCase.Id).ToList();
-            return new object[] { _testSources, _testSites, _testPages, _testCases, _testCasesChoose, Text };
+            return new object[] { _testSources, _testSites, _testPages, _testCases, _testCasesChoose, Text, _testResults };
         }
 
         public IRecoverAble Recover(object[] recoverData)
@@ -151,7 +157,8 @@ namespace AutoTest.UI.UC
             _testPages = (List<TestPage>)recoverData[2];
             _testCases = (List<TestTask>)recoverData[3];
             _testCasesChoose = (List<int>)recoverData[4];
-            UCTestCaseSelector1.Init(_testSources, _testSites, _testPages, _testCases, _testCasesChoose);
+            _testResults = (Dictionary<int, TestResult>)recoverData[6];
+            UCTestCaseSelector1.Init(_testSources, _testSites, _testPages, _testCases, _testCasesChoose, _testResults);
             return this;
         }
 
@@ -207,7 +214,7 @@ namespace AutoTest.UI.UC
                     c.TestEnvParams = c.TestEnv == null ? null : ep.FirstOrDefault(p => p.Key == c.TestEnv.Id).Value.envParams;
                 }
                 _testCasesChoose = GetSelecteCase().Select(p => p.TestCase.Id).ToList();
-                UCTestCaseSelector1.Init(_testSources, _testSites, _testPages, _testCases, _testCasesChoose);
+                UCTestCaseSelector1.Init(_testSources, _testSites, _testPages, _testCases, _testCasesChoose, _testResults);
 
                 Util.SendMsg(this, "刷新成功");
 

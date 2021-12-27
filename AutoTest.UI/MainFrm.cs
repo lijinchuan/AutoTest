@@ -287,6 +287,19 @@ namespace AutoTest.UI
         {
         }
 
+        public void SelectedTab(TabPage selpage)
+        {
+            foreach (TabPage page in this.TabControl.TabPages)
+            {
+
+                if (page == selpage)
+                {
+                    TabControl.SelectedTab = page;
+                    break;
+                }
+            }
+        }
+
         public bool AddTab(string title, TabPage addpage)
         {
             bool isExists = false;

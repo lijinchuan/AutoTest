@@ -178,6 +178,7 @@
                       context.style.top = ScollPostion().top + y - $("#context").height() + "px";
                   }
                   opTarget = e.target
+                  $(opTarget).parents().filter("[case-id]").addClass('selected')
                   // return false可以关闭系统默认菜单
                   return false;
               };

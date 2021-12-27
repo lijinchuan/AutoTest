@@ -164,6 +164,20 @@ namespace AutoTest.UI
             return null;
         }
 
+        public static void SelectedTab(Control ctl, TabPage selpage)
+        {
+            var parent = ctl;
+            while (parent != null)
+            {
+                if (parent is MainFrm)
+                {
+                   ((MainFrm)parent).SelectedTab(selpage);
+                    break;
+                }
+                parent = parent.Parent;
+            }
+        }
+
         public static bool AddToMainTab(Control ctl, string title, TabPage page)
         {
             if (string.IsNullOrWhiteSpace(page.Text))
