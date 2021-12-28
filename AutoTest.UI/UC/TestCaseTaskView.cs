@@ -147,11 +147,8 @@ namespace AutoTest.UI.UC
                     RunTest(tasks.Where(p => !_testResults.ContainsKey(p.TestCase.Id)).ToList(), false);
                     return;
                 }
-                else
-                {
-                    _testResults.Clear();
-                }
             }
+            _testResults.Clear();
             RunTest(tasks, true);
         }
 

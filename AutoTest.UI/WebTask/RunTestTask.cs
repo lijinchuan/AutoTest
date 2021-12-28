@@ -519,6 +519,7 @@ namespace AutoTest.UI.WebTask
             BigEntityTableEngine.LocalEngine.Insert(nameof(TestResult), _testResult);
 
             _notify?.Invoke(_testResult);
+            Util.NotifyTestResultAction?.Invoke(_testResult);
         }
 
         /// <summary>

@@ -402,36 +402,7 @@ namespace AutoTest.UI.UC
                     TestPage = testPage,
                     TestSite = testSite,
                     TestEnv = ep.env,
-                    TestEnvParams = ep.envParams,
-                    ResultNotify = r =>
-                    {
-                        BeginInvoke(new Action(() =>
-                        {
-                            var lastNode = node;
-                            if (lastNode.Parent == null)
-                            {
-                                lastNode = FindNode(tv_DBServers.Nodes, lastNode.Tag);
-                            }
-                            if (lastNode == null)
-                            {
-                                return;
-                            }
-                            var nodeEx = (TreeNodeEx)lastNode;
-                            var imgIndex = 19;
-                            if (r.Success)
-                            {
-                                if (r.HasWarn)
-                                {
-                                    imgIndex = 21;
-                                }
-                            }
-                            else
-                            {
-                                imgIndex = 20;
-                            }
-                            nodeEx.SelectedImageIndex = nodeEx.ImageIndex = nodeEx.ExpandImgIndex = nodeEx.CollapseImgIndex = imgIndex;
-                        }));
-                    }
+                    TestEnvParams = ep.envParams
                 });
             }
 
@@ -485,15 +456,58 @@ namespace AutoTest.UI.UC
                     return panel;
                 }, null);
 
-                testTasksView.OnTaskStart += t =>
-                {
-                    var nodeEx = FindNode(tv_DBServers.Nodes, (t as RunTestTask)?.TestCase) as TreeNodeEx;
-                    if (nodeEx != null)
-                    {
-                        nodeEx.SelectedImageIndex = nodeEx.ImageIndex = nodeEx.ExpandImgIndex = nodeEx.CollapseImgIndex = 18;
-                    }
-                };
                 testTasksView.Init(sources, testSites, testPages, testTaskList, testTaskList.Select(p => p.TestCase.Id).ToList());
+            }
+        }
+
+        private void NotifyTestResult(TestResult r)
+        {
+            BeginInvoke(new Action(() =>
+            {
+                var lastNode = FindNode(tv_DBServers.Nodes, new TestCase
+                {
+                    Id=r.TestCaseId
+                });
+                if (lastNode == null)
+                {
+                    return;
+                }
+                tv_DBServers.SelectedNode = lastNode;
+                var nodeEx = (TreeNodeEx)lastNode;
+                var imgIndex = 19;
+                if (r.Success)
+                {
+                    if (r.HasWarn)
+                    {
+                        imgIndex = 21;
+                    }
+                }
+                else
+                {
+                    imgIndex = 20;
+                }
+                nodeEx.SelectedImageIndex = nodeEx.ImageIndex = nodeEx.ExpandImgIndex = nodeEx.CollapseImgIndex = imgIndex;
+            }));
+
+        }
+
+        private void NotifyTestStart(IWebTask webTask)
+        {
+            var testcase = (webTask as RunTestTask)?.TestCase;
+            if (testcase == null)
+            {
+                return;
+            }
+            var lastNode = FindNode(tv_DBServers.Nodes, testcase);
+            if (lastNode == null)
+            {
+                return;
+            }
+            tv_DBServers.SelectedNode = lastNode;
+            var nodeEx = lastNode as TreeNodeEx;
+            if (nodeEx != null)
+            {
+                nodeEx.SelectedImageIndex = nodeEx.ImageIndex = nodeEx.ExpandImgIndex = nodeEx.CollapseImgIndex = 18;
             }
         }
 
@@ -1251,6 +1265,10 @@ namespace AutoTest.UI.UC
 
             Util.SelectTestCaseAction = null;
             Util.SelectTestCaseAction += SelectTestCase;
+            Util.NotifyTestResultAction = null;
+            Util.NotifyTestResultAction += NotifyTestResult;
+            Util.NotifyTestStartAction = null;
+            Util.NotifyTestStartAction += NotifyTestStart;
         }
     }
 }

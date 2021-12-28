@@ -97,6 +97,7 @@ namespace AutoTest.UI.UC
         private void WebView_OnTaskStart(IWebTask task)
         {
             OnTaskStart?.Invoke(task);
+            Util.NotifyTestStartAction?.Invoke(task);
         }
 
         public void Load()

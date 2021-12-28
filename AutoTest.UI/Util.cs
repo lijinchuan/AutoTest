@@ -1,5 +1,6 @@
 ﻿using AutoTest.Domain.Entity;
 using AutoTest.UI.SubForm;
+using AutoTest.UI.WebTask;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -17,6 +18,18 @@ namespace AutoTest.UI
         private static string MsgType = "";
 
         public static Action<int> SelectTestCaseAction
+        {
+            get;
+            set;
+        }
+
+        public static Action<TestResult> NotifyTestResultAction
+        {
+            get;
+            set;
+        }
+
+        public static Action<IWebTask> NotifyTestStartAction
         {
             get;
             set;
