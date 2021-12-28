@@ -207,7 +207,7 @@ namespace AutoTest.UI.UC
             {
                 testEnvParams = BigEntityTableEngine.LocalEngine.Find<TestEnvParam>(nameof(TestEnvParam), "SiteId_EnvId", new object[] { testSite.Id, currentEnv.Id }).ToList();
             }
-            return (currentEnv, testEnvParams, true);
+            return (currentEnv, testEnvParams, testEnvs.Count() > 0);
         }
 
         private List<TreeNode> GetTestCaseTaskList(TreeNode node)
@@ -484,14 +484,7 @@ namespace AutoTest.UI.UC
                     var panel = new UC.TestCaseTaskView();
                     return panel;
                 }, null);
-                testTasksView.SelectTestCaseAction += id =>
-                {
-                    var node = FindNode(tv_DBServers.Nodes, new TestCase { Id = id });
-                    if (node != null)
-                    {
-                        tv_DBServers.SelectedNode = node;
-                    }
-                };
+
                 testTasksView.OnTaskStart += t =>
                 {
                     var nodeEx = FindNode(tv_DBServers.Nodes, (t as RunTestTask)?.TestCase) as TreeNodeEx;
@@ -501,6 +494,15 @@ namespace AutoTest.UI.UC
                     }
                 };
                 testTasksView.Init(sources, testSites, testPages, testTaskList, testTaskList.Select(p => p.TestCase.Id).ToList());
+            }
+        }
+
+        public void SelectTestCase(int caseid)
+        {
+            var node = FindNode(tv_DBServers.Nodes, new TestCase { Id = caseid });
+            if (node != null)
+            {
+                tv_DBServers.SelectedNode = node;
             }
         }
 
@@ -1243,23 +1245,12 @@ namespace AutoTest.UI.UC
             Mark_Local();
         }
 
-        private void MarkResource()
+        protected override void OnLoad(EventArgs e)
         {
+            base.OnLoad(e);
 
-        }
-
-        private void ClearMarkResource()
-        {
-
-        }
-
-        private void TTSM_CreateIndex_Click(object sender, EventArgs e)
-        {
-            var _node = tv_DBServers.SelectedNode;
-        }
-
-        private void TTSM_DelIndex_Click(object sender, EventArgs e)
-        {
+            Util.SelectTestCaseAction = null;
+            Util.SelectTestCaseAction += SelectTestCase;
         }
     }
 }

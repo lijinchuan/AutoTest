@@ -23,14 +23,11 @@ namespace AutoTest.UI.UC
         private List<int> _testCasesChoose = null;
         private Dictionary<int, TestResult> _testResults = new Dictionary<int, TestResult>();
 
-        public Action<int> SelectTestCaseAction;
-
         public TestCaseTaskView()
         {
             InitializeComponent();
             BtnCancel.Enabled = false;
             UCTestCaseSelector1.ReTestCaseAction += ReTestCase;
-            UCTestCaseSelector1.SelectTestCaseAction += SelectTestCase;
         }
 
         public TestCaseTaskView Init(List<TestSource> testSources, List<TestSite> testSites, List<TestPage> testPages, List<TestTask> testCases, List<int> testCasesChoose)
@@ -143,11 +140,11 @@ namespace AutoTest.UI.UC
         private void BtnOk_Click(object sender, EventArgs e)
         {
             var tasks = GetSelecteCase();
-            if (tasks.Count() > _testResults.Count())
+            if (tasks.Count() > _testResults.Count() && _testResults.Count() > 0)
             {
-                if(new ConfirmDlg("未完成测试询问", "继续测试吗?是-继续，否-全部重新测试").ShowDialog() == DialogResult.OK)
+                if (new ConfirmDlg("未完成测试询问", "继续测试吗?是-继续，否-全部重新测试").ShowDialog() == DialogResult.OK)
                 {
-                    RunTest(tasks.Where(p=>!_testResults.ContainsKey(p.TestCase.Id)).ToList(), false);
+                    RunTest(tasks.Where(p => !_testResults.ContainsKey(p.TestCase.Id)).ToList(), false);
                     return;
                 }
                 else
@@ -245,11 +242,6 @@ namespace AutoTest.UI.UC
         {
             var tasks = _testCases.Where(p => p.TestCase.Id == caseid).ToList();
             this.BeginInvoke(new Action(() => RunTest(tasks, false)));
-        }
-
-        public void SelectTestCase(int caseid)
-        {
-            SelectTestCaseAction?.BeginInvoke(caseid, null, null);
         }
     }
 }

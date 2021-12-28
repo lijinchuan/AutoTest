@@ -16,6 +16,12 @@ namespace AutoTest.UI
 
         private static string MsgType = "";
 
+        public static Action<int> SelectTestCaseAction
+        {
+            get;
+            set;
+        }
+
         public static void SendMsg(Control ctl, string msg, uint showSecs = 5)
         {
             var parent = ctl;
