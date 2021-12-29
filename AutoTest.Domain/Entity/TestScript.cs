@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace AutoTest.Domain.Entity
 {
     [Serializable]
-    public class TestScript:IComparable,ISearch
+    public class TestScript:IUpdate,ISearch
     {
         public static readonly string Index3 = $"{nameof(SourceId)}_{nameof(SiteId)}_{nameof(ScriptName)}";
 
@@ -67,6 +67,24 @@ namespace AutoTest.Domain.Entity
             }
 
             return 1;
+        }
+
+        public IComparable GetParentUpdate()
+        {
+            if (SiteId == 0)
+            {
+                return new TestSource
+                {
+                    Id=SourceId
+                };
+            }
+            else
+            {
+                return new TestSite
+                {
+                    Id=SiteId
+                };
+            }
         }
 
         public bool Search(string wd)

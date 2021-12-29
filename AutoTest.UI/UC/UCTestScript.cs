@@ -15,7 +15,6 @@ namespace AutoTest.UI.UC
     public partial class UCTestScript : TabPage, ISaveAble
     {
         private TestScript _testScript;
-        private Action _callBack;
         private List<TestScript> _testScripts;
 
         public UCTestScript()
@@ -23,12 +22,11 @@ namespace AutoTest.UI.UC
             InitializeComponent();
         }
 
-        public UCTestScript(TestScript testScript,Action callBack,List<TestScript> testScripts)
+        public UCTestScript(TestScript testScript,List<TestScript> testScripts)
         {
             InitializeComponent();
 
             this._testScript = testScript;
-            this._callBack = callBack;
             _testScripts = testScripts;
 
             if (_testScripts != null && _testScripts.Count > 0)
@@ -75,12 +73,11 @@ namespace AutoTest.UI.UC
             else
             {
                 BigEntityTableEngine.LocalEngine.Update(nameof(TestScript), _testScript);
+                EventBus.NotifyTestThingChangeAction?.Invoke(_testScript);
                 Util.SendMsg(this, "更新脚本成功");
             }
 
             LogHelper.Instance.Info($"保存testScript：{JsonConvert.SerializeObject(_testScript)}");
-
-            _callBack?.Invoke();
         }
     }
 }

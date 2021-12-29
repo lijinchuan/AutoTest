@@ -75,6 +75,7 @@
     <Compile Include="INodeContents.cs" />
     <Compile Include="IOrder.cs" />
     <Compile Include="ISearch.cs" />
+    <Compile Include="IUpade.cs" />
     <Compile Include="Model\WebRequestData.cs" />
     <Compile Include="Model\WebVar.cs" />
     <Compile Include="NodeContents.cs" />

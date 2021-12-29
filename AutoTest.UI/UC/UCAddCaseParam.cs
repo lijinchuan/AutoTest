@@ -56,20 +56,6 @@ namespace AutoTest.UI.UC
 
         private bool fromlogflag = false;
 
-        private Action _callBack;
-
-        public Action CallBack
-        {
-            get
-            {
-                return _callBack;
-            }
-            set
-            {
-                _callBack = value;
-            }
-        }
-
         public UCAddCaseParam()
         {
             InitializeComponent();
@@ -78,7 +64,7 @@ namespace AutoTest.UI.UC
             rawTextBox.ScrollBars = ScrollBars.Both;
         }
 
-        public UCAddCaseParam(TestSite testSite,TestPage testPage,TestCase testCase,Action callBack)
+        public UCAddCaseParam(TestSite testSite,TestPage testPage,TestCase testCase)
         {
             InitializeComponent();
             //rawTextBox.TextChanged += RawTextBox_TextChanged;
@@ -88,7 +74,6 @@ namespace AutoTest.UI.UC
             _testSite = testSite;
             _testPage = testPage;
             _testCase = testCase;
-            _callBack = callBack;
 
             var scripts = BigEntityTableEngine.LocalEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == testSite.SourceId && s.SiteId == 0).ToList();
             var siteScripts = BigEntityTableEngine.LocalEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == testSite.SourceId && s.SiteId == testSite.Id).ToList();
@@ -1483,11 +1468,7 @@ namespace AutoTest.UI.UC
 
                 if (ischanged || force)
                 {
-                    if (_callBack == null)
-                    {
-                        Util.SendMsg(this, $"注意：{this._testCase.CaseName}用例已保存成功，运行测试前请手动刷新左边列表。", 30);
-                    }
-                    _callBack?.Invoke();
+                    EventBus.NotifyTestThingChangeAction?.Invoke(_testCase);
                 }
 
                 

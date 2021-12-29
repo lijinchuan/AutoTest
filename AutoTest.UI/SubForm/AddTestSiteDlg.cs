@@ -52,23 +52,28 @@ namespace AutoTest.UI.SubForm
         {
             if (_siteId == 0)
             {
-                BigEntityTableEngine.LocalEngine.Insert(nameof(TestSite), new TestSite
+                var site = new TestSite
                 {
                     Name = TBName.Text,
                     CheckLoginCode = TBCode.Text,
                     SourceId = _sourceId
-                });
+                };
+                BigEntityTableEngine.LocalEngine.Insert(nameof(TestSite), site);
 
+                EventBus.NotifyTestThingAddAction?.Invoke(site);
             }
             else
             {
-                BigEntityTableEngine.LocalEngine.Update(nameof(TestSite), new TestSite
+                var site = new TestSite
                 {
-                    Id=_siteId,
+                    Id = _siteId,
                     Name = TBName.Text,
                     CheckLoginCode = TBCode.Text,
                     SourceId = _sourceId
-                });
+                };
+                BigEntityTableEngine.LocalEngine.Update(nameof(TestSite), site);
+
+                EventBus.NotifyTestThingChangeAction?.Invoke(site);
             }
 
             DialogResult = DialogResult.OK;

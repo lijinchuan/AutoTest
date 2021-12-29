@@ -87,17 +87,22 @@ namespace AutoTest.UI.SubForm
                 };
                 BigEntityTableEngine.LocalEngine.Insert(nameof(TestPage), page);
                 _pageId = page.Id;
+
+                EventBus.NotifyTestThingAddAction?.Invoke(page);
             }
             else
             {
-                BigEntityTableEngine.LocalEngine.Update(nameof(TestPage), new TestPage
+                var page = new TestPage
                 {
                     Id = _pageId,
                     Name = TBName.Text.Trim(),
                     Order = (int)NUDOrder.Value,
                     SiteId = _siteId,
                     Url = TBUrl.Text
-                });
+                };
+                BigEntityTableEngine.LocalEngine.Update(nameof(TestPage), page);
+
+                EventBus.NotifyTestThingChangeAction?.Invoke(page);
             }
 
             var order = (int)NUDOrder.Value;

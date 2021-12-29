@@ -120,6 +120,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AutofacBuilder.cs" />
+    <Compile Include="EventBus.cs" />
     <Compile Include="EventListener\EventListener.cs" />
     <Compile Include="EventListener\IEventListener.cs" />
     <Compile Include="EventListener\TestEventListener.cs" />

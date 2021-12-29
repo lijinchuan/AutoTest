@@ -181,7 +181,7 @@ namespace AutoTest.UI.UC
 
         public void SelectTestCase(int caseid)
         {
-            Util.SelectTestCaseAction?.BeginInvoke(caseid, null, null);
+            EventBus.SelectTestCaseAction?.BeginInvoke(caseid, null, null);
         }
     }
 }

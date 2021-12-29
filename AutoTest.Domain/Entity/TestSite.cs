@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace AutoTest.Domain.Entity
 {
     [Serializable]
-    public class TestSite:IComparable,ISearch
+    public class TestSite:IUpdate,ISearch
     {
         public int Id
         {
@@ -41,6 +41,14 @@ namespace AutoTest.Domain.Entity
             }
 
             return 1;
+        }
+
+        public IComparable GetParentUpdate()
+        {
+            return new TestSource
+            {
+                Id=SourceId
+            };
         }
 
         public bool Search(string wd)

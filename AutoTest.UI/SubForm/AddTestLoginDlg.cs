@@ -79,7 +79,7 @@ namespace AutoTest.UI.SubForm
 
             if (_siteLoginId == 0)
             {
-                BigEntityTableEngine.LocalEngine.Insert(nameof(TestLogin), new TestLogin
+                var login = new TestLogin
                 {
                     AccountInfo = TBAccountName.Text.Trim(),
                     IsMannual = CBManual.Checked,
@@ -88,20 +88,26 @@ namespace AutoTest.UI.SubForm
                     SiteId = _siteId,
                     Url = TBUrl.Text,
                     Used = !testLoginList.Any(p => p.Used)
-                });
+                };
+                BigEntityTableEngine.LocalEngine.Insert(nameof(TestLogin), login);
+
+                EventBus.NotifyTestThingAddAction?.Invoke(login);
             }
             else
             {
-                BigEntityTableEngine.LocalEngine.Update(nameof(TestLogin), new TestLogin
+                var login = new TestLogin
                 {
-                    Id=_siteLoginId,
+                    Id = _siteLoginId,
                     AccountInfo = TBAccountName.Text.Trim(),
                     IsMannual = CBManual.Checked,
                     LoginCode = TBLoginCode.Text,
                     ValidCode = TBValidCode.Text,
                     SiteId = _siteId,
                     Url = TBUrl.Text
-                });
+                };
+                BigEntityTableEngine.LocalEngine.Update(nameof(TestLogin), login);
+
+                EventBus.NotifyTestThingChangeAction?.Invoke(login);
             }
 
             this.DialogResult = DialogResult.OK;
