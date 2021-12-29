@@ -87,8 +87,6 @@ namespace AutoTest.UI.SubForm
                 };
                 BigEntityTableEngine.LocalEngine.Insert(nameof(TestPage), page);
                 _pageId = page.Id;
-
-                EventBus.NotifyTestThingAddAction?.Invoke(page);
             }
             else
             {

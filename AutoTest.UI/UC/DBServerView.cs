@@ -902,7 +902,7 @@ namespace AutoTest.UI.UC
 
                                     BigEntityTableEngine.LocalEngine.Insert(nameof(TestScript), testScript);
                                     var scripts = BigEntityTableEngine.LocalEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == testResource.Id && s.SiteId == 0).ToList();
-
+                                    ReLoadDBObj(selnode);
                                     Util.AddToMainTab(this, $"{testResource.SourceName}_{testSite?.Name}_{testScript.ScriptName}(脚本)",
                                         new UC.UCTestScript(testScript, scripts));
                                 }
@@ -923,7 +923,7 @@ namespace AutoTest.UI.UC
                                 var step1dlg = new AddTestCaseDlg(testPage.Id, 0, scripts, selnode.Tag as TestCase);
                                 if (step1dlg.ShowDialog() == DialogResult.OK)
                                 {
-                                    ReLoadDBObj(selnode);
+                                    ReLoadDBObj(selnode.Parent);
                                     Util.AddToMainTab(this, $"[{testSite.Name}]-{testPage.Name}-{step1dlg.TestCase.CaseName}", new UC.UCAddCaseParam(testSite, testPage, step1dlg.TestCase));
                                 }
                             }
@@ -941,6 +941,10 @@ namespace AutoTest.UI.UC
                                     //AccountInfo=currentTestLogin.AccountInfo
                                 };
                                 var dlg = new AddTestLoginDlg(testSite.Id, testLogin);
+                                if (dlg.ShowDialog() == DialogResult.OK)
+                                {
+                                    ReLoadDBObj(selnode.Parent);
+                                }
                             }
                             break;
                         }
@@ -1253,7 +1257,6 @@ namespace AutoTest.UI.UC
             EventBus.SelectTestCaseAction += SelectTestCase;
             EventBus.NotifyTestResultAction += NotifyTestResult;
             EventBus.NotifyTestStartAction += NotifyTestStart;
-            EventBus.NotifyTestThingAddAction += NotifyTestThingAdd;
             EventBus.NotifyTestThingChangeAction += NotifyTestThingChange;
         }
     }

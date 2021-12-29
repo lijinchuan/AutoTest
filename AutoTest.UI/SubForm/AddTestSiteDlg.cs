@@ -59,8 +59,6 @@ namespace AutoTest.UI.SubForm
                     SourceId = _sourceId
                 };
                 BigEntityTableEngine.LocalEngine.Insert(nameof(TestSite), site);
-
-                EventBus.NotifyTestThingAddAction?.Invoke(site);
             }
             else
             {

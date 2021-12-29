@@ -90,8 +90,6 @@ namespace AutoTest.UI.SubForm
                     Used = !testLoginList.Any(p => p.Used)
                 };
                 BigEntityTableEngine.LocalEngine.Insert(nameof(TestLogin), login);
-
-                EventBus.NotifyTestThingAddAction?.Invoke(login);
             }
             else
             {
