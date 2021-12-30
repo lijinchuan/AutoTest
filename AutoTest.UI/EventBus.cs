@@ -29,7 +29,7 @@ namespace AutoTest.UI
             set;
         }
 
-        public static Action<IComparable> NotifyTestThingChangeAction
+        public static Action<IUpdate> NotifyTestThingChangeAction
         {
             get;
             set;

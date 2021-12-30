@@ -28,6 +28,12 @@ namespace AutoTest.UI.SubForm
             InitializeComponent();
         }
 
+        public TestPage TestPage
+        {
+            get;
+            private set;
+        }
+
         protected override void OnLoad(EventArgs e)
         {
             base.OnLoad(e);
@@ -87,6 +93,8 @@ namespace AutoTest.UI.SubForm
                 };
                 BigEntityTableEngine.LocalEngine.Insert(nameof(TestPage), page);
                 _pageId = page.Id;
+
+                TestPage = page;
             }
             else
             {
@@ -100,6 +108,7 @@ namespace AutoTest.UI.SubForm
                 };
                 BigEntityTableEngine.LocalEngine.Update(nameof(TestPage), page);
 
+                TestPage = page;
                 EventBus.NotifyTestThingChangeAction?.Invoke(page);
             }
 

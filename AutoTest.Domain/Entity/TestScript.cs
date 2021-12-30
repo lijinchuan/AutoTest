@@ -69,6 +69,11 @@ namespace AutoTest.Domain.Entity
             return 1;
         }
 
+        public string GetDisplayText()
+        {
+            return ScriptName;
+        }
+
         public IComparable GetParentUpdate()
         {
             if (SiteId == 0)

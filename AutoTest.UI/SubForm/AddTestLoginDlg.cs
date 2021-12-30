@@ -18,6 +18,12 @@ namespace AutoTest.UI.SubForm
         private int _siteLoginId = 0;
         private int _siteId;
 
+        public TestLogin TestLogin
+        {
+            get;
+            private set;
+        }
+
         public AddTestLoginDlg()
         {
             InitializeComponent();
@@ -90,6 +96,8 @@ namespace AutoTest.UI.SubForm
                     Used = !testLoginList.Any(p => p.Used)
                 };
                 BigEntityTableEngine.LocalEngine.Insert(nameof(TestLogin), login);
+
+                TestLogin = login;
             }
             else
             {
@@ -104,6 +112,8 @@ namespace AutoTest.UI.SubForm
                     Url = TBUrl.Text
                 };
                 BigEntityTableEngine.LocalEngine.Update(nameof(TestLogin), login);
+
+                TestLogin = login;
 
                 EventBus.NotifyTestThingChangeAction?.Invoke(login);
             }

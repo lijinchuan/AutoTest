@@ -10,7 +10,7 @@ namespace AutoTest.Domain.Entity
     /// <summary>
     /// 测试实例
     /// </summary>
-    public class TestCase:IComparable,ISearch
+    public class TestCase:IUpdate,ISearch
     {
         public int Id
         {
@@ -100,9 +100,22 @@ namespace AutoTest.Domain.Entity
             return 1;
         }
 
+        public string GetDisplayText()
+        {
+            return CaseName;
+        }
+
         public NodeContentType GetNodeContentType()
         {
             return NodeContentType.TESTCASE;
+        }
+
+        public IComparable GetParentUpdate()
+        {
+            return new TestPage
+            {
+                Id = PageId
+            };
         }
 
         public bool Search(string wd)

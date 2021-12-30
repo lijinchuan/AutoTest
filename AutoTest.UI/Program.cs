@@ -2,7 +2,9 @@
 using LJC.FrameWorkV3.Data.EntityDataBase;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -10,12 +12,27 @@ namespace AutoTest.UI
 {
     static class Program
     {
+        [DllImport("user32.dll")]
+        public static extern void SwitchToThisWindow(IntPtr hWnd, bool fAltTab);
+
         /// <summary>
         /// 应用程序的主入口点。
         /// </summary>
         [STAThread]
         static void Main()
         {
+            Process[] pa = Process.GetProcesses();//获取当前进程数组。
+            var currprocess = Process.GetCurrentProcess();
+            foreach (Process p in pa)
+            {
+                if (p.ProcessName == currprocess.ProcessName && p.Id != currprocess.Id && p.MainModule.FileName == currprocess.MainModule.FileName)
+                {
+                    //MessageBox.Show("另一个进程正在运行，无法启动。");
+                    SwitchToThisWindow(p.MainWindowHandle, true);
+                    return;
+                }
+            }
+
             BigEntityTableEngine.LocalEngine.CreateTable<TestSource>(p => p.Id, b => b.AddIndex(nameof(TestSource.Id), c => c.Asc(m => m.Id)));
 
             BigEntityTableEngine.LocalEngine.CreateTable<TestSite>(p => p.Id, b => b.AddIndex(nameof(TestSite.Name), c => c.Asc(m => m.Name))

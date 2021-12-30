@@ -21,6 +21,12 @@ namespace AutoTest.UI.SubForm
             InitializeComponent();
         }
 
+        public TestSite TestSite
+        {
+            get;
+            private set;
+        }
+
         public AddTestSiteDlg(int sourceId,int siteId)
         {
             InitializeComponent();
@@ -59,6 +65,8 @@ namespace AutoTest.UI.SubForm
                     SourceId = _sourceId
                 };
                 BigEntityTableEngine.LocalEngine.Insert(nameof(TestSite), site);
+
+                TestSite = site;
             }
             else
             {
@@ -70,6 +78,7 @@ namespace AutoTest.UI.SubForm
                     SourceId = _sourceId
                 };
                 BigEntityTableEngine.LocalEngine.Update(nameof(TestSite), site);
+                TestSite = site;
 
                 EventBus.NotifyTestThingChangeAction?.Invoke(site);
             }

@@ -9,5 +9,7 @@ namespace AutoTest.Domain
     public interface IUpdate:IComparable
     {
         IComparable GetParentUpdate();
+
+        string GetDisplayText();
     }
 }

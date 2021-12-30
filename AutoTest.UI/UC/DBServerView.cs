@@ -507,19 +507,17 @@ namespace AutoTest.UI.UC
             }
         }
 
-        private void NotifyTestThingChange(IComparable comparable)
+        private void NotifyTestThingChange(IUpdate comparable)
         {
             var node = FindNode(tv_DBServers.Nodes, comparable);
             if (node != null)
             {
-                var parentNode = node.Parent;
-                ReLoadDBObj(parentNode, true);
-
-                node = FindNode(parentNode.Nodes, comparable);
-                if (node != null)
+                if (comparable.GetDisplayText() != node.Text)
                 {
-                    tv_DBServers.SelectedNode = node;
+                    node.Text = comparable.GetDisplayText();
                 }
+                
+                node.Tag = comparable;
             }
         }
 
@@ -530,6 +528,16 @@ namespace AutoTest.UI.UC
             {
                 tv_DBServers.SelectedNode = node;
             }
+        }
+
+        private void UpdateNode(TreeNode node,string text,object tag)
+        {
+            if (node.Text != text)
+            {
+                node.Text = text;
+            }
+
+            node.Tag = tag;
         }
 
         void OnMenuStrip_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
@@ -560,17 +568,19 @@ namespace AutoTest.UI.UC
                                 var testPage = FindParentNode<TestPage>(selnode);
                                 var testCase = selnode.Tag as TestCase;
 
-                                var tab= (UCAddCaseParam)Util.TryAddToMainTab(this, $"[{testSite.Name}]-{testPage.Name}-{testCase.CaseName}",()=> new UCAddCaseParam(testSite, testPage, testCase));
+                                _ = (UCAddCaseParam)Util.TryAddToMainTab(this, $"[{testSite.Name}]-{testPage.Name}-{testCase.CaseName}", () => new UCAddCaseParam(testSite, testPage, testCase));
                             }
                             else if (selnode.Tag is TestPage)
                             {
                                 var testSite = FindParentNode<TestSite>(selnode);
                                 var dlg = new AddTestPageDlg(testSite.Id, (selnode.Tag as TestPage).Id);
+                                dlg.ShowDialog();
                             }
                             else if (selnode.Tag is TestSite)
                             {
                                 var testSource = FindParentNode<TestSource>(selnode);
                                 AddTestSiteDlg dlg = new AddTestSiteDlg(testSource.Id, (selnode.Tag as TestSite).Id);
+                                dlg.ShowDialog();
                             }
                             else if (selnode.Tag is TestSource)
                             {
@@ -583,6 +593,7 @@ namespace AutoTest.UI.UC
                             {
                                 var testSite = FindParentNode<TestSite>(selnode);
                                 var dlg = new AddTestLoginDlg(testSite.Id, selnode.Tag as TestLogin);
+                                dlg.ShowDialog();
                             }
                             else if (selnode.Tag is TestScript)
                             {
@@ -593,6 +604,17 @@ namespace AutoTest.UI.UC
 
                                 Util.AddToMainTab(this, $"{testResource.SourceName}_{testSite?.Name}_{testScript.ScriptName}(脚本)",
                                         new UCTestScript(testScript, scripts));
+                            }
+                            else if(selnode.Tag is TestEnvParam)
+                            {
+                                var testSite = FindParentNode<TestSite>(selnode);
+                                var envparam = selnode.Tag as TestEnvParam;
+                                if (envparam.Id == 0)
+                                {
+                                    envparam = BigEntityTableEngine.LocalEngine.Find<TestEnvParam>(nameof(TestEnvParam), "SiteId_Name", new object[] { testSite.Id, envparam.Name }).FirstOrDefault();
+                                }
+                                var dlg = new AddTestEnvParamDlg(testSite.Id, envparam.Id);
+                                dlg.ShowDialog();
                             }
                             break;
                         }
@@ -984,21 +1006,7 @@ namespace AutoTest.UI.UC
 
         private void Tv_DBServers_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
         {
-            if (e.Node.Tag is TestEnvParam)
-            {
-                var testSite = FindParentNode<TestSite>(e.Node);
-                var envparam = e.Node.Tag as TestEnvParam;
-                if (envparam.Id == 0)
-                {
-                    envparam = BigEntityTableEngine.LocalEngine.Find<TestEnvParam>(nameof(TestEnvParam), "SiteId_Name", new object[] { testSite.Id, envparam.Name }).FirstOrDefault();
-                }
-                var dlg = new SubForm.AddTestEnvParamDlg(testSite.Id, envparam.Id);
-                if (dlg.ShowDialog() == DialogResult.OK)
-                {
-
-                }
-            }
-            else if (e.Node.Tag is TestCase)
+            if (e.Node.Tag is TestCase)
             {
                 RunTest(e.Node);
             }

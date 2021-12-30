@@ -49,6 +49,11 @@ namespace AutoTest.Domain.Entity
             return 1;
         }
 
+        public string GetDisplayText()
+        {
+            return Name;
+        }
+
         public IComparable GetParentUpdate()
         {
             return new TestSite
