@@ -701,9 +701,42 @@ namespace AutoTest.UI.UC
                     }
                     else
                     {
-                        if (this.RichText.SelectedText.IndexOf(".") != -1)
+                        var lastText = RichText.SelectedText.Substring(RichText.SelectedText.LastIndexOf(".") + 1);
+
+                        var subVal = val.Split('.').ToArray();
+                        var replaceVal = string.Empty;
+                        for (var i = subVal.Length - 1; i >= 0; i--)
                         {
-                            this.RichText.SelectedText = this.RichText.SelectedText.Remove(this.RichText.SelectedText.LastIndexOf(".")) + "." + val.Split('.').Last();
+                            if (subVal[i].StartsWith(lastText, StringComparison.OrdinalIgnoreCase))
+                            {
+                                replaceVal = string.Join(".", subVal.Skip(i));
+                                break;
+                            }
+                        }
+
+                        if (string.IsNullOrWhiteSpace(replaceVal))
+                        {
+                            for (var i = subVal.Length - 1; i >= 0; i--)
+                            {
+                                if (subVal[i].IndexOf(lastText, StringComparison.OrdinalIgnoreCase) > -1)
+                                {
+                                    replaceVal = string.Join(".", subVal.Skip(i));
+                                    break;
+                                }
+                            }
+                        }
+
+
+                        if (!string.IsNullOrWhiteSpace(replaceVal))
+                        {
+                            if (RichText.SelectedText.LastIndexOf(".") >= 0)
+                            {
+                                RichText.SelectedText = RichText.SelectedText.Remove(RichText.SelectedText.LastIndexOf(".")) + "." + replaceVal;
+                            }
+                            else
+                            {
+                                RichText.SelectedText = val;
+                            }
                         }
                     }
                     
