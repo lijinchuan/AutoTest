@@ -177,7 +177,7 @@ namespace AutoTest.UI
                 wdlg.Msg = "其它工作...";
                 BigEntityTableEngine.LocalEngine.ShutDown();
             }
-            catch
+            catch(Exception ex)
             {
 
             }
