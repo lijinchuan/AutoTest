@@ -291,7 +291,7 @@ namespace AutoTest.UI.UC
                     {
                         if (apiEnv != null)
                         {
-                            var apienvparamlist = BigEntityTableEngine.LocalEngine.Find<TestEnvParam>(nameof(TestEnvParam), "SiteId_EnvId", new object[] { apiEnv.SiteId, apiEnv.Id }).ToList();
+                            var apienvparamlist = BigEntityTableRemotingEngine.Find<TestEnvParam>(nameof(TestEnvParam), "SiteId_EnvId", new object[] { apiEnv.SiteId, apiEnv.Id }).ToList();
                             DataGridView dgv = null;
                             if (this.DGVHeader.Visible)
                             {
@@ -324,13 +324,13 @@ namespace AutoTest.UI.UC
                                                 if (apienvparam.Val != kv[1].ToString())
                                                 {
                                                     apienvparam.Val = kv[1].ToString();
-                                                    BigEntityTableEngine.LocalEngine.Update<TestEnvParam>(nameof(TestEnvParam), apienvparam);
+                                                    BigEntityTableRemotingEngine.Update<TestEnvParam>(nameof(TestEnvParam), apienvparam);
                                                     count++;
                                                 }
                                             }
                                             else
                                             {
-                                                BigEntityTableEngine.LocalEngine.Insert<TestEnvParam>(nameof(TestEnvParam), new TestEnvParam
+                                                BigEntityTableRemotingEngine.Insert<TestEnvParam>(nameof(TestEnvParam), new TestEnvParam
                                                 {
                                                     SiteId = apiEnv.SiteId,
                                                     EnvId = apiEnv.Id,

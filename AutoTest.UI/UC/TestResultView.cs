@@ -167,7 +167,7 @@ namespace AutoTest.UI.UC
             {
                 foreach (DataGridViewRow log in logs)
                 {
-                    BigEntityTableEngine.LocalEngine.Delete<TestCaseInvokeLog>(nameof(TestCaseInvokeLog), (int)log.Cells["编号"].Value);
+                    BigEntityTableRemotingEngine.Delete<TestCaseInvokeLog>(nameof(TestCaseInvokeLog), (int)log.Cells["编号"].Value);
                 }
                 BindData();
             }
@@ -208,7 +208,7 @@ namespace AutoTest.UI.UC
                 if (row != null)
                 {
                     var id = (int)row.Cells["编号"].Value;
-                    var log = BigEntityTableEngine.LocalEngine.Find<TestCaseInvokeLog>(nameof(TestCaseInvokeLog), id);
+                    var log = BigEntityTableRemotingEngine.Find<TestCaseInvokeLog>(nameof(TestCaseInvokeLog), id);
                     SubForm.TextBoxWin win = new SubForm.TextBoxWin($"查看文本", log?.GetRequestDetail().ToString());
                     win.ShowDialog();
                 }
@@ -219,7 +219,7 @@ namespace AutoTest.UI.UC
                 if (row != null)
                 {
                     var id = (int)row.Cells["编号"].Value;
-                    var log = BigEntityTableEngine.LocalEngine.Find<TestCaseInvokeLog>(nameof(TestCaseInvokeLog), id);
+                    var log = BigEntityTableRemotingEngine.Find<TestCaseInvokeLog>(nameof(TestCaseInvokeLog), id);
                     SubForm.TextBoxWin win = new SubForm.TextBoxWin($"查看文本", log?.GetRespDetail().ToString());
                     win.ShowDialog();
                 }
@@ -308,7 +308,7 @@ namespace AutoTest.UI.UC
                     object logs = null;
                     if (string.IsNullOrWhiteSpace(TBSearchKey.Text) || TBSearchKey.Text.Equals(TBSearchKey.Tag))
                     {
-                        logs = BigEntityTableEngine.LocalEngine.Scan<TestResult>(nameof(TestResult), TestResult.Index_TestCaseId_EnvId_TestDate,
+                        logs = BigEntityTableRemotingEngine.Scan<TestResult>(nameof(TestResult), TestResult.Index_TestCaseId_EnvId_TestDate,
                             new object[] { _caseId, _envid, EndDate.Value.Date.AddDays(1) }, new object[] { _caseId, _envid, BeginDate.Value.Date }, PageIndex == 0 ? 1 : PageIndex, pageSize, ref total).Select(p => new
                             {
                                 编号 = p.Id,
@@ -324,7 +324,7 @@ namespace AutoTest.UI.UC
                     }
                     else
                     {
-                        var list = BigEntityTableEngine.LocalEngine.Scan<TestResult>(nameof(TestResult), TestResult.Index_TestCaseId_EnvId_TestDate,
+                        var list = BigEntityTableRemotingEngine.Scan<TestResult>(nameof(TestResult), TestResult.Index_TestCaseId_EnvId_TestDate,
                             new object[] { _caseId, _envid, EndDate.Value.Date.AddDays(1) }, new object[] { _caseId, _envid, BeginDate.Value.Date }, 1, int.MaxValue, ref total);
                         var key = TBSearchKey.Text;
                         list = list.Where(p => (p.FailMsg??string.Empty).Contains(key) || (p.ResultContent ?? "").Contains(key)).ToList();

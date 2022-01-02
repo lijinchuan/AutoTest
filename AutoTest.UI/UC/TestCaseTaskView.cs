@@ -175,19 +175,19 @@ namespace AutoTest.UI.UC
         {
             try
             {
-                var sources = BigEntityTableEngine.LocalEngine.FindBatch<TestSource>(nameof(TestSource), _testSources.Select(p => (object)p.Id));
-                var sites = BigEntityTableEngine.LocalEngine.FindBatch<TestSite>(nameof(TestSite), _testSites.Select(p => (object)p.Id));
-                var pages = BigEntityTableEngine.LocalEngine.FindBatch<TestPage>(nameof(TestPage), _testPages.Select(p => (object)p.Id));
-                var cases = BigEntityTableEngine.LocalEngine.FindBatch<TestCase>(nameof(TestCase), _testCases.Select(p => (object)p.TestCase.Id));
-                var testLogins = BigEntityTableEngine.LocalEngine.FindBatch<TestLogin>(nameof(TestLogin), _testCases.Where(p => p.TestLogin != null).Select(p => (object)p.TestLogin.Id));
+                var sources = BigEntityTableRemotingEngine.FindBatch<TestSource>(nameof(TestSource), _testSources.Select(p => (object)p.Id));
+                var sites = BigEntityTableRemotingEngine.FindBatch<TestSite>(nameof(TestSite), _testSites.Select(p => (object)p.Id));
+                var pages = BigEntityTableRemotingEngine.FindBatch<TestPage>(nameof(TestPage), _testPages.Select(p => (object)p.Id));
+                var cases = BigEntityTableRemotingEngine.FindBatch<TestCase>(nameof(TestCase), _testCases.Select(p => (object)p.TestCase.Id));
+                var testLogins = BigEntityTableRemotingEngine.FindBatch<TestLogin>(nameof(TestLogin), _testCases.Where(p => p.TestLogin != null).Select(p => (object)p.TestLogin.Id));
 
                 var scriptsDic = new Dictionary<object, List<TestScript>>();
                 var loginDic = new Dictionary<object, TestLogin>();
                 Dictionary<int, (TestEnv env, List<TestEnvParam> envParams, bool hasEvn)> ep = new Dictionary<int, (TestEnv env, List<TestEnvParam> envParams, bool hasEvn)>();
                 foreach (var item in _testCases.Where(p => p.TestEnv != null).Select(p => p.TestEnv.Id).Distinct())
                 {
-                    var env = BigEntityTableEngine.LocalEngine.Find<TestEnv>(nameof(TestEnv), item);
-                    var envParams = BigEntityTableEngine.LocalEngine.Find<TestEnvParam>(nameof(TestEnvParam), "SiteId_EnvId", new object[] { env.SiteId, env.Id });
+                    var env = BigEntityTableRemotingEngine.Find<TestEnv>(nameof(TestEnv), item);
+                    var envParams = BigEntityTableRemotingEngine.Find<TestEnvParam>(nameof(TestEnvParam), "SiteId_EnvId", new object[] { env.SiteId, env.Id });
                     ep.Add(env.Id, (env, envParams.ToList(), true));
                 }
 
@@ -196,7 +196,7 @@ namespace AutoTest.UI.UC
                     c.TestSource = sources.FirstOrDefault(p => p.Id == c.TestSource.Id);
                     c.TestSite = sites.FirstOrDefault(p => p.Id == c.TestSite.Id);
                     c.TestPage = pages.FirstOrDefault(p => p.Id == c.TestPage.Id);
-                    c.TestCase = BigEntityTableEngine.LocalEngine.Find<TestCase>(nameof(TestCase), c.TestCase.Id);
+                    c.TestCase = BigEntityTableRemotingEngine.Find<TestCase>(nameof(TestCase), c.TestCase.Id);
 
                     c.TestLogin = c.TestLogin == null ? null : testLogins.FirstOrDefault(p => p.Id == c.TestLogin.Id);
 
@@ -204,7 +204,7 @@ namespace AutoTest.UI.UC
                     List<TestScript> globalScripts = null;
                     if (!scriptsDic.TryGetValue(key, out globalScripts))
                     {
-                        globalScripts = BigEntityTableEngine.LocalEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == c.TestSource.Id && s.SiteId == 0).ToList();
+                        globalScripts = BigEntityTableRemotingEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == c.TestSource.Id && s.SiteId == 0).ToList();
                         scriptsDic.Add(key, globalScripts);
                     }
 
@@ -212,7 +212,7 @@ namespace AutoTest.UI.UC
                     List<TestScript> siteScripts = null;
                     if (!scriptsDic.TryGetValue(key, out siteScripts))
                     {
-                        siteScripts = BigEntityTableEngine.LocalEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == c.TestSource.Id && s.SiteId == c.TestSite.Id).ToList();
+                        siteScripts = BigEntityTableRemotingEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == c.TestSource.Id && s.SiteId == c.TestSite.Id).ToList();
                         scriptsDic.Add(key, siteScripts);
                     }
 

@@ -24,7 +24,7 @@ namespace AutoTest.Biz
         public static void LoadTestResurce(Form parent, TreeNode pnode, bool isExpanded)
         {
             List<TreeNode> treeNodes = new List<TreeNode>();
-            var aPISources = BigEntityTableEngine.LocalEngine.List<TestSource>(nameof(TestSource), 1, int.MaxValue);
+            var aPISources = BigEntityTableRemotingEngine.List<TestSource>(nameof(TestSource), 1, int.MaxValue);
             foreach (var s in aPISources)
             {
                 TreeNode node = new TreeNodeEx(s.SourceName, 12, 12, 12, 12);
@@ -48,7 +48,7 @@ namespace AutoTest.Biz
         {
             List<TreeNode> treeNodes = new List<TreeNode>();
 
-            var testSiteList = BigEntityTableEngine.LocalEngine.Find<TestSite>(nameof(TestSite), nameof(TestSite.SourceId), new object[] { sourceId }).ToList();
+            var testSiteList = BigEntityTableRemotingEngine.Find<TestSite>(nameof(TestSite), nameof(TestSite.SourceId), new object[] { sourceId }).ToList();
 
             foreach (var page in testSiteList)
             {
@@ -94,7 +94,7 @@ namespace AutoTest.Biz
             usersNode.Tag = new NodeContents(NodeContentType.LOGINACCOUNTS);
             treeNodes.Add(usersNode);
 
-            var testPageList = BigEntityTableEngine.LocalEngine.Find<TestPage>(nameof(TestPage), nameof(TestPage.SiteId), new object[] { siteId })
+            var testPageList = BigEntityTableRemotingEngine.Find<TestPage>(nameof(TestPage), nameof(TestPage.SiteId), new object[] { siteId })
                 .OrderBy(p=>p.Order).ToList();
 
             foreach (var page in testPageList)
@@ -145,7 +145,7 @@ namespace AutoTest.Biz
         public static void LoadTestCase(Form parent, TreeNode pnode, int pageId,int envId,bool isExpanded)
         {
             List<TreeNode> treeNodes = new List<TreeNode>();
-            var testCaseList = BigEntityTableEngine.LocalEngine.Find<TestCase>(nameof(TestCase), nameof(TestCase.PageId), new object[] { pageId })
+            var testCaseList = BigEntityTableRemotingEngine.Find<TestCase>(nameof(TestCase), nameof(TestCase.PageId), new object[] { pageId })
                 .OrderBy(p => p.Order).ToList();
 
             foreach (var @case in testCaseList)
@@ -154,7 +154,7 @@ namespace AutoTest.Biz
 
                 //if (envId != 0)
                 {
-                    var testResult = BigEntityTableEngine.LocalEngine.Scan<TestResult>(nameof(TestResult), TestResult.Index_TestCaseId_EnvId_TestDate,
+                    var testResult = BigEntityTableRemotingEngine.Scan<TestResult>(nameof(TestResult), TestResult.Index_TestCaseId_EnvId_TestDate,
                         new object[] { @case.Id, envId, DateTime.Now }, new object[] { @case.Id, envId, DateTime.MinValue }, 1, 1).FirstOrDefault();
 
                     if (testResult != null)
@@ -203,7 +203,7 @@ namespace AutoTest.Biz
         public static void LoadTestEnv(Form parent, TreeNode pnode, int siteId,bool isExpanded)
         {
             List<TreeNode> treeNodes = new List<TreeNode>();
-            var envlist = BigEntityTableEngine.LocalEngine.Find<TestEnv>(nameof(TestEnv), nameof(TestEnv.SiteId), new object[] { siteId }).ToList();
+            var envlist = BigEntityTableRemotingEngine.Find<TestEnv>(nameof(TestEnv), nameof(TestEnv.SiteId), new object[] { siteId }).ToList();
             foreach (var s in envlist)
             {
                 int imageIndex = 0, selectedImageIndex = 2;
@@ -234,7 +234,7 @@ namespace AutoTest.Biz
             try
             {
                 List<TreeNode> treeNodes = new List<TreeNode>();
-                var allenvparamslist = BigEntityTableEngine.LocalEngine.Find<TestEnvParam>(nameof(TestEnvParam), "SiteId", new object[] { siteId }).ToList();
+                var allenvparamslist = BigEntityTableRemotingEngine.Find<TestEnvParam>(nameof(TestEnvParam), "SiteId", new object[] { siteId }).ToList();
                 var allparamnames = allenvparamslist.Select(p => p.Name).Distinct();
                 foreach (var s in allparamnames)
                 {
@@ -282,7 +282,7 @@ namespace AutoTest.Biz
             try
             {
                 List<TreeNode> treeNodes = new List<TreeNode>();
-                var testScriptList = BigEntityTableEngine.LocalEngine.Scan<TestScript>(nameof(TestScript), $"{nameof(TestScript.SourceId)}_{nameof(TestScript.SiteId)}_{nameof(TestScript.ScriptName)}",
+                var testScriptList = BigEntityTableRemotingEngine.Scan<TestScript>(nameof(TestScript), $"{nameof(TestScript.SourceId)}_{nameof(TestScript.SiteId)}_{nameof(TestScript.ScriptName)}",
                     new object[] { sourceid, siteId, Consts.STRINGCOMPAIRMIN }, new object[] { sourceid, siteId, Consts.STRINGCOMPAIRMAX }, 1, int.MaxValue)
                     .OrderBy(p => p.Order).ToList();
 
@@ -316,7 +316,7 @@ namespace AutoTest.Biz
             try
             {
                 List<TreeNode> treeNodes = new List<TreeNode>();
-                var testLoginList = BigEntityTableEngine.LocalEngine.Find<TestLogin>(nameof(TestLogin), nameof(TestLogin.SiteId), new object[] { siteId });
+                var testLoginList = BigEntityTableRemotingEngine.Find<TestLogin>(nameof(TestLogin), nameof(TestLogin.SiteId), new object[] { siteId });
 
                 foreach (var testLogin in testLoginList)
                 {

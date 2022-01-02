@@ -40,7 +40,7 @@ namespace AutoTest.UI.SubForm
 
             if (_pageId > 0)
             {
-                var testPage = BigEntityTableEngine.LocalEngine.Find<TestPage>(nameof(TestPage), _pageId);
+                var testPage = BigEntityTableRemotingEngine.Find<TestPage>(nameof(TestPage), _pageId);
                 if (testPage == null)
                 {
                     MessageBox.Show("page不存在");
@@ -54,7 +54,7 @@ namespace AutoTest.UI.SubForm
             }
             else
             {
-                var testPageList = BigEntityTableEngine.LocalEngine.Find<TestPage>(nameof(TestPage), nameof(TestPage.SiteId),
+                var testPageList = BigEntityTableRemotingEngine.Find<TestPage>(nameof(TestPage), nameof(TestPage.SiteId),
                     new object[] { _siteId }).ToList();
 
                 NUDOrder.Value = testPageList.Count + 1;
@@ -73,7 +73,7 @@ namespace AutoTest.UI.SubForm
                 new AlertDlg("添加测试页面", "名称不能为空", null).ShowDialog();
                 return;
             }
-            var testPageList = BigEntityTableEngine.LocalEngine.Find<TestPage>(nameof(TestPage), nameof(TestPage.SiteId),
+            var testPageList = BigEntityTableRemotingEngine.Find<TestPage>(nameof(TestPage), nameof(TestPage.SiteId),
                     new object[] { _siteId }).ToList();
 
             if (testPageList.Any(p => p.Name == TBName.Text.Trim() && (_pageId == 0 || _pageId != p.Id)))
@@ -91,7 +91,7 @@ namespace AutoTest.UI.SubForm
                     SiteId = _siteId,
                     Url = TBUrl.Text
                 };
-                BigEntityTableEngine.LocalEngine.Insert(nameof(TestPage), page);
+                BigEntityTableRemotingEngine.Insert(nameof(TestPage), page);
                 _pageId = page.Id;
 
                 TestPage = page;
@@ -106,7 +106,7 @@ namespace AutoTest.UI.SubForm
                     SiteId = _siteId,
                     Url = TBUrl.Text
                 };
-                BigEntityTableEngine.LocalEngine.Update(nameof(TestPage), page);
+                BigEntityTableRemotingEngine.Update(nameof(TestPage), page);
 
                 TestPage = page;
                 EventBus.NotifyTestThingChangeAction?.Invoke(page);
@@ -120,7 +120,7 @@ namespace AutoTest.UI.SubForm
                 {
                     p.Order = ++order;
 
-                    BigEntityTableEngine.LocalEngine.Update(nameof(TestPage), p);
+                    BigEntityTableRemotingEngine.Update(nameof(TestPage), p);
                 }
             }
 

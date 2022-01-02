@@ -234,6 +234,12 @@
     <Compile Include="SubForm\RunTestCaseConfirmDlg.Designer.cs">
       <DependentUpon>RunTestCaseConfirmDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="SubForm\ServerSettingDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SubForm\ServerSettingDlg.Designer.cs">
+      <DependentUpon>ServerSettingDlg.cs</DependentUpon>
+    </Compile>
     <Compile Include="SubForm\SubBaseDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -487,6 +493,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SubForm\RunTestCaseConfirmDlg.resx">
       <DependentUpon>RunTestCaseConfirmDlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SubForm\ServerSettingDlg.resx">
+      <DependentUpon>ServerSettingDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SubForm\SubBaseDlg.resx">
       <DependentUpon>SubBaseDlg.cs</DependentUpon>

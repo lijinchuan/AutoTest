@@ -19,7 +19,7 @@ namespace AutoTest.UI.SubForm
             InitializeComponent();
             _sourceId = sourceId;
 
-            var source = BigEntityTableEngine.LocalEngine.Find<TestSource>(nameof(TestSource), _sourceId);
+            var source = BigEntityTableRemotingEngine.Find<TestSource>(nameof(TestSource), _sourceId);
             if (source == null)
             {
                 MessageBox.Show("资源不存在或被删除");
@@ -38,7 +38,7 @@ namespace AutoTest.UI.SubForm
             }
             if (_sourceId > 0)
             {
-                var source = BigEntityTableEngine.LocalEngine.Find<TestSource>(nameof(TestSource), _sourceId);
+                var source = BigEntityTableRemotingEngine.Find<TestSource>(nameof(TestSource), _sourceId);
                 if (source == null)
                 {
                     MessageBox.Show("资源不存在或被删除");
@@ -46,11 +46,11 @@ namespace AutoTest.UI.SubForm
                 }
                 source.SourceName = TBSourceName.Text.Trim();
                 source.Desc = TBSourceDesc.Text.Trim();
-                BigEntityTableEngine.LocalEngine.Update(nameof(TestSource), source);
+                BigEntityTableRemotingEngine.Update(nameof(TestSource), source);
             }
             else
             {
-                BigEntityTableEngine.LocalEngine.Insert(nameof(TestSource), new TestSource
+                BigEntityTableRemotingEngine.Insert(nameof(TestSource), new TestSource
                 {
                     SourceName = TBSourceName.Text.Trim(),
                     Desc = TBSourceDesc.Text.Trim()

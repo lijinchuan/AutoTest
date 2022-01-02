@@ -41,7 +41,7 @@ namespace AutoTest.UI.SubForm
 
             if (_siteId > 0)
             {
-                var testSite = BigEntityTableEngine.LocalEngine.Find<TestSite>(nameof(TestSite), _siteId);
+                var testSite = BigEntityTableRemotingEngine.Find<TestSite>(nameof(TestSite), _siteId);
                 if (testSite == null)
                 {
                     MessageBox.Show("site不存在");
@@ -64,7 +64,7 @@ namespace AutoTest.UI.SubForm
                     CheckLoginCode = TBCode.Text,
                     SourceId = _sourceId
                 };
-                BigEntityTableEngine.LocalEngine.Insert(nameof(TestSite), site);
+                BigEntityTableRemotingEngine.Insert(nameof(TestSite), site);
 
                 TestSite = site;
             }
@@ -77,7 +77,7 @@ namespace AutoTest.UI.SubForm
                     CheckLoginCode = TBCode.Text,
                     SourceId = _sourceId
                 };
-                BigEntityTableEngine.LocalEngine.Update(nameof(TestSite), site);
+                BigEntityTableRemotingEngine.Update(nameof(TestSite), site);
                 TestSite = site;
 
                 EventBus.NotifyTestThingChangeAction?.Invoke(site);

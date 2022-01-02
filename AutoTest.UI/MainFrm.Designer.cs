@@ -63,6 +63,7 @@ namespace AutoTest.UI
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.MspPanel = new System.Windows.Forms.ToolStripStatusLabel();
             this.TSL_ClearMsg = new System.Windows.Forms.ToolStripStatusLabel();
+            this.服务器设置ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.mainMenuBar.SuspendLayout();
             this.panel1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -97,13 +98,14 @@ namespace AutoTest.UI
             // 最近ToolStripMenuItem
             // 
             this.最近ToolStripMenuItem.Name = "最近ToolStripMenuItem";
-            this.最近ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
+            this.最近ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.最近ToolStripMenuItem.Text = "最近访问";
             // 
             // SubItemEdit
             // 
             this.SubItemEdit.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.代理服务器ToolStripMenuItem});
+            this.代理服务器ToolStripMenuItem,
+            this.服务器设置ToolStripMenuItem});
             this.SubItemEdit.Name = "SubItemEdit";
             this.SubItemEdit.Size = new System.Drawing.Size(59, 21);
             this.SubItemEdit.Text = "编辑(E)";
@@ -111,8 +113,9 @@ namespace AutoTest.UI
             // 代理服务器ToolStripMenuItem
             // 
             this.代理服务器ToolStripMenuItem.Name = "代理服务器ToolStripMenuItem";
-            this.代理服务器ToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
+            this.代理服务器ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.代理服务器ToolStripMenuItem.Text = "代理服务器";
+            this.代理服务器ToolStripMenuItem.Visible = false;
             this.代理服务器ToolStripMenuItem.Click += new System.EventHandler(this.代理服务器ToolStripMenuItem_Click);
             // 
             // SubItemView
@@ -340,6 +343,13 @@ namespace AutoTest.UI
             this.TSL_ClearMsg.Visible = false;
             this.TSL_ClearMsg.Click += new System.EventHandler(this.TSL_ClearMsg_Click);
             // 
+            // 服务器设置ToolStripMenuItem
+            // 
+            this.服务器设置ToolStripMenuItem.Name = "服务器设置ToolStripMenuItem";
+            this.服务器设置ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.服务器设置ToolStripMenuItem.Text = "服务器设置";
+            this.服务器设置ToolStripMenuItem.Click += new System.EventHandler(this.服务器设置ToolStripMenuItem_Click);
+            // 
             // MainFrm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -401,6 +411,7 @@ namespace AutoTest.UI
         private System.Windows.Forms.ToolStripMenuItem TSMReportError;
         private System.Windows.Forms.ToolStripLabel TSBar;
         private System.Windows.Forms.ToolStripMenuItem uRLEncodeToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 服务器设置ToolStripMenuItem;
     }
 }
 

@@ -71,8 +71,8 @@ namespace AutoTest.UI.UC
         {
             if (_testCaseId > 0)
             {
-                var setting = BigEntityTableEngine.LocalEngine.Find<TestCaseSetting>(nameof(TestCaseSetting), nameof(TestCaseSetting.TestCaseId), new object[] { _testCaseId }).FirstOrDefault();
-                _testCaseSetting = setting ?? new Domain.Entity.TestCaseSetting() { TestCaseId = this._testCaseId };
+                var setting = BigEntityTableRemotingEngine.Find<TestCaseSetting>(nameof(TestCaseSetting), nameof(TestCaseSetting.TestCaseId), new object[] { _testCaseId }).FirstOrDefault();
+                _testCaseSetting = setting ?? new TestCaseSetting() { TestCaseId = this._testCaseId };
 
                 if (!string.IsNullOrWhiteSpace(_testCaseSetting.SettingJson))
                 {
@@ -113,11 +113,11 @@ namespace AutoTest.UI.UC
                 _testCaseSetting.SettingJson = Newtonsoft.Json.JsonConvert.SerializeObject(newapiUrlSettingObj);
                 if (_testCaseSetting.Id == 0)
                 {
-                    BigEntityTableEngine.LocalEngine.Insert(nameof(Domain.Entity.TestCaseSetting), _testCaseSetting);
+                    BigEntityTableRemotingEngine.Insert(nameof(TestCaseSetting), _testCaseSetting);
                 }
                 else
                 {
-                    BigEntityTableEngine.LocalEngine.Update(nameof(Domain.Entity.TestCaseSetting), _testCaseSetting);
+                    BigEntityTableRemotingEngine.Update(nameof(TestCaseSetting), _testCaseSetting);
                 }
 
                 _testCaseSettingObj = newapiUrlSettingObj;

@@ -57,7 +57,7 @@ namespace AutoTest.UI.SubForm
 
             if (_caseId > 0)
             {
-                var testCase = BigEntityTableEngine.LocalEngine.Find<TestCase>(nameof(TestCase), _caseId);
+                var testCase = BigEntityTableRemotingEngine.Find<TestCase>(nameof(TestCase), _caseId);
                 if (testCase == null)
                 {
                     MessageBox.Show("case不存在");
@@ -83,7 +83,7 @@ namespace AutoTest.UI.SubForm
                     }
                 }
 
-                var cnt = BigEntityTableEngine.LocalEngine.Count(nameof(TestCase), nameof(TestCase.PageId), new object[] { _pageId });
+                var cnt = BigEntityTableRemotingEngine.Count(nameof(TestCase), nameof(TestCase.PageId), new object[] { _pageId });
                 NUDOrder.Value = cnt + 1;
             }
         }
@@ -113,17 +113,17 @@ namespace AutoTest.UI.SubForm
             };
             if (_caseId == 0)
             {
-                var list = BigEntityTableEngine.LocalEngine.Find<TestCase>(nameof(TestCase), nameof(TestCase.PageId), new object[] { _pageId });
+                var list = BigEntityTableRemotingEngine.Find<TestCase>(nameof(TestCase), nameof(TestCase.PageId), new object[] { _pageId });
                 if (list.Any(p => p.CaseName == TestCase.CaseName))
                 {
                     new AlertDlg("添加测试用例", $"用例名[{TestCase.CaseName}]不能重复", null).ShowDialog();
                     return;
                 }
-                BigEntityTableEngine.LocalEngine.Insert(nameof(TestCase), TestCase);
+                BigEntityTableRemotingEngine.Insert(nameof(TestCase), TestCase);
             }
             else
             {
-                BigEntityTableEngine.LocalEngine.Update<TestCase>(nameof(TestCase), TestCase);
+                BigEntityTableRemotingEngine.Update(nameof(TestCase), TestCase);
             }
             this.DialogResult = DialogResult.OK;
         }

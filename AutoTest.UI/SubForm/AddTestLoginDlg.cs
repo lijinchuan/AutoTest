@@ -76,7 +76,7 @@ namespace AutoTest.UI.SubForm
                 return;
             }
 
-            var testLoginList = BigEntityTableEngine.LocalEngine.Find<TestLogin>(nameof(TestLogin), nameof(TestLogin.SiteId), new object[] { _siteId }).ToList();
+            var testLoginList = BigEntityTableRemotingEngine.Find<TestLogin>(nameof(TestLogin), nameof(TestLogin.SiteId), new object[] { _siteId }).ToList();
             if (testLoginList.Any(t => t.Id != _siteLoginId && t.AccountInfo == TBAccountName.Text.Trim()))
             {
                 MessageBox.Show("帐号名称不能重复");
@@ -95,7 +95,7 @@ namespace AutoTest.UI.SubForm
                     Url = TBUrl.Text,
                     Used = !testLoginList.Any(p => p.Used)
                 };
-                BigEntityTableEngine.LocalEngine.Insert(nameof(TestLogin), login);
+                BigEntityTableRemotingEngine.Insert(nameof(TestLogin), login);
 
                 TestLogin = login;
             }
@@ -111,7 +111,7 @@ namespace AutoTest.UI.SubForm
                     SiteId = _siteId,
                     Url = TBUrl.Text
                 };
-                BigEntityTableEngine.LocalEngine.Update(nameof(TestLogin), login);
+                BigEntityTableRemotingEngine.Update(nameof(TestLogin), login);
 
                 TestLogin = login;
 

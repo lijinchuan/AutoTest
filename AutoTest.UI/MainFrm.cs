@@ -495,5 +495,12 @@ namespace AutoTest.UI
             }
 
         }
+
+        private void 服务器设置ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var dlg = new ServerSettingDlg();
+
+            dlg.ShowDialog();
+        }
     }
 }

@@ -67,12 +67,12 @@ namespace AutoTest.UI.UC
 
             if (_testScript.Id == 0)
             {
-                BigEntityTableEngine.LocalEngine.Insert(nameof(TestScript), _testScript);
+                BigEntityTableRemotingEngine.Insert(nameof(TestScript), _testScript);
                 Util.SendMsg(this, "添加脚本成功");
             }
             else
             {
-                BigEntityTableEngine.LocalEngine.Update(nameof(TestScript), _testScript);
+                BigEntityTableRemotingEngine.Update(nameof(TestScript), _testScript);
                 EventBus.NotifyTestThingChangeAction?.Invoke(_testScript);
                 Util.SendMsg(this, "更新脚本成功");
             }

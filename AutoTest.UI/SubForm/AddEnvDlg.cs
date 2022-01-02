@@ -47,14 +47,14 @@ namespace AutoTest.UI.SubForm
                 return;
             }
 
-            var isexists = BigEntityTableEngine.LocalEngine.Find<TestEnv>(nameof(TestEnv), nameof(TestEnv.SiteId), new object[] { _siteId }).Any(p => p.EnvName.Equals(envname, StringComparison.OrdinalIgnoreCase));
+            var isexists = BigEntityTableRemotingEngine.Find<TestEnv>(nameof(TestEnv), nameof(TestEnv.SiteId), new object[] { _siteId }).Any(p => p.EnvName.Equals(envname, StringComparison.OrdinalIgnoreCase));
             if (isexists)
             {
                 MessageBox.Show("环境名称不能重复");
                 return;
             }
 
-            BigEntityTableEngine.LocalEngine.Insert(nameof(TestEnv), new TestEnv
+            BigEntityTableRemotingEngine.Insert(nameof(TestEnv), new TestEnv
             {
                 EnvDesc = TBDesc.Text.Trim(),
                 EnvName = envname,

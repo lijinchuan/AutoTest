@@ -39,7 +39,7 @@ namespace AutoTest.UI.UC
             sbdoc.AppendLine();
             sbdoc.AppendLine("|参数名|必选|类型|说明|");
             sbdoc.AppendLine("|:----    |:---|:----- |-----   |");
-            var aPIParams = BigEntityTableEngine.LocalEngine.Find<TestCaseParam>(nameof(TestCaseParam), nameof(TestCaseParam.TestCaseId), new object[] { testCase.Id }).ToList();
+            var aPIParams = BigEntityTableRemotingEngine.Find<TestCaseParam>(nameof(TestCaseParam), nameof(TestCaseParam.TestCaseId), new object[] { testCase.Id }).ToList();
             foreach (var item in aPIParams.Where(p => p.Type == 0).OrderBy(p => p.Sort))
             {
                 sbdoc.AppendLine($"{item.Name}|{(item.IsRequried ? "T" : "F")}|{item.TypeName}|{item.Desc}|");
@@ -56,7 +56,7 @@ namespace AutoTest.UI.UC
             }
             sbdoc.AppendLine();
 
-            var examplelist = BigEntityTableEngine.LocalEngine.Find<TestCaseDocExample>(nameof(TestCaseDocExample), nameof(TestCaseDocExample.TestCaseId), new object[] { testCase.Id });
+            var examplelist = BigEntityTableRemotingEngine.Find<TestCaseDocExample>(nameof(TestCaseDocExample), nameof(TestCaseDocExample.TestCaseId), new object[] { testCase.Id });
             sbdoc.AppendLine("**示例：** ");
             sbdoc.AppendLine();
             foreach (var examle in examplelist)

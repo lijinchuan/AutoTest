@@ -75,8 +75,8 @@ namespace AutoTest.UI.UC
             _testPage = testPage;
             _testCase = testCase;
 
-            var scripts = BigEntityTableEngine.LocalEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == testSite.SourceId && s.SiteId == 0).ToList();
-            var siteScripts = BigEntityTableEngine.LocalEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == testSite.SourceId && s.SiteId == testSite.Id).ToList();
+            var scripts = BigEntityTableRemotingEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == testSite.SourceId && s.SiteId == 0).ToList();
+            var siteScripts = BigEntityTableRemotingEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == testSite.SourceId && s.SiteId == testSite.Id).ToList();
             scripts.AddRange(siteScripts);
             var keyWords = scripts.Select(p => new ScriptKeyWord
             {
@@ -317,7 +317,7 @@ namespace AutoTest.UI.UC
 
             if (apiEnvParams == null)
             {
-                apiEnvParams = BigEntityTableEngine.LocalEngine.Find<TestEnvParam>(nameof(TestEnvParam), "APISourceId_EnvId", new object[] { _testSite.Id, GetEnvId() }).ToList();
+                apiEnvParams = BigEntityTableRemotingEngine.Find<TestEnvParam>(nameof(TestEnvParam), "APISourceId_EnvId", new object[] { _testSite.Id, GetEnvId() }).ToList();
             }
 
             if (apiEnvParams.Count == 0)
@@ -380,7 +380,7 @@ namespace AutoTest.UI.UC
 
                     if (!ucsetting.NoPrxoy())
                     {
-                        var globProxyServer = BigEntityTableEngine.LocalEngine.Find<ProxyServer>(nameof(ProxyServer), p => p.Name == ProxyServer.GlobName).FirstOrDefault();
+                        var globProxyServer = BigEntityTableRemotingEngine.Find<ProxyServer>(nameof(ProxyServer), p => p.Name == ProxyServer.GlobName).FirstOrDefault();
                         if (globProxyServer != null && !string.IsNullOrWhiteSpace(globProxyServer.Host))
                         {
                             httpRequestEx.SetCredential(globProxyServer.Name, globProxyServer.Password, globProxyServer.Host);
@@ -496,7 +496,7 @@ namespace AutoTest.UI.UC
                 }
             }
 
-            List<TestEnvParam> apiEnvParams = apiEnvParams = BigEntityTableEngine.LocalEngine.Find<TestEnvParam>(nameof(TestEnvParam), "SiteId_EnvId", new object[] { _testSite.Id, GetEnvId() }).ToList();
+            List<TestEnvParam> apiEnvParams = apiEnvParams = BigEntityTableRemotingEngine.Find<TestEnvParam>(nameof(TestEnvParam), "SiteId_EnvId", new object[] { _testSite.Id, GetEnvId() }).ToList();
 
             var url = TBUrl.Text;
             var httpRequestExList = PepareRequest(ref url, apiEnvParams, number, cancelToken);
@@ -722,7 +722,7 @@ namespace AutoTest.UI.UC
 
                     }
                 }
-                BigEntityTableEngine.LocalEngine.Insert(nameof(TestCaseInvokeLog), log);
+                BigEntityTableRemotingEngine.Insert(nameof(TestCaseInvokeLog), log);
             }
 
         }
@@ -964,9 +964,9 @@ namespace AutoTest.UI.UC
 
             if (this._testCase != null)
             {
-                this._testCaseData = BigEntityTableEngine.LocalEngine.Find<TestCaseData>(nameof(TestCaseData), nameof(TestCaseData.TestCaseId), new object[] { _testCase.Id }).FirstOrDefault();
+                this._testCaseData = BigEntityTableRemotingEngine.Find<TestCaseData>(nameof(TestCaseData), nameof(TestCaseData.TestCaseId), new object[] { _testCase.Id }).FirstOrDefault();
 
-                var envlist = BigEntityTableEngine.LocalEngine.Find<TestEnv>(nameof(TestEnv), nameof(TestEnv.SiteId), new object[] { _testPage.SiteId }).ToList();
+                var envlist = BigEntityTableRemotingEngine.Find<TestEnv>(nameof(TestEnv), nameof(TestEnv.SiteId), new object[] { _testPage.SiteId }).ToList();
                 if (envlist.Count > 0)
                 {
                     LKEnv.Visible = true;
@@ -1213,7 +1213,7 @@ namespace AutoTest.UI.UC
                 TestCaseId = _testCase.Id
             };
 
-            List<TestEnvParam> apiEnvParams = apiEnvParams = BigEntityTableEngine.LocalEngine.Find<TestEnvParam>(nameof(TestEnvParam), "SiteId_EnvId", new object[] { _testSite.Id, GetEnvId() }).ToList();
+            List<TestEnvParam> apiEnvParams = apiEnvParams = BigEntityTableRemotingEngine.Find<TestEnvParam>(nameof(TestEnvParam), "SiteId_EnvId", new object[] { _testSite.Id, GetEnvId() }).ToList();
 
             apidata.XWWWFormUrlEncoded = this.XWWWFormUrlEncoded?.Select(p => new ParamInfo
             {
@@ -1347,7 +1347,7 @@ namespace AutoTest.UI.UC
 
                 if (ischanged || force)
                 {
-                    BigEntityTableEngine.LocalEngine.Update(nameof(TestCase), _testCase);
+                    BigEntityTableRemotingEngine.Update(nameof(TestCase), _testCase);
                     LogHelper.Instance.Info($"保存TESTCASE：{JsonConvert.SerializeObject(_testCase)}");
                     Util.SendMsg(this, "接口资源信息已更新");
                 }
@@ -1437,12 +1437,12 @@ namespace AutoTest.UI.UC
                     if (this._testCaseData.Id == 0)
                     {
                         adjustOrder = true;
-                        BigEntityTableEngine.LocalEngine.Insert(nameof(TestCaseData), _testCaseData);
+                        BigEntityTableRemotingEngine.Insert(nameof(TestCaseData), _testCaseData);
                         Util.SendMsg(this, "接口资源已添加");
                     }
                     else
                     {
-                        BigEntityTableEngine.LocalEngine.Update(nameof(TestCaseData), this._testCaseData);
+                        BigEntityTableRemotingEngine.Update(nameof(TestCaseData), this._testCaseData);
                         Util.SendMsg(this, "接口资源已更新");
                     }
 
@@ -1451,7 +1451,7 @@ namespace AutoTest.UI.UC
 
                 if (adjustOrder)
                 {
-                    var caseList = BigEntityTableEngine.LocalEngine.Find<TestCase>(nameof(TestCase), nameof(TestCase.PageId), new object[] { _testPage.Id })
+                    var caseList = BigEntityTableRemotingEngine.Find<TestCase>(nameof(TestCase), nameof(TestCase.PageId), new object[] { _testPage.Id })
                         .Where(p => p.Order >= _testCase.Order && p.Id != _testCase.Id).OrderBy(p => p.Order).ToList();
 
                     if (caseList.Any()&&caseList.First().Order==_testCase.Order)
@@ -1460,7 +1460,7 @@ namespace AutoTest.UI.UC
                         foreach(var @case in caseList)
                         {
                             @case.Order = nextOrder;
-                            BigEntityTableEngine.LocalEngine.Update(nameof(TestCase), @case);
+                            BigEntityTableRemotingEngine.Update(nameof(TestCase), @case);
                             nextOrder += 1;
                         }
                     }

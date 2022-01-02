@@ -39,7 +39,7 @@ namespace AutoTest.UI
             .AddIndex(nameof(TestSite.SourceId), c => c.Asc(m => m.SourceId)));
 
             //BigEntityTableEngine.LocalEngine.CreateTable<TestLogin>(p => p.Id, b => b.AddIndex(nameof(TestLogin.SiteId), c => c.Asc(m => m.SiteId)));
-            BigEntityTableEngine.LocalEngine.Upgrade<AutoTest.Domain.Entity.OldVerion.TestLogin, TestLogin>(nameof(TestLogin), f => new TestLogin
+            BigEntityTableEngine.LocalEngine.Upgrade<Domain.Entity.OldVerion.TestLogin, TestLogin>(nameof(TestLogin), f => new TestLogin
             {
                 AccountInfo = "默认帐号",
                 IsMannual = f.IsMannual,

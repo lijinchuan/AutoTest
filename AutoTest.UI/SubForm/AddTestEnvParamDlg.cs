@@ -27,7 +27,7 @@ namespace AutoTest.UI.SubForm
             _siteId = siteId;
             _envparamid = envparamid;
 
-            apiEnvs = BigEntityTableEngine.LocalEngine.Find<TestEnv>(nameof(TestEnv), nameof(TestEnv.SiteId), new object[] { _siteId }).ToList();
+            apiEnvs = BigEntityTableRemotingEngine.Find<TestEnv>(nameof(TestEnv), nameof(TestEnv.SiteId), new object[] { _siteId }).ToList();
             if (_envparamid == 0)
             {
                 apiEnvParams.AddRange(apiEnvs.Select(p => new ParamInfo
@@ -37,8 +37,8 @@ namespace AutoTest.UI.SubForm
             }
             else
             {
-                var apienvparam = BigEntityTableEngine.LocalEngine.Find<TestEnvParam>(nameof(TestEnvParam), _envparamid);
-                var envparamlist = BigEntityTableEngine.LocalEngine.Find<TestEnvParam>(nameof(TestEnvParam), "SiteId_Name", new object[] { _siteId, apienvparam.Name }).ToList();
+                var apienvparam = BigEntityTableRemotingEngine.Find<TestEnvParam>(nameof(TestEnvParam), _envparamid);
+                var envparamlist = BigEntityTableRemotingEngine.Find<TestEnvParam>(nameof(TestEnvParam), "SiteId_Name", new object[] { _siteId, apienvparam.Name }).ToList();
                 apiEnvParams.AddRange(apiEnvs.Select(p =>
                 {
                     return new ParamInfo
@@ -97,13 +97,13 @@ namespace AutoTest.UI.SubForm
 
             if (list.Any(p => p.Id == 0))
             {
-                BigEntityTableEngine.LocalEngine.InsertBatch(nameof(TestEnvParam), list.Where(p => p.Id == 0));
+                BigEntityTableRemotingEngine.InsertBatch(nameof(TestEnvParam), list.Where(p => p.Id == 0));
             }
             else
             {
                 foreach (var item in list.Where(p => p.Id > 0))
                 {
-                    BigEntityTableEngine.LocalEngine.Update(nameof(TestEnvParam), item);
+                    BigEntityTableRemotingEngine.Update(nameof(TestEnvParam), item);
                 }
             }
 

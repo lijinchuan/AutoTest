@@ -85,7 +85,7 @@ namespace AutoTest.UI.WebTask
             _testEnv = testEnv;
             _testEnvParams = testEnvParams;
             _testLogin = testLogin;
-            _testCaseData = BigEntityTableEngine.LocalEngine.Find<TestCaseData>(nameof(TestCaseData), nameof(TestCaseData.TestCaseId), new object[] { _testCase.Id }).FirstOrDefault();
+            _testCaseData = BigEntityTableRemotingEngine.Find<TestCaseData>(nameof(TestCaseData), nameof(TestCaseData.TestCaseId), new object[] { _testCase.Id }).FirstOrDefault();
             _globScripts = globScripts;
             _siteScripts = siteScripts;
             _notify = notify;
@@ -516,7 +516,7 @@ namespace AutoTest.UI.WebTask
         private void FinishTest()
         {
             _testResult.TestEndDate = DateTime.Now;
-            BigEntityTableEngine.LocalEngine.Insert(nameof(TestResult), _testResult);
+            BigEntityTableRemotingEngine.Insert(nameof(TestResult), _testResult);
 
             _notify?.Invoke(_testResult);
             EventBus.NotifyTestResultAction?.Invoke(_testResult);
