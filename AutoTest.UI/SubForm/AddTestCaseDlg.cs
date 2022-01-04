@@ -55,13 +55,30 @@ namespace AutoTest.UI.SubForm
         {
             base.OnLoad(e);
 
+            var testPage = BigEntityTableRemotingEngine.Find<TestPage>(nameof(TestPage), _pageId);
+            if (testPage == null)
+            {
+                new AlertDlg("添加测试用例", "页面不存在",null).ShowDialog();
+                DialogResult = DialogResult.Abort;
+                return;
+            }
+            var testLoginList = BigEntityTableRemotingEngine.Find<TestLogin>(nameof(TestLogin), nameof(TestLogin.SiteId), new object[] { testPage.SiteId }).ToList();
+            testLoginList.Insert(0, new TestLogin
+            {
+                Id=0,
+                AccountInfo="不限"
+            });
+            CBUser.DataSource = testLoginList;
+            CBUser.DisplayMember = nameof(TestLogin.AccountInfo);
+            CBUser.ValueMember = nameof(TestLogin.Id);
+
             if (_caseId > 0)
             {
                 var testCase = BigEntityTableRemotingEngine.Find<TestCase>(nameof(TestCase), _caseId);
                 if (testCase == null)
                 {
                     MessageBox.Show("case不存在");
-                    this.Close();
+                    Close();
                     return;
                 }
                 TBName.Text = testCase.CaseName;
@@ -69,6 +86,8 @@ namespace AutoTest.UI.SubForm
                 NUDOrder.Value = testCase.Order;
                 TBCode.Text = testCase.TestCode;
                 TBValidCode.Text = testCase.ValidCode;
+
+                CBUser.SelectedValue = testCase.OnlyUserId;
             }
             else
             {
@@ -109,7 +128,8 @@ namespace AutoTest.UI.SubForm
                 Order = (int)NUDOrder.Value,
                 TestCode = TBCode.Text,
                 ValidCode = TBValidCode.Text,
-                Url = TBUrl.Text
+                Url = TBUrl.Text,
+                OnlyUserId = (int)CBUser.SelectedValue
             };
             if (_caseId == 0)
             {

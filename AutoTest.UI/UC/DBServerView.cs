@@ -332,6 +332,9 @@ namespace AutoTest.UI.UC
                 if (!loginDic.TryGetValue(key, out testLogin))
                 {
                     var testLoginList = BigEntityTableRemotingEngine.Find<TestLogin>(nameof(TestLogin), nameof(TestLogin.SiteId), new object[] { testSite.Id });
+                    
+                    loginDic.Add(key, testLogin);
+
                     if (testLoginList.Any())
                     {
                         if (!testLoginList.Any(p => p.Used))
@@ -339,10 +342,14 @@ namespace AutoTest.UI.UC
                             MessageBox.Show("请选择一个测试帐号");
                             return;
                         }
-                        testLogin = testLoginList.First(p => p.Used);
-                    }
 
-                    loginDic.Add(key, testLogin);
+                        testLogin = testLoginList.First(p => p.Used);
+                        if (testLogin.Id != testCase.OnlyUserId && testCase.OnlyUserId != 0)
+                        {
+                            continue;
+                        }
+
+                    }
                 }
 
                 key = "globalScripts_" + testSource.Id;
@@ -431,7 +438,7 @@ namespace AutoTest.UI.UC
             {
                 var testTasksView = (TestCaseTaskView)Util.TryAddToMainTab(this, $"测试_{GetTestTaskName(selnode)}", () =>
                 {
-                    var panel = new UC.TestCaseTaskView();
+                    var panel = new TestCaseTaskView();
                     return panel;
                 }, null);
 
@@ -819,7 +826,7 @@ namespace AutoTest.UI.UC
 
                             LJC.FrameWorkV3.Comm.TaskHelper.SetInterval(1000, () =>
                             {
-                                this.BeginInvoke(new Action(() => testPanel.RunTest(new RunTestLoginTask(testLogin.Url, false, testSite, testLogin, ep.env, ep.envParams))));
+                                BeginInvoke(new Action(() => testPanel.RunTest(new RunTestLoginTask(testLogin.Url, false, testSite, testLogin, ep.env, ep.envParams))));
                                 return true;
                             }, runintime: false);
                             break;
@@ -1024,9 +1031,9 @@ namespace AutoTest.UI.UC
 
         public string DisConnectSelectDBServer()
         {
-            if (this.tv_DBServers.SelectedNode == null || this.tv_DBServers.SelectedNode.Level != 1)
+            if (tv_DBServers.SelectedNode == null || this.tv_DBServers.SelectedNode.Level != 1)
                 return null;
-            var server = this.tv_DBServers.SelectedNode.Text;
+            var server = tv_DBServers.SelectedNode.Text;
             DisConnectServer(server);
             return server;
         }

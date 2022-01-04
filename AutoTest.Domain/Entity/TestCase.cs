@@ -90,6 +90,15 @@ namespace AutoTest.Domain.Entity
             set;
         }
 
+        /// <summary>
+        /// 限定USER
+        /// </summary>
+        public int OnlyUserId
+        {
+            get;
+            set;
+        }
+
         public int CompareTo(object obj)
         {
             if (obj is TestCase)

@@ -56,6 +56,8 @@ namespace AutoTest.UI.UC
 
         private bool fromlogflag = false;
 
+        private bool isFirstVisible = true;
+
         public UCAddCaseParam()
         {
             InitializeComponent();
@@ -1021,6 +1023,18 @@ namespace AutoTest.UI.UC
                         }
                     };
                 }
+
+                var testLoginList = BigEntityTableRemotingEngine.Find<TestLogin>(nameof(TestLogin), nameof(TestLogin.SiteId), new object[] { _testSite.Id }).ToList();
+                testLoginList.Insert(0, new TestLogin
+                {
+                    Id = 0,
+                    AccountInfo = "不限"
+                });
+                CBUser.DataSource = testLoginList;
+                CBUser.DropDownStyle = ComboBoxStyle.DropDownList;
+                CBUser.DisplayMember = nameof(TestLogin.AccountInfo);
+                CBUser.ValueMember = nameof(TestLogin.Id);
+                
             }
 
             rawTextBox.Multiline = true;
@@ -1289,11 +1303,18 @@ namespace AutoTest.UI.UC
 
                 if (TBUrl.Text != _testPage.Url)
                 {
+                    ischanged = true;
                     _testCase.Url = TBUrl.Text;
                 }
                 else
                 {
                     _testCase.Url = string.Empty;
+                }
+
+                if ((int)CBUser.SelectedValue != _testCase.OnlyUserId)
+                {
+                    ischanged = true;
+                    _testCase.OnlyUserId = (int)CBUser.SelectedValue;
                 }
 
                 if (_testCase.Order != (int)NUDOrder.Value)
@@ -1500,6 +1521,16 @@ namespace AutoTest.UI.UC
         public void Execute()
         {
             BtnSend_Click(null, null);
+        }
+
+        protected override void OnVisibleChanged(EventArgs e)
+        {
+            base.OnVisibleChanged(e);
+
+            if (isFirstVisible)
+            {
+                CBUser.SelectedValue = _testCase.OnlyUserId;
+            }
         }
     }
 }

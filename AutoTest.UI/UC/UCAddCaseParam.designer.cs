@@ -67,16 +67,18 @@
             this.TP_Setting = new System.Windows.Forms.TabPage();
             this.TP_Result = new System.Windows.Forms.TabPage();
             this.TBResult = new AutoTest.UI.UC.UCApiResult();
+            this.TPTestView = new System.Windows.Forms.TabPage();
+            this.UCTestResutView = new AutoTest.UI.UC.TestResultView();
             this.TPLog = new System.Windows.Forms.TabPage();
             this.TPInvokeLog = new AutoTest.UI.UC.LogViewTab();
-            this.TPTestView = new System.Windows.Forms.TabPage();
             this.TopPannel = new System.Windows.Forms.Panel();
             this.LKEnv = new System.Windows.Forms.Label();
             this.pannelmid = new System.Windows.Forms.Panel();
             this.PannelBottom = new System.Windows.Forms.Panel();
             this.TabResults = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.UCTestResutView = new AutoTest.UI.UC.TestResultView();
+            this.CBUser = new System.Windows.Forms.ComboBox();
+            this.label8 = new System.Windows.Forms.Label();
             this.Tabs.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.myTabControl1.SuspendLayout();
@@ -92,8 +94,8 @@
             this.TP_Body.SuspendLayout();
             this.PannelReqBody.SuspendLayout();
             this.TP_Result.SuspendLayout();
-            this.TPLog.SuspendLayout();
             this.TPTestView.SuspendLayout();
+            this.TPLog.SuspendLayout();
             this.TopPannel.SuspendLayout();
             this.pannelmid.SuspendLayout();
             this.PannelBottom.SuspendLayout();
@@ -181,6 +183,8 @@
             // 
             // tabPage7
             // 
+            this.tabPage7.Controls.Add(this.CBUser);
+            this.tabPage7.Controls.Add(this.label8);
             this.tabPage7.Controls.Add(this.NUDOrder);
             this.tabPage7.Controls.Add(this.label5);
             this.tabPage7.Controls.Add(this.TBName);
@@ -196,7 +200,7 @@
             // NUDOrder
             // 
             this.NUDOrder.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.NUDOrder.Location = new System.Drawing.Point(115, 83);
+            this.NUDOrder.Location = new System.Drawing.Point(115, 56);
             this.NUDOrder.Maximum = new decimal(new int[] {
             10000,
             0,
@@ -210,7 +214,7 @@
             // 
             this.label5.AutoSize = true;
             this.label5.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label5.Location = new System.Drawing.Point(39, 88);
+            this.label5.Location = new System.Drawing.Point(39, 61);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(56, 16);
             this.label5.TabIndex = 2;
@@ -219,7 +223,7 @@
             // TBName
             // 
             this.TBName.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.TBName.Location = new System.Drawing.Point(115, 26);
+            this.TBName.Location = new System.Drawing.Point(115, 15);
             this.TBName.Name = "TBName";
             this.TBName.Size = new System.Drawing.Size(242, 26);
             this.TBName.TabIndex = 1;
@@ -228,7 +232,7 @@
             // 
             this.label6.AutoSize = true;
             this.label6.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label6.Location = new System.Drawing.Point(39, 31);
+            this.label6.Location = new System.Drawing.Point(39, 20);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(56, 16);
             this.label6.TabIndex = 0;
@@ -279,7 +283,7 @@
             this.TP_Params.Location = new System.Drawing.Point(4, 22);
             this.TP_Params.Name = "TP_Params";
             this.TP_Params.Padding = new System.Windows.Forms.Padding(3);
-            this.TP_Params.Size = new System.Drawing.Size(739, 157);
+            this.TP_Params.Size = new System.Drawing.Size(192, 74);
             this.TP_Params.TabIndex = 0;
             this.TP_Params.Text = "URL参数";
             this.TP_Params.UseVisualStyleBackColor = true;
@@ -291,7 +295,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.ParamDataPanel.Location = new System.Drawing.Point(8, 6);
             this.ParamDataPanel.Name = "ParamDataPanel";
-            this.ParamDataPanel.Size = new System.Drawing.Size(725, 145);
+            this.ParamDataPanel.Size = new System.Drawing.Size(178, 62);
             this.ParamDataPanel.TabIndex = 0;
             // 
             // TP_Auth
@@ -300,7 +304,7 @@
             this.TP_Auth.Location = new System.Drawing.Point(4, 22);
             this.TP_Auth.Name = "TP_Auth";
             this.TP_Auth.Padding = new System.Windows.Forms.Padding(3);
-            this.TP_Auth.Size = new System.Drawing.Size(739, 157);
+            this.TP_Auth.Size = new System.Drawing.Size(192, 74);
             this.TP_Auth.TabIndex = 1;
             this.TP_Auth.Text = "鉴权";
             this.TP_Auth.UseVisualStyleBackColor = true;
@@ -318,7 +322,7 @@
             this.AuthTableLayoutPanel.RowCount = 2;
             this.AuthTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.AuthTableLayoutPanel.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.AuthTableLayoutPanel.Size = new System.Drawing.Size(733, 151);
+            this.AuthTableLayoutPanel.Size = new System.Drawing.Size(186, 68);
             this.AuthTableLayoutPanel.TabIndex = 0;
             // 
             // CBAuthType
@@ -344,7 +348,7 @@
             this.TP_Header.Controls.Add(this.HeaderDataPannel);
             this.TP_Header.Location = new System.Drawing.Point(4, 22);
             this.TP_Header.Name = "TP_Header";
-            this.TP_Header.Size = new System.Drawing.Size(739, 157);
+            this.TP_Header.Size = new System.Drawing.Size(192, 74);
             this.TP_Header.TabIndex = 2;
             this.TP_Header.Text = "请求头";
             this.TP_Header.UseVisualStyleBackColor = true;
@@ -356,7 +360,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.HeaderDataPannel.Location = new System.Drawing.Point(7, 3);
             this.HeaderDataPannel.Name = "HeaderDataPannel";
-            this.HeaderDataPannel.Size = new System.Drawing.Size(725, 149);
+            this.HeaderDataPannel.Size = new System.Drawing.Size(178, 66);
             this.HeaderDataPannel.TabIndex = 1;
             // 
             // TP_Cookie
@@ -365,7 +369,7 @@
             this.TP_Cookie.Location = new System.Drawing.Point(4, 22);
             this.TP_Cookie.Name = "TP_Cookie";
             this.TP_Cookie.Padding = new System.Windows.Forms.Padding(3);
-            this.TP_Cookie.Size = new System.Drawing.Size(739, 157);
+            this.TP_Cookie.Size = new System.Drawing.Size(192, 74);
             this.TP_Cookie.TabIndex = 7;
             this.TP_Cookie.Text = "Cookie";
             this.TP_Cookie.UseVisualStyleBackColor = true;
@@ -377,7 +381,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.CookieDataPannel.Location = new System.Drawing.Point(7, 7);
             this.CookieDataPannel.Name = "CookieDataPannel";
-            this.CookieDataPannel.Size = new System.Drawing.Size(725, 144);
+            this.CookieDataPannel.Size = new System.Drawing.Size(178, 61);
             this.CookieDataPannel.TabIndex = 2;
             // 
             // TP_Body
@@ -386,7 +390,7 @@
             this.TP_Body.Controls.Add(this.PannelReqBody);
             this.TP_Body.Location = new System.Drawing.Point(4, 22);
             this.TP_Body.Name = "TP_Body";
-            this.TP_Body.Size = new System.Drawing.Size(739, 157);
+            this.TP_Body.Size = new System.Drawing.Size(192, 74);
             this.TP_Body.TabIndex = 3;
             this.TP_Body.Text = "请求体";
             this.TP_Body.UseVisualStyleBackColor = true;
@@ -398,7 +402,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.DataPanel.Location = new System.Drawing.Point(3, 32);
             this.DataPanel.Name = "DataPanel";
-            this.DataPanel.Size = new System.Drawing.Size(714, 125);
+            this.DataPanel.Size = new System.Drawing.Size(167, 42);
             this.DataPanel.TabIndex = 7;
             // 
             // PannelReqBody
@@ -481,7 +485,7 @@
             // 
             this.TP_Setting.Location = new System.Drawing.Point(4, 22);
             this.TP_Setting.Name = "TP_Setting";
-            this.TP_Setting.Size = new System.Drawing.Size(739, 157);
+            this.TP_Setting.Size = new System.Drawing.Size(192, 74);
             this.TP_Setting.TabIndex = 4;
             this.TP_Setting.Text = "设置";
             this.TP_Setting.UseVisualStyleBackColor = true;
@@ -491,7 +495,7 @@
             this.TP_Result.Controls.Add(this.TBResult);
             this.TP_Result.Location = new System.Drawing.Point(4, 22);
             this.TP_Result.Name = "TP_Result";
-            this.TP_Result.Size = new System.Drawing.Size(739, 157);
+            this.TP_Result.Size = new System.Drawing.Size(192, 74);
             this.TP_Result.TabIndex = 5;
             this.TP_Result.Text = "结果";
             this.TP_Result.UseVisualStyleBackColor = true;
@@ -503,10 +507,31 @@
             this.TBResult.Location = new System.Drawing.Point(0, 0);
             this.TBResult.Name = "TBResult";
             this.TBResult.Raw = null;
-            this.TBResult.Size = new System.Drawing.Size(739, 157);
+            this.TBResult.Size = new System.Drawing.Size(192, 74);
             this.TBResult.TabIndex = 0;
             this.TBResult.TestEnv = null;
             this.TBResult.Url = null;
+            // 
+            // TPTestView
+            // 
+            this.TPTestView.Controls.Add(this.UCTestResutView);
+            this.TPTestView.Location = new System.Drawing.Point(4, 22);
+            this.TPTestView.Name = "TPTestView";
+            this.TPTestView.Padding = new System.Windows.Forms.Padding(3);
+            this.TPTestView.Size = new System.Drawing.Size(192, 74);
+            this.TPTestView.TabIndex = 9;
+            this.TPTestView.Text = "测试";
+            this.TPTestView.UseVisualStyleBackColor = true;
+            // 
+            // UCTestResutView
+            // 
+            this.UCTestResutView.AutoScroll = true;
+            this.UCTestResutView.AutoSize = true;
+            this.UCTestResutView.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.UCTestResutView.Location = new System.Drawing.Point(3, 3);
+            this.UCTestResutView.Name = "UCTestResutView";
+            this.UCTestResutView.Size = new System.Drawing.Size(186, 68);
+            this.UCTestResutView.TabIndex = 0;
             // 
             // TPLog
             // 
@@ -514,7 +539,7 @@
             this.TPLog.Location = new System.Drawing.Point(4, 22);
             this.TPLog.Name = "TPLog";
             this.TPLog.Padding = new System.Windows.Forms.Padding(3);
-            this.TPLog.Size = new System.Drawing.Size(739, 157);
+            this.TPLog.Size = new System.Drawing.Size(192, 74);
             this.TPLog.TabIndex = 6;
             this.TPLog.Text = "日志";
             this.TPLog.UseVisualStyleBackColor = true;
@@ -525,19 +550,8 @@
             this.TPInvokeLog.Dock = System.Windows.Forms.DockStyle.Fill;
             this.TPInvokeLog.Location = new System.Drawing.Point(3, 3);
             this.TPInvokeLog.Name = "TPInvokeLog";
-            this.TPInvokeLog.Size = new System.Drawing.Size(733, 151);
+            this.TPInvokeLog.Size = new System.Drawing.Size(186, 68);
             this.TPInvokeLog.TabIndex = 1;
-            // 
-            // TPTestView
-            // 
-            this.TPTestView.Controls.Add(this.UCTestResutView);
-            this.TPTestView.Location = new System.Drawing.Point(4, 22);
-            this.TPTestView.Name = "TPTestView";
-            this.TPTestView.Padding = new System.Windows.Forms.Padding(3);
-            this.TPTestView.Size = new System.Drawing.Size(739, 157);
-            this.TPTestView.TabIndex = 9;
-            this.TPTestView.Text = "测试";
-            this.TPTestView.UseVisualStyleBackColor = true;
             // 
             // TopPannel
             // 
@@ -606,13 +620,24 @@
             this.tabPage1.Text = "tabPage1";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
-            // UCTestResutView
+            // CBUser
             // 
-            this.UCTestResutView.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.UCTestResutView.Location = new System.Drawing.Point(3, 3);
-            this.UCTestResutView.Name = "UCTestResutView";
-            this.UCTestResutView.Size = new System.Drawing.Size(733, 151);
-            this.UCTestResutView.TabIndex = 0;
+            this.CBUser.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.CBUser.FormattingEnabled = true;
+            this.CBUser.Location = new System.Drawing.Point(115, 94);
+            this.CBUser.Name = "CBUser";
+            this.CBUser.Size = new System.Drawing.Size(121, 24);
+            this.CBUser.TabIndex = 9;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label8.Location = new System.Drawing.Point(10, 97);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(88, 16);
+            this.label8.TabIndex = 8;
+            this.label8.Text = "限定User：";
             // 
             // UCAddCaseParam
             // 
@@ -639,8 +664,9 @@
             this.PannelReqBody.ResumeLayout(false);
             this.PannelReqBody.PerformLayout();
             this.TP_Result.ResumeLayout(false);
-            this.TPLog.ResumeLayout(false);
             this.TPTestView.ResumeLayout(false);
+            this.TPTestView.PerformLayout();
+            this.TPLog.ResumeLayout(false);
             this.TopPannel.ResumeLayout(false);
             this.TopPannel.PerformLayout();
             this.pannelmid.ResumeLayout(false);
@@ -699,5 +725,7 @@
         private JSCodeEditBox TBValidCode;
         private System.Windows.Forms.TabPage TPTestView;
         private TestResultView UCTestResutView;
+        private System.Windows.Forms.ComboBox CBUser;
+        private System.Windows.Forms.Label label8;
     }
 }

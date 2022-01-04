@@ -60,6 +60,8 @@ namespace AutoTest.UI.SubForm
             this.textBox2 = new System.Windows.Forms.TextBox();
             this.tabPage6 = new System.Windows.Forms.TabPage();
             this.textBox3 = new System.Windows.Forms.TextBox();
+            this.label8 = new System.Windows.Forms.Label();
+            this.CBUser = new System.Windows.Forms.ComboBox();
             this.panel1.SuspendLayout();
             this.myTabControl1.SuspendLayout();
             this.tabPage7.SuspendLayout();
@@ -168,6 +170,8 @@ namespace AutoTest.UI.SubForm
             // 
             // tabPage7
             // 
+            this.tabPage7.Controls.Add(this.CBUser);
+            this.tabPage7.Controls.Add(this.label8);
             this.tabPage7.Controls.Add(this.TBUrl);
             this.tabPage7.Controls.Add(this.label7);
             this.tabPage7.Controls.Add(this.NUDOrder);
@@ -374,6 +378,25 @@ namespace AutoTest.UI.SubForm
             this.textBox3.Size = new System.Drawing.Size(192, 74);
             this.textBox3.TabIndex = 0;
             // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label8.Location = new System.Drawing.Point(9, 149);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(88, 16);
+            this.label8.TabIndex = 6;
+            this.label8.Text = "限定User：";
+            // 
+            // CBUser
+            // 
+            this.CBUser.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.CBUser.FormattingEnabled = true;
+            this.CBUser.Location = new System.Drawing.Point(114, 146);
+            this.CBUser.Name = "CBUser";
+            this.CBUser.Size = new System.Drawing.Size(121, 24);
+            this.CBUser.TabIndex = 7;
+            // 
             // AddTestCaseDlg
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -434,5 +457,7 @@ namespace AutoTest.UI.SubForm
         private System.Windows.Forms.Label label7;
         private UC.JSCodeEditBox TBCode;
         private UC.JSCodeEditBox TBValidCode;
+        private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.ComboBox CBUser;
     }
 }
