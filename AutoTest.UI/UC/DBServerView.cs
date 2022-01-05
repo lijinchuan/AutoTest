@@ -333,8 +333,6 @@ namespace AutoTest.UI.UC
                 {
                     var testLoginList = BigEntityTableRemotingEngine.Find<TestLogin>(nameof(TestLogin), nameof(TestLogin.SiteId), new object[] { testSite.Id });
                     
-                    loginDic.Add(key, testLogin);
-
                     if (testLoginList.Any())
                     {
                         if (!testLoginList.Any(p => p.Used))
@@ -344,12 +342,13 @@ namespace AutoTest.UI.UC
                         }
 
                         testLogin = testLoginList.First(p => p.Used);
-                        if (testLogin.Id != testCase.OnlyUserId && testCase.OnlyUserId != 0)
-                        {
-                            continue;
-                        }
-
                     }
+                    loginDic.Add(key, testLogin);
+                }
+
+                if (testLogin.Id != testCase.OnlyUserId && testCase.OnlyUserId != 0)
+                {
+                    continue;
                 }
 
                 key = "globalScripts_" + testSource.Id;
