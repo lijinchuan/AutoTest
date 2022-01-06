@@ -98,6 +98,8 @@ namespace AutoTest.UI
             BigEntityTableEngine.LocalEngine.CreateTable<TestResult>(p => p.Id, a => a.AddIndex(TestResult.Index_TestCaseId_EnvId_TestDate,
                    b => b.Asc(m => m.TestCaseId).Asc(m => m.EnvId).Desc(m => m.TestStartDate)));
 
+            BigEntityTableEngine.LocalEngine.CreateTable<FileDB>(p => p.Id, a => a.AddIndex(nameof(FileDB.FileName), m => m.Asc(s => s.FileName)));
+
             AutofacBuilder.init();
 
             Application.EnableVisualStyles();

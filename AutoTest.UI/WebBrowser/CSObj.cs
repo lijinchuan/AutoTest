@@ -1,7 +1,9 @@
-﻿using AutoTest.Domain.Model;
+﻿using AutoTest.Domain.Entity;
+using AutoTest.Domain.Model;
 using AutoTest.UI.WebTask;
 using CefSharp;
 using CefSharp.WinForms;
+using LJC.FrameWorkV3.Data.EntityDataBase;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -19,16 +21,10 @@ namespace AutoTest.UI.WebBrowser
         private ChromiumWebBrowser browser;
         private IWebTask currentWebTask;
 
-        private static string userFileDir = "userData\\";
-
         public event Action<string> OnPublishMsg;
 
         static CSObj()
         {
-            if (!Directory.Exists(userFileDir))
-            {
-                Directory.CreateDirectory(userFileDir);
-            }
 
         }
 
@@ -86,27 +82,45 @@ namespace AutoTest.UI.WebBrowser
 
         public bool SaveFile(string fileName,bool replace,string content)
         {
-            var path = userFileDir + fileName;
-            if (File.Exists(path) &&!replace)
+            var isExists = BigEntityTableRemotingEngine.Count(nameof(FileDB), nameof(FileDB.FileName), new object[] { fileName }) > 0;
+            if (!replace && isExists)
             {
                 return false;
             }
 
-            File.WriteAllText(path, content, Encoding.UTF8);
+            if (!isExists)
+            {
+                BigEntityTableRemotingEngine.Insert(nameof(FileDB), new FileDB
+                {
+                    CDate = DateTime.Now,
+                    MDate = DateTime.Now,
+                    FileName = fileName,
+                    FileContent = content
+                });
+            }
+            else
+            {
+                var file = BigEntityTableRemotingEngine.Find<FileDB>(nameof(FileDB), nameof(FileDB.FileName), new object[] { fileName }).First();
+                file.MDate = DateTime.Now;
+                file.FileContent = content;
+
+                BigEntityTableRemotingEngine.Update<FileDB>(nameof(FileDB), file);
+            }
+            
+
             return true;
         }
 
         public string ReadFile(string fileName)
         {
-            var path = userFileDir + fileName;
-            if (File.Exists(path))
-            {
-                return File.ReadAllText(path);
-            }
-            else
+            var file = BigEntityTableRemotingEngine.Find<FileDB>(nameof(FileDB), nameof(FileDB.FileName), new object[] { fileName }).FirstOrDefault();
+
+            if (file == null)
             {
                 return string.Empty;
             }
+
+            return file.FileContent;
         }
 
         public string GetLastAlertMsg()

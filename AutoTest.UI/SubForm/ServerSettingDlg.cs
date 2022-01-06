@@ -126,7 +126,8 @@ namespace AutoTest.UI.SubForm
                                 nameof(TestCaseData),
                                 nameof(TestCaseSetting),
                                 nameof(TestCaseParam),
-                                nameof(TestScript)
+                                nameof(TestScript),
+                                nameof(FileDB)
                             }
                         }
                     }
