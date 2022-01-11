@@ -206,6 +206,13 @@ namespace AutoTest.Util
 
             KeyWordDic.Add(new ScriptKeyWord
             {
+                KeyWord = "ServerDriverClient.setFileValue",
+                Desc = "设置file控件路径:ServerDriverClient.setFileValue(string fileName,string call)",
+                HighColor = Color.Red
+            });
+
+            KeyWordDic.Add(new ScriptKeyWord
+            {
                 KeyWord = "ServerDriverClient.readFile",
                 Desc = "ServerDriverClient.ReadFile(string fileName)",
                 HighColor = Color.Red

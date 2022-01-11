@@ -78,6 +78,8 @@ namespace AutoTest.UI.WebBrowser
 
         private static SilenceJsDialogHandler silenceJsDialogHandler = new SilenceJsDialogHandler();
 
+        private IDialogHandler dialogHandler = null;
+
         private CSObj cSObj = null;
 
         public event Action<IWebTask> OnTaskStart;
@@ -118,7 +120,11 @@ namespace AutoTest.UI.WebBrowser
             var context = new RequestContext(setting);
             RequestContext = context;
 
-            this.JsDialogHandler = silenceJsDialogHandler;
+            dialogHandler = new CommonFileDialogHandler();
+            DialogHandler = dialogHandler;
+
+            JsDialogHandler = silenceJsDialogHandler;
+            
             silenceJsDialogHandler.OnAlert += WebTask_OnMsgPublish;
 
             FrameLoadStart += DefaultChromiumWebBrowser_FrameLoadStart;

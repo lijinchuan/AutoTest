@@ -428,6 +428,7 @@
       <DependentUpon>WebTab.cs</DependentUpon>
     </Compile>
     <Compile Include="Util.cs" />
+    <Compile Include="WebBrowser\CommonFileDialogHandler .cs" />
     <Compile Include="WebBrowser\CookieVisitor.cs" />
     <Compile Include="WebBrowser\CSObj.cs" />
     <Compile Include="WebBrowser\CSUCTestCaseSelector.cs" />

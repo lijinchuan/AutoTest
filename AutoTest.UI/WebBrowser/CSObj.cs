@@ -152,6 +152,21 @@ namespace AutoTest.UI.WebBrowser
             browser.GetBrowser().MainFrame.LoadUrl(url);
         }
 
+        public void SetFileValue(string file,string call)
+        {
+            if (browser.DialogHandler is CommonFileDialogHandler)
+            {
+                (browser.DialogHandler as CommonFileDialogHandler).GetFiles = () =>
+                {
+                    return new List<string> { file };
+                };
+                if (!string.IsNullOrWhiteSpace(call))
+                {
+                    browser.GetMainFrame().ExecuteJavaScriptAsync(call);
+                }
+            }
+        }
+
         public void Dispose()
         {
             this.OnPublishMsg = null;
