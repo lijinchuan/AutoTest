@@ -3,6 +3,7 @@ using AutoTest.Domain.Model;
 using AutoTest.UI.WebTask;
 using CefSharp;
 using CefSharp.WinForms;
+using LJC.FrameWorkV3.Comm;
 using LJC.FrameWorkV3.Data.EntityDataBase;
 using System;
 using System.Collections.Generic;
@@ -152,17 +153,23 @@ namespace AutoTest.UI.WebBrowser
             browser.GetBrowser().MainFrame.LoadUrl(url);
         }
 
-        public void SetFileValue(string file,string call)
+        public void SetFileValue(string file,string script)
         {
+            var path=Path.Combine(CommFun.GetRuningPath() + "Images",file);
+            if (!File.Exists(path))
+            {
+                browser.GetMainFrame().ExecuteJavaScriptAsync($"alert('{path.Replace("\\","\\\\")}不存在')");
+                return;
+            }
             if (browser.DialogHandler is CommonFileDialogHandler)
             {
                 (browser.DialogHandler as CommonFileDialogHandler).GetFiles = () =>
                 {
-                    return new List<string> { file };
+                    return new List<string> { path };
                 };
-                if (!string.IsNullOrWhiteSpace(call))
+                if (!string.IsNullOrWhiteSpace(script))
                 {
-                    browser.GetMainFrame().ExecuteJavaScriptAsync(call);
+                    browser.GetMainFrame().ExecuteJavaScriptAsync(script);
                 }
             }
         }
