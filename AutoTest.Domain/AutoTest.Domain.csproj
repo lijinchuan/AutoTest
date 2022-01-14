@@ -56,10 +56,12 @@
     <Compile Include="Entity\OldVerion\TestLogin.cs" />
     <Compile Include="Entity\ParamInfo.cs" />
     <Compile Include="Entity\RespCookie.cs" />
+    <Compile Include="Entity\TestCookie.cs" />
     <Compile Include="Entity\TestCaseData.cs" />
     <Compile Include="Entity\TestCaseInvokeLog.cs" />
     <Compile Include="Entity\TestCaseSetting.cs" />
     <Compile Include="Entity\TestCaseSettingObj.cs" />
+    <Compile Include="Entity\TestCookieContainer.cs" />
     <Compile Include="Entity\TestEnv.cs" />
     <Compile Include="Entity\TestEnvParam.cs" />
     <Compile Include="Entity\TestLogin.cs" />
