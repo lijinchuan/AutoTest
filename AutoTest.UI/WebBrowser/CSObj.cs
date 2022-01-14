@@ -174,6 +174,29 @@ namespace AutoTest.UI.WebBrowser
             }
         }
 
+        public void OpenWindow(string title, string html)
+        {
+            MainFrm.Instance.BeginInvoke(
+            new Action(() =>
+            {
+                var win = new SubForm.PopWebDlg(title, html);
+                win.Show();
+                win.BringToFront();
+            }));
+
+        }
+
+        public void CompareHtml(string title,string oldHtml,string newHtml)
+        {
+            MainFrm.Instance.BeginInvoke(
+            new Action(() =>
+            {
+                var win = new SubForm.CompareWebDlg($"{title}（左边是旧的HTML，右边是新的HTML）", oldHtml,newHtml);
+                win.Show();
+                win.BringToFront();
+            }));
+        }
+
         public void Dispose()
         {
             this.OnPublishMsg = null;

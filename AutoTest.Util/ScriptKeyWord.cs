@@ -253,6 +253,19 @@ namespace AutoTest.Util
                 Desc = "网络请求状态码，ServerDriverClient.getWebRequestData[?].Code,int",
                 HighColor = Color.Green
             });
+            KeyWordDic.Add(new ScriptKeyWord
+            {
+                KeyWord = "ServerDriverClient.openWindow",
+                Desc = "弹出一个窗口展示HTML，ServerDriverClient.openWindow(string title,string html)",
+                HighColor = Color.Green
+            });
+
+            KeyWordDic.Add(new ScriptKeyWord
+            {
+                KeyWord = "ServerDriverClient.compareHtml",
+                Desc = "比较HTML，ServerDriverClient.compareHtml(string title,string oldHtml,string newHtml)",
+                HighColor = Color.Green
+            });
 
             KeyWordDic.Add(new ScriptKeyWord
             {

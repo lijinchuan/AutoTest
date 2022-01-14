@@ -186,6 +186,12 @@
     <Compile Include="SubForm\AddTestSource.Designer.cs">
       <DependentUpon>AddTestSource.cs</DependentUpon>
     </Compile>
+    <Compile Include="SubForm\CompareWebDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SubForm\CompareWebDlg.Designer.cs">
+      <DependentUpon>CompareWebDlg.cs</DependentUpon>
+    </Compile>
     <Compile Include="SubForm\ConfirmDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -227,6 +233,12 @@
     </Compile>
     <Compile Include="SubForm\PopMessageDlg.Designer.cs">
       <DependentUpon>PopMessageDlg.cs</DependentUpon>
+    </Compile>
+    <Compile Include="SubForm\PopWebDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SubForm\PopWebDlg.Designer.cs">
+      <DependentUpon>PopWebDlg.cs</DependentUpon>
     </Compile>
     <Compile Include="SubForm\RunTestCaseConfirmDlg.cs">
       <SubType>Form</SubType>
@@ -477,6 +489,9 @@
     <EmbeddedResource Include="SubForm\AddTestSiteDlg.resx">
       <DependentUpon>AddTestSiteDlg.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="SubForm\CompareWebDlg.resx">
+      <DependentUpon>CompareWebDlg.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SubForm\ConfirmDlg.resx">
       <DependentUpon>ConfirmDlg.cs</DependentUpon>
     </EmbeddedResource>
@@ -491,6 +506,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="SubForm\MD5Dlg.resx">
       <DependentUpon>MD5Dlg.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="SubForm\PopWebDlg.resx">
+      <DependentUpon>PopWebDlg.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SubForm\RunTestCaseConfirmDlg.resx">
       <DependentUpon>RunTestCaseConfirmDlg.cs</DependentUpon>

@@ -23,6 +23,13 @@ namespace AutoTest.UI
         private System.Timers.Timer tasktimer = null;
         private WatingDlg wdlg = new WatingDlg();
 
+        public static MainFrm Instance
+        {
+            get;
+            private set;
+        }
+
+
         private void InitFrm()
         {
             this.tsb_Excute.Enabled = false;
@@ -88,6 +95,8 @@ namespace AutoTest.UI
         {
             InitializeComponent();
             InitFrm();
+
+            Instance = this;
         }
 
         protected override void OnLoad(EventArgs e)
