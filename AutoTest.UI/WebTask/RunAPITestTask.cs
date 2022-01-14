@@ -20,7 +20,7 @@ namespace AutoTest.UI.WebTask
 
         }
 
-        public override void DocumentCompletedHandler(IBrowser browser, IFrame frame, List<Cookie> cookies)
+        public override void DocumentCompletedHandler(IBrowser browser, IFrame frame)
         {
             throw new NotImplementedException();
         }
@@ -40,7 +40,7 @@ namespace AutoTest.UI.WebTask
             throw new NotImplementedException();
         }
 
-        protected override Task<int> ExecuteInner(IBrowser browser, IFrame frame)
+        protected override Task<int> ExecuteInner(IBrowser browser, IFrame frame, ICookieManager cookieManager)
         {
             throw new NotImplementedException();
         }

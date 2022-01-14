@@ -101,7 +101,7 @@ namespace AutoTest.UI.WebTask
             };
         }
 
-        public override void DocumentCompletedHandler(IBrowser browser, IFrame frame, List<CefSharp.Cookie> cookies)
+        public override void DocumentCompletedHandler(IBrowser browser, IFrame frame)
         {
             lock(_locker)
             {
@@ -469,7 +469,7 @@ namespace AutoTest.UI.WebTask
             return flag;
         }
 
-        protected override async Task<int> ExecuteInner(IBrowser browser, IFrame frame)
+        protected override async Task<int> ExecuteInner(IBrowser browser, IFrame frame, ICookieManager cookieManager)
         {
             if (!Check(browser, frame))
             {

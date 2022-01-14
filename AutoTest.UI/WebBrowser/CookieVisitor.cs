@@ -1,7 +1,9 @@
-﻿using System;
+﻿using CefSharp;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace AutoTest.UI.WebBrowser
@@ -9,21 +11,34 @@ namespace AutoTest.UI.WebBrowser
     /// <summary>
     /// cookie访问者模式
     /// </summary>
-    public class CookieVisitor : CefSharp.ICookieVisitor
+    public class CookieVisitor : ICookieVisitor
     {
-        public event Action<CefSharp.Cookie> SendCookie;
+        private readonly ICookieManager cookieManager;
+
+        public CookieVisitor(ICookieManager cookieManager)
+        {
+            this.cookieManager = cookieManager;
+        }
 
         public void Dispose()
         {
             // Method intentionally left empty.
         }
 
-        public bool Visit(CefSharp.Cookie cookie, int count, int total, ref bool deleteCookie)
+        public bool Visit(Cookie cookie, int count, int total, ref bool deleteCookie)
         {
             deleteCookie = false;
-            SendCookie?.Invoke(cookie);
 
             return true;
+        }
+
+        public async Task<List<Cookie>> GetCookies(string url)
+        {
+            if (string.IsNullOrWhiteSpace(url))
+            {
+                return await cookieManager.VisitAllCookiesAsync();
+            }
+            return await cookieManager.VisitUrlCookiesAsync(url, true);
         }
     }
 }

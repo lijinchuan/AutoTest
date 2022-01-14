@@ -19,13 +19,13 @@ namespace AutoTest.UI.WebTask
         private readonly IEventListener eventListener = null;
         private readonly RequestAutoResetEvent pageRequestAutoResetEvent = null;
         private readonly IMapper mapper = null;
-        private TestSite _testSite;
+        private readonly TestSite _testSite;
 
-        private TestLogin _testLogin;
+        private readonly TestLogin _testLogin;
         private TestEnv _testEnv;
-        private List<TestEnvParam> _testEnvParams;
+        private readonly List<TestEnvParam> _testEnvParams;
         private bool _readyFlag;
-        private dynamic bag;
+        private readonly dynamic bag;
 
         public RunTestLoginTask(string taskname, bool useProxy, TestSite testSite, 
             TestLogin testLogin,TestEnv testEnv, List<TestEnvParam> testEnvParams) 
@@ -43,7 +43,7 @@ namespace AutoTest.UI.WebTask
             _testLogin = testLogin;
         }
 
-        public override void DocumentCompletedHandler(IBrowser browser, IFrame frame, List<Cookie> cookies)
+        public override void DocumentCompletedHandler(IBrowser browser, IFrame frame)
         {
             if (!_readyFlag)
             {
@@ -222,7 +222,7 @@ namespace AutoTest.UI.WebTask
             return await Task.FromResult(validResult);
         }
 
-        protected override async Task<int> ExecuteInner(IBrowser browser, IFrame frame)
+        protected override async Task<int> ExecuteInner(IBrowser browser, IFrame frame,ICookieManager cookieManager)
         {
             var ret = 0;
             try
@@ -233,6 +233,15 @@ namespace AutoTest.UI.WebTask
                     ret = await RunValidCode(browser, frame);
                     if (ret == 1)
                     {
+                        //保存下COOKIE
+                        using (var visiter = new CookieVisitor(cookieManager))
+                        {
+                            var list = visiter.GetCookies(GetStartPageUrl()).Result;
+                            foreach(var li in list)
+                            {
+                                //li.Creation
+                            }
+                        }
                         PublishMsg($"登陆成功");
                     }
                     else

@@ -22,11 +22,6 @@ namespace AutoTest.UI.WebBrowser
     public class DefaultChromiumWebBrowser : ChromiumWebBrowser
     {
         /// <summary>
-        /// 记录COOKIE
-        /// </summary>
-        private readonly List<Cookie> cookiecontainer = new List<Cookie>();
-
-        /// <summary>
         /// 开始下载网页
         /// </summary>
         private event Action<IBrowser, IFrame> DocumentLoadStart;
@@ -34,7 +29,7 @@ namespace AutoTest.UI.WebBrowser
         /// <summary>
         ///文档下载完成事件通知 
         /// </summary>
-        private event Action<IBrowser,IFrame,List<Cookie>> DocumentLoadCompleted;
+        private event Action<IBrowser,IFrame> DocumentLoadCompleted;
 
         /// <summary>
         /// 待执行任务列表
@@ -69,7 +64,7 @@ namespace AutoTest.UI.WebBrowser
         /// <summary>
         /// 等待通知准备好
         /// </summary>
-        private AutoResetEvent readyResetEvent = new AutoResetEvent(true);
+        private readonly AutoResetEvent readyResetEvent = new AutoResetEvent(true);
 
         /// <summary>
         /// 局部锁
@@ -88,7 +83,7 @@ namespace AutoTest.UI.WebBrowser
 
         private IWebTask lastTask = null;
 
-        WebBrowserTool webBrowserTool = new WebBrowserTool();
+        readonly WebBrowserTool webBrowserTool = new WebBrowserTool();
 
         public bool CancelTasks()
         {
@@ -145,16 +140,6 @@ namespace AutoTest.UI.WebBrowser
 
         }
 
-        private void DefaultChromiumWebBrowser_AddressChanged(object sender, AddressChangedEventArgs e)
-        {
-            DocumentLoadStart?.BeginInvoke(e.Browser, e.Browser.MainFrame, null, null);
-        }
-
-        private void DefaultChromiumWebBrowser_DocumentLoadStart(IBrowser browser, IFrame frame)
-        {
-            //DocumentLoadStart?.BeginInvoke(browser, frame, null, null);
-        }
-
         private void DefaultChromiumWebBrowser_FrameLoadStart(object sender, FrameLoadStartEventArgs e)
         {
             
@@ -169,14 +154,17 @@ namespace AutoTest.UI.WebBrowser
                 if (!isInit)
                 {
                     MenuHandler = new MenuHandler().Init(this);
-
-                    var cookieManager = this.GetCookieManager();
-                    CookieVisitor visitor = new CookieVisitor();
-                    visitor.SendCookie += Visitor_SendCookie;
-                    //_ = cookieManager.VisitAllCookies(visitor);
-                    
                     isInit = true;
                 }
+            }
+        }
+
+        public async Task<List<Cookie>> GetCookies(string url)
+        {
+            var cookieManager = this.GetCookieManager();
+            using (CookieVisitor visitor = new CookieVisitor(cookieManager))
+            {
+                return await visitor.GetCookies(url);
             }
         }
 
@@ -188,7 +176,7 @@ namespace AutoTest.UI.WebBrowser
                 _ = new Action(() =>
                 {
                     webBrowserTool.WaitLoading(GetBrowser(), cancelFlag);
-                    DocumentLoadCompleted?.Invoke(e.Browser, e.Frame, GetCookie());
+                    DocumentLoadCompleted?.Invoke(e.Browser, e.Frame);
                 }).BeginInvoke(null, null);
             }
         }
@@ -196,27 +184,6 @@ namespace AutoTest.UI.WebBrowser
         private void DefaultChromiumWebBrowser_LoadingStateChanged(object sender, LoadingStateChangedEventArgs e)
         {
             // Method intentionally left empty.
-        }
-
-        private void Visitor_SendCookie(CefSharp.Cookie cookie)
-        {
-            lock (cookiecontainer)
-            {
-                var oldcookie = cookiecontainer.FirstOrDefault(p => p.Name == cookie.Name && p.Domain == cookie.Domain);
-                if (oldcookie != null)
-                {
-                    _ = cookiecontainer.Remove(oldcookie);
-                }
-                cookiecontainer.Add(cookie);
-            }
-        }
-
-        public List<Cookie> GetCookie()
-        {
-            lock (cookiecontainer)
-            {
-                return cookiecontainer.Select(p => p).ToList();
-            }
         }
 
 
@@ -350,6 +317,7 @@ namespace AutoTest.UI.WebBrowser
             if (cooklist.Any())
             {
                 var cookmanager = this.GetCookieManager();
+                var cookiecontainer = GetCookies(webTask.GetStartPageUrl()).Result;
                 foreach (var c in cooklist)
                 {
                     var oldcookie = cookiecontainer.FirstOrDefault(p => p.Name == c.Name && p.Domain == c.Domain);
@@ -400,7 +368,7 @@ namespace AutoTest.UI.WebBrowser
                 DocumentLoadCompleted -= DefaultChromiumWebBrowser_DocumentLoadCompleted;
             }
 
-            void DefaultChromiumWebBrowser_DocumentLoadCompleted(IBrowser arg1, IFrame arg2, List<Cookie> arg3)
+            void DefaultChromiumWebBrowser_DocumentLoadCompleted(IBrowser arg1, IFrame arg2)
             {
                 ar.Set();
             }
@@ -498,7 +466,8 @@ namespace AutoTest.UI.WebBrowser
             _ = readyResetEvent.Set();
             try
             {
-                _ = webTask.Execute(GetBrowser(), GetBrowser().MainFrame);
+                var cookieManager = this.GetCookieManager();
+                _ = webTask.Execute(GetBrowser(), GetBrowser().MainFrame, cookieManager);
             }
             catch (Exception ex)
             {

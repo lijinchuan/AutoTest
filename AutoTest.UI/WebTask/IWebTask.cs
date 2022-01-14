@@ -1,5 +1,6 @@
 ﻿using AutoTest.Domain.Model;
 using AutoTest.UI.EventListener;
+using AutoTest.UI.WebBrowser;
 using CefSharp;
 using System;
 using System.Collections.Generic;
@@ -81,7 +82,7 @@ namespace AutoTest.UI.WebTask
         /// <summary>
         /// 执行方法体，不要等待，完了会通知
         /// </summary>
-        Task<int> Execute(IBrowser browser, IFrame frame);
+        Task<int> Execute(IBrowser browser, IFrame frame, ICookieManager cookieManager);
 
         /// <summary>
         /// 页面加载完成通知，主要用来初始化起始页，登录拿COOKIE等作用
@@ -89,7 +90,7 @@ namespace AutoTest.UI.WebTask
         /// <param name="browser"></param>
         /// <param name="frame"></param>
         /// <param name="cookies"></param>
-        void DocumentCompletedHandler(IBrowser browser, IFrame frame, List<Cookie> cookies);
+        void DocumentCompletedHandler(IBrowser browser, IFrame frame);
 
         /// <summary>
         /// 

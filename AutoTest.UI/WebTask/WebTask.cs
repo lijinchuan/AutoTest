@@ -93,7 +93,7 @@ namespace AutoTest.UI.WebTask
             webBrowserTool = new WebBrowserTool();
         }
 
-        public abstract void DocumentCompletedHandler(IBrowser browser, IFrame frame, List<Cookie> cookies);
+        public abstract void DocumentCompletedHandler(IBrowser browser, IFrame frame);
 
         /// <summary>
         /// 内部执行，更安全，防止不通知任务结束
@@ -101,13 +101,13 @@ namespace AutoTest.UI.WebTask
         /// <param name="browser"></param>
         /// <param name="frame"></param>
         /// <returns></returns>
-        protected abstract Task<int> ExecuteInner(IBrowser browser, IFrame frame);
+        protected abstract Task<int> ExecuteInner(IBrowser browser, IFrame frame, ICookieManager cookieManager);
 
-        public async Task<int> Execute(IBrowser browser, IFrame frame)
+        public async Task<int> Execute(IBrowser browser, IFrame frame,ICookieManager cookieManager)
         {
             try
             {
-                return await ExecuteInner(browser, frame);
+                return await ExecuteInner(browser, frame, cookieManager);
             }
             finally
             {
