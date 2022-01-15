@@ -257,14 +257,14 @@ namespace AutoTest.Util
             {
                 KeyWord = "ServerDriverClient.openWindow",
                 Desc = "弹出一个窗口展示HTML，ServerDriverClient.openWindow(string title,string html)",
-                HighColor = Color.Green
+                HighColor = Color.Red
             });
 
             KeyWordDic.Add(new ScriptKeyWord
             {
                 KeyWord = "ServerDriverClient.compareHtml",
                 Desc = "比较HTML，ServerDriverClient.compareHtml(string title,string oldHtml,string newHtml)",
-                HighColor = Color.Green
+                HighColor = Color.Red
             });
 
             //long Inc(string name, long init = 0)
@@ -272,7 +272,15 @@ namespace AutoTest.Util
             {
                 KeyWord = "ServerDriverClient.inc",
                 Desc = "取自增数，ServerDriverClient.inc(string name, long init = 0)",
-                HighColor = Color.Green
+                HighColor = Color.Red
+            });
+
+            //long GetCounterVal(string name)
+            KeyWordDic.Add(new ScriptKeyWord
+            {
+                KeyWord = "ServerDriverClient.getCounterVal",
+                Desc = "取自增数，ServerDriverClient.getCounterVal(string name)",
+                HighColor = Color.Red
             });
 
             KeyWordDic.Add(new ScriptKeyWord

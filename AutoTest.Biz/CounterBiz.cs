@@ -11,6 +11,20 @@ namespace AutoTest.Biz
     public static class CounterBiz
     {
         static object locker = new object();
+
+        public static long GetCounterVal(string name)
+        {
+            lock (locker)
+            {
+                var cnt = BigEntityTableRemotingEngine.Find<Counter>(nameof(Counter), nameof(Counter.CounterName), new object[] { name }).FirstOrDefault();
+                if (cnt == null)
+                {
+                    return 0;
+                }
+                return cnt.Value;
+            }
+        }
+
         public static long Inc(string name, long init = 0)
         {
             lock (locker)
