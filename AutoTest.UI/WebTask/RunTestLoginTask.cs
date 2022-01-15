@@ -5,6 +5,7 @@ using AutoTest.UI.EventListener;
 using AutoTest.UI.WebBrowser;
 using AutoTest.Util;
 using CefSharp;
+using LJC.FrameWorkV3.Data.EntityDataBase;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,6 +42,7 @@ namespace AutoTest.UI.WebTask
 
             _testSite = testSite;
             _testLogin = testLogin;
+            _testEnv = testEnv;
         }
 
         public override void DocumentCompletedHandler(IBrowser browser, IFrame frame)
@@ -236,11 +238,44 @@ namespace AutoTest.UI.WebTask
                         //保存下COOKIE
                         using (var visiter = new CookieVisitor(cookieManager))
                         {
+                            var container = BigEntityTableRemotingEngine.Find<TestCookieContainer>(nameof(TestCookieContainer), TestCookieContainer.IX,
+                                new object[] { _testSite.Id, _testEnv == null ? 0 : _testEnv.Id, _testLogin.Id }).FirstOrDefault();
+                            if (container == null) {
+                                container = new TestCookieContainer()
+                                {
+                                    Account = _testLogin.Id,
+                                    CreateTime = DateTime.Now,
+                                    Env = _testEnv.Id,
+                                    SiteId = _testSite.Id,
+                                    TestCookies = new List<TestCookie>
+                                    {
+
+                                    }
+                                };
+                            }
+                            else
+                            {
+                                container.CreateTime = DateTime.Now;
+                            }
                             var list = visiter.GetCookies(GetStartPageUrl()).Result;
                             foreach(var li in list)
                             {
                                 //li.Creation
+                                container.TestCookies.Add(new TestCookie
+                                {
+                                    Domain=li.Domain,
+                                    Expires=li.Expires??DateTime.Now.AddYears(1),
+                                    HttpOnly=li.HttpOnly,
+                                    Name=li.Name,
+                                    Path=li.Path,
+                                    Priority=(int)li.Priority,
+                                    SameSite=(int)li.SameSite,
+                                    Secure=li.Secure,
+                                    Value=li.Value
+                                });
                             }
+
+                            BigEntityTableRemotingEngine.Upsert(nameof(TestCookieContainer), container);
                         }
                         PublishMsg($"登陆成功");
                     }

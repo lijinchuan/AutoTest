@@ -35,16 +35,16 @@ namespace AutoTest.Domain.Entity
         // 摘要:
         //     Expires or null if no expiry
         public DateTime Expires { get; set; }
-        //
-        // 摘要:
-        //     The cookie creation date. This is automatically populated by the system on cookie
-        //     creation.
-        public DateTime Creation { get; }
-        //
-        // 摘要:
-        //     The cookie last access date. This is automatically populated by the system on
-        //     access.
-        public DateTime LastAccess { get; }
+        ////
+        //// 摘要:
+        ////     The cookie creation date. This is automatically populated by the system on cookie
+        ////     creation.
+        //public DateTime Creation { get; }
+        ////
+        //// 摘要:
+        ////     The cookie last access date. This is automatically populated by the system on
+        ////     access.
+        //public DateTime LastAccess { get; }
         //
         // 摘要:
         //     Same site.

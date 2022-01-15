@@ -37,6 +37,8 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.myTabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage7 = new System.Windows.Forms.TabPage();
+            this.CBUser = new System.Windows.Forms.ComboBox();
+            this.label8 = new System.Windows.Forms.Label();
             this.NUDOrder = new System.Windows.Forms.NumericUpDown();
             this.label5 = new System.Windows.Forms.Label();
             this.TBName = new System.Windows.Forms.TextBox();
@@ -72,13 +74,12 @@
             this.TPLog = new System.Windows.Forms.TabPage();
             this.TPInvokeLog = new AutoTest.UI.UC.LogViewTab();
             this.TopPannel = new System.Windows.Forms.Panel();
+            this.LBAccount = new System.Windows.Forms.Label();
             this.LKEnv = new System.Windows.Forms.Label();
             this.pannelmid = new System.Windows.Forms.Panel();
             this.PannelBottom = new System.Windows.Forms.Panel();
             this.TabResults = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.CBUser = new System.Windows.Forms.ComboBox();
-            this.label8 = new System.Windows.Forms.Label();
             this.Tabs.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.myTabControl1.SuspendLayout();
@@ -196,6 +197,25 @@
             this.tabPage7.TabIndex = 0;
             this.tabPage7.Text = "属性";
             this.tabPage7.UseVisualStyleBackColor = true;
+            // 
+            // CBUser
+            // 
+            this.CBUser.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.CBUser.FormattingEnabled = true;
+            this.CBUser.Location = new System.Drawing.Point(115, 94);
+            this.CBUser.Name = "CBUser";
+            this.CBUser.Size = new System.Drawing.Size(121, 24);
+            this.CBUser.TabIndex = 9;
+            // 
+            // label8
+            // 
+            this.label8.AutoSize = true;
+            this.label8.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label8.Location = new System.Drawing.Point(10, 97);
+            this.label8.Name = "label8";
+            this.label8.Size = new System.Drawing.Size(88, 16);
+            this.label8.TabIndex = 8;
+            this.label8.Text = "限定User：";
             // 
             // NUDOrder
             // 
@@ -557,6 +577,7 @@
             // 
             this.TopPannel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.TopPannel.Controls.Add(this.LBAccount);
             this.TopPannel.Controls.Add(this.LKEnv);
             this.TopPannel.Controls.Add(this.TBUrl);
             this.TopPannel.Controls.Add(this.CBWebMethod);
@@ -565,6 +586,18 @@
             this.TopPannel.Name = "TopPannel";
             this.TopPannel.Size = new System.Drawing.Size(747, 56);
             this.TopPannel.TabIndex = 4;
+            // 
+            // LBAccount
+            // 
+            this.LBAccount.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.LBAccount.AutoSize = true;
+            this.LBAccount.BackColor = System.Drawing.Color.DarkSeaGreen;
+            this.LBAccount.ForeColor = System.Drawing.Color.White;
+            this.LBAccount.Location = new System.Drawing.Point(707, 23);
+            this.LBAccount.Name = "LBAccount";
+            this.LBAccount.Size = new System.Drawing.Size(29, 12);
+            this.LBAccount.TabIndex = 4;
+            this.LBAccount.Text = "账号";
             // 
             // LKEnv
             // 
@@ -619,25 +652,6 @@
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "tabPage1";
             this.tabPage1.UseVisualStyleBackColor = true;
-            // 
-            // CBUser
-            // 
-            this.CBUser.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.CBUser.FormattingEnabled = true;
-            this.CBUser.Location = new System.Drawing.Point(115, 94);
-            this.CBUser.Name = "CBUser";
-            this.CBUser.Size = new System.Drawing.Size(121, 24);
-            this.CBUser.TabIndex = 9;
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label8.Location = new System.Drawing.Point(10, 97);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(88, 16);
-            this.label8.TabIndex = 8;
-            this.label8.Text = "限定User：";
             // 
             // UCAddCaseParam
             // 
@@ -727,5 +741,6 @@
         private TestResultView UCTestResutView;
         private System.Windows.Forms.ComboBox CBUser;
         private System.Windows.Forms.Label label8;
+        private System.Windows.Forms.Label LBAccount;
     }
 }

@@ -53,6 +53,7 @@ namespace AutoTest.UI.UC
         UC.LoadingBox loadbox = new LoadingBox();
 
         private ComboBox CBEnv = new ComboBox();
+        private ComboBox CBAccount = new ComboBox();
 
         private bool fromlogflag = false;
 
@@ -283,20 +284,45 @@ namespace AutoTest.UI.UC
 
         private int GetEnvId()
         {
-            var envname = LKEnv.Text;
-            if (CBEnv.DataSource is List<TestEnv>)
+            if ((CBEnv.DataSource as List<TestEnv>)?.Count > 0)
             {
-                var envlist = CBEnv.DataSource as List<TestEnv>;
-                if (envlist.Count > 0)
+                var env = GetEnv();
+                if (env == null)
                 {
-                    var env = envlist.Find(p => p.EnvName == envname);
-                    if (env == null)
-                    {
-                        return -1;
-                    }
-                    return env.Id;
+                    return -1;
+                }
+                return env.Id;
+            }
+            return 0;
+        }
+
+        private TestLogin GetTestLogin()
+        {
+            var account = LBAccount.Text;
+            if (CBAccount.DataSource is List<TestLogin>)
+            {
+                var testLoginList = CBAccount.DataSource as List<TestLogin>;
+                if (testLoginList.Count > 0)
+                {
+                    return testLoginList.Find(p => p.AccountInfo == account);
                 }
             }
+
+            return null;
+        }
+
+        private int GetTestLoginId()
+        {
+            if ((CBAccount.DataSource as List<TestLogin>)?.Count > 0)
+            {
+                var testLogin = GetTestLogin();
+                if (testLogin == null)
+                {
+                    return -1;
+                }
+                return testLogin.Id;
+            }
+
             return 0;
         }
 
@@ -370,7 +396,7 @@ namespace AutoTest.UI.UC
 
             for(var i = 0; i < number; i++)
             {
-                UCAddCaseParam.CheckForIllegalCrossThreadCalls = false;
+                CheckForIllegalCrossThreadCalls = false;
                 url = ReplaceEvnParams(url, ref apiEnvParams);
                 HttpRequestEx httpRequestEx = new HttpRequestEx();
                 httpRequestEx.TimeOut = 3600 * 8;
@@ -449,6 +475,24 @@ namespace AutoTest.UI.UC
                         if (cookie.Checked)
                         {
                             httpRequestEx.AppendCookie(ReplaceEvnParams(cookie.Name, ref apiEnvParams), ReplaceEvnParams(cookie.Value, ref apiEnvParams), new Uri(url).Host, "/");
+                        }
+                    }
+                }
+                else
+                {
+                    var testLogin = GetTestLogin();
+                    if (testLogin!=null)
+                    {
+
+                        var cookieContainer = BigEntityTableRemotingEngine.Find<TestCookieContainer>(nameof(TestCookieContainer), TestCookieContainer.IX,
+                             new object[] { _testSite.Id, GetEnv()?.Id ?? 0, testLogin.Id }).FirstOrDefault();
+
+                        if (cookieContainer != null)
+                        {
+                            foreach(var cookie in cookieContainer.TestCookies)
+                            {
+                                httpRequestEx.AppendCookie(ReplaceEvnParams(cookie.Name, ref apiEnvParams), ReplaceEvnParams(cookie.Value, ref apiEnvParams), new Uri(url).Host, "/");
+                            }
                         }
                     }
                 }
@@ -1001,6 +1045,7 @@ namespace AutoTest.UI.UC
 
                         LKEnv.Visible = false;
                         CBEnv.Visible = true;
+                        CBEnv.BringToFront();
                     };
 
                     CBEnv.MouseLeave += (s, e) =>
@@ -1025,6 +1070,63 @@ namespace AutoTest.UI.UC
                 }
 
                 var testLoginList = BigEntityTableRemotingEngine.Find<TestLogin>(nameof(TestLogin), nameof(TestLogin.SiteId), new object[] { _testSite.Id }).ToList();
+
+                if (testLoginList.Count > 0)
+                {
+                    LBAccount.Visible = true;
+
+                    CBAccount.Visible = false;
+                    CBAccount.Location = LKEnv.Location;
+                    CBAccount.Width = this.TopPannel.Width - this.CBEnv.Location.X - 5;
+                    this.TopPannel.Controls.Add(CBAccount);
+
+                    CBAccount.DataSource = testLoginList;
+                    CBAccount.DisplayMember = nameof(TestLogin.AccountInfo);
+                    CBAccount.ValueMember = nameof(TestLogin.Id);
+
+                    if (_testCase.OnlyUserId > 0)
+                    {
+                        var testLogin = testLoginList.Find(p => p.Id == _testCase.OnlyUserId);
+                        if (testLogin != null)
+                        {
+                            LBAccount.Text = testLogin.AccountInfo;
+                            CBAccount.SelectedItem = testLogin;
+                        }
+                    }
+
+                    LBAccount.Click += (s, e) =>
+                    {
+                        CBAccount.Location = LKEnv.Location;
+
+                        var testLogin = testLoginList.Find(p => p.AccountInfo == LBAccount.Text);
+                        CBAccount.SelectedItem = testLogin;
+
+                        LBAccount.Visible = false;
+                        CBAccount.Visible = true;
+                        CBAccount.BringToFront();
+                    };
+
+                    CBAccount.MouseLeave += (s, e) =>
+                    {
+                        if (CBAccount.Visible)
+                        {
+                            CBAccount.Visible = false;
+                            LBAccount.Visible = true;
+                        }
+
+                    };
+
+                    CBAccount.SelectedIndexChanged += (s, e) =>
+                    {
+                        if (CBAccount.SelectedIndex > -1)
+                        {
+                            LBAccount.Text = (CBAccount.SelectedItem as TestLogin).AccountInfo;
+                            CBAccount.Visible = false;
+                            LBAccount.Visible = true;
+                        }
+                    };
+                }
+
                 testLoginList.Insert(0, new TestLogin
                 {
                     Id = 0,

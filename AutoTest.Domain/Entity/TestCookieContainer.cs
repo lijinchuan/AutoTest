@@ -8,6 +8,8 @@ namespace AutoTest.Domain.Entity
 {
     public class TestCookieContainer
     {
+        public static readonly string IX = $"{nameof(SiteId)}_{nameof(Env)}_{nameof(Account)}";
+
         public int Id
         {
             get;
@@ -20,13 +22,13 @@ namespace AutoTest.Domain.Entity
             set;
         }
 
-        public string Env
+        public int Env
         {
             get;
             set;
         }
 
-        public string Account
+        public int Account
         {
             get;
             set;
