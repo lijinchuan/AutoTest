@@ -50,6 +50,7 @@
     <Compile Include="Entity\ApplicationType.cs" />
     <Compile Include="Entity\AuthType.cs" />
     <Compile Include="Entity\BodyDataType.cs" />
+    <Compile Include="Entity\Counter.cs" />
     <Compile Include="Entity\FileDB.cs" />
     <Compile Include="Entity\OldVerion\TestCase.cs" />
     <Compile Include="Entity\OldVerion\TestCaseV2.cs" />

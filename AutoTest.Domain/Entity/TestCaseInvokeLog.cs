@@ -135,7 +135,7 @@ namespace AutoTest.Domain.Entity
             sb.AppendLine($"url:{this.Path}");
             sb.AppendLine();
 
-            sb.AppendLine($"method:{this.APIMethod.ToString()}");
+            sb.AppendLine($"method:{this.APIMethod}");
 
             sb.AppendLine();
             sb.AppendLine("headers:");

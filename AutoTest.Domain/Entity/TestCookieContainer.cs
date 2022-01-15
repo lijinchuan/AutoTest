@@ -40,6 +40,12 @@ namespace AutoTest.Domain.Entity
             set;
         }
 
+        public DateTime Expires
+        {
+            get;
+            set;
+        }
+
         public List<TestCookie> TestCookies
         {
             get;

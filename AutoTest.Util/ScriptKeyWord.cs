@@ -267,6 +267,14 @@ namespace AutoTest.Util
                 HighColor = Color.Green
             });
 
+            //long Inc(string name, long init = 0)
+            KeyWordDic.Add(new ScriptKeyWord
+            {
+                KeyWord = "ServerDriverClient.inc",
+                Desc = "取自增数，ServerDriverClient.inc(string name, long init = 0)",
+                HighColor = Color.Green
+            });
+
             KeyWordDic.Add(new ScriptKeyWord
             {
                 KeyWord = "JSON.parse",

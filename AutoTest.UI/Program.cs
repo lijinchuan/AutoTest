@@ -102,6 +102,8 @@ namespace AutoTest.UI
 
             BigEntityTableEngine.LocalEngine.CreateTable<TestCookieContainer>(p => p.Id, a => a.AddIndex(TestCookieContainer.IX, b => b.Asc(f => f.SiteId).Asc(f => f.Env).Asc(f => f.Account)));
 
+            BigEntityTableEngine.LocalEngine.CreateTable<Counter>(p => p.Id, a => a.AddIndex(nameof(Counter.CounterName), b => b.Asc(m => m.CounterName)));
+
             AutofacBuilder.init();
 
             Application.EnableVisualStyles();

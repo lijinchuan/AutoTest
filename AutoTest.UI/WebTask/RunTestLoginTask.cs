@@ -245,17 +245,16 @@ namespace AutoTest.UI.WebTask
                                 {
                                     Account = _testLogin.Id,
                                     CreateTime = DateTime.Now,
+                                    Expires=DateTime.Now.AddYears(1),
                                     Env = _testEnv.Id,
                                     SiteId = _testSite.Id,
-                                    TestCookies = new List<TestCookie>
-                                    {
-
-                                    }
+                                    TestCookies = new List<TestCookie>()
                                 };
                             }
                             else
                             {
                                 container.CreateTime = DateTime.Now;
+                                container.Expires = DateTime.Now.AddYears(1);
                             }
                             var list = visiter.GetCookies(GetStartPageUrl()).Result;
                             foreach(var li in list)

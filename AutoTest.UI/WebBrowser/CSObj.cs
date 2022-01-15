@@ -197,6 +197,11 @@ namespace AutoTest.UI.WebBrowser
             }));
         }
 
+        public long Inc(string name, long init = 0)
+        {
+            return Biz.CounterBiz.Inc(name, init);
+        }
+
         public void Dispose()
         {
             this.OnPublishMsg = null;
