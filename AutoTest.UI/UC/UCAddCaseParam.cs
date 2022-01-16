@@ -15,6 +15,7 @@ using AutoTest.Domain;
 using LJC.FrameWorkV3.LogManager;
 using AutoTest.Util;
 using System.Drawing;
+using AutoTest.Biz;
 
 namespace AutoTest.UI.UC
 {
@@ -484,12 +485,11 @@ namespace AutoTest.UI.UC
                     if (testLogin!=null)
                     {
 
-                        var cookieContainer = BigEntityTableRemotingEngine.Find<TestCookieContainer>(nameof(TestCookieContainer), TestCookieContainer.IX,
-                             new object[] { _testSite.Id, GetEnv()?.Id ?? 0, testLogin.Id }).FirstOrDefault();
+                        var cookies = TestCookieContainerBiz.GetCookies(_testSite.Id, GetEnv()?.Id, testLogin.Id);
 
-                        if (cookieContainer != null)
+                        if (cookies != null)
                         {
-                            foreach(var cookie in cookieContainer.TestCookies)
+                            foreach(var cookie in cookies)
                             {
                                 httpRequestEx.AppendCookie(ReplaceEvnParams(cookie.Name, ref apiEnvParams), ReplaceEvnParams(cookie.Value, ref apiEnvParams), new Uri(url).Host, "/");
                             }

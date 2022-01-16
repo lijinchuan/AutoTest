@@ -48,6 +48,7 @@
     <Compile Include="CounterBiz.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RecoverManager.cs" />
+    <Compile Include="TestCookieContainerBiz.cs" />
     <Compile Include="TreeNodeEx.cs" />
     <Compile Include="UILoadHelper.cs" />
   </ItemGroup>

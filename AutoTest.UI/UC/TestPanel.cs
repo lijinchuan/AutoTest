@@ -1,6 +1,8 @@
-﻿using AutoTest.UI.WebBrowser;
+﻿using AutoTest.Domain.Entity;
+using AutoTest.UI.WebBrowser;
 using AutoTest.UI.WebTask;
 using AutoTest.Util;
+using CefSharp.Enums;
 using LJC.FrameWorkV3.LogManager;
 using System;
 using System.Collections.Generic;
@@ -108,6 +110,27 @@ namespace AutoTest.UI.UC
         public bool ClearCookie(string url)
         {
             return webView.ClearCookie(url);
+        }
+
+        public bool SetCookie(string url,List<TestCookie> cookies)
+        {
+            foreach (var cookie in cookies)
+            {
+                webView.SetCookie(url, new CefSharp.Cookie
+                {
+                    Domain = cookie.Domain,
+                    HttpOnly = cookie.HttpOnly,
+                    Name = cookie.Name,
+                    Expires = cookie.Expires,
+                    Path = cookie.Path,
+                    Priority = (CookiePriority)cookie.Priority,
+                    SameSite = (CookieSameSite)cookie.SameSite,
+                    Secure = cookie.Secure,
+                    Value = cookie.Value
+                });
+            }
+
+            return true;
         }
 
         public bool Reset()

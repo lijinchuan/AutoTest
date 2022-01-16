@@ -65,6 +65,14 @@ namespace AutoTest.UI.WebTask
             }
         }
 
+        public TestEnv TestEnv
+        {
+            get
+            {
+                return _testEnv;
+            }
+        }
+
         public RunTestTask(string taskname, bool useProxy, TestSite testSite, TestLogin testLogin,
             TestPage testPage, TestCase testCase, TestEnv testEnv, List<TestEnvParam> testEnvParams,
             List<TestScript> globScripts, List<TestScript> siteScripts,Action<TestResult> notify)

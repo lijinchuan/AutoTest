@@ -295,8 +295,8 @@ namespace AutoTest.UI.UC
             var testCaseNodeList = GetTestCaseTaskList(selnode);
             var testTaskList = new List<TestTask>();
             var scriptsDic = new Dictionary<object, List<TestScript>>();
-            var loginDic = new Dictionary<object, TestLogin>();
             var envDic = new Dictionary<object, (TestEnv env, List<TestEnvParam> envParams, bool hasEvn)>();
+            var testLoginList = BigEntityTableRemotingEngine.List<TestLogin>(nameof(TestLogin),1,int.MaxValue).ToList();
 
             List<TestSource> sources = new List<TestSource>();
             List<TestSite> testSites = new List<TestSite>();
@@ -327,31 +327,40 @@ namespace AutoTest.UI.UC
 
                 testCases.Add(testCase);
 
-                TestLogin testLogin;
-                var key = "testLogin_" + testSource.Id + "_" + testSite.Id;
-                if (!loginDic.TryGetValue(key, out testLogin))
+                TestLogin testLogin = null;
+                if (testCase.OnlyUserId > 0)
                 {
-                    var testLoginList = BigEntityTableRemotingEngine.Find<TestLogin>(nameof(TestLogin), nameof(TestLogin.SiteId), new object[] { testSite.Id });
-                    
-                    if (testLoginList.Any())
+                    testLogin = testLoginList.FirstOrDefault(p => p.Id == testCase.OnlyUserId && p.SiteId == testSite.Id);
+                    if (testLogin == null)
                     {
-                        if (!testLoginList.Any(p => p.Used))
+                        Util.SendMsg(this, $"账号不存在：{testCase.OnlyUserId}");
+                        return;
+                    }
+                }
+                else
+                {
+                    if (testLoginList.Where(p => p.SiteId == testSite.Id).Count()==1)
+                    {
+                        testLogin = testLoginList.FirstOrDefault(p => p.SiteId == testSite.Id);
+                    }
+                    else if (testLoginList.Where(p => p.SiteId == testSite.Id).Count() >1)
+                    {
+                        testLogin = testLoginList.FirstOrDefault(p => p.SiteId == testSite.Id && p.Used);
+                        if (testLogin==null)
                         {
-                            MessageBox.Show("请选择一个测试帐号");
+                            MessageBox.Show($"{testSite.Name}:请选择一个测试帐号");
                             return;
                         }
-
-                        testLogin = testLoginList.First(p => p.Used);
                     }
-                    loginDic.Add(key, testLogin);
+
                 }
 
-                if (testLogin.Id != testCase.OnlyUserId && testCase.OnlyUserId != 0)
-                {
-                    continue;
-                }
+                //if (testLogin != null && testLogin.Id != testCase.OnlyUserId && testCase.OnlyUserId != 0)
+                //{
+                //    continue;
+                //}
 
-                key = "globalScripts_" + testSource.Id;
+                var key = "globalScripts_" + testSource.Id;
                 List<TestScript> globalScripts = null;
                 if (!scriptsDic.TryGetValue(key, out globalScripts))
                 {
@@ -843,6 +852,7 @@ namespace AutoTest.UI.UC
                                 {
                                     return;
                                 }
+                                TestCookieContainerBiz.SetExpired(testSite.Id, ep.env?.Id, testLogin.Id);
                                 var loginTask = new RunTestLoginTask(testLogin.Url, false, testSite, testLogin, ep.env, ep.envParams);
                                 if (testPanel.ClearCookie(loginTask.GetStartPageUrl()))
                                 {

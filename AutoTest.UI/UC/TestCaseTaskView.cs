@@ -86,6 +86,12 @@ namespace AutoTest.UI.UC
                     {
                         currentTestLogin = rt.TestLogin;
                         testPanel.ClearCookie(rt.TestLogin.Url);
+
+                        var cookies = Biz.TestCookieContainerBiz.GetCookies(rt.TestLogin.SiteId, rt.TestEnv?.Id, rt.TestLogin.Id);
+                        if (cookies.Count > 0)
+                        {
+                            testPanel.SetCookie(rt.TestLogin.Url, cookies);
+                        }
                     }
                     OnTaskStart?.Invoke(t);
                 };

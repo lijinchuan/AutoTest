@@ -310,6 +310,12 @@ namespace AutoTest.UI.WebBrowser
             }
         }
 
+        public bool SetCookie(string url, Cookie cookie)
+        {
+            var cookmanager = this.GetCookieManager();
+            return cookmanager.SetCookie(url, cookie);
+        }
+
         private void PepareTask(IWebTask webTask)
         {
             //第一步，更新COOKIE

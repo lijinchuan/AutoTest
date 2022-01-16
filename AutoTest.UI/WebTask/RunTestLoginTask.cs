@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoTest.Biz;
 using AutoTest.Domain.Entity;
 using AutoTest.Domain.Model;
 using AutoTest.UI.EventListener;
@@ -238,8 +239,7 @@ namespace AutoTest.UI.WebTask
                         //保存下COOKIE
                         using (var visiter = new CookieVisitor(cookieManager))
                         {
-                            var container = BigEntityTableRemotingEngine.Find<TestCookieContainer>(nameof(TestCookieContainer), TestCookieContainer.IX,
-                                new object[] { _testSite.Id, _testEnv == null ? 0 : _testEnv.Id, _testLogin.Id }).FirstOrDefault();
+                            var container = TestCookieContainerBiz.GetTestCookieContainer(_testSite.Id, _testEnv?.Id, _testLogin.Id);
                             if (container == null) {
                                 container = new TestCookieContainer()
                                 {
@@ -255,6 +255,7 @@ namespace AutoTest.UI.WebTask
                             {
                                 container.CreateTime = DateTime.Now;
                                 container.Expires = DateTime.Now.AddYears(1);
+                                container.TestCookies.Clear();
                             }
                             var list = visiter.GetCookies(GetStartPageUrl()).Result;
                             foreach(var li in list)
@@ -274,7 +275,7 @@ namespace AutoTest.UI.WebTask
                                 });
                             }
 
-                            BigEntityTableRemotingEngine.Upsert(nameof(TestCookieContainer), container);
+                            TestCookieContainerBiz.Upsert(container);
                         }
                         PublishMsg($"登陆成功");
                     }
