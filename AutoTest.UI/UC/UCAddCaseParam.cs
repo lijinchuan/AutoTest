@@ -391,6 +391,35 @@ namespace AutoTest.UI.UC
             return url;
         }
 
+        private List<ParamInfo> GetAbleCookies()
+        {
+            var caseData= GetApiData(false);
+            if (caseData.Cookies != null && caseData.Cookies.Count > 0)
+            {
+                return caseData.Cookies;
+            }
+
+            var testLogin = GetTestLogin();
+            if (testLogin != null)
+            {
+
+                var tempCookies = TestCookieContainerBiz.GetCookies(_testSite.Id, GetEnv()?.Id, testLogin.Id);
+
+                if (tempCookies != null)
+                {
+                    return tempCookies.Select(cookie => new ParamInfo
+                    {
+                        Checked = true,
+                        Desc = "来自测试的登录cookie",
+                        Name = cookie.Name,
+                        Value = cookie.Value
+                    }).ToList();
+                }
+            }
+
+            return new List<ParamInfo>();
+        }
+
         private List<HttpRequestEx> PepareRequest(ref string url, List<TestEnvParam> apiEnvParams,int number,object cancelToken)
         {
             List<HttpRequestEx> requestlist = new List<HttpRequestEx>();
@@ -469,31 +498,11 @@ namespace AutoTest.UI.UC
                     }
                 }
 
-                if (Cookies?.Count > 0)
+                foreach (var cookie in GetAbleCookies())
                 {
-                    foreach (var cookie in Cookies)
+                    if (cookie.Checked)
                     {
-                        if (cookie.Checked)
-                        {
-                            httpRequestEx.AppendCookie(ReplaceEvnParams(cookie.Name, ref apiEnvParams), ReplaceEvnParams(cookie.Value, ref apiEnvParams), new Uri(url).Host, "/");
-                        }
-                    }
-                }
-                else
-                {
-                    var testLogin = GetTestLogin();
-                    if (testLogin!=null)
-                    {
-
-                        var cookies = TestCookieContainerBiz.GetCookies(_testSite.Id, GetEnv()?.Id, testLogin.Id);
-
-                        if (cookies != null)
-                        {
-                            foreach(var cookie in cookies)
-                            {
-                                httpRequestEx.AppendCookie(ReplaceEvnParams(cookie.Name, ref apiEnvParams), ReplaceEvnParams(cookie.Value, ref apiEnvParams), new Uri(url).Host, "/");
-                            }
-                        }
+                        httpRequestEx.AppendCookie(ReplaceEvnParams(cookie.Name, ref apiEnvParams), ReplaceEvnParams(cookie.Value, ref apiEnvParams), new Uri(url).Host, "/");
                     }
                 }
 
@@ -664,22 +673,20 @@ namespace AutoTest.UI.UC
                 var responseEx = responseExTaskList.First().Result;
 
                 var cookies = new List<RespCookie>();
-                var apidata = GetApiData(false);
-                if (apidata.Cookies != null && apidata.Cookies.Count > 0)
+
+                foreach (var c in GetAbleCookies())
                 {
-                    foreach(var c in apidata.Cookies)
+                    if (!cookies.Any(p => p.Name == c.Name))
                     {
-                        if (!cookies.Any(p => p.Name == c.Name))
+                        cookies.Add(new RespCookie
                         {
-                            cookies.Add(new RespCookie
-                            {
-                                Name = c.Name,
-                                Value = c.Value,
-                                Path = "/"
-                            });
-                        }
+                            Name = c.Name,
+                            Value = c.Value,
+                            Path = "/"
+                        });
                     }
                 }
+
                 TBResult.SetCookie(cookies);
                 TBResult.Url = responseEx.ResponseUrl;
 
@@ -1413,7 +1420,7 @@ namespace AutoTest.UI.UC
                     _testCase.Url = string.Empty;
                 }
 
-                if ((int)CBUser.SelectedValue != _testCase.OnlyUserId)
+                if (CBUser.SelectedValue != null && (int)CBUser.SelectedValue != _testCase.OnlyUserId)
                 {
                     ischanged = true;
                     _testCase.OnlyUserId = (int)CBUser.SelectedValue;

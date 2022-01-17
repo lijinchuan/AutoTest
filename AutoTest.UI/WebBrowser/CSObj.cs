@@ -202,6 +202,11 @@ namespace AutoTest.UI.WebBrowser
             return Biz.CounterBiz.Inc(name, init);
         }
 
+        public long GetCounterVal(string name)
+        {
+            return Biz.CounterBiz.GetCounterVal(name);
+        }
+
         public void Dispose()
         {
             this.OnPublishMsg = null;
