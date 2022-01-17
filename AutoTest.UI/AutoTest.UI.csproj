@@ -447,6 +447,7 @@
     <Compile Include="WebBrowser\DefaultChromiumWebBrowser.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="WebBrowser\DefLifeSpanHandler.cs" />
     <Compile Include="WebBrowser\IWebBrowserTool.cs" />
     <Compile Include="WebBrowser\JsDialogHandler.cs" />
     <Compile Include="WebBrowser\MenuHandler.cs" />

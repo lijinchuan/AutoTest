@@ -117,6 +117,7 @@ namespace AutoTest.UI.WebBrowser
 
             dialogHandler = new CommonFileDialogHandler();
             DialogHandler = dialogHandler;
+            LifeSpanHandler = new DefLifeSpanHandler();
 
             JsDialogHandler = silenceJsDialogHandler;
             
