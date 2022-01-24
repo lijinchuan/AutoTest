@@ -32,6 +32,11 @@ namespace AutoTest.UI.WebBrowser
                 script.src = ""{0}"";
                 document.getElementsByTagName('head')[0].appendChild(script);";
 
+        private static string REGISTERRSCRIPTCODE = @"var script = document.createElement(""script"");
+                script.type = ""text/javascript"";
+                script.text = ""{0}"";
+                document.getElementsByTagName('head')[0].appendChild(script);";
+
         private const string ADDEVALFUNCTIONCODE = @"var script = document.createElement(""script"");
                 script.type = ""text/javascript"";
                 script.text = ""function _$eval(code) { eval('_r_='+code); return _r_;}"";
@@ -116,6 +121,14 @@ namespace AutoTest.UI.WebBrowser
         public bool RegisterRomoteScript(IBrowser browser,IFrame frame,string url)
         {
             var code = string.Format(REGISTERREMOTESCRIPTCODE, url);
+            var resp = browser.MainFrame.EvaluateScriptAsync(code);
+            AssertJavaScriptResult(resp);
+            return resp.Result.Success;
+        }
+
+        public bool RegisterScript(IBrowser browser, IFrame frame, string code)
+        {
+            code = string.Format(REGISTERRSCRIPTCODE, code.Replace("\"","\\\""));
             var resp = browser.MainFrame.EvaluateScriptAsync(code);
             AssertJavaScriptResult(resp);
             return resp.Result.Success;

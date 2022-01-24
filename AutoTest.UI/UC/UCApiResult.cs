@@ -8,6 +8,9 @@ using System.Windows.Forms;
 using LJC.FrameWorkV3.Data.EntityDataBase;
 using AutoTest.Domain.Entity;
 using AutoTest.Util;
+using CefSharp.WinForms;
+using CefSharp;
+using AutoTest.UI.WebBrowser;
 
 namespace AutoTest.UI.UC
 {
@@ -18,7 +21,7 @@ namespace AutoTest.UI.UC
         private TestEnv apiEnv = null;
         private UC.UCJsonViewer UCJsonViewer = null;
 
-        private System.Windows.Forms.WebBrowser WBResult = null;
+        private ChromiumWebBrowser WBResult = null;
 
         public UCApiResult()
         {
@@ -73,8 +76,7 @@ namespace AutoTest.UI.UC
             UCJsonViewer.Anchor = AnchorStyles.Left | AnchorStyles.Top | AnchorStyles.Right | AnchorStyles.Bottom;
             this.TPBody.Controls.Add(UCJsonViewer);
 
-            WBResult = new System.Windows.Forms.WebBrowser();
-            WBResult.ScriptErrorsSuppressed = true;
+            WBResult = new ChromiumWebBrowser("about:_blank");
             WBResult.Dock = DockStyle.Fill;
             TPBrowser.Controls.Add(WBResult);
         }
@@ -102,30 +104,40 @@ namespace AutoTest.UI.UC
         public void ChangeHTML(string url, string newHtml, Dictionary<string, string> cookies)
         {
             bool isWriteCookie = false;
-
-            WBResult.DocumentCompleted += DocumentCompleted;
-            WBResult.Url = new Uri(url);
-
-
-
-            void DocumentCompleted(object sender, WebBrowserDocumentCompletedEventArgs e)
+            var frame = WBResult.GetBrowser().MainFrame;
+            WBResult.FrameLoadEnd += DocumentCompleted;
+            
+            if (frame.Url == null || !frame.Url.Equals(url, StringComparison.OrdinalIgnoreCase))
             {
-                if (WBResult.Url.ToString().Equals(url, StringComparison.OrdinalIgnoreCase))
+                WBResult.LoadUrl(url);
+            }
+
+
+
+            void DocumentCompleted(object sender, FrameLoadEndEventArgs e)
+            {
+                frame = WBResult.GetBrowser().MainFrame;
+                if (frame.Url.Equals(url, StringComparison.OrdinalIgnoreCase))
                 {
-                    WBResult.DocumentCompleted -= DocumentCompleted;
+                    WBResult.FrameLoadEnd -= DocumentCompleted;
                     if (!isWriteCookie)
                     {
                         isWriteCookie = true;
                         if (cookies != null && cookies.Count > 0)
                         {
-                            var host = url.Split(':')[0] + "://" + new Uri(url).Host;
+                            var host = new Uri(url).Host;
                             foreach (var kv in cookies)
                             {
-                                //Biz.IEUtil.InternetSetCookie(host, kv.Key, kv.Value + ";path=/;expires=Thu, 01-Jan-1970 00:00:01 GMT");
-                                IEUtil.InternetSetCookie(host, kv.Key, kv.Value + ";path=/;");
+                                WBResult.GetCookieManager().SetCookie(host, new Cookie
+                                {
+                                    Domain = host,
+                                    Name = kv.Key,
+                                    Value = kv.Value,
+                                    Path = "/"
+                                });
                             }
 
-                            WBResult.Navigate(url);
+                            WBResult.LoadUrl(url);
                             return;
                         }
                     }
@@ -135,40 +147,38 @@ namespace AutoTest.UI.UC
                 {
                     if (isWriteCookie)
                     {
-                        WBResult.DocumentCompleted -= DocumentCompleted;
+                        WBResult.FrameLoadEnd -= DocumentCompleted;
                     }
                     else
                     {
                         isWriteCookie = true;
                         if (cookies != null && cookies.Count > 0)
                         {
-                            var host = url.Split(':')[0] + "://" + new Uri(url).Host;
-                            var host2 = WBResult.Url.ToString().Split(':')[0] + "://" + WBResult.Url.Host;
+                            var host = new Uri(url).Host;
                             foreach (var kv in cookies)
                             {
-                                //Biz.IEUtil.InternetSetCookie(host, kv.Key, kv.Value + ";path=/;expires=Thu, 01-Jan-1970 00:00:01 GMT");
-                                IEUtil.InternetSetCookie(host, kv.Key, kv.Value + ";path=/;");
-
-                                //Biz.IEUtil.InternetSetCookie(host2, kv.Key, kv.Value + ";path=/;expires=Thu, 01-Jan-1970 00:00:01 GMT");
-                                IEUtil.InternetSetCookie(host2, kv.Key, kv.Value + ";path=/;");
+                                WBResult.GetCookieManager().SetCookie(host, new Cookie
+                                {
+                                    Domain=host,
+                                    Name=kv.Key,
+                                    Value=kv.Value,
+                                    Path="/"
+                                });
                             }
 
-                            WBResult.Navigate(url);
+                            frame.LoadUrl(url);
                             return;
                         }
                     }
 
                 }
 
-                if (newHtml == WBResult.DocumentText)
+                if (newHtml == frame.GetSourceAsync().Result)
                 {
                     return;
                 }
 
-                HtmlElement element2 = WBResult.Document.CreateElement("script");
-                element2.SetAttribute("type", "text/javascript");
-                element2.SetAttribute("text", "function replacedom(dom){document.documentElement.innerHTML=dom;return true;}");   //这里写JS代码
-                var re = WBResult.Document.Body.AppendChild(element2);
+                new WebBrowserTool().RegisterScript(WBResult.GetBrowser(), frame, "function replacedom(dom){document.documentElement.innerHTML=dom;return true;}");
 
                 var startPos = newHtml.IndexOf("<head>", StringComparison.OrdinalIgnoreCase);
                 var endPos = newHtml.LastIndexOf("</body>", StringComparison.OrdinalIgnoreCase);
@@ -178,17 +188,15 @@ namespace AutoTest.UI.UC
                     newHtml = newHtml.Substring(startPos, endPos - startPos) + "</body>";
                 }
 
-                WBResult.Document.InvokeScript("replacedom", new[] { newHtml });
+                WBResult.ExecuteScriptAsync("replacedom", newHtml);
 
-                var docHeader = WBResult.Document.GetElementsByTagName("head");
-                if (docHeader.Count > 0)
+                var resp = frame.EvaluateScriptAsPromiseAsync("return document.getElementsByTagName(\"head\").length").Result;
+                if (resp.Success&&((int)resp.Result)>0)
                 {
                     var id = Guid.NewGuid().ToString("N");
-                    HtmlElement element3 = WBResult.Document.CreateElement("script");
-                    element3.SetAttribute("type", "text/javascript");
-                    element3.SetAttribute("id", id);
-                    element3.SetAttribute("text", "var scripts =[];var ss= document.getElementsByTagName(\"SCRIPT\"); for(var i=0;i<ss.length;i++){scripts.push(ss[i]); ss[i].remove();};for(var i=0;i<scripts.length;i++){if(scripts[i].id=='" + id+ "' || !scripts[i].innerHTML) continue;var newScript = document.createElement(\"SCRIPT\");alert(scripts[i].innerHTML);newScript.innerHTML=scripts[i].innerHTML;document.getElementsByTagName(\"HEAD\").item(0).appendChild(newScript);}");   //这里写JS代码
-                    docHeader[0].AppendChild(element3);
+                    var code = "var scripts =[];var ss= document.getElementsByTagName(\"SCRIPT\"); for(var i=0;i<ss.length;i++){scripts.push(ss[i]); ss[i].remove();};for(var i=0;i<scripts.length;i++){if(scripts[i].id=='" + id + "' || !scripts[i].innerHTML) continue;var newScript = document.createElement(\"SCRIPT\");alert(scripts[i].innerHTML);newScript.innerHTML=scripts[i].innerHTML;document.getElementsByTagName(\"HEAD\").item(0).appendChild(newScript);}";
+
+                    new WebBrowserTool().ExecutePromiseScript(WBResult.GetBrowser(), frame, code);
                 }
             }
         }
@@ -434,17 +442,17 @@ namespace AutoTest.UI.UC
         {
             if (Raw != null && Raw.Length > 0)
             {
-                var html = (this.CBEncode.SelectedItem as Encoding).GetString(Raw);
+                var html = (CBEncode.SelectedItem as Encoding).GetString(Raw);
                 if (RBRow.Checked)
                 {
                     TBResult.Visible = true;
                     UCJsonViewer.Visible = false;
-                    this.TBResult.Text = html;
-                    WBResult.DocumentText = html;
+                    TBResult.Text = html;
+                    WBResult.GetMainFrame().LoadHtml(html);
                 }
                 else if (RBTree.Checked)
                 {
-                    WBResult.DocumentText = html;
+                    WBResult.GetMainFrame().LoadHtml(html);
                     UCJsonViewer.DataSource = html;
                     UCJsonViewer.Location = TBResult.Location;
                     UCJsonViewer.Height = TBResult.Height;
@@ -508,18 +516,18 @@ namespace AutoTest.UI.UC
                             {
                                 Tabs.SelectedTab = TPBrowser;
                             }
-                            WBResult.DocumentCompleted += (s, e) =>
+                            WBResult.FrameLoadEnd += (s, e) =>
                             {
-                                WBResult.Document.InvokeScript("maxWin", null);
-                                WBResult.Document.InvokeScript("setText", new[] { html });
+                                WBResult.ExecuteScriptAsync("maxWin", null);
+                                WBResult.ExecuteScriptAsync("setText", html);
                             };
-                            if (WBResult.Url?.AbsoluteUri.Contains("jsonviewer.html") != true)
+                            if (WBResult.GetMainFrame().Url?.Contains("jsonviewer.html") != true)
                             {
-                                WBResult.Url = new Uri(AppDomain.CurrentDomain.BaseDirectory + "jsonviewer.html");
+                                WBResult.LoadUrl(AppDomain.CurrentDomain.BaseDirectory + "jsonviewer.html");
                             }
                             else
                             {
-                                WBResult.Document.InvokeScript("setText", new[] { html });
+                                WBResult.ExecuteScriptAsync("setText", html);
                             }
                         }
                         else if (isxml)
@@ -529,19 +537,18 @@ namespace AutoTest.UI.UC
                                 Tabs.SelectedTab = TPBrowser;
                             }
                             //this.WBResult.ScriptErrorsSuppressed = false;
-                            WBResult.DocumentCompleted += (s, e) =>
+                            WBResult.FrameLoadEnd += (s, e) =>
                             {
                                 //this.WBResult.Document.InvokeScript("maxWin", new object[] { this.Width, this.Height });
-                                WBResult.Document.InvokeScript("setText", new[] { html });
+                                WBResult.ExecuteScriptAsync("setText", html);
                             };
-                            if (WBResult.Url?.AbsoluteUri.Contains("xml.html") != true)
+                            if (WBResult.GetMainFrame().Url?.Contains("xml.html") != true)
                             {
-                                WBResult.AllowNavigation = false;
-                                WBResult.Url = new Uri(AppDomain.CurrentDomain.BaseDirectory + "xml.html");
+                                WBResult.LoadUrl(AppDomain.CurrentDomain.BaseDirectory + "xml.html");
                             }
                             else
                             {
-                                WBResult.Document.InvokeScript("setText", new[] { html });
+                                WBResult.ExecuteScriptAsync("setText", html);
                             }
                         }
                     }
