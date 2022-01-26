@@ -81,6 +81,12 @@ namespace AutoTest.UI.UC
             TPBrowser.Controls.Add(WBResult);
         }
 
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+            Tabs.SelectedTab = TPBrowser;
+        }
+
         /// <summary>
         /// 清理资源
         /// </summary>
