@@ -85,12 +85,12 @@ namespace AutoTest.UI.UC
                     if (rt != null && rt.TestLogin != null && (currentTestLogin == null || currentTestLogin.Id != rt.TestLogin.Id))
                     {
                         currentTestLogin = rt.TestLogin;
-                        testPanel.ClearCookie(rt.TestLogin.Url);
+                        testPanel.ClearCookie(rt.GetStartPageUrl());
 
                         var cookies = Biz.TestCookieContainerBiz.GetCookies(rt.TestLogin.SiteId, rt.TestEnv?.Id, rt.TestLogin.Id);
-                        if (cookies.Count > 0)
+                        if (cookies?.Count > 0)
                         {
-                            testPanel.SetCookie(rt.TestLogin.Url, cookies);
+                            testPanel.SetCookie(rt.GetStartPageUrl(), cookies);
                         }
                     }
                     OnTaskStart?.Invoke(t);

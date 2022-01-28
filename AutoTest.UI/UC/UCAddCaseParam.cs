@@ -405,7 +405,7 @@ namespace AutoTest.UI.UC
 
                 var tempCookies = TestCookieContainerBiz.GetCookies(_testSite.Id, GetEnv()?.Id, testLogin.Id);
 
-                if (tempCookies != null)
+                if (tempCookies?.Count > 0)
                 {
                     return tempCookies.Select(cookie => new ParamInfo
                     {
