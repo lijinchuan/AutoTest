@@ -111,10 +111,10 @@ namespace AutoTest.UI.UC
         {
             bool isWriteCookie = false;
             var frame = WBResult.GetBrowser().MainFrame;
-            WBResult.FrameLoadEnd += DocumentCompleted;
-
+            
             if (frame.Url == null || !frame.Url.Equals(url, StringComparison.OrdinalIgnoreCase)|| newHtml != frame.GetSourceAsync().Result)
             {
+                WBResult.FrameLoadEnd += DocumentCompleted;
                 WBResult.LoadUrl(url);
             }
 
