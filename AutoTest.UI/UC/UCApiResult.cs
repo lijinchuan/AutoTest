@@ -111,7 +111,7 @@ namespace AutoTest.UI.UC
         {
             bool isWriteCookie = false;
             var frame = WBResult.GetBrowser().MainFrame;
-            
+
             if (frame.Url == null || !frame.Url.Equals(url, StringComparison.OrdinalIgnoreCase)|| newHtml != frame.GetSourceAsync().Result)
             {
                 WBResult.FrameLoadEnd += DocumentCompleted;
@@ -157,13 +157,14 @@ namespace AutoTest.UI.UC
                     }
                     else
                     {
+                        WBResult.FrameLoadEnd -= DocumentCompleted;
                         isWriteCookie = true;
                         if (cookies != null && cookies.Count > 0)
                         {
                             var host = new Uri(url).Host;
                             foreach (var kv in cookies)
                             {
-                                WBResult.GetCookieManager().SetCookie(host, new Cookie
+                                WBResult.GetCookieManager().SetCookie(url, new Cookie
                                 {
                                     Domain=host,
                                     Name=kv.Key,

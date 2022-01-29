@@ -85,7 +85,7 @@ namespace AutoTest.UI.UC
             List<int> idList = _testCasesChoose;
             if (CBBroswer.IsBrowserInitialized)
             {
-                var ret = CBBroswer.GetBrowser().MainFrame.EvaluateScriptAsync("getSelCaseId()").Result;
+                var ret = CBBroswer.GetBrowser().MainFrame.EvaluateScriptAsync("getSelCaseId()", timeout: TimeSpan.FromSeconds(5)).Result;
 
                 if (ret.Success)
                 {
