@@ -450,7 +450,7 @@ namespace AutoTest.UI.UC
             }
             else
             {
-                var testTasksView = (TestCaseTaskView)Util.TryAddToMainTab(this, $"测试_{GetTestTaskName(selnode)}", () =>
+                var testTasksView = (TestCaseTaskView)Util.TryAddToMainTab(this, $"测试_{GetTestTaskName(selnode)} {testTaskList.First().TestEnv?.EnvName}", () =>
                 {
                     var panel = new TestCaseTaskView();
                     return panel;

@@ -109,7 +109,25 @@ namespace AutoTest.UI.UC
 
         public void ChangeHTML(string url, string newHtml, Dictionary<string, string> cookies)
         {
-            bool isWriteCookie = false;
+            if (cookies != null && cookies.Count > 0)
+            {
+                var host = new Uri(url).Host;
+                var cookieManager = WBResult.GetCookieManager();
+                foreach (var kv in cookies)
+                {
+                    cookieManager.SetCookie(url, new Cookie
+                    {
+                        Domain = host,
+                        Name = kv.Key,
+                        Value = kv.Value,
+                        Path = "/"
+                    });
+                }
+
+                WBResult.LoadUrl(url);
+                return;
+            }
+
             var frame = WBResult.GetBrowser().MainFrame;
 
             if (frame.Url == null || !frame.Url.Equals(url, StringComparison.OrdinalIgnoreCase)|| newHtml != frame.GetSourceAsync().Result)
@@ -118,67 +136,10 @@ namespace AutoTest.UI.UC
                 WBResult.LoadUrl(url);
             }
 
-
-
             void DocumentCompleted(object sender, FrameLoadEndEventArgs e)
             {
+                WBResult.FrameLoadEnd -= DocumentCompleted;
                 frame = WBResult.GetBrowser().MainFrame;
-                if (frame.Url.Equals(url, StringComparison.OrdinalIgnoreCase))
-                {
-                    WBResult.FrameLoadEnd -= DocumentCompleted;
-                    if (!isWriteCookie)
-                    {
-                        isWriteCookie = true;
-                        if (cookies != null && cookies.Count > 0)
-                        {
-                            var host = new Uri(url).Host;
-                            foreach (var kv in cookies)
-                            {
-                                WBResult.GetCookieManager().SetCookie(url, new Cookie
-                                {
-                                    Domain = host,
-                                    Name = kv.Key,
-                                    Value = kv.Value,
-                                    Path = "/"
-                                });
-                            }
-
-                            WBResult.LoadUrl(url);
-                            return;
-                        }
-                    }
-
-                }
-                else
-                {
-                    if (isWriteCookie)
-                    {
-                        WBResult.FrameLoadEnd -= DocumentCompleted;
-                    }
-                    else
-                    {
-                        WBResult.FrameLoadEnd -= DocumentCompleted;
-                        isWriteCookie = true;
-                        if (cookies != null && cookies.Count > 0)
-                        {
-                            var host = new Uri(url).Host;
-                            foreach (var kv in cookies)
-                            {
-                                WBResult.GetCookieManager().SetCookie(url, new Cookie
-                                {
-                                    Domain=host,
-                                    Name=kv.Key,
-                                    Value=kv.Value,
-                                    Path="/"
-                                });
-                            }
-
-                            frame.LoadUrl(url);
-                            return;
-                        }
-                    }
-
-                }
 
                 if (newHtml == frame.GetSourceAsync().Result)
                 {

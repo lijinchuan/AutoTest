@@ -47,7 +47,7 @@ namespace AutoTest.UI.UC
         {
             _testSources = testSources;
             _testSites = testSites;
-            _testPages = testPages;
+            _testPages = testPages; 
             _testCases = testCases;
             _testCasesChoose = testCasesChoose;
             _testResults = testResults;
