@@ -1295,7 +1295,7 @@ namespace AutoTest.UI.UC
         {
             if (this.Parent == null)
             {
-                Save();
+                //Save();
             }
         }
 
