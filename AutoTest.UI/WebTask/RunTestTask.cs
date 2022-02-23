@@ -327,11 +327,11 @@ namespace AutoTest.UI.WebTask
                         UpdateUserVarData(browser, frame);
                         if (object.Equals(ret, false))
                         {
-                            if (tryCount++ >= TestTimeOut / sleepMills)
-                            {
-                                PublishMsg("超时");
-                                return await Task.FromResult(0);
-                            }
+                            //if (tryCount++ >= TestTimeOut / sleepMills)
+                            //{
+                            //    PublishMsg("超时");
+                            //    return await Task.FromResult(0);
+                            //}
                             Thread.Sleep(sleepMills);
                         }
                         else
