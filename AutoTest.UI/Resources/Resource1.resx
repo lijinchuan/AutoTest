@@ -295,6 +295,9 @@
   <data name="OpenServer1" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>OpenServer.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="package" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>package.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
   <data name="page_world" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>page_world.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>

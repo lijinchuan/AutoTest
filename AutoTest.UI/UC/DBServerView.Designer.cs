@@ -50,6 +50,7 @@ namespace AutoTest.UI.UC
             this.添加测试站点ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.添加测试页面ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.添加测试用例ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.添加测试包ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.运行测试ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.添加登陆页ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.登陆ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -106,6 +107,7 @@ namespace AutoTest.UI.UC
             this.添加测试站点ToolStripMenuItem,
             this.添加测试页面ToolStripMenuItem,
             this.添加测试用例ToolStripMenuItem,
+            this.添加测试包ToolStripMenuItem,
             this.运行测试ToolStripMenuItem,
             this.添加登陆页ToolStripMenuItem,
             this.登陆ToolStripMenuItem,
@@ -114,7 +116,7 @@ namespace AutoTest.UI.UC
             this.添加脚本ToolStripMenuItem,
             this.复制ToolStripMenuItem});
             this.DBServerviewContextMenuStrip.Name = "DBServerviewContextMenuStrip";
-            this.DBServerviewContextMenuStrip.Size = new System.Drawing.Size(181, 554);
+            this.DBServerviewContextMenuStrip.Size = new System.Drawing.Size(181, 576);
             // 
             // 复制表名ToolStripMenuItem
             // 
@@ -217,6 +219,12 @@ namespace AutoTest.UI.UC
             this.添加测试用例ToolStripMenuItem.Name = "添加测试用例ToolStripMenuItem";
             this.添加测试用例ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.添加测试用例ToolStripMenuItem.Text = "添加测试用例";
+            // 
+            // 添加测试包ToolStripMenuItem
+            // 
+            this.添加测试包ToolStripMenuItem.Name = "添加测试包ToolStripMenuItem";
+            this.添加测试包ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.添加测试包ToolStripMenuItem.Text = "添加测试包";
             // 
             // 运行测试ToolStripMenuItem
             // 
@@ -349,5 +357,6 @@ namespace AutoTest.UI.UC
         private System.Windows.Forms.ToolStripMenuItem 添加脚本ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 复制ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 退出ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem 添加测试包ToolStripMenuItem;
     }
 }

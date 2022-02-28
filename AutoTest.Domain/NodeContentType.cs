@@ -23,6 +23,7 @@ namespace AutoTest.Domain
         TESTPAGE,
         TESTCASE,
         SCRIPTPARENT,
+        TESTBAG,
         UNKNOWN = 999
     }
 }

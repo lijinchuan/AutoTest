@@ -73,6 +73,7 @@
     <Compile Include="Entity\TestScript.cs" />
     <Compile Include="Entity\TestSite.cs" />
     <Compile Include="Entity\TestTask.cs" />
+    <Compile Include="Entity\TestTaskBag.cs" />
     <Compile Include="Entity\WebMethod.cs" />
     <Compile Include="Exceptions\JSException.cs" />
     <Compile Include="Exceptions\JSSyntaxError.cs" />

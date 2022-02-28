@@ -130,6 +130,16 @@ namespace AutoTest.Biz
                 ExpandImgIndex = 13
             });
 
+            treeNodes.Add(new TreeNodeEx
+            {
+                Text = "测试包",
+                Tag = new NodeContents(NodeContentType.TESTBAG),
+                ImageIndex = 24,
+                SelectedImageIndex = 24,
+                CollapseImgIndex = 24,
+                ExpandImgIndex = 24
+            });
+
             parent.Invoke(new Action(() => { pnode.Nodes.Clear(); pnode.Nodes.AddRange(treeNodes.ToArray()); if (!isExpanded) pnode.Collapse(); }));
         }
 
@@ -338,6 +348,37 @@ namespace AutoTest.Biz
             {
                 throw ex;
             }
+        }
+
+        public static void LoadTestBagAsync(Form parent, TreeNode pnode, int siteId, AsyncCallback callback, object @object)
+        {
+            var isExpanded = pnode.IsExpanded;
+            pnode.Nodes.Add(new TreeNode("加载中...", 3, 3));
+            pnode.Expand();
+
+            new Action<Form, TreeNode, int, bool>(LoadTestBag).BeginInvoke(parent, pnode, siteId, isExpanded, callback, @object);
+        }
+
+        public static void LoadTestBag(Form parent, TreeNode pnode, int siteId, bool isExpanded)
+        {
+
+            List<TreeNode> treeNodes = new List<TreeNode>();
+            var testTaskBagList = BigEntityTableRemotingEngine.Find<TestTaskBag>(nameof(TestTaskBag), nameof(TestTaskBag.SiteId), new object[] { siteId });
+            var imgIndex = 25;
+            foreach (var testBag in testTaskBagList)
+            {
+                treeNodes.Add(new TreeNodeEx
+                {
+                    Text = testBag.BagName,
+                    Tag = testBag,
+                    ImageIndex = imgIndex,
+                    SelectedImageIndex = imgIndex,
+                    CollapseImgIndex = imgIndex,
+                    ExpandImgIndex = imgIndex
+                });
+            }
+
+            parent.Invoke(new Action(() => { pnode.Nodes.Clear(); pnode.Nodes.AddRange(treeNodes.ToArray()); if (!isExpanded) pnode.Collapse(); }));
         }
     }
 }

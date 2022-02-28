@@ -1,4 +1,5 @@
-﻿using AutoTest.Domain.Entity;
+﻿using AutoTest.Biz;
+using AutoTest.Domain.Entity;
 using LJC.FrameWorkV3.Data.EntityDataBase;
 using System;
 using System.Collections.Generic;
@@ -103,6 +104,8 @@ namespace AutoTest.UI
             BigEntityTableEngine.LocalEngine.CreateTable<TestCookieContainer>(p => p.Id, a => a.AddIndex(TestCookieContainer.IX, b => b.Asc(f => f.SiteId).Asc(f => f.Env).Asc(f => f.Account)));
 
             BigEntityTableEngine.LocalEngine.CreateTable<Counter>(p => p.Id, a => a.AddIndex(nameof(Counter.CounterName), b => b.Asc(m => m.CounterName)));
+
+            BigEntityTableEngine.LocalEngine.CreateTable<TestTaskBag>(p => p.Id, a => a.AddIndex(nameof(TestTaskBag.SiteId), b => b.Asc(m => m.SiteId)));
 
             AutofacBuilder.init();
 

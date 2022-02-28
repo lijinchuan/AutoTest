@@ -382,6 +382,12 @@
     <Compile Include="UC\TestResultView.Designer.cs">
       <DependentUpon>TestResultView.cs</DependentUpon>
     </Compile>
+    <Compile Include="UC\UCTestTaskBagView.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="UC\UCTestTaskBagView.Designer.cs">
+      <DependentUpon>UCTestTaskBagView.cs</DependentUpon>
+    </Compile>
     <Compile Include="UC\TextBoxEx.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -558,6 +564,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UC\TestResultView.resx">
       <DependentUpon>TestResultView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UC\UCTestTaskBagView.resx">
+      <DependentUpon>UCTestTaskBagView.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UC\UCAddCaseParam.resx">
       <DependentUpon>UCAddCaseParam.cs</DependentUpon>
@@ -1014,6 +1023,7 @@
     <Content Include="Resources\date.png" />
     <None Include="Resources\group.png" />
     <Content Include="Resources\number.png" />
+    <None Include="Resources\package.png" />
     <Content Include="Resources\record_blue.png" />
     <Content Include="Resources\record_green.png" />
     <Content Include="Resources\text_ab.png" />
