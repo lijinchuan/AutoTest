@@ -107,6 +107,8 @@ namespace AutoTest.UI
 
             BigEntityTableEngine.LocalEngine.CreateTable<TestTaskBag>(p => p.Id, a => a.AddIndex(nameof(TestTaskBag.SiteId), b => b.Asc(m => m.SiteId)));
 
+            BigEntityTableEngine.LocalEngine.CreateTable<TaskBagLog>(p => p.Id, a => a.AddIndex(nameof(TaskBagLog.TaskBagId), b => b.Asc(m => m.TaskBagId)));
+
             AutofacBuilder.init();
 
             Application.EnableVisualStyles();
