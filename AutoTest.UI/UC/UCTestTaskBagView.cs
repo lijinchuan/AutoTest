@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using LJC.FrameWorkV3.Data.EntityDataBase;
 using AutoTest.Domain.Entity;
+using AutoTest.Biz;
 
 namespace AutoTest.UI.UC
 {
@@ -129,6 +130,12 @@ namespace AutoTest.UI.UC
                 return;
             }
 
+            if (!string.IsNullOrWhiteSpace(TBCorn.Text) && CronHelper.GetNextDateTime(TBCorn.Text, DateTime.Now) == null)
+            {
+                Util.SendMsg(this, "corn表达式错误");
+                return;
+            }
+
             var selCaseList = _ucTestCaseSelector.GetSelecteCase();
 
             _testTaskBag.BagName = TBName.Text;
@@ -141,7 +148,7 @@ namespace AutoTest.UI.UC
             {
                 _testTaskBag.TestLoginId = (int)CBUser.SelectedValue;
             }
-            _testTaskBag.Corn = TBCorn.Text;
+            _testTaskBag.Corn = TBCorn.Text.Trim();
 
             if (_testTaskBag.Id > 0)
             {

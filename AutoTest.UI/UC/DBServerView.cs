@@ -3,6 +3,7 @@ using AutoTest.Domain;
 using AutoTest.Domain.Entity;
 using AutoTest.UI.SubForm;
 using AutoTest.UI.WebTask;
+using LJC.FrameWorkV3.Comm;
 using LJC.FrameWorkV3.Data.EntityDataBase;
 using System;
 using System.Collections.Generic;
@@ -19,6 +20,7 @@ namespace AutoTest.UI.UC
     public partial class DBServerView : UserControl
     {
         private static TestLogin currentTestLogin = null;
+        private System.Timers.Timer autoTimer = null;
         public DBServerView()
         {
             InitializeComponent();
@@ -328,7 +330,7 @@ namespace AutoTest.UI.UC
                         GlobalTestScripts = globalScripts,
                         TestCase = tc,
                         TestLogin = testLogin,
-                        TestPage = testPages.First(),
+                        TestPage = testPages.Find(x => x.Id == tc.PageId),
                         TestSite = testSites.First(),
                         TestEnv = env,
                         TestEnvParams = envParams
@@ -1366,6 +1368,169 @@ namespace AutoTest.UI.UC
             EventBus.NotifyTestResultAction += NotifyTestResult;
             EventBus.NotifyTestStartAction += NotifyTestStart;
             EventBus.NotifyTestThingChangeAction += NotifyTestThingChange;
+
+            autoTimer=TaskHelper.SetInterval(60 * 1000, () =>
+            {
+                var nextList = new AutoTaskBiz().GetNextRunTaskBagList();
+                if (nextList.Any())
+                {
+                    List<TestSource> sources = new List<TestSource>();
+                    List<TestSite> testSites = new List<TestSite>();
+                    List<TestPage> testPages = new List<TestPage>();
+                    List<TestCase> testCases = new List<TestCase>();
+                    Dictionary<string, object> cach = new Dictionary<string, object>();
+                    var testTaskList = new List<TestTask>();
+                    var testLoginList = BigEntityTableRemotingEngine.List<TestLogin>(nameof(TestLogin), 1, int.MaxValue).ToList();
+
+                    foreach (var testTaskBag in nextList)
+                    {
+                        var testSite = testSites.FirstOrDefault(p => p.Id == testTaskBag.SiteId);
+                        if (testSite == null)
+                        {
+                            testSite = BigEntityTableRemotingEngine.Find<TestSite>(nameof(TestSite), testTaskBag.SiteId);
+                            testSites.Add(testSite);
+                        }
+
+                        var testSource = sources.FirstOrDefault(p => p.Id == testSite.SourceId);
+                        if (testSource == null)
+                        {
+                            testSource = BigEntityTableRemotingEngine.Find<TestSource>(nameof(TestSource), testSite.SourceId);
+                            sources.Add(testSource);
+                        }
+
+                        var tempTestCases = BigEntityTableRemotingEngine.FindBatch<TestCase>(nameof(TestCase), testTaskBag.CaseId.Select(p => (object)p));
+                        testCases.AddRange(tempTestCases);
+                        var tempTestPages = BigEntityTableRemotingEngine.FindBatch<TestPage>(nameof(TestPage), testCases.Select(p => (object)p.PageId).Distinct());
+                        testPages.AddRange(tempTestPages);
+
+                        var key = "scripts" + testSite.SourceId;
+                        object globalScripts = null;
+                        if (!cach.TryGetValue(key, out globalScripts))
+                        {
+                            globalScripts = BigEntityTableRemotingEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == testSource.Id && s.SiteId == 0).ToList();
+                            cach.Add(key, globalScripts);
+                        }
+
+                        object siteScripts = null;
+                        var key2 = "scripts" + testSite.SourceId + "_" + testSite.Id;
+                        if (!cach.TryGetValue(key2, out siteScripts))
+                        {
+                            siteScripts = BigEntityTableRemotingEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == testSource.Id && s.SiteId == testSite.Id).ToList();
+                            cach.Add(key2, siteScripts);
+                        }
+
+                        object env = null;
+                        var key3 = "env" + testTaskBag.TestEnvId;
+                        if (!cach.TryGetValue(key3, out env))
+                        {
+                            env = BigEntityTableRemotingEngine.Find<TestEnv>(nameof(TestEnv), testTaskBag.TestEnvId);
+                            cach.Add(key3, env);
+                        }
+
+                        object envParams = null;
+                        if (env != null)
+                        {
+                            var key4 = "env" + testSite.Id + "_" + (env as TestEnv).Id;
+                            if (!cach.TryGetValue(key4, out envParams))
+                            {
+                                envParams = env == null ? new List<TestEnvParam>() : BigEntityTableRemotingEngine.Find<TestEnvParam>(nameof(TestEnvParam), "SiteId_EnvId", new object[] { testSite.Id, (env as TestEnv).Id }).ToList();
+                                cach.Add(key4, envParams);
+                            }
+                        }
+                        foreach (var tc in tempTestCases)
+                        {
+                            var testLogin = GetTestLogin(tc, testSite);
+
+                            testTaskList.Add(new TestTask
+                            {
+                                TestSource = testSource,
+                                SiteTestScripts = (List<TestScript>)siteScripts,
+                                GlobalTestScripts = (List<TestScript>)globalScripts,
+                                TestCase = tc,
+                                TestLogin = testLogin,
+                                TestPage = tempTestPages.First(x => x.Id == tc.PageId),
+                                TestSite = testSite,
+                                TestEnv = env == null ? null : (TestEnv)env,
+                                TestEnvParams = envParams == null ? null : (List<TestEnvParam>)envParams
+                            });
+                        }
+                    }
+
+                    //
+                    var testPanel = (TestPanel)Util.TryAddToMainTab(this, $"执行定时测试", () =>
+                    {
+                        var panel = new TestPanel("执行定时测试");
+                        panel.Load();
+
+                        return panel;
+                    }, null);
+
+                    if (testPanel.IsRunning())
+                    {
+                        Util.SendMsg(this, "正在执行测试，请稍后再试");
+                        return false;
+                    }
+
+                    if (!testPanel.Reset())
+                    {
+                        Util.SendMsg(this, "任务未开始，有测试在执行");
+                        return false;
+                    }
+                    testPanel.OnTaskStart += t =>
+                    {
+                        var rt = t as RunTestTask;
+                        if (rt != null && rt.TestLogin != null && (currentTestLogin == null || currentTestLogin.Id != rt.TestLogin.Id))
+                        {
+                            currentTestLogin = rt.TestLogin;
+                            testPanel.ClearCookie(rt.TestLogin.Url);
+
+                            var cookies = TestCookieContainerBiz.GetCookies(rt.TestLogin.SiteId, rt.TestEnv?.Id, rt.TestLogin.Id);
+                            if (cookies?.Count > 0)
+                            {
+                                testPanel.SetCookie(rt.GetStartPageUrl(), cookies);
+                            }
+                        }
+                    };
+
+
+                    var runTaskList = testTaskList.Select(task => new RunTestTask(task.GetTaskName(), false, task.TestSite, task.TestLogin, task.TestPage, task.TestCase, task.TestEnv, task.TestEnvParams, task.GlobalTestScripts, task.SiteTestScripts, task.ResultNotify));
+                    BeginInvoke(new Action(() => testPanel.RunTest(runTaskList)));
+
+                    TestLogin GetTestLogin(TestCase testCase, TestSite testSite)
+                    {
+                        TestLogin testLogin = null;
+                        if (testCase.OnlyUserId > 0)
+                        {
+                            testLogin = testLoginList.FirstOrDefault(p => p.Id == testCase.OnlyUserId && p.SiteId == testSite.Id);
+                            if (testLogin == null)
+                            {
+                                Util.SendMsg(this, $"账号不存在：{testCase.OnlyUserId}");
+                                return testLogin;
+                            }
+                        }
+                        else
+                        {
+                            if (testLoginList.Where(p => p.SiteId == testSite.Id).Count() == 1)
+                            {
+                                testLogin = testLoginList.FirstOrDefault(p => p.SiteId == testSite.Id);
+                            }
+                            else if (testLoginList.Where(p => p.SiteId == testSite.Id).Count() > 1)
+                            {
+                                testLogin = testLoginList.FirstOrDefault(p => p.SiteId == testSite.Id && p.Used);
+                                if (testLogin == null)
+                                {
+                                    MessageBox.Show($"{testSite.Name}:请选择一个测试帐号");
+                                    return testLogin;
+                                }
+                            }
+
+                        }
+
+                        return testLogin;
+                    }
+                }
+                return false;
+            }, runintime: false);
         }
     }
 }

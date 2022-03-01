@@ -231,7 +231,7 @@ namespace AutoTest.Biz
         /// </summary>
         /// <param name="cron">表达式</param>
         /// <returns>最近要执行的时间字符串</returns>
-        public static string GetNextDateTime(string cron)
+        public static DateTime? GetNextDateTime(string cron)
         {
             try
             {
@@ -242,7 +242,7 @@ namespace AutoTest.Biz
                     string date = arr[6] + "/" + arr[4] + "/" + arr[3] + " " + arr[2] + ":" + arr[1] + ":" + arr[0];
                     if (DateTime.Compare(Convert.ToDateTime(date), now) >= 0)
                     {
-                        return date;
+                        return DateTime.Parse(date);
                     }
                     else
                     {
@@ -273,7 +273,7 @@ namespace AutoTest.Biz
                             int DayOfWeek = (((int)now.DayOfWeek) + 6) % 7;
                             if (c.Days[now.Day - 1] == 1 && c.Weeks[DayOfWeek] == 1)
                             {
-                                return now.ToString("yyyy/MM/dd HH:mm:ss");
+                                return now;
                             }
                         }
                         else
@@ -282,7 +282,7 @@ namespace AutoTest.Biz
                             int DayOfWeek = (((int)now.DayOfWeek) + 6) % 7;
                             if (c.Days[now.Day - 1] == 1 && c.Weeks[DayOfWeek] == 1)
                             {
-                                return now.ToString("yyyy/MM/dd HH:mm:ss");
+                                return now;
                             }
                         }
                     }
@@ -313,7 +313,7 @@ namespace AutoTest.Biz
         /// <param name="cron">表达式</param>
         /// <param name="now">开始时间</param>
         /// <returns>最近要执行的时间字符串</returns>
-        public static string GetNextDateTime(string cron, DateTime now)
+        public static DateTime? GetNextDateTime(string cron, DateTime now)
         {
             try
             {
@@ -323,7 +323,7 @@ namespace AutoTest.Biz
                     string date = arr[6] + "/" + arr[4] + "/" + arr[3] + " " + arr[2] + ":" + arr[1] + ":" + arr[0];
                     if (DateTime.Compare(Convert.ToDateTime(date), now) > 0)
                     {
-                        return date;
+                        return DateTime.Parse(date);
                     }
                     else
                     {
@@ -354,7 +354,7 @@ namespace AutoTest.Biz
                             int DayOfWeek = (((int)now.DayOfWeek) + 6) % 7;
                             if (c.Days[now.Day - 1] == 1 && c.Weeks[DayOfWeek] == 1)
                             {
-                                return now.ToString("yyyy/MM/dd HH:mm:ss");
+                                return now;
                             }
                         }
                         else
@@ -363,7 +363,7 @@ namespace AutoTest.Biz
                             int DayOfWeek = (((int)now.DayOfWeek) + 6) % 7;
                             if (c.Days[now.Day - 1] == 1 && c.Weeks[DayOfWeek] == 1)
                             {
-                                return now.ToString("yyyy/MM/dd HH:mm:ss");
+                                return now;
                             }
                         }
                     }

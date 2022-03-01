@@ -356,8 +356,11 @@ namespace AutoTest.UI
                     {
                         addpage.Text = title;
                     }
-                    TabControl.TabPages.Add(addpage);
-                    TabControl.SelectedTab = addpage;
+                    this.BeginInvoke(new Action(() =>
+                    {
+                        TabControl.TabPages.Add(addpage);
+                        TabControl.SelectedTab = addpage;
+                    }));
                 }
             }
 
