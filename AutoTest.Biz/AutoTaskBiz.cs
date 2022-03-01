@@ -17,7 +17,19 @@ namespace AutoTest.Biz
             foreach (var bag in bagList)
             {
                 var log = BigEntityTableRemotingEngine.Find<TaskBagLog>(nameof(TaskBagLog), nameof(TaskBagLog.TaskBagId), new object[] { bag.Id }).FirstOrDefault();
-                var now = log == null ? DateTime.Now : log.LastTime;
+
+                if (log == null)
+                {
+                    log = new TaskBagLog
+                    {
+                        TaskBagId = bag.Id,
+                        LastTime = DateTime.Now
+                    };
+                    BigEntityTableRemotingEngine.Insert(nameof(TaskBagLog), log);
+                    continue;
+                }
+
+                var now = log.LastTime;
 
                 var dt = CronHelper.GetNextDateTime(bag.Corn, now);
                 if (dt == null)
@@ -27,20 +39,10 @@ namespace AutoTest.Biz
 
                 if (dt <= DateTime.Now)
                 {
-                    if (log != null)
-                    {
-                        log.LastTime = DateTime.Now;
-                        BigEntityTableRemotingEngine.Update(nameof(TaskBagLog), log);
-                    }
-                    else
-                    {
-                        log = new TaskBagLog
-                        {
-                            TaskBagId = bag.Id,
-                            LastTime = DateTime.Now
-                        };
-                        BigEntityTableRemotingEngine.Insert(nameof(TaskBagLog), log);
-                    }
+
+                    log.LastTime = DateTime.Now;
+                    BigEntityTableRemotingEngine.Update(nameof(TaskBagLog), log);
+
 
                     list.Add(bag);
                 }
