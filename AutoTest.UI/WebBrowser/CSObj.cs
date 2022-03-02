@@ -207,6 +207,12 @@ namespace AutoTest.UI.WebBrowser
             return Biz.CounterBiz.GetCounterVal(name);
         }
 
+        public string PostJosn(string url,string json)
+        {
+           return new HttpRequestEx().DoRequest(url, Encoding.UTF8.GetBytes(json),
+                WebRequestMethodEnum.POST, false, true, "application/json").ResponseContent;
+        }
+        
         public void Dispose()
         {
             this.OnPublishMsg = null;
