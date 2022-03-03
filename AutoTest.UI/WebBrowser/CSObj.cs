@@ -5,6 +5,7 @@ using CefSharp;
 using CefSharp.WinForms;
 using LJC.FrameWorkV3.Comm;
 using LJC.FrameWorkV3.Data.EntityDataBase;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -207,10 +208,53 @@ namespace AutoTest.UI.WebBrowser
             return Biz.CounterBiz.GetCounterVal(name);
         }
 
-        public string PostJosn(string url,string json)
+        public string PostJosn(string url, string json)
         {
-           return new HttpRequestEx().DoRequest(url, Encoding.UTF8.GetBytes(json),
-                WebRequestMethodEnum.POST, false, true, "application/json").ResponseContent;
+            if (string.IsNullOrWhiteSpace(json))
+            {
+                json = "{}";
+            }
+
+            return RequestWebResource(url, json, "application/json", "POST");
+        }
+
+
+        public string RequestWebResource(string url, string data,string applicatonType,string method)
+        {
+            HttpResponseEx resp = null;
+            object ret;
+            try
+            {
+                byte[] bytes = null;
+                if (!string.IsNullOrWhiteSpace(data))
+                {
+                    bytes = Encoding.UTF8.GetBytes(data);
+
+                }
+
+                var methodType = (WebRequestMethodEnum)Enum.Parse(typeof(WebRequestMethodEnum), method, true);
+                resp = new HttpRequestEx().DoRequest(url, bytes,
+                     methodType, false, true, applicatonType);
+                int code = resp.StatusCode;
+
+                ret = new
+                {
+                    code,
+                    contentType = resp.ContentType,
+                    content = resp.ResponseContent,
+                };
+
+            }
+            catch (Exception ex)
+            {
+                ret = new
+                {
+                    code = resp?.StatusCode ?? 500,
+                    error = resp.ErrorMsg?.Message ?? ex.Message
+                };
+            }
+
+            return JsonConvert.SerializeObject(ret);
         }
         
         public void Dispose()

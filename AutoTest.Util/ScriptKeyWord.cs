@@ -286,7 +286,15 @@ namespace AutoTest.Util
             KeyWordDic.Add(new ScriptKeyWord
             {
                 KeyWord = "ServerDriverClient.postJosn",
-                Desc = "发送JSON请求，ServerDriverClient.postJosn(string url, string json)",
+                Desc = @"发送JSON请求，需要再转换为JSON:ServerDriverClient.postJosn(url,data),结果{code,contentType,content}, 出错情况下:{ code,error}",
+                HighColor = Color.Red
+
+            });
+
+            KeyWordDic.Add(new ScriptKeyWord
+            {
+                KeyWord = "ServerDriverClient.requestWebResource",
+                Desc = @"发送web请求，ServerDriverClient.requestWebResource(url,data,applicatonType,method),结果{code,contentType,content},出错情况下:{code,error}",
                 HighColor = Color.Red
             });
 
