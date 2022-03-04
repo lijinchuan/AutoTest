@@ -38,6 +38,7 @@
             this.TBName = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
             this.TBCorn = new System.Windows.Forms.TextBox();
+            this.linkLabel1 = new System.Windows.Forms.LinkLabel();
             this.SuspendLayout();
             // 
             // panel1
@@ -134,8 +135,21 @@
             this.TBCorn.Size = new System.Drawing.Size(333, 21);
             this.TBCorn.TabIndex = 9;
             // 
+            // linkLabel1
+            // 
+            this.linkLabel1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.linkLabel1.AutoSize = true;
+            this.linkLabel1.Location = new System.Drawing.Point(460, 511);
+            this.linkLabel1.Name = "linkLabel1";
+            this.linkLabel1.Size = new System.Drawing.Size(65, 12);
+            this.linkLabel1.TabIndex = 10;
+            this.linkLabel1.TabStop = true;
+            this.linkLabel1.Text = "在线生成器";
+            this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
+            // 
             // UCTestTaskBagView
             // 
+            this.Controls.Add(this.linkLabel1);
             this.Controls.Add(this.TBCorn);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.TBName);
@@ -165,5 +179,6 @@
         private System.Windows.Forms.TextBox TBName;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox TBCorn;
+        private System.Windows.Forms.LinkLabel linkLabel1;
     }
 }

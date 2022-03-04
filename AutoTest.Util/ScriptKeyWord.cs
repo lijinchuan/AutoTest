@@ -293,6 +293,54 @@ namespace AutoTest.Util
 
             KeyWordDic.Add(new ScriptKeyWord
             {
+                KeyWord = "ServerDriverClient.loadOuterHtml",
+                Desc = @"使用xpath解析web:ServerDriverClient.loadOuterHtml(string url,string xpath)",
+                HighColor = Color.Red
+
+            });
+
+            KeyWordDic.Add(new ScriptKeyWord
+            {
+                KeyWord = "ServerDriverClient.outerHtml",
+                Desc = @"使用xpath解析web:ServerDriverClient.outerHtml(string html,string xpath)",
+                HighColor = Color.Red
+
+            });
+
+            KeyWordDic.Add(new ScriptKeyWord
+            {
+                KeyWord = "ServerDriverClient.innerText",
+                Desc = @"使用xpath解析web:ServerDriverClient.innerText(string html,string xpath)",
+                HighColor = Color.Red
+
+            });
+
+            KeyWordDic.Add(new ScriptKeyWord
+            {
+                KeyWord = "ServerDriverClient.loadInnerText",
+                Desc = @"使用xpath解析web:ServerDriverClient.loadInnerText(string url,string xpath)",
+                HighColor = Color.Red
+
+            });
+
+            KeyWordDic.Add(new ScriptKeyWord
+            {
+                KeyWord = "ServerDriverClient.innerHtml",
+                Desc = @"使用xpath解析web:ServerDriverClient.innerHtml(string html,string xpath)",
+                HighColor = Color.Red
+
+            });
+
+            KeyWordDic.Add(new ScriptKeyWord
+            {
+                KeyWord = "ServerDriverClient.loadInnerHtml",
+                Desc = @"使用xpath解析web:ServerDriverClient.loadInnerHtml(string url,string xpath)",
+                HighColor = Color.Red
+
+            });
+
+            KeyWordDic.Add(new ScriptKeyWord
+            {
                 KeyWord = "ServerDriverClient.requestWebResource",
                 Desc = @"发送web请求，ServerDriverClient.requestWebResource(url,data,applicatonType,method),结果{code,contentType,content},出错情况下:{code,error}",
                 HighColor = Color.Red

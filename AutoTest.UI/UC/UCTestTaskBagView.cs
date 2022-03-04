@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using LJC.FrameWorkV3.Data.EntityDataBase;
 using AutoTest.Domain.Entity;
 using AutoTest.Biz;
+using System.Diagnostics;
 
 namespace AutoTest.UI.UC
 {
@@ -162,6 +163,11 @@ namespace AutoTest.UI.UC
             }
 
             _onUpdateTestBag?.Invoke(_testTaskBag);
+        }
+
+        private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            Process.Start("https://cron.qqe2.com/");
         }
     }
 }

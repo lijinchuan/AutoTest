@@ -514,5 +514,15 @@ namespace AutoTest.UI
 
             dlg.ShowDialog();
         }
+
+        private void cron表达式生成ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Process.Start("https://cron.qqe2.com/");
+        }
+
+        private void xPath在线测试ToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            Process.Start("http://www.ab173.com/other/xpath.php");
+        }
     }
 }

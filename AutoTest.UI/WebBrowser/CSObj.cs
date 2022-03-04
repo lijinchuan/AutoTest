@@ -3,6 +3,7 @@ using AutoTest.Domain.Model;
 using AutoTest.UI.WebTask;
 using CefSharp;
 using CefSharp.WinForms;
+using HtmlAgilityPack;
 using LJC.FrameWorkV3.Comm;
 using LJC.FrameWorkV3.Data.EntityDataBase;
 using Newtonsoft.Json;
@@ -256,7 +257,107 @@ namespace AutoTest.UI.WebBrowser
 
             return JsonConvert.SerializeObject(ret);
         }
-        
+
+        public string OuterHtml(string html,string xpath)
+        {
+            try
+            {
+                HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+                doc.LoadHtml(html);
+                var node = doc.DocumentNode.SelectSingleNode(xpath);
+
+                return node.OuterHtml;
+            }
+            catch
+            {
+                return string.Empty;
+            }
+        }
+
+        public string LoadOuterHtml(string url, string xpath)
+        {
+            try
+            {
+                HtmlWeb web = new HtmlWeb();
+                
+                HtmlAgilityPack.HtmlDocument doc = web.Load(url);
+                var node = doc.DocumentNode.SelectSingleNode(xpath);
+
+                return node.OuterHtml;
+            }
+            catch
+            {
+                return string.Empty;
+            }
+        }
+
+        public string InnerText(string html, string xpath)
+        {
+            try
+            {
+                HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+                doc.LoadHtml(html);
+                var node = doc.DocumentNode.SelectSingleNode(xpath);
+
+                return node.InnerText;
+            }
+            catch
+            {
+                return string.Empty;
+            }
+        }
+
+        public string LoadInnerText(string url, string xpath)
+        {
+            try
+            {
+                HtmlWeb web = new HtmlWeb();
+
+                HtmlAgilityPack.HtmlDocument doc = web.Load(url);
+                var node = doc.DocumentNode.SelectSingleNode(xpath);
+
+                return node.InnerText;
+            }
+            catch
+            {
+                return string.Empty;
+            }
+        }
+
+        public string InnerHtml(string html, string xpath)
+        {
+            try
+            {
+                HtmlAgilityPack.HtmlDocument doc = new HtmlAgilityPack.HtmlDocument();
+                doc.LoadHtml(html);
+                var node = doc.DocumentNode.SelectSingleNode(xpath);
+
+                return node.InnerHtml;
+            }
+            catch
+            {
+                return string.Empty;
+            }
+        }
+
+        public string LoadInnerHtml(string url, string xpath)
+        {
+            try
+            {
+                HtmlWeb web = new HtmlWeb();
+
+                HtmlAgilityPack.HtmlDocument doc = web.Load(url);
+                var node = doc.DocumentNode.SelectSingleNode(xpath);
+
+                return node.InnerHtml;
+            }
+            catch
+            {
+                return string.Empty;
+            }
+        }
+
+
         public void Dispose()
         {
             this.OnPublishMsg = null;

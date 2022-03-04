@@ -56,6 +56,9 @@
     <Reference Include="CefSharp.WinForms, Version=95.7.141.0, Culture=neutral, PublicKeyToken=40c4b6fc221f4138, processorArchitecture=MSIL">
       <HintPath>..\packages\CefSharp.WinForms.95.7.141\lib\net452\CefSharp.WinForms.dll</HintPath>
     </Reference>
+    <Reference Include="HtmlAgilityPack, Version=1.11.39.0, Culture=neutral, PublicKeyToken=bd319b19eaf3b43a, processorArchitecture=MSIL">
+      <HintPath>..\packages\HtmlAgilityPack.1.11.39\lib\Net45\HtmlAgilityPack.dll</HintPath>
+    </Reference>
     <Reference Include="LJC.FrameWorkV3">
       <HintPath>..\Lib\LJC.FrameWorkV3.dll</HintPath>
     </Reference>
