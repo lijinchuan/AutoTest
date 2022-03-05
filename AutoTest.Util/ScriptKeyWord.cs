@@ -294,7 +294,15 @@ namespace AutoTest.Util
             KeyWordDic.Add(new ScriptKeyWord
             {
                 KeyWord = "ServerDriverClient.loadOuterHtml",
-                Desc = @"使用xpath解析web:ServerDriverClient.loadOuterHtml(string url,string xpath)",
+                Desc = @"使用xpath解析web:ServerDriverClient.loadOuterHtml(url,xpath)",
+                HighColor = Color.Red
+
+            });
+
+            KeyWordDic.Add(new ScriptKeyWord
+            {
+                KeyWord = "ServerDriverClient.loadOuterHtmlEx",
+                Desc = @"使用xpath解析web:ServerDriverClient.loadOuterHtmlEx(url,xpath,encoding)",
                 HighColor = Color.Red
 
             });
@@ -310,7 +318,7 @@ namespace AutoTest.Util
             KeyWordDic.Add(new ScriptKeyWord
             {
                 KeyWord = "ServerDriverClient.innerText",
-                Desc = @"使用xpath解析web:ServerDriverClient.innerText(string html,string xpath)",
+                Desc = @"使用xpath解析web:ServerDriverClient.innerText(html,xpath)",
                 HighColor = Color.Red
 
             });
@@ -318,7 +326,15 @@ namespace AutoTest.Util
             KeyWordDic.Add(new ScriptKeyWord
             {
                 KeyWord = "ServerDriverClient.loadInnerText",
-                Desc = @"使用xpath解析web:ServerDriverClient.loadInnerText(string url,string xpath)",
+                Desc = @"使用xpath解析web:ServerDriverClient.loadInnerText(url,xpath)",
+                HighColor = Color.Red
+
+            });
+
+            KeyWordDic.Add(new ScriptKeyWord
+            {
+                KeyWord = "ServerDriverClient.loadInnerTextEx",
+                Desc = @"使用xpath解析web:ServerDriverClient.loadInnerTextEx(url,xpath,encoding)",
                 HighColor = Color.Red
 
             });
@@ -326,7 +342,7 @@ namespace AutoTest.Util
             KeyWordDic.Add(new ScriptKeyWord
             {
                 KeyWord = "ServerDriverClient.innerHtml",
-                Desc = @"使用xpath解析web:ServerDriverClient.innerHtml(string html,string xpath)",
+                Desc = @"使用xpath解析web:ServerDriverClient.innerHtml(html,xpath)",
                 HighColor = Color.Red
 
             });
@@ -334,7 +350,15 @@ namespace AutoTest.Util
             KeyWordDic.Add(new ScriptKeyWord
             {
                 KeyWord = "ServerDriverClient.loadInnerHtml",
-                Desc = @"使用xpath解析web:ServerDriverClient.loadInnerHtml(string url,string xpath)",
+                Desc = @"使用xpath解析web:ServerDriverClient.loadInnerHtml(url,xpath)",
+                HighColor = Color.Red
+
+            });
+
+            KeyWordDic.Add(new ScriptKeyWord
+            {
+                KeyWord = "ServerDriverClient.loadInnerHtmlEx",
+                Desc = @"使用xpath解析web:ServerDriverClient.loadInnerHtmlEx(url,xpath,encoding)",
                 HighColor = Color.Red
 
             });

@@ -291,6 +291,23 @@ namespace AutoTest.UI.WebBrowser
             }
         }
 
+        public string LoadOuterHtmlEx(string url, string xpath, string encoding)
+        {
+            try
+            {
+                HtmlWeb web = new HtmlWeb();
+
+                HtmlAgilityPack.HtmlDocument doc = web.LoadFromWebAsync(url, Encoding.GetEncoding(encoding)).Result;
+                var node = doc.DocumentNode.SelectSingleNode(xpath);
+
+                return node.OuterHtml;
+            }
+            catch
+            {
+                return string.Empty;
+            }
+        }
+
         public string InnerText(string html, string xpath)
         {
             try
@@ -324,6 +341,23 @@ namespace AutoTest.UI.WebBrowser
             }
         }
 
+        public string LoadInnerTextEx(string url, string xpath, string encoding)
+        {
+            try
+            {
+                HtmlWeb web = new HtmlWeb();
+
+                HtmlAgilityPack.HtmlDocument doc = web.LoadFromWebAsync(url, Encoding.GetEncoding(encoding)).Result;
+                var node = doc.DocumentNode.SelectSingleNode(xpath);
+
+                return node.InnerText;
+            }
+            catch
+            {
+                return string.Empty;
+            }
+        }
+
         public string InnerHtml(string html, string xpath)
         {
             try
@@ -347,6 +381,23 @@ namespace AutoTest.UI.WebBrowser
                 HtmlWeb web = new HtmlWeb();
 
                 HtmlAgilityPack.HtmlDocument doc = web.Load(url);
+                var node = doc.DocumentNode.SelectSingleNode(xpath);
+
+                return node.InnerHtml;
+            }
+            catch
+            {
+                return string.Empty;
+            }
+        }
+
+        public string LoadInnerHtmlEx(string url, string xpath,string encoding)
+        {
+            try
+            {
+                HtmlWeb web = new HtmlWeb();
+
+                HtmlAgilityPack.HtmlDocument doc = web.LoadFromWebAsync(url,Encoding.GetEncoding(encoding)).Result;
                 var node = doc.DocumentNode.SelectSingleNode(xpath);
 
                 return node.InnerHtml;
