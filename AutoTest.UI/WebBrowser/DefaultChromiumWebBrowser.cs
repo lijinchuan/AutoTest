@@ -212,7 +212,7 @@ namespace AutoTest.UI.WebBrowser
         {
             lock (eventListeners)
             {
-                _ = eventListeners.RemoveAll(p => p.GetEventName() == eventListener.GetEventName());
+                _ = eventListeners.Remove(eventListener);
             }
         }
 
