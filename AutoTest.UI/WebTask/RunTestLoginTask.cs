@@ -26,7 +26,6 @@ namespace AutoTest.UI.WebTask
         private readonly TestLogin _testLogin;
         private TestEnv _testEnv;
         private readonly List<TestEnvParam> _testEnvParams;
-        private bool _readyFlag;
         private readonly dynamic bag;
 
         public RunTestLoginTask(string taskname, bool useProxy, TestSite testSite, 
@@ -48,11 +47,8 @@ namespace AutoTest.UI.WebTask
 
         public override void DocumentCompletedHandler(IBrowser browser, IFrame frame)
         {
-            if (!_readyFlag)
-            {
-                _readyFlag = true;
-                FireTaskReady();
-            }
+
+            FireTaskReady();
         }
 
         public override IEnumerable<Cookie> GetCookieList()

@@ -61,6 +61,9 @@ namespace AutoTest.UI.WebTask
 
         protected List<WebEvent> webEvents = new List<WebEvent>();
 
+        private bool _readyFlag = false;
+        private readonly object _locker = new object();
+
         /// <summary>
         /// 是否使用代理
         /// </summary>
@@ -131,7 +134,15 @@ namespace AutoTest.UI.WebTask
         /// </summary>
         protected void FireTaskReady()
         {
-            OnTaskReady?.Invoke(this);
+            lock (_locker)
+            {
+                if (!_readyFlag)
+                {
+                    _readyFlag = true;
+
+                    OnTaskReady?.Invoke(this);
+                }
+            }
         }
 
         /// <summary>

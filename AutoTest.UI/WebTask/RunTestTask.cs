@@ -111,17 +111,9 @@ namespace AutoTest.UI.WebTask
 
         public override void DocumentCompletedHandler(IBrowser browser, IFrame frame)
         {
-            lock(_locker)
-            {
-                if (!_readyFlag)
-                {
-                    _readyFlag = true;
+            _testResult.TestStartDate = DateTime.Now;
 
-                    _testResult.TestStartDate = DateTime.Now;
-
-                    FireTaskReady();
-                }
-            }
+            FireTaskReady();
         }
 
         public override IEnumerable<CefSharp.Cookie> GetCookieList()
