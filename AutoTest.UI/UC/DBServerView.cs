@@ -319,6 +319,15 @@ namespace AutoTest.UI.UC
                 var siteScripts = BigEntityTableRemotingEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == sources.First().Id && s.SiteId == testSites.First().Id).ToList();
                 var env = BigEntityTableRemotingEngine.Find<TestEnv>(nameof(TestEnv), testTaskBag.TestEnvId);
                 var envParams = env == null ? new List<TestEnvParam>() : BigEntityTableRemotingEngine.Find<TestEnvParam>(nameof(TestEnvParam), "SiteId_EnvId", new object[] { testSites.First().Id, env.Id }).ToList();
+
+                testCases = testCases.OrderBy(p =>
+                 {
+                     return testPages.FirstOrDefault(q => q.Id == p.PageId)?.Order;
+                 }).ThenBy(p =>
+                 {
+                     return p.Order;
+                 }).ToList();
+
                 foreach (var tc in testCases)
                 {
                     var testLogin = GetTestLogin(tc, testSites.First());
