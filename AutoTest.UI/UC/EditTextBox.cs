@@ -121,44 +121,10 @@ namespace AutoTest.UI.UC
             }
 
             List<ThinkInfo> thinkresut = new List<ThinkInfo>();
-            foreach (var item in ThinkInfoLib)
-            {
-                var desc = string.Empty;
-                var fullobjectname = item.ObjectName;
-                if (item.ObjectName.Equals(keys, StringComparison.OrdinalIgnoreCase)
-                    || (item.ObjectName.Equals(keys, StringComparison.OrdinalIgnoreCase) == true))
-                {
-                    item.Score = (byte)(byte.MaxValue - (byte)fullobjectname.IndexOf(keys, StringComparison.OrdinalIgnoreCase));
-                    thinkresut.Add(item);
-                    continue;
-                }
-
-                if (item.ObjectName.StartsWith(keys, StringComparison.OrdinalIgnoreCase)
-                    || (desc?.StartsWith(keys, StringComparison.OrdinalIgnoreCase)) == true)
-                {
-                    item.Score = (byte)(byte.MaxValue - 1 - (byte)fullobjectname.Length);
-                    thinkresut.Add(item);
-                    continue;
-                }
-
-                int pos = fullobjectname.IndexOf(keys, StringComparison.OrdinalIgnoreCase);
-                if (pos > -1)
-                {
-                    item.Score = Math.Max((byte)(byte.MaxValue - (byte)fullobjectname.Length - (byte)pos), (byte)0);
-                    thinkresut.Add(item);
-                    continue;
-                }
-                else
-                {
-                    pos = desc?.IndexOf(keys, StringComparison.OrdinalIgnoreCase) ?? -1;
-                    if (pos > -1)
-                    {
-                        item.Score = Math.Max((byte)(byte.MaxValue - fullobjectname.Length - (byte)item.Desc.Length - (byte)pos), (byte)0);
-                        thinkresut.Add(item);
-                        continue;
-                    }
-                }
-            }
+            var sourceList = ThinkInfoLib.Select(p => new SubSearchSourceItem(p.ObjectName.ToUpper(), p)).ToList();
+            sourceList.AddRange(ThinkInfoLib.Where(p => !string.IsNullOrWhiteSpace(p.Desc)).Select(p => new SubSearchSourceItem(p.Desc.ToUpper(), p)).ToList());
+            thinkresut = StringHelper.SubSearch(sourceList, keys.ToUpper(), 3, 1000)
+                .Select(p => (ThinkInfo)p).ToList();
 
             foreach (var item in TableSet.Select(p => p).ToList())
             {
