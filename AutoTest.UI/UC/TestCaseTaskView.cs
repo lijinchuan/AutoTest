@@ -116,16 +116,21 @@ namespace AutoTest.UI.UC
                 LJC.FrameWorkV3.Comm.TaskHelper.SetInterval(1000, () =>
                 {
                     var runTaskList = tasks.Select(task => new RunTestTask(task.GetTaskName(), false, task.TestSite, task.TestLogin, task.TestPage, task.TestCase, task.TestEnv, task.TestEnvParams, task.GlobalTestScripts, task.SiteTestScripts, task.ResultNotify));
-                    BeginInvoke(new Action(() => testPanel.RunTest(runTaskList)));
-                    LJC.FrameWorkV3.Comm.TaskHelper.SetInterval(1000, () =>
+                    BeginInvoke(new Action(() =>
                     {
-                        if (testPanel.IsDisposed || !testPanel.IsRunning())
+                        _ = testPanel.RunTest(runTaskList);
+
+                        LJC.FrameWorkV3.Comm.TaskHelper.SetInterval(1000, () =>
                         {
-                            BeginInvoke(new Action(() => {BtnOk.Enabled = true; BtnCancel.Enabled = false;BtnRefrash.Enabled = true; BtnCancel.Click -= BtnCancel_Click; Util.SelectedTab(this, this); }));
-                            return true;
-                        }
-                        return false;
-                    }, runintime: false);
+                            if (testPanel.IsDisposed || !testPanel.IsRunning())
+                            {
+                                BeginInvoke(new Action(() => { BtnOk.Enabled = true; BtnCancel.Enabled = false; BtnRefrash.Enabled = true; BtnCancel.Click -= BtnCancel_Click; Util.SelectedTab(this, this); }));
+                                return true;
+                            }
+                            return false;
+                        }, runintime: false);
+                    }));
+                    
                     return true;
                 }, runintime: false);
             }
