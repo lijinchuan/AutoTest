@@ -104,7 +104,7 @@ namespace AutoTest.Biz
                 int addtime = 1;
                 while (true)
                 {
-                    if (c.Seconds[now.Second] == 1 && c.Minutes[now.Minute] == 1 && c.Hours[now.Hour] == 1 && c.Month[now.Month - 1] == 1 && c.Year[now.Year - 2019] == 1)
+                    if (Check(c, now, addtime))
                     {
                         if (arr[3] != "?")
                         {
@@ -112,7 +112,8 @@ namespace AutoTest.Biz
                             int DayOfWeek = (((int)now.DayOfWeek) + 6) % 7;
                             if (c.Days[now.Day - 1] == 1 && c.Weeks[DayOfWeek] == 1)
                             {
-                                lits.Add(now);
+                                var dt = GetDateTime(now, addtime);
+                                lits.Add(dt);                      
                             }
                         }
                         else
@@ -121,7 +122,8 @@ namespace AutoTest.Biz
                             int DayOfWeek = (((int)now.DayOfWeek) + 6) % 7;
                             if (c.Days[now.Day - 1] == 1 && c.Weeks[DayOfWeek] == 1)
                             {
-                                lits.Add(now);
+                                var dt = GetDateTime(now, addtime);
+                                lits.Add(dt);
                             }
                         }
                     }
@@ -226,6 +228,33 @@ namespace AutoTest.Biz
             }
         }
 
+        private static bool Check(Cron c,DateTime now,int addtime)
+        {
+            if (addtime >= 3600)
+            {
+                return (c.Hours[now.Hour] == 1 && c.Month[now.Month - 1] == 1 && c.Year[now.Year - 2019] == 1);
+            }
+            else if (addtime >= 60)
+            {
+                return (c.Minutes[now.Minute] == 1 && c.Hours[now.Hour] == 1 && c.Month[now.Month - 1] == 1 && c.Year[now.Year - 2019] == 1);
+            }
+            return (c.Seconds[now.Second] == 1 && c.Minutes[now.Minute] == 1 && c.Hours[now.Hour] == 1 && c.Month[now.Month - 1] == 1 && c.Year[now.Year - 2019] == 1);
+        }
+
+        private static DateTime GetDateTime(DateTime now,int addseconds)
+        {
+            var dt = now;
+            if (addseconds >= 3600)
+            {
+                dt = new DateTime(now.Year, now.Month, now.Day, now.Hour, 0, 0);
+            }
+            else if (addseconds >= 60)
+            {
+                dt = new DateTime(now.Year, now.Month, now.Day, now.Hour, now.Minute, 0);
+            }
+            return dt;
+        }
+
         /// <summary>
         /// Cron表达式转换(默认开始时间为当前)
         /// </summary>
@@ -265,7 +294,7 @@ namespace AutoTest.Biz
                 int addtime = 1;
                 while (true)
                 {
-                    if (c.Seconds[now.Second] == 1 && c.Minutes[now.Minute] == 1 && c.Hours[now.Hour] == 1 && c.Month[now.Month - 1] == 1 && c.Year[now.Year - 2019] == 1)
+                    if (Check(c, now, addtime))
                     {
                         if (arr[3] != "?")
                         {
@@ -273,7 +302,8 @@ namespace AutoTest.Biz
                             int DayOfWeek = (((int)now.DayOfWeek) + 6) % 7;
                             if (c.Days[now.Day - 1] == 1 && c.Weeks[DayOfWeek] == 1)
                             {
-                                return now;
+                                var dt = GetDateTime(now, addtime);
+                                return dt;
                             }
                         }
                         else
@@ -282,7 +312,8 @@ namespace AutoTest.Biz
                             int DayOfWeek = (((int)now.DayOfWeek) + 6) % 7;
                             if (c.Days[now.Day - 1] == 1 && c.Weeks[DayOfWeek] == 1)
                             {
-                                return now;
+                                var dt = GetDateTime(now, addtime);
+                                return dt;
                             }
                         }
                     }
@@ -317,6 +348,7 @@ namespace AutoTest.Biz
         {
             try
             {
+                var startNow = now;
                 string[] arr = cron.Split(' ');
                 if (IsOrNoOne(cron))
                 {
@@ -346,7 +378,7 @@ namespace AutoTest.Biz
                 int addtime = 1;
                 while (true)
                 {
-                    if (c.Seconds[now.Second] == 1 && c.Minutes[now.Minute] == 1 && c.Hours[now.Hour] == 1 && c.Month[now.Month - 1] == 1 && c.Year[now.Year - 2019] == 1)
+                    if (Check(c, now, addtime))
                     {
                         if (arr[3] != "?")
                         {
@@ -354,7 +386,11 @@ namespace AutoTest.Biz
                             int DayOfWeek = (((int)now.DayOfWeek) + 6) % 7;
                             if (c.Days[now.Day - 1] == 1 && c.Weeks[DayOfWeek] == 1)
                             {
-                                return now;
+                                var dt = GetDateTime(now, addtime);
+                                if (dt != startNow)
+                                {
+                                    return dt;
+                                }
                             }
                         }
                         else
@@ -363,7 +399,11 @@ namespace AutoTest.Biz
                             int DayOfWeek = (((int)now.DayOfWeek) + 6) % 7;
                             if (c.Days[now.Day - 1] == 1 && c.Weeks[DayOfWeek] == 1)
                             {
-                                return now;
+                                var dt = GetDateTime(now, addtime);
+                                if (dt != startNow)
+                                {
+                                    return dt;
+                                }
                             }
                         }
                     }
