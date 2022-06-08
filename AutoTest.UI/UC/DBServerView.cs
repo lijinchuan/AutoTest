@@ -765,6 +765,14 @@ namespace AutoTest.UI.UC
                                     return true;
                                 };
                             }
+                            else if (selnode.Tag is TestTaskBag)
+                            {
+                                delFunc = () =>
+                                {
+                                    BigEntityTableRemotingEngine.Delete<TestTaskBag>(nameof(TestTaskBag), (selnode.Tag as TestTaskBag).Id);
+                                    return true;
+                                };
+                            }
 
                             if (delFunc!=null)
                             {
