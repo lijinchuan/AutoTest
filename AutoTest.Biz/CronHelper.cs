@@ -410,7 +410,7 @@ namespace AutoTest.Biz
                     c.Init();
                     if (!arr[1].Contains('-') && !arr[1].Contains(',') && !arr[1].Contains('*') && !arr[1].Contains('/'))
                     {
-                        if (now.Minute == int.Parse(arr[1]))
+                        if (now.Minute == 0 && arr[1] == "0")
                         {
                             addtime = 3600;
                         }
