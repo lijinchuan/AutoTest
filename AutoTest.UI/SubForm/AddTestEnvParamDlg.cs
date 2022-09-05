@@ -93,7 +93,7 @@ namespace AutoTest.UI.SubForm
                 Name = envparamname,
                 Val = p.Value,
                 Id = string.IsNullOrEmpty(p.Desc) ? 0 : int.Parse(p.Desc)
-            });
+            }).ToList();
 
             if (list.Any(p => p.Id == 0))
             {
