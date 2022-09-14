@@ -74,5 +74,18 @@ namespace AutoTest.UI.UC
             StripRect = RectangleF.Empty;
             CloseButtonBand = Rectangle.Empty;
         }
+
+        public bool Visible
+        {
+            get;
+            set;
+        }
+
+        public bool IsHidTitle
+        {
+            get;
+            set;
+        }
+
     }
 }

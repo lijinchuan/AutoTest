@@ -207,6 +207,12 @@
     <Compile Include="SubForm\AlertDlg.Designer.cs">
       <DependentUpon>AlertDlg.cs</DependentUpon>
     </Compile>
+    <Compile Include="SubForm\DragOutDlg.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="SubForm\DragOutDlg.designer.cs">
+      <DependentUpon>DragOutDlg.cs</DependentUpon>
+    </Compile>
     <Compile Include="SubForm\FileDlg.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -385,6 +391,12 @@
     <Compile Include="UC\TestResultView.Designer.cs">
       <DependentUpon>TestResultView.cs</DependentUpon>
     </Compile>
+    <Compile Include="UC\UCTestCaseOrder.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UC\UCTestCaseOrder.Designer.cs">
+      <DependentUpon>UCTestCaseOrder.cs</DependentUpon>
+    </Compile>
     <Compile Include="UC\UCTestTaskBagView.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -508,6 +520,9 @@
     <EmbeddedResource Include="SubForm\AlertDlg.resx">
       <DependentUpon>AlertDlg.cs</DependentUpon>
     </EmbeddedResource>
+    <EmbeddedResource Include="SubForm\DragOutDlg.resx">
+      <DependentUpon>DragOutDlg.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="SubForm\FileDlg.resx">
       <DependentUpon>FileDlg.cs</DependentUpon>
     </EmbeddedResource>
@@ -567,6 +582,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UC\TestResultView.resx">
       <DependentUpon>TestResultView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UC\UCTestCaseOrder.resx">
+      <DependentUpon>UCTestCaseOrder.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UC\UCTestTaskBagView.resx">
       <DependentUpon>UCTestTaskBagView.cs</DependentUpon>
