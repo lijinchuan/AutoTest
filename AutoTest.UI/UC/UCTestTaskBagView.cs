@@ -19,6 +19,7 @@ namespace AutoTest.UI.UC
         private int _siteId = 0;
         private TestTaskBag _testTaskBag = null;
         private UCTestCaseSelector _ucTestCaseSelector = null;
+        private UCTestCaseOrder ucTestCaseOrder = null;
         private Action<TestTaskBag> _onUpdateTestBag;
 
         public UCTestTaskBagView()
@@ -168,6 +169,37 @@ namespace AutoTest.UI.UC
         private void linkLabel1_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
             Process.Start("https://cron.qqe2.com/");
+        }
+
+        private void BtnOrder_Click(object sender, EventArgs e)
+        {
+            if (BtnOrder.Text == "排序")
+            {
+                var selCaseList = _ucTestCaseSelector.GetSelecteCase();
+                if (selCaseList.Count < 2)
+                {
+                    MessageBox.Show("没有CASE可以排序");
+                    return;
+                }
+                _ucTestCaseSelector.Visible = false;
+                if (ucTestCaseOrder == null)
+                {
+                    ucTestCaseOrder = new UCTestCaseOrder();
+                    ucTestCaseOrder.Dock = DockStyle.Fill;
+                    panel1.Controls.Add(ucTestCaseOrder);
+                }
+                ucTestCaseOrder.Visible = true;
+                ucTestCaseOrder.SetTestTasks(selCaseList);
+                BtnOrder.Text = "选择";
+
+            }
+            else
+            {
+                ucTestCaseOrder.Visible = false;
+                var orders = ucTestCaseOrder.GetOrders();
+                _ucTestCaseSelector.Visible = true;
+                BtnOrder.Text = "排序";
+            }
         }
     }
 }

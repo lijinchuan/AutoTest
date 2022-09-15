@@ -39,6 +39,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.TBCorn = new System.Windows.Forms.TextBox();
             this.linkLabel1 = new System.Windows.Forms.LinkLabel();
+            this.BtnOrder = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // panel1
@@ -147,8 +148,19 @@
             this.linkLabel1.Text = "在线生成器";
             this.linkLabel1.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.linkLabel1_LinkClicked);
             // 
+            // BtnOrder
+            // 
+            this.BtnOrder.Location = new System.Drawing.Point(619, 533);
+            this.BtnOrder.Name = "BtnOrder";
+            this.BtnOrder.Size = new System.Drawing.Size(75, 23);
+            this.BtnOrder.TabIndex = 11;
+            this.BtnOrder.Text = "排序";
+            this.BtnOrder.UseVisualStyleBackColor = true;
+            this.BtnOrder.Click += new System.EventHandler(this.BtnOrder_Click);
+            // 
             // UCTestTaskBagView
             // 
+            this.Controls.Add(this.BtnOrder);
             this.Controls.Add(this.linkLabel1);
             this.Controls.Add(this.TBCorn);
             this.Controls.Add(this.label4);
@@ -180,5 +192,6 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.TextBox TBCorn;
         private System.Windows.Forms.LinkLabel linkLabel1;
+        private System.Windows.Forms.Button BtnOrder;
     }
 }
