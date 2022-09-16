@@ -53,9 +53,11 @@ namespace AutoTest.UI.UC
             CBBroswer.LoadUrl($@"{LJC.FrameWorkV3.Comm.CommFun.GetCurrentAppForder()}HTML\DragOrder.html");
         }
 
-        public object GetOrders()
+        public List<int> GetOrders()
         {
-            return CBBroswer.GetBrowser().MainFrame.EvaluateScriptAsync("getEles()").Result.Result;
+            var list = ((List<object>)CBBroswer.GetBrowser().MainFrame.EvaluateScriptAsync("getEles()").Result.Result).Select(p => (string)p).ToList();
+
+            return list.Select(p => testTasks.FirstOrDefault(q => q.GetTaskName() == p)).Select(p => p.TestCase.Id).ToList();
         }
 
         private void CBBroswer_FrameLoadEnd(object sender, FrameLoadEndEventArgs e)

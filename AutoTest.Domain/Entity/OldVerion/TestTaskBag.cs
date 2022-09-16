@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AutoTest.Domain.Entity
+namespace AutoTest.Domain.Entity.OldVerion
 {
     public class TestTaskBag
     {
@@ -39,15 +39,6 @@ namespace AutoTest.Domain.Entity
         }
 
         public List<int> CaseId
-        {
-            get;
-            set;
-        }
-
-        /// <summary>
-        /// 重新排序
-        /// </summary>
-        public List<int> OrderCaseId
         {
             get;
             set;

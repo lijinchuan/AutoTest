@@ -328,6 +328,16 @@ namespace AutoTest.UI.UC
                      return p.Order;
                  }).ToList();
 
+                testCases = testCases.OrderBy(p =>
+                 {
+                     var idx = testTaskBag.OrderCaseId.IndexOf(p.Id);
+                     if (idx != -1)
+                     {
+                         return idx;
+                     }
+                     return int.MaxValue;
+                 }).ToList();
+
                 foreach (var tc in testCases)
                 {
                     var testLogin = GetTestLogin(tc, testSites.First());

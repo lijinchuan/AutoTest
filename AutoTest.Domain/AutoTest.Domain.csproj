@@ -55,6 +55,7 @@
     <Compile Include="Entity\OldVerion\TestCase.cs" />
     <Compile Include="Entity\OldVerion\TestCaseV2.cs" />
     <Compile Include="Entity\OldVerion\TestLogin.cs" />
+    <Compile Include="Entity\OldVerion\TestTaskBag.cs" />
     <Compile Include="Entity\ParamInfo.cs" />
     <Compile Include="Entity\RespCookie.cs" />
     <Compile Include="Entity\TaskBagLog.cs" />

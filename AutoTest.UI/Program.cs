@@ -105,7 +105,18 @@ namespace AutoTest.UI
 
             BigEntityTableEngine.LocalEngine.CreateTable<Counter>(p => p.Id, a => a.AddIndex(nameof(Counter.CounterName), b => b.Asc(m => m.CounterName)));
 
-            BigEntityTableEngine.LocalEngine.CreateTable<TestTaskBag>(p => p.Id, a => a.AddIndex(nameof(TestTaskBag.SiteId), b => b.Asc(m => m.SiteId)));
+            //BigEntityTableEngine.LocalEngine.CreateTable<TestTaskBag>(p => p.Id, a => a.AddIndex(nameof(TestTaskBag.SiteId), b => b.Asc(m => m.SiteId)));
+
+            BigEntityTableEngine.LocalEngine.Upgrade<Domain.Entity.OldVerion.TestTaskBag, TestTaskBag>(nameof(TestTaskBag), f => new TestTaskBag
+            {
+                BagName = f.BagName,
+                CaseId = f.CaseId,
+                Corn = f.Corn,
+                OrderCaseId = new List<int>(),
+                SiteId = f.SiteId,
+                TestEnvId = f.TestEnvId,
+                TestLoginId = f.TestLoginId
+            }, nameof(TestTaskBag.Id), true, new IndexBuilder<TestTaskBag>().AddIndex(nameof(TestTaskBag.SiteId), b => b.Asc(m => m.SiteId)).Build());
 
             BigEntityTableEngine.LocalEngine.CreateTable<TaskBagLog>(p => p.Id, a => a.AddIndex(nameof(TaskBagLog.TaskBagId), b => b.Asc(m => m.TaskBagId)));
 

@@ -139,9 +139,9 @@ namespace AutoTest.UI.UC
             }
 
             var selCaseList = _ucTestCaseSelector.GetSelecteCase();
-
             _testTaskBag.BagName = TBName.Text;
             _testTaskBag.CaseId = selCaseList.Select(p => p.TestCase.Id).ToList();
+            _testTaskBag.OrderCaseId = ucTestCaseOrder.GetOrders();
             if (CBEvn.SelectedValue != null)
             {
                 _testTaskBag.TestEnvId = (int)CBEvn.SelectedValue;
@@ -189,14 +189,22 @@ namespace AutoTest.UI.UC
                     panel1.Controls.Add(ucTestCaseOrder);
                 }
                 ucTestCaseOrder.Visible = true;
-                ucTestCaseOrder.SetTestTasks(selCaseList);
-                BtnOrder.Text = "选择";
 
+                ucTestCaseOrder.SetTestTasks(selCaseList.OrderBy(p =>
+                {
+                    var idx = _testTaskBag.OrderCaseId.IndexOf(p.TestCase.Id);
+                    if (idx == -1)
+                    {
+                        return int.MaxValue;
+                    }
+                    return idx;
+                }).ToList());
+                BtnOrder.Text = "选择";
             }
             else
             {
+                _testTaskBag.OrderCaseId = ucTestCaseOrder.GetOrders();
                 ucTestCaseOrder.Visible = false;
-                var orders = ucTestCaseOrder.GetOrders();
                 _ucTestCaseSelector.Visible = true;
                 BtnOrder.Text = "排序";
             }
