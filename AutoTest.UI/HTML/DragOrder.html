@@ -148,15 +148,57 @@
 
         function setEles(eles) {
             eles = JSON.parse(eles);
-            while (node.firstChild) { node.removeChild(node.firstChild) };
+            var elesNames = {}
             for (var i = 0; i < eles.length; i++) {
-                var ele = eles[i]
-                var li = document.createElement('li')
-                li.setAttribute('class', 'ele')
-                li.setAttribute('draggable', 'true')
-                li.innerHTML = ele.TaskName
-                node.appendChild(li)
+                elesNames[eles[i].TaskName]=1;
             }
+            //while (node.firstChild) { node.removeChild(node.firstChild) };
+            var lis = node.getElementsByTagName('li')
+            var remNodes = [],leftNodes=[];
+            for (var i = 0; i < lis.length; i++) {
+                var curr = lis[i].innerHTML
+                if (!elesNames[curr]) {
+                    remNodes.push(lis[i]);
+                } else {
+                    leftNodes.push(lis[i]);
+                }
+            }
+
+            for (var i = 0; i < remNodes.length; i++) {
+                node.removeChild(remNodes[i]);
+            }
+
+            var nowEles = {}
+            getEles().forEach(function (x) { nowEles[x] = 1; })
+            var idx = 0;
+            for (var x in elesNames) {
+
+                if (nowEles[x]) {
+                    idx++;
+                    continue;
+                }
+                var li = document.createElement('li');
+                li.setAttribute('class', 'ele');
+                li.setAttribute('draggable', 'true');
+                li.innerHTML = x;
+                if (leftNodes.length == 0) {
+                    node.appendChild(li);
+                } else {
+                    node.insertBefore(li, leftNodes[idx]);
+                    leftNodes.splice(idx, 0, x);
+                }
+
+                idx++;
+            }
+
+            //for (var i = 0; i < eles.length; i++) {
+            //    var ele = eles[i]
+            //    var li = document.createElement('li')
+            //    li.setAttribute('class', 'ele')
+            //    li.setAttribute('draggable', 'true')
+            //    li.innerHTML = ele.TaskName
+            //    node.appendChild(li)
+            //}
         }
 
         function getEles() {

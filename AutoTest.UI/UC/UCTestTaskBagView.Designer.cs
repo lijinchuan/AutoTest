@@ -150,7 +150,8 @@
             // 
             // BtnOrder
             // 
-            this.BtnOrder.Location = new System.Drawing.Point(619, 533);
+            this.BtnOrder.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.BtnOrder.Location = new System.Drawing.Point(648, 533);
             this.BtnOrder.Name = "BtnOrder";
             this.BtnOrder.Size = new System.Drawing.Size(75, 23);
             this.BtnOrder.TabIndex = 11;

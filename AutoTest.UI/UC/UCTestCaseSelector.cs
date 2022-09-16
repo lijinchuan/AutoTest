@@ -96,7 +96,7 @@ namespace AutoTest.UI.UC
 
             if (idList != null && idList.Count > 0)
             {
-                return _testCases.Where(p => idList.Contains(p.TestCase.Id)).ToList();
+                return idList.Select(p => _testCases.FirstOrDefault(q => q.TestCase.Id == p)).ToList();
             }
 
             return new List<TestTask>();

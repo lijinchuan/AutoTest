@@ -14,7 +14,7 @@ using System.Diagnostics;
 
 namespace AutoTest.UI.UC
 {
-    public partial class UCTestTaskBagView : TabPage//UserControl
+    public partial class UCTestTaskBagView : TabPage//UserControl//
     {
         private int _siteId = 0;
         private TestTaskBag _testTaskBag = null;
