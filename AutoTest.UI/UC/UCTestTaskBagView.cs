@@ -190,16 +190,8 @@ namespace AutoTest.UI.UC
                 }
                 ucTestCaseOrder.Visible = true;
 
-                ucTestCaseOrder.SetTestTasks(selCaseList.OrderBy(p =>
-                {
-                    var idx = _testTaskBag.OrderCaseId.IndexOf(p.TestCase.Id);
-                    if (idx == -1)
-                    {
-                        return int.MaxValue;
-                    }
-                    return idx;
-                }).ToList());
-                BtnOrder.Text = "选择";
+                ucTestCaseOrder.SetTestTasks(TestTaskBagBiz.Order(selCaseList, _testTaskBag));
+                BtnOrder.Text = "返回";
             }
             else
             {

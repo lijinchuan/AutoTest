@@ -328,15 +328,7 @@ namespace AutoTest.UI.UC
                      return p.Order;
                  }).ToList();
 
-                testCases = testCases.OrderBy(p =>
-                 {
-                     var idx = testTaskBag.OrderCaseId.IndexOf(p.Id);
-                     if (idx != -1)
-                     {
-                         return idx;
-                     }
-                     return int.MaxValue;
-                 }).ToList();
+                testCases = TestTaskBagBiz.Order(testCases, testTaskBag);
 
                 foreach (var tc in testCases)
                 {
