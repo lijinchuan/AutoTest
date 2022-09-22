@@ -1,4 +1,5 @@
-﻿using AutoTest.Domain;
+﻿using AutoTest.Biz;
+using AutoTest.Domain;
 using AutoTest.Domain.Entity;
 using AutoTest.UI.SubForm;
 using AutoTest.UI.WebTask;
@@ -15,7 +16,7 @@ namespace AutoTest.UI.UC
     {
         private static TestLogin currentTestLogin = null;
         public event Action<IWebTask> OnTaskStart;
-
+        private TestTaskBag _testTaskBag = null;
         private List<TestSource> _testSources = null;
         private List<TestSite> _testSites = null;
         private List<TestPage> _testPages = null;
@@ -30,8 +31,9 @@ namespace AutoTest.UI.UC
             UCTestCaseSelector1.ReTestCaseAction += ReTestCase;
         }
 
-        public TestCaseTaskView Init(List<TestSource> testSources, List<TestSite> testSites, List<TestPage> testPages, List<TestTask> testCases, List<int> testCasesChoose)
+        public TestCaseTaskView Init(TestTaskBag testTaskBag,List<TestSource> testSources, List<TestSite> testSites, List<TestPage> testPages, List<TestTask> testCases, List<int> testCasesChoose)
         {
+            _testTaskBag = testTaskBag;
             _testSources = testSources;
             _testSites = testSites;
             _testPages = testPages;
@@ -96,7 +98,10 @@ namespace AutoTest.UI.UC
                     OnTaskStart?.Invoke(t);
                 };
 
-
+                if (_testTaskBag != null)
+                {
+                    tasks = TestTaskBagBiz.Order(tasks, this._testTaskBag);
+                }
 
                 foreach (var tk in tasks)
                 {
@@ -166,7 +171,7 @@ namespace AutoTest.UI.UC
         public object[] GetRecoverData()
         {
             _testCasesChoose = GetSelecteCase().Select(p => p.TestCase.Id).ToList();
-            return new object[] { _testSources, _testSites, _testPages, _testCases, _testCasesChoose, Text, _testResults };
+            return new object[] { _testSources, _testSites, _testPages, _testCases, _testCasesChoose, Text, _testResults , _testTaskBag};
         }
 
         public IRecoverAble Recover(object[] recoverData)
@@ -178,6 +183,7 @@ namespace AutoTest.UI.UC
             _testCases = (List<TestTask>)recoverData[3];
             _testCasesChoose = (List<int>)recoverData[4];
             _testResults = (Dictionary<int, TestResult>)recoverData[6];
+            _testTaskBag = (TestTaskBag)recoverData[7];
             UCTestCaseSelector1.Init(_testSources, _testSites, _testPages, _testCases, _testCasesChoose, _testResults);
             return this;
         }

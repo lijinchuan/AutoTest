@@ -142,7 +142,7 @@ namespace AutoTest.UI.UC
             var selCaseList = _ucTestCaseSelector.GetSelecteCase();
             _testTaskBag.BagName = TBName.Text;
             _testTaskBag.CaseId = selCaseList.Select(p => p.TestCase.Id).ToList();
-            _testTaskBag.OrderCaseId = ucTestCaseOrder.GetOrders();
+            _testTaskBag.OrderCaseId = ucTestCaseOrder==null?new List<int>(): ucTestCaseOrder.GetOrders();
             if (CBEvn.SelectedValue != null)
             {
                 _testTaskBag.TestEnvId = (int)CBEvn.SelectedValue;

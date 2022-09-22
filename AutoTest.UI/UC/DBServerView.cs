@@ -328,8 +328,6 @@ namespace AutoTest.UI.UC
                      return p.Order;
                  }).ToList();
 
-                testCases = TestTaskBagBiz.Order(testCases, testTaskBag);
-
                 foreach (var tc in testCases)
                 {
                     var testLogin = GetTestLogin(tc, testSites.First());
@@ -488,7 +486,7 @@ namespace AutoTest.UI.UC
                     return panel;
                 }, null);
 
-                testTasksView.Init(sources, testSites, testPages, testTaskList, testTaskList.Select(p => p.TestCase.Id).ToList());
+                testTasksView.Init(selnode.Tag as TestTaskBag, sources, testSites, testPages, testTaskList, testTaskList.Select(p => p.TestCase.Id).ToList());
             }
 
             TestLogin GetTestLogin(TestCase testCase,TestSite testSite)
@@ -1473,6 +1471,8 @@ namespace AutoTest.UI.UC
                                 TestEnvParams = envParams == null ? null : (List<TestEnvParam>)envParams
                             });
                         }
+
+                        testTaskList = TestTaskBagBiz.Order(testTaskList, testTaskBag);
                     }
 
                     //
@@ -1510,7 +1510,6 @@ namespace AutoTest.UI.UC
                             }
                         }
                     };
-
 
                     var runTaskList = testTaskList.Select(task => new RunTestTask(task.GetTaskName(), false, task.TestSite, task.TestLogin, task.TestPage, task.TestCase, task.TestEnv, task.TestEnvParams, task.GlobalTestScripts, task.SiteTestScripts, task.ResultNotify));
                     BeginInvoke(new Action(() => testPanel.RunTest(runTaskList)));
