@@ -84,7 +84,7 @@ namespace AutoTest.UI.WebBrowser
             }
             if (!Task.WaitAll(new[] { resp }, timeOut))
             {
-                throw new TimeoutException("执行代码超时，请检查代码是否有问题");
+                throw new TimeoutException("执行代码超时，请检查代码是否有问题(例如，返回了DOM对象，而非JSON对象)");
             }
 
             if (!resp.Result.Success)
