@@ -500,7 +500,7 @@ namespace AutoTest.UI.WebBrowser
                 while (!isInit)
                 {
                     Thread.Sleep(100);
-                    if (tryTimes++ > 30)
+                    if (tryTimes++ > 300)
                     {
                         OnMsgPublished?.Invoke("timeout:isInit");
                         throw new TimeoutException("isInit");
