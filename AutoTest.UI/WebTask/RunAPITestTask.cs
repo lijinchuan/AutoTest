@@ -14,8 +14,8 @@ namespace AutoTest.UI.WebTask
         public RunAPITestTask(string taskname, bool useProxy, TestSite testSite, TestLogin testLogin,
             TestPage testPage, TestCase testCase, TestEnv testEnv, List<TestEnvParam> testEnvParams,
             List<TestScript> globScripts, List<TestScript> siteScripts, Action<TestResult> notify)
-            : base(taskname, Util.ReplaceEvnParams(string.IsNullOrWhiteSpace(testCase.Url)?testPage.Url:testCase.Url, testEnvParams),
-                  useProxy, false)
+            : base(taskname, Util.ReplaceEvnParams(string.IsNullOrWhiteSpace(testCase.Url) ? testPage.Url : testCase.Url, testEnvParams),
+                  useProxy, false, testEnv, testEnvParams)
         {
 
         }

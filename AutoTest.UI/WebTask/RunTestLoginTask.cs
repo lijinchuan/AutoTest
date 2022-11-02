@@ -28,9 +28,9 @@ namespace AutoTest.UI.WebTask
         private readonly List<TestEnvParam> _testEnvParams;
         private readonly dynamic bag;
 
-        public RunTestLoginTask(string taskname, bool useProxy, TestSite testSite, 
-            TestLogin testLogin,TestEnv testEnv, List<TestEnvParam> testEnvParams) 
-            : base(taskname,Util.ReplaceEvnParams(testLogin.Url,testEnvParams), useProxy, false)
+        public RunTestLoginTask(string taskname, bool useProxy, TestSite testSite,
+            TestLogin testLogin, TestEnv testEnv, List<TestEnvParam> testEnvParams)
+            : base(taskname, Util.ReplaceEvnParams(testLogin.Url, testEnvParams), useProxy, false, testEnv, testEnvParams)
         {
 
             eventListener = new TestEventListener();

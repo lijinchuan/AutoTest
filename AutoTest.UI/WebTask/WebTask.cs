@@ -1,4 +1,5 @@
-﻿using AutoTest.Domain.Model;
+﻿using AutoTest.Domain.Entity;
+using AutoTest.Domain.Model;
 using AutoTest.UI.EventListener;
 using AutoTest.UI.WebBrowser;
 using CefSharp;
@@ -7,6 +8,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace AutoTest.UI.WebTask
@@ -86,12 +88,18 @@ namespace AutoTest.UI.WebTask
 
         protected volatile bool _cancelFlag = false;
 
-        protected WebTask(string strTaskName, string strStartPageUrl, bool useProxy,bool clearCookies)
+        protected TestEnv _testEnv;
+        protected List<TestEnvParam> _testEnvParams;
+
+        protected WebTask(string strTaskName, string strStartPageUrl, bool useProxy,bool clearCookies,
+            TestEnv testEnv, List<TestEnvParam> testEnvParams)
         {
             taskName = strTaskName;
             startPageUrl = strStartPageUrl;
             UseProxy = useProxy;
             ClearCookies = clearCookies;
+            _testEnv = testEnv;
+            _testEnvParams = testEnvParams;
 
             webBrowserTool = new WebBrowserTool();
         }
@@ -228,6 +236,25 @@ namespace AutoTest.UI.WebTask
 
         public virtual void ForceCancel(string reason)
         {
+        }
+
+        protected void RegistTestScript(IBrowser browser, IFrame frame, TestScript testScript)
+        {
+            if (!testScript.Enable || string.IsNullOrWhiteSpace(testScript.Body))
+            {
+                return;
+            }
+
+            var body = Util.ReplaceEvnParams(testScript.Body, _testEnvParams);
+
+            if (Regex.Match(body.TrimStart(), "^(https?:|//)", RegexOptions.IgnoreCase).Success)
+            {
+                webBrowserTool.RegisterRomoteScript(browser, frame, body.TrimStart());
+            }
+            else
+            {
+                webBrowserTool.ExecuteScript(browser, frame, body);
+            }
         }
     }
 }

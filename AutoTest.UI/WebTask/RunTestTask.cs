@@ -32,8 +32,6 @@ namespace AutoTest.UI.WebTask
         private TestPage _testPage;
         private TestLogin _testLogin;
         private TestCase _testCase;
-        private TestEnv _testEnv;
-        private List<TestEnvParam> _testEnvParams;
         private bool _readyFlag = false;
         private TestCaseData _testCaseData;
         
@@ -77,7 +75,7 @@ namespace AutoTest.UI.WebTask
             TestPage testPage, TestCase testCase, TestEnv testEnv, List<TestEnvParam> testEnvParams,
             List<TestScript> globScripts, List<TestScript> siteScripts,Action<TestResult> notify)
             : base(taskname, Util.ReplaceEvnParams(string.IsNullOrWhiteSpace(testCase.Url)?testPage.Url:testCase.Url, testEnvParams),
-                  useProxy, false)
+                  useProxy, false,testEnv,testEnvParams)
         {
 
             eventListener = new TestEventListener();
@@ -90,8 +88,7 @@ namespace AutoTest.UI.WebTask
             _testSite = testSite;
             _testPage = testPage;
             _testCase = testCase;
-            _testEnv = testEnv;
-            _testEnvParams = testEnvParams;
+            
             _testLogin = testLogin;
             _testCaseData = BigEntityTableRemotingEngine.Find<TestCaseData>(nameof(TestCaseData), nameof(TestCaseData.TestCaseId), new object[] { _testCase.Id }).FirstOrDefault();
             _globScripts = globScripts;
@@ -147,23 +144,6 @@ namespace AutoTest.UI.WebTask
         public override string GetSite()
         {
             return GetTaskName();
-        }
-
-        private void RegistTestScript(IBrowser browser, IFrame frame, TestScript testScript)
-        {
-            if (!testScript.Enable || string.IsNullOrWhiteSpace(testScript.Body))
-            {
-                return;
-            }
-
-            if (Regex.Match(testScript.Body.TrimStart(), "^(https?:|//)", RegexOptions.IgnoreCase).Success)
-            {
-                webBrowserTool.RegisterRomoteScript(browser, frame, testScript.Body.TrimStart());
-            }
-            else
-            {
-                webBrowserTool.ExecuteScript(browser, frame, testScript.Body);
-            }
         }
 
         private void PrepareTest(IBrowser browser, IFrame frame, object userData)
