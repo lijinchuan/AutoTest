@@ -1,0 +1,218 @@
+﻿using AutoTest.Domain.Entity;
+using LJC.FrameWorkV3.Data.EntityDataBase;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace AutoTest.UI.UC
+{
+    public partial class UCRequestInterceptConfigManager : UserControl
+    {
+        private TestCase _testCase = null;
+        private RequestInterceptConfig _currentInterceptConfig = null;
+
+        public UCRequestInterceptConfigManager()
+        {
+            InitializeComponent();
+        }
+
+        public UCRequestInterceptConfigManager(TestCase testCase)
+        {
+            InitializeComponent();
+
+            _testCase = testCase;
+        }
+
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+            GBEdit.Visible = false;
+            GVRequestIntercept.Dock = DockStyle.Fill;
+            GVRequestIntercept.MouseClick += GVRequestIntercept_MouseClick;
+            this.GVRequestIntercept.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.Fill;
+            this.GVRequestIntercept.ContextMenuStrip = new ContextMenuStrip();
+            this.GVRequestIntercept.ContextMenuStrip.Items.Add("删除");
+            this.GVRequestIntercept.ContextMenuStrip.Items.Add("禁用");
+            this.GVRequestIntercept.ContextMenuStrip.Items.Add("启用");
+            this.GVRequestIntercept.ContextMenuStrip.Items.Add("新增");
+            GVRequestIntercept.ContextMenuStrip.VisibleChanged += ContextMenuStrip_VisibleChanged;
+            this.GVRequestIntercept.ContextMenuStrip.ItemClicked += ContextMenuStrip_ItemClicked; ;
+            this.GVRequestIntercept.CellDoubleClick += GVRequestIntercept_CellDoubleClick; ;
+            this.GVRequestIntercept.BorderStyle = BorderStyle.None;
+            this.GVRequestIntercept.GridColor = Color.LightBlue;
+            GVRequestIntercept.BackgroundColor = Color.White;
+
+            this.GVRequestIntercept.AllowUserToResizeRows = true;
+
+            GVRequestIntercept.RowHeadersVisible = false;
+            GVRequestIntercept.DataBindingComplete += GVRequestIntercept_DataBindingComplete;
+
+            if (_testCase != null)
+            {
+                var configs = BigEntityTableRemotingEngine.Find<RequestInterceptConfig>(nameof(RequestInterceptConfig),
+                     nameof(RequestInterceptConfig.TestCaseId), new object[] { _testCase.Id }).ToList();
+
+                GVRequestIntercept.DataSource = configs;
+            }
+
+            var dic = new List<object>
+            {
+                new
+                {
+                    Key=0,
+                    Value="相同"
+                },
+                 new
+                {
+                    Key=1,
+                    Value="包含"
+                },
+                  new
+                {
+                    Key=2,
+                    Value="正则"
+                }
+            };
+
+            CBTypes.DataSource = dic;
+            CBTypes.ValueMember = "Key";
+            CBTypes.DisplayMember = "Value";
+            CBTypes.SelectedValue = 0;
+        }
+
+        private void ContextMenuStrip_VisibleChanged(object sender, EventArgs e)
+        {
+            if (GVRequestIntercept.ContextMenuStrip.Visible)
+            {
+                var currentRow = GVRequestIntercept.CurrentRow;
+                if (currentRow != null)
+                {
+                    var config = currentRow.DataBoundItem as RequestInterceptConfig;
+
+                    GVRequestIntercept.ContextMenuStrip.Items[1].Enabled = config.Enabled;
+                    GVRequestIntercept.ContextMenuStrip.Items[2].Enabled = !config.Enabled;
+
+                }
+            }
+        }
+
+        private void GVRequestIntercept_MouseClick(object sender, MouseEventArgs e)
+        {
+            
+        }
+
+        private void GVRequestIntercept_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            _currentInterceptConfig = (GVRequestIntercept.DataSource as List<RequestInterceptConfig>)[e.RowIndex];
+            TBUrl.Text = _currentInterceptConfig.MatchUrl;
+            TBContent.Text = _currentInterceptConfig.Response;
+            CBTypes.SelectedValue = _currentInterceptConfig.MatchType;
+            CBEnable.Checked = _currentInterceptConfig.Enabled;
+
+            GVRequestIntercept.Visible = false;
+            GBEdit.Visible = true;
+            GBEdit.Dock = DockStyle.Fill;
+            GBEdit.Text = "编辑";
+        }
+
+        private void GVRequestIntercept_DataBindingComplete(object sender, DataGridViewBindingCompleteEventArgs e)
+        {
+        }
+
+        private void BindData()
+        {
+            var configs = BigEntityTableRemotingEngine.Find<RequestInterceptConfig>(nameof(RequestInterceptConfig),
+                    nameof(RequestInterceptConfig.TestCaseId), new object[] { _testCase.Id }).ToList();
+
+            GVRequestIntercept.DataSource = configs;
+        }
+
+        private void ContextMenuStrip_ItemClicked(object sender, ToolStripItemClickedEventArgs e)
+        {
+            switch (e.ClickedItem.Text)
+            {
+                case "新增":
+                    {
+                        _currentInterceptConfig = new RequestInterceptConfig()
+                        {
+                            TestCaseId=_testCase.Id
+                        };
+                        GBEdit.Text = "新增";
+                        TBUrl.Text = string.Empty;
+                        CBTypes.SelectedValue = 0;
+                        CBEnable.Checked = true;
+                        TBContent.Text = string.Empty;
+                        GVRequestIntercept.Visible = false;
+                        GBEdit.Visible = true;
+                        GBEdit.Dock = DockStyle.Fill;
+                        break;
+                    }
+                case "启用":
+                    {
+                        var row=GVRequestIntercept.CurrentRow;
+                        if (row != null)
+                        {
+                            var config = (row.DataBoundItem as RequestInterceptConfig);
+                            config.Enabled = true;
+                            BigEntityTableRemotingEngine.Update(nameof(RequestInterceptConfig), config);
+                            BindData();
+                        }
+                        break;
+                    }
+                case "禁用":
+                    {
+                        var row = GVRequestIntercept.CurrentRow;
+                        if (row != null)
+                        {
+                            var config = (row.DataBoundItem as RequestInterceptConfig);
+                            config.Enabled = false;
+                            BigEntityTableRemotingEngine.Update(nameof(RequestInterceptConfig), config);
+                            BindData();
+                        }
+                        break;
+                    }
+            }
+        }
+
+        private void BtnSave_Click(object sender, EventArgs e)
+        {
+            if (_currentInterceptConfig != null)
+            {
+                if (string.IsNullOrEmpty(TBUrl.Text))
+                {
+                    Util.SendMsg(this, "地址不能为空");
+                    return;
+                }
+                _currentInterceptConfig.MatchUrl = TBUrl.Text;
+                _currentInterceptConfig.MatchType = (int)CBTypes.SelectedValue;
+                _currentInterceptConfig.Enabled = CBEnable.Checked;
+                _currentInterceptConfig.Response = TBContent.Text;
+
+                BigEntityTableRemotingEngine.Upsert(nameof(RequestInterceptConfig), _currentInterceptConfig);
+
+                GBEdit.Visible = false;
+                _currentInterceptConfig = null;
+                
+
+                GVRequestIntercept.Visible = true;
+                GVRequestIntercept.Dock = DockStyle.Fill;
+
+                BindData();
+            }
+        }
+
+        private void BtnCancel_Click(object sender, EventArgs e)
+        {
+            _currentInterceptConfig = null;
+            GBEdit.Visible = false;
+            GVRequestIntercept.Visible = true;
+            GVRequestIntercept.Dock = DockStyle.Fill;
+        }
+    }
+}

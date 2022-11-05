@@ -256,5 +256,7 @@ namespace AutoTest.UI.WebTask
                 webBrowserTool.ExecuteScript(browser, frame, body);
             }
         }
+
+        public abstract TestCase GetTestCase();
     }
 }

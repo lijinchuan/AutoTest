@@ -640,6 +640,15 @@ namespace AutoTest.UI.WebBrowser
             }
         }
 
+        /// <summary>
+        /// 获取当前任务
+        /// </summary>
+        /// <returns></returns>
+        public IWebTask GetCurrentTask()
+        {
+            return lastTask;
+        }
+
         protected override void Dispose(bool disposing)
         {
             // Cleanup managed objects by calling their

@@ -392,6 +392,12 @@
     <Compile Include="UC\TestResultView.Designer.cs">
       <DependentUpon>TestResultView.cs</DependentUpon>
     </Compile>
+    <Compile Include="UC\UCRequestInterceptConfigManager.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="UC\UCRequestInterceptConfigManager.Designer.cs">
+      <DependentUpon>UCRequestInterceptConfigManager.cs</DependentUpon>
+    </Compile>
     <Compile Include="UC\UCTestCaseOrder.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -583,6 +589,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="UC\TestResultView.resx">
       <DependentUpon>TestResultView.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="UC\UCRequestInterceptConfigManager.resx">
+      <DependentUpon>UCRequestInterceptConfigManager.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="UC\UCTestCaseOrder.resx">
       <DependentUpon>UCTestCaseOrder.cs</DependentUpon>

@@ -1151,6 +1151,10 @@ namespace AutoTest.UI.UC
                 CBUser.ValueMember = nameof(TestLogin.Id);
 
                 _testCaseUrlConfig = BigEntityTableRemotingEngine.Find<TestCaseUrlConfig>(nameof(TestCaseUrlConfig), nameof(TestCaseUrlConfig.TestCaseId), new object[] { _testCase.Id }).FirstOrDefault();
+
+                var uc = new UC.UCRequestInterceptConfigManager(_testCase);
+                uc.Dock = DockStyle.Fill;
+                tabPage3.Controls.Add(uc);
             }
 
             rawTextBox.Multiline = true;

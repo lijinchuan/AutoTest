@@ -685,5 +685,10 @@ namespace AutoTest.UI.WebTask
             _testResult.FailMsg = reason;
             FinishTest();
         }
+
+        public override TestCase GetTestCase()
+        {
+            return _testCase;
+        }
     }
 }

@@ -298,5 +298,10 @@ namespace AutoTest.UI.WebTask
             webEvents.Add(webEvent);
             return false;
         }
+
+        public override TestCase GetTestCase()
+        {
+            return null;
+        }
     }
 }

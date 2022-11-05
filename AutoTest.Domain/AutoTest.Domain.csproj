@@ -99,6 +99,7 @@
     <Compile Include="IRecoverAble.cs" />
     <Compile Include="ISaveAble.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Entity\RequestInterceptConfig.cs" />
     <Compile Include="ScriptException.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

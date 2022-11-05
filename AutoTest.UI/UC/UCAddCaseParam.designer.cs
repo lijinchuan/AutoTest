@@ -37,6 +37,8 @@
             this.tabPage2 = new System.Windows.Forms.TabPage();
             this.myTabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage7 = new System.Windows.Forms.TabPage();
+            this.label2 = new System.Windows.Forms.Label();
+            this.TBIgnoreUrls = new System.Windows.Forms.TextBox();
             this.CBUser = new System.Windows.Forms.ComboBox();
             this.label8 = new System.Windows.Forms.Label();
             this.NUDOrder = new System.Windows.Forms.NumericUpDown();
@@ -80,8 +82,7 @@
             this.PannelBottom = new System.Windows.Forms.Panel();
             this.TabResults = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.TBIgnoreUrls = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
+            this.tabPage3 = new System.Windows.Forms.TabPage();
             this.Tabs.SuspendLayout();
             this.tabPage2.SuspendLayout();
             this.myTabControl1.SuspendLayout();
@@ -177,6 +178,7 @@
             this.myTabControl1.Controls.Add(this.tabPage7);
             this.myTabControl1.Controls.Add(this.tabPage8);
             this.myTabControl1.Controls.Add(this.tabPage9);
+            this.myTabControl1.Controls.Add(this.tabPage3);
             this.myTabControl1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.myTabControl1.Location = new System.Drawing.Point(3, 3);
             this.myTabControl1.Name = "myTabControl1";
@@ -202,6 +204,25 @@
             this.tabPage7.TabIndex = 0;
             this.tabPage7.Text = "属性";
             this.tabPage7.UseVisualStyleBackColor = true;
+            // 
+            // label2
+            // 
+            this.label2.AccessibleDescription = "rwlt";
+            this.label2.AutoSize = true;
+            this.label2.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
+            this.label2.Location = new System.Drawing.Point(10, 138);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(88, 48);
+            this.label2.TabIndex = 11;
+            this.label2.Text = "忽略地址：\r\n（请求出错\r\n时不中止）";
+            // 
+            // TBIgnoreUrls
+            // 
+            this.TBIgnoreUrls.Location = new System.Drawing.Point(115, 132);
+            this.TBIgnoreUrls.Multiline = true;
+            this.TBIgnoreUrls.Name = "TBIgnoreUrls";
+            this.TBIgnoreUrls.Size = new System.Drawing.Size(558, 86);
+            this.TBIgnoreUrls.TabIndex = 10;
             // 
             // CBUser
             // 
@@ -658,24 +679,14 @@
             this.tabPage1.Text = "tabPage1";
             this.tabPage1.UseVisualStyleBackColor = true;
             // 
-            // TBIgnoreUrls
+            // tabPage3
             // 
-            this.TBIgnoreUrls.Location = new System.Drawing.Point(115, 132);
-            this.TBIgnoreUrls.Multiline = true;
-            this.TBIgnoreUrls.Name = "TBIgnoreUrls";
-            this.TBIgnoreUrls.Size = new System.Drawing.Size(558, 86);
-            this.TBIgnoreUrls.TabIndex = 10;
-            // 
-            // label2
-            // 
-            this.label2.AccessibleDescription = "rwlt";
-            this.label2.AutoSize = true;
-            this.label2.Font = new System.Drawing.Font("宋体", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(134)));
-            this.label2.Location = new System.Drawing.Point(10, 138);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(88, 48);
-            this.label2.TabIndex = 11;
-            this.label2.Text = "忽略地址：\r\n（请求出错\r\n时不中止）";
+            this.tabPage3.Location = new System.Drawing.Point(4, 22);
+            this.tabPage3.Name = "tabPage3";
+            this.tabPage3.Size = new System.Drawing.Size(725, 125);
+            this.tabPage3.TabIndex = 3;
+            this.tabPage3.Text = "请求拦截";
+            this.tabPage3.UseVisualStyleBackColor = true;
             // 
             // UCAddCaseParam
             // 
@@ -768,5 +779,6 @@
         private System.Windows.Forms.Label LBAccount;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.TextBox TBIgnoreUrls;
+        private System.Windows.Forms.TabPage tabPage3;
     }
 }

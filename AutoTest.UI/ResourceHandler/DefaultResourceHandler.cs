@@ -1,14 +1,18 @@
-﻿using AutoTest.UI.EventListener;
+﻿using AutoTest.Domain.Entity;
+using AutoTest.UI.EventListener;
 using AutoTest.UI.ResponseFilters;
 using AutoTest.UI.WebBrowser;
 using AutoTest.Util;
 using CefSharp;
 using CefSharp.Handler;
+using LJC.FrameWorkV3.Comm;
+using LJC.FrameWorkV3.Data.EntityDataBase;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace AutoTest.UI.ResourceHandler
@@ -20,12 +24,56 @@ namespace AutoTest.UI.ResourceHandler
     {
         protected override IResourceHandler GetResourceHandler(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request)
         {
-            if (request.Url.Equals("https://sofire.bdstatic.com/js/dfxaf3-635b4cd6.js", StringComparison.OrdinalIgnoreCase)
-                || request.Url.Equals("https://x0.ifengimg.com/fe/lark/lark_comp/chip-294534ed97.js")
-                || request.Url.IndexOf("https://ax.ifeng.com/showcode", StringComparison.OrdinalIgnoreCase) > -1)
+            //if (request.Url.Equals("https://sofire.bdstatic.com/js/dfxaf3-635b4cd6.js", StringComparison.OrdinalIgnoreCase)
+            //    || request.Url.Equals("https://x0.ifengimg.com/fe/lark/lark_comp/chip-294534ed97.js")
+            //    || request.Url.IndexOf("https://ax.ifeng.com/showcode", StringComparison.OrdinalIgnoreCase) > -1)
+            //{
+            //    return new TransferRequestHandler(Encoding.UTF8.GetBytes("function _0x982f(a,w){}"));
+            //}
+
+            if(chromiumWebBrowser is DefaultChromiumWebBrowser)
             {
-                return new TransferRequestHandler(Encoding.UTF8.GetBytes("function _0x982f(a,w){}"));
+                var currTask = (chromiumWebBrowser as DefaultChromiumWebBrowser).GetCurrentTask();
+                if (currTask != null && currTask.GetTestCase() != null)
+                {
+                    var configs = (List<RequestInterceptConfig>)LocalCacheManager<object>.Find("RequestInterceptConfig_" + currTask.GetTestCase().Id,
+                        () => BigEntityTableRemotingEngine.Find<RequestInterceptConfig>(nameof(RequestInterceptConfig),
+                    nameof(RequestInterceptConfig.TestCaseId), new object[] { currTask.GetTestCase().Id }).ToList(), 1);
+
+                    foreach(var c in configs)
+                    {
+                        switch (c.MatchType)
+                        {
+                            case 0:
+                                {
+                                    if (request.Url.Equals(c.MatchUrl, StringComparison.OrdinalIgnoreCase))
+                                    {
+                                        return new TransferRequestHandler(Encoding.UTF8.GetBytes(c.Response));
+                                    }
+                                    break;
+                                }
+                            case 1:
+                                {
+                                    if (request.Url.IndexOf(c.MatchUrl, StringComparison.OrdinalIgnoreCase)>-1)
+                                    {
+                                        return new TransferRequestHandler(Encoding.UTF8.GetBytes(c.Response));
+                                    }
+                                    break;
+                                }
+                            case 2:
+                                {
+                                    if (Regex.IsMatch(request.Url, c.MatchUrl))
+                                    {
+                                        return new TransferRequestHandler(Encoding.UTF8.GetBytes(c.Response));
+                                    }
+                                    break;
+                                }
+                        }
+                    }
+
+                }
             }
+
             return base.GetResourceHandler(chromiumWebBrowser, browser, frame, request);
         }
 

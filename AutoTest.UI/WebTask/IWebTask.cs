@@ -1,4 +1,5 @@
-﻿using AutoTest.Domain.Model;
+﻿using AutoTest.Domain.Entity;
+using AutoTest.Domain.Model;
 using AutoTest.UI.EventListener;
 using AutoTest.UI.WebBrowser;
 using CefSharp;
@@ -53,6 +54,8 @@ namespace AutoTest.UI.WebTask
         /// </summary>
         /// <returns></returns>
         string GetSite();
+
+        TestCase GetTestCase();
 
         /// <summary>
         /// 起始页面，作一些初始化的任务
