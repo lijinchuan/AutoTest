@@ -19,7 +19,7 @@ using AutoTest.Biz;
 
 namespace AutoTest.UI.UC
 {
-    public partial class UCAddCaseParam : TabPage, IRecoverAble, ISaveAble, IExcuteAble
+    public partial class UCAddCaseParam :TabPage, IRecoverAble, ISaveAble, IExcuteAble
     {
         private List<ParamInfo> Params = new List<ParamInfo>();
         private List<ParamInfo> Headers = new List<ParamInfo>();
@@ -50,6 +50,7 @@ namespace AutoTest.UI.UC
         private TestCase _testCase = null;
         private TestPage _testPage = null;
         private TestCaseData _testCaseData = null;
+        private TestCaseUrlConfig _testCaseUrlConfig = null;
 
         UC.LoadingBox loadbox = new LoadingBox();
 
@@ -952,6 +953,11 @@ namespace AutoTest.UI.UC
                 }
             }
 
+            if (_testCaseUrlConfig != null&&_testCaseUrlConfig.IgnoreUrls?.Count>0)
+            {
+                TBIgnoreUrls.Text = string.Join("\r\n", _testCaseUrlConfig.IgnoreUrls);
+            }
+
             Tabs_SelectedIndexChanged(null, null);
         }
 
@@ -1143,7 +1149,8 @@ namespace AutoTest.UI.UC
                 CBUser.DropDownStyle = ComboBoxStyle.DropDownList;
                 CBUser.DisplayMember = nameof(TestLogin.AccountInfo);
                 CBUser.ValueMember = nameof(TestLogin.Id);
-                
+
+                _testCaseUrlConfig = BigEntityTableRemotingEngine.Find<TestCaseUrlConfig>(nameof(TestCaseUrlConfig), nameof(TestCaseUrlConfig.TestCaseId), new object[] { _testCase.Id }).FirstOrDefault();
             }
 
             rawTextBox.Multiline = true;
@@ -1475,6 +1482,23 @@ namespace AutoTest.UI.UC
                     }
                 }
 
+                if (!string.IsNullOrWhiteSpace(TBIgnoreUrls.Text))
+                {
+                    var urls = TBIgnoreUrls.Text.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                    if (urls.Any())
+                    {
+                        if (_testCaseUrlConfig == null)
+                        {
+                            _testCaseUrlConfig = new TestCaseUrlConfig
+                            {
+                                TestCaseId=_testCase.Id
+                            };
+                        }
+                        _testCaseUrlConfig.IgnoreUrls = urls.ToList();
+                    }
+                    BigEntityTableRemotingEngine.Upsert(nameof(TestCaseUrlConfig), _testCaseUrlConfig);
+                }
+
                 if (ischanged || force)
                 {
                     BigEntityTableRemotingEngine.Update(nameof(TestCase), _testCase);
@@ -1607,7 +1631,7 @@ namespace AutoTest.UI.UC
 
         public object[] GetRecoverData()
         {
-            return new object[] {this._testSite,this._testPage, this._testCase, this._testCaseData, this.Text };
+            return new object[] { _testSite, _testPage, _testCase, _testCaseData, Text, TBIgnoreUrls.Text };
         }
 
         public IRecoverAble Recover(object[] recoverData)
@@ -1617,6 +1641,10 @@ namespace AutoTest.UI.UC
             this._testCase = (TestCase)recoverData[2];
             this._testCaseData = (TestCaseData)recoverData[3];
             this.Text = (string)recoverData[4];
+            if (recoverData.Length > 5)
+            {
+                this.TBIgnoreUrls.Text = (string)recoverData[5];
+            }
             Bind();
             BindData();
             return this;

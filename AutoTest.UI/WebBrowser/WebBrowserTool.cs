@@ -198,10 +198,10 @@ namespace AutoTest.UI.WebBrowser
             }
         }
 
-        public void WaitLoading(IBrowser browser,bool breakFlag, int timeOutMs = 120000)
+        public void WaitLoading(IBrowser browser, bool breakFlag, int timeOutMs = 120000)
         {
             int ms = 0;
-            while (browser.IsLoading && !breakFlag)
+            while ((browser.IsLoading || IsScriptBusy(browser)) && !breakFlag)
             {
                 Thread.Sleep(10);
                 ms += 10;
@@ -210,6 +210,18 @@ namespace AutoTest.UI.WebBrowser
                     throw new TimeoutException($"{browser.MainFrame.Url}加载超时");
                 }
             }
+        }
+
+        public bool IsScriptBusy(IBrowser browser)
+        {
+            var resp = browser.MainFrame.EvaluateScriptAsPromiseAsync("return 1");
+
+            if(Task.WaitAll(new[] { resp }, 100))
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

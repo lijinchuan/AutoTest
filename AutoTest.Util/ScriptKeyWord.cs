@@ -439,6 +439,28 @@ namespace AutoTest.Util
                 Desc = "设置或返回从问号 (?) 开始的 URL（查询部分）",
                 HighColor = Color.Blue
             });
+
+
+            KeyWordDic.Add(new ScriptKeyWord
+            {
+                KeyWord = "ServerDriverClient.logInfo",
+                Desc = "记录info日志：ServerDriverClient.logInfo(string content)",
+                HighColor = Color.Red
+            });
+
+            KeyWordDic.Add(new ScriptKeyWord
+            {
+                KeyWord = "ServerDriverClient.logError",
+                Desc = "记录error日志：ServerDriverClient.logError(string content)",
+                HighColor = Color.Red
+            });
+
+            KeyWordDic.Add(new ScriptKeyWord
+            {
+                KeyWord = "ServerDriverClient.logDebug",
+                Desc = "记录error日志：ServerDriverClient.logDebug(string content)",
+                HighColor = Color.Red
+            });
         }
 
         private static void Deal()

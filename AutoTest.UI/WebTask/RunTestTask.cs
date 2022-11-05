@@ -34,7 +34,8 @@ namespace AutoTest.UI.WebTask
         private TestCase _testCase;
         private bool _readyFlag = false;
         private TestCaseData _testCaseData;
-        
+        private TestCaseUrlConfig _testCaseUrlConfig = null;
+
         private List<TestScript> _globScripts;
         private List<TestScript> _siteScripts;
         private TestResult _testResult;
@@ -94,6 +95,9 @@ namespace AutoTest.UI.WebTask
             _globScripts = globScripts;
             _siteScripts = siteScripts;
             _notify = notify;
+
+            _testCaseUrlConfig = BigEntityTableRemotingEngine.Find<TestCaseUrlConfig>(nameof(TestCaseUrlConfig),
+                nameof(TestCaseUrlConfig.TestCaseId), new object[] { testCase.Id }).FirstOrDefault();
 
             _testResult = new TestResult
             {
@@ -272,6 +276,16 @@ namespace AutoTest.UI.WebTask
 
             bool isWarn(string url)
             {
+                if (_testCaseUrlConfig?.IgnoreUrls?.Any() == true)
+                {
+                    foreach(var igUrl in _testCaseUrlConfig.IgnoreUrls)
+                    {
+                        if (url.Equals(igUrl, StringComparison.OrdinalIgnoreCase))
+                        {
+                            return true;
+                        }
+                    }
+                }
                 return warnFileExt.Any(p => url.EndsWith(p, StringComparison.OrdinalIgnoreCase) || url.ToLower().Contains($"{p}?"));
             }
         }

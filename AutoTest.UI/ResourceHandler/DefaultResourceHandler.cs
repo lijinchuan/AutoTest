@@ -18,6 +18,16 @@ namespace AutoTest.UI.ResourceHandler
     /// </summary>
     public class DefaultResourceHandler : ResourceRequestHandler
     {
+        protected override IResourceHandler GetResourceHandler(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request)
+        {
+            if (request.Url.Equals("https://sofire.bdstatic.com/js/dfxaf3-635b4cd6.js", StringComparison.OrdinalIgnoreCase)
+                || request.Url.Equals("https://x0.ifengimg.com/fe/lark/lark_comp/chip-294534ed97.js")
+                || request.Url.IndexOf("https://ax.ifeng.com/showcode", StringComparison.OrdinalIgnoreCase) > -1)
+            {
+                return new TransferRequestHandler(Encoding.UTF8.GetBytes("function _0x982f(a,w){}"));
+            }
+            return base.GetResourceHandler(chromiumWebBrowser, browser, frame, request);
+        }
 
         protected sealed override IResponseFilter GetResourceResponseFilter(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request, IResponse response)
         {

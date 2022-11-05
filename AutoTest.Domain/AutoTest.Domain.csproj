@@ -52,6 +52,7 @@
     <Compile Include="Entity\BodyDataType.cs" />
     <Compile Include="Entity\Counter.cs" />
     <Compile Include="Entity\FileDB.cs" />
+    <Compile Include="Entity\IgnoreUrls.cs" />
     <Compile Include="Entity\OldVerion\TestCase.cs" />
     <Compile Include="Entity\OldVerion\TestCaseV2.cs" />
     <Compile Include="Entity\OldVerion\TestLogin.cs" />

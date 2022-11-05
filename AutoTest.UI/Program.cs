@@ -120,6 +120,10 @@ namespace AutoTest.UI
 
             BigEntityTableEngine.LocalEngine.CreateTable<TaskBagLog>(p => p.Id, a => a.AddIndex(nameof(TaskBagLog.TaskBagId), b => b.Asc(m => m.TaskBagId)));
 
+            BigEntityTableEngine.LocalEngine.CreateTable<TestCaseUrlConfig>(p => p.Id, a => a.AddIndex(nameof(TestCaseUrlConfig.TestCaseId), b => b.Asc(m => m.TestCaseId)));
+
+            BigEntityTableEngine.LocalEngine.CreateTable<RequestInterceptConfig>(p=>p.Id, a => a.AddIndex(nameof(RequestInterceptConfig.TestCaseId), b => b.Asc(m => m.TestCaseId)));
+
             AutofacBuilder.init();
 
             Application.EnableVisualStyles();

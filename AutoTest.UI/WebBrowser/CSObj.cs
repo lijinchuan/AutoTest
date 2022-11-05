@@ -6,6 +6,7 @@ using CefSharp.WinForms;
 using HtmlAgilityPack;
 using LJC.FrameWorkV3.Comm;
 using LJC.FrameWorkV3.Data.EntityDataBase;
+using LJC.FrameWorkV3.LogManager;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
@@ -134,6 +135,21 @@ namespace AutoTest.UI.WebBrowser
         public void Ehco(string msg)
         {
             this.OnPublishMsg?.Invoke(msg);
+        }
+
+        public void LogInfo(string content)
+        {
+            LogHelper.Instance.Info("【js】"+content);
+        }
+
+        public void LogError(string content)
+        {
+            LogHelper.Instance.Error("【js】" + content);
+        }
+
+        public void LogDebug(string content)
+        {
+            LogHelper.Instance.Debug("【js】" + content);
         }
 
         public string GetWebRequestData(string url)
