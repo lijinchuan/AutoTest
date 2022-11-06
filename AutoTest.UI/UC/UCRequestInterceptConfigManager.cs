@@ -7,6 +7,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -186,9 +187,23 @@ namespace AutoTest.UI.UC
             {
                 if (string.IsNullOrEmpty(TBUrl.Text))
                 {
-                    Util.SendMsg(this, "地址不能为空");
+                    MessageBox.Show("地址不能为空");
                     return;
                 }
+
+                if ((int)CBTypes.SelectedValue == 2)
+                {
+                    try
+                    {
+                        _ = Regex.IsMatch("http://www.abc.com/def/gi", TBUrl.Text, RegexOptions.IgnoreCase);
+                    }
+                    catch (Exception ex)
+                    {
+                        MessageBox.Show("正则表达式有误:"+ex.Message);
+                        return;
+                    }
+                }
+
                 _currentInterceptConfig.MatchUrl = TBUrl.Text;
                 _currentInterceptConfig.MatchType = (int)CBTypes.SelectedValue;
                 _currentInterceptConfig.Enabled = CBEnable.Checked;

@@ -40,7 +40,7 @@ namespace AutoTest.UI.ResourceHandler
                         () => BigEntityTableRemotingEngine.Find<RequestInterceptConfig>(nameof(RequestInterceptConfig),
                     nameof(RequestInterceptConfig.TestCaseId), new object[] { currTask.GetTestCase().Id }).ToList(), 1);
 
-                    foreach(var c in configs)
+                    foreach(var c in configs.Where(p=>p.Enabled))
                     {
                         switch (c.MatchType)
                         {
@@ -62,9 +62,18 @@ namespace AutoTest.UI.ResourceHandler
                                 }
                             case 2:
                                 {
-                                    if (Regex.IsMatch(request.Url, c.MatchUrl))
+                                    try
                                     {
-                                        return new TransferRequestHandler(Encoding.UTF8.GetBytes(c.Response));
+                                        if (Regex.IsMatch(request.Url, c.MatchUrl, RegexOptions.IgnoreCase))
+                                        {
+                                            return new TransferRequestHandler(Encoding.UTF8.GetBytes(c.Response));
+                                        }
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        ex.Data.Add("url", request.Url);
+                                        ex.Data.Add("matchurl", c.MatchUrl);
+                                        LJC.FrameWorkV3.LogManager.LogHelper.Instance.Error("正则截取请求地址错误", ex);
                                     }
                                     break;
                                 }

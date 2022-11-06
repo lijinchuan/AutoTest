@@ -958,6 +958,7 @@ namespace AutoTest.UI.UC
                 TBIgnoreUrls.Text = string.Join("\r\n", _testCaseUrlConfig.IgnoreUrls);
             }
 
+            Tabs.SelectedTab = tabPage2;
             Tabs_SelectedIndexChanged(null, null);
         }
 
