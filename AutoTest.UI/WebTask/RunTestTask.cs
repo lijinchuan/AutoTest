@@ -305,7 +305,7 @@ namespace AutoTest.UI.WebTask
                         throw new Exception("任务取消");
                     }
                     AssertWebHasNoError();
-                    webBrowserTool.WaitLoading(browser, _cancelFlag);
+                    webBrowserTool.WaitLoading(browser, _cancelFlag,true);
                     try
                     {
                         PrepareTest(browser, frame, bag);
@@ -477,7 +477,7 @@ namespace AutoTest.UI.WebTask
                 ret = await RunTestCode(browser, frame);
                 if (ret == 1)
                 {
-                    webBrowserTool.WaitLoading(browser, _cancelFlag);
+                    webBrowserTool.WaitLoading(browser, _cancelFlag,true);
                     PublishDebugMsg($"{_testCase.CaseName}执行代码成功，准备验证");
                     ret = await RunValidCode(browser, frame);
                     if (ret == 1)

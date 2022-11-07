@@ -198,10 +198,10 @@ namespace AutoTest.UI.WebBrowser
             }
         }
 
-        public void WaitLoading(IBrowser browser, bool breakFlag, int timeOutMs = 120000)
+        public void WaitLoading(IBrowser browser, bool breakFlag, bool checkScript = false, int timeOutMs = 120000)
         {
             int ms = 0;
-            while ((browser.IsLoading || IsScriptBusy(browser)) && !breakFlag)
+            while ((browser.IsLoading || (checkScript && IsScriptBusy(browser))) && !breakFlag)
             {
                 Thread.Sleep(10);
                 ms += 10;

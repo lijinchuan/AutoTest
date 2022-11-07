@@ -176,7 +176,7 @@ namespace AutoTest.UI.WebBrowser
             {
                 _ = new Action(() =>
                 {
-                    webBrowserTool.WaitLoading(GetBrowser(), cancelFlag);
+                    webBrowserTool.WaitLoading(GetBrowser(), cancelFlag,true);
                     DocumentLoadCompleted?.Invoke(e.Browser, e.Frame);
                 }).BeginInvoke(null, null);
             }
