@@ -201,13 +201,21 @@ namespace AutoTest.UI.WebBrowser
         public void WaitLoading(IBrowser browser, bool breakFlag, bool checkScript = false, int timeOutMs = 120000)
         {
             int ms = 0;
-            while ((browser.IsLoading || (checkScript && IsScriptBusy(browser))) && !breakFlag)
+            while (browser.IsLoading && !breakFlag)
             {
                 Thread.Sleep(10);
                 ms += 10;
                 if (ms > timeOutMs)
                 {
                     throw new TimeoutException($"{browser.MainFrame.Url}加载超时");
+                }
+            }
+            while (checkScript && IsScriptBusy(browser) && !breakFlag)
+            {
+                ms += 100;
+                if (ms > timeOutMs)
+                {
+                    throw new TimeoutException($"{browser.MainFrame.Url}页面脚本超时");
                 }
             }
         }
