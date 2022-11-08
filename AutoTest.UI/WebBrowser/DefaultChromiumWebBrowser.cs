@@ -231,7 +231,10 @@ namespace AutoTest.UI.WebBrowser
             webTask.OnTaskReady -= WebTask_OnTaskReady;
             DocumentLoadCompleted -= webTask.DocumentCompletedHandler;
             DocumentLoadStart -= webTask.DocumentLoadStartHandler;
-            _ = webTaskListHash.Remove(webTask.GetTaskName());
+            lock (webTaskList)
+            {
+                _ = webTaskListHash.Remove(webTask.GetTaskName());
+            }
             RemoveEventListener(webTask.GetEventListener());
             if (webTask.ClearCookies)
             {
