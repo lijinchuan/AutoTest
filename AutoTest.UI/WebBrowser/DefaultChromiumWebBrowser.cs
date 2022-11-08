@@ -248,14 +248,21 @@ namespace AutoTest.UI.WebBrowser
             return this.GetCookieManager().DeleteCookies(url);
         }
 
-        public bool AddTask(IWebTask webTask)
+        public bool AddTask(IWebTask webTask, bool priority = false)
         {
             lock (webTaskList)
             {
                 if (!webTaskListHash.Contains(webTask.GetTaskName()))
                 {
                     _ = webTaskListHash.Add(webTask.GetTaskName());
-                    webTaskList.Enqueue(webTask);
+                    if (priority)
+                    {
+                        webTaskList.ToList().Insert(0, webTask);
+                    }
+                    else
+                    {
+                        webTaskList.Enqueue(webTask);
+                    }
                     return true;
                 }
             }
