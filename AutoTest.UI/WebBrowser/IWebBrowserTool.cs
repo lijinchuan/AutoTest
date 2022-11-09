@@ -44,8 +44,8 @@ namespace AutoTest.UI.WebBrowser
         /// <param name="frame"></param>
         /// <param name="code"></param>
         /// <returns></returns>
-        object ExecuteScript(IBrowser browser, IFrame frame, string code);
+        object ExecuteScript(IBrowser browser, IFrame frame, string code,int timeOut);
 
-        object ExecutePromiseScript(IBrowser browser, IFrame frame, string code);
+        object ExecutePromiseScript(IBrowser browser, IFrame frame, string code, int timeOut);
     }
 }

@@ -309,11 +309,11 @@ namespace AutoTest.UI.WebTask
                     try
                     {
                         PrepareTest(browser, frame, bag);
-                        var ret = webBrowserTool.ExecutePromiseScript(browser, frame, Util.ReplaceEvnParams(_testCase.TestCode, _testEnvParams));
+                        var ret = webBrowserTool.ExecutePromiseScript(browser, frame, Util.ReplaceEvnParams(_testCase.TestCode, _testEnvParams), 60 * 1000 * 3);
                         UpdateUserVarData(browser, frame);
                         if (object.Equals(ret, false))
                         {
-                            if (tryCount++ >= TestTimeOut * 3 / sleepMills)
+                            if (tryCount++ >= 60)
                             {
                                 PublishMsg("长时间返回false，超时");
                                 return await Task.FromResult(0);
@@ -338,9 +338,9 @@ namespace AutoTest.UI.WebTask
                             PublishMsg(ex.Message);
                         }
 
-                        if (tryCount++ > TestTimeOut / sleepMills)
+                        if (tryCount++ > 3)
                         {
-                            PublishMsg("超时");
+                            PublishMsg("错误" + ex.Message + "，且重试次数超过3次");
                             return await Task.FromResult(0);
                         }
                         Thread.Sleep(sleepMills);

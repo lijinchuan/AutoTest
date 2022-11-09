@@ -134,17 +134,17 @@ namespace AutoTest.UI.WebBrowser
             return resp.Result.Success;
         }
 
-        public object ExecuteScript(IBrowser browser,IFrame frame,string code)
+        public object ExecuteScript(IBrowser browser, IFrame frame, string code, int timeOut = SCRIPT_TIMEOUT)
         {
             var resp = browser.MainFrame.EvaluateScriptAsync(code);
-            AssertJavaScriptResult(resp);
+            AssertJavaScriptResult(resp, timeOut);
             return resp.Result.Result;
         }
 
-        public object ExecutePromiseScript(IBrowser browser, IFrame frame, string code)
+        public object ExecutePromiseScript(IBrowser browser, IFrame frame, string code, int timeOut = SCRIPT_TIMEOUT)
         {
             var resp = browser.MainFrame.EvaluateScriptAsPromiseAsync(code);
-            AssertJavaScriptResult(resp);
+            AssertJavaScriptResult(resp, timeOut);
             return resp.Result.Result;
         }
 
@@ -153,11 +153,11 @@ namespace AutoTest.UI.WebBrowser
             return Regex.IsMatch(code, @"([^\w]|^)return([\r\n\s]+|$)", RegexOptions.IgnoreCase);
         }
 
-        public object TryExecuteScript(IBrowser browser, IFrame frame, string code)
+        public object TryExecuteScript(IBrowser browser, IFrame frame, string code, int timeOut = SCRIPT_TIMEOUT)
         {
             if (IsPromiseScript(code))
             {
-                return ExecutePromiseScript(browser, frame, code);
+                return ExecutePromiseScript(browser, frame, code, timeOut);
             }
 
             return ExecuteScript(browser, frame, code);

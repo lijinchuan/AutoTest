@@ -470,7 +470,7 @@ namespace AutoTest.UI.WebBrowser
             }
             catch (Exception ex)
             {
-                this.OnMsgPublished($"任务出错:{webTask.GetTaskName()},{ex.Message}");
+                OnMsgPublished?.Invoke($"任务出错:{webTask.GetTaskName()},{ex.Message}");
                 WebTask_OnTaskCompleted(webTask);
                 throw;
             }
