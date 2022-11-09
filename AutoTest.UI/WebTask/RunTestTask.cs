@@ -8,6 +8,7 @@ using AutoTest.Util;
 using CefSharp;
 using LJC.FrameWorkV3.Comm;
 using LJC.FrameWorkV3.Data.EntityDataBase;
+using LJC.FrameWorkV3.LogManager;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -383,7 +384,7 @@ namespace AutoTest.UI.WebTask
                             PublishDebugMsg("执行验证代码,结果:" + ret);
                             if (ret == null)
                             {
-                                if (tryCount++ >= TestTimeOut / sleepMills)
+                                if (tryCount++ >= 30)
                                 {
                                     _testResult.IsTimeOut = true;
                                     _testResult.FailMsg = "检查结果一直为NULL";
@@ -412,7 +413,7 @@ namespace AutoTest.UI.WebTask
                                 PublishMsg("验证可能会失败：" + ex.Message);
                             }
 
-                            if (tryCount++ >= TestTimeOut / sleepMills)
+                            if (tryCount++ >= 3)
                             {
                                 _testResult.IsTimeOut = true;
                                 _testResult.FailMsg = "检查出错：" + ex.Message;
@@ -477,7 +478,7 @@ namespace AutoTest.UI.WebTask
                 ret = await RunTestCode(browser, frame);
                 if (ret == 1)
                 {
-                    webBrowserTool.WaitLoading(browser, _cancelFlag,true);
+                    webBrowserTool.WaitLoading(browser, _cancelFlag, true);
                     PublishDebugMsg($"{_testCase.CaseName}执行代码成功，准备验证");
                     ret = await RunValidCode(browser, frame);
                     if (ret == 1)
@@ -494,6 +495,7 @@ namespace AutoTest.UI.WebTask
             {
                 _testResult.Success = false;
                 _testResult.FailMsg = ex.Message;
+                LogHelper.Instance.Error($"{_testCase.CaseName}出错", ex);
                 PublishMsg($"{_testCase.CaseName}出错:{ex.Message}");
             }
             finally

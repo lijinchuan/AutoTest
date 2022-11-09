@@ -555,7 +555,7 @@ namespace AutoTest.UI.WebBrowser
             try
             {
                 this.Stop();
-                webBrowserTool.WaitLoading(GetBrowser(), cancelFlag);
+                webBrowserTool.WaitLoading(GetBrowser(), cancelFlag, timeOutMs: 30000);
                 Clear(webTask);
 
                 if (webTask.GetNext() != null)
@@ -565,7 +565,19 @@ namespace AutoTest.UI.WebBrowser
             }
             catch (Exception ex)
             {
-                WebTask_OnMsgPublish("clear task失败" + ex.Message);
+                try
+                {
+                    LogHelper.Instance.Error("出错（此错误可忽略）", ex);
+                    this.LoadUrl("about:blank");
+                    webBrowserTool.WaitLoading(GetBrowser(), cancelFlag, timeOutMs: 30000);
+                    Clear(webTask);
+                }
+                catch (Exception exx)
+                {
+                    LogHelper.Instance.Error("出错", exx);
+                    WebTask_OnMsgPublish("clear task失败,后面可能会出现串页情况：" + exx.Message);
+                    Clear(webTask);
+                }
             }
             finally
             {
