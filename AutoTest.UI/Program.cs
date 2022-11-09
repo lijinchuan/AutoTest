@@ -122,7 +122,19 @@ namespace AutoTest.UI
 
             BigEntityTableEngine.LocalEngine.CreateTable<TestCaseUrlConfig>(p => p.Id, a => a.AddIndex(nameof(TestCaseUrlConfig.TestCaseId), b => b.Asc(m => m.TestCaseId)));
 
-            BigEntityTableEngine.LocalEngine.CreateTable<RequestInterceptConfig>(p=>p.Id, a => a.AddIndex(nameof(RequestInterceptConfig.TestCaseId), b => b.Asc(m => m.TestCaseId)));
+            //BigEntityTableEngine.LocalEngine.CreateTable<RequestInterceptConfig>(p=>p.Id, a => a.AddIndex(nameof(RequestInterceptConfig.TestCaseId), b => b.Asc(m => m.TestCaseId)));
+
+            BigEntityTableEngine.LocalEngine.Upgrade<Domain.Entity.OldVerion.RequestInterceptConfig, RequestInterceptConfig>(nameof(RequestInterceptConfig),
+                o => new RequestInterceptConfig
+                {
+                    Enabled = o.Enabled,
+                    MatchType = o.MatchType,
+                    MatchUrl = o.MatchUrl,
+                    MimeType = string.Empty,
+                    Response = o.Response,
+                    TestCaseId = o.TestCaseId,
+                    ResponseData=null
+                }, nameof(RequestInterceptConfig.Id), true, new IndexBuilder<RequestInterceptConfig>().AddIndex(nameof(RequestInterceptConfig.TestCaseId), b => b.Asc(m => m.TestCaseId)).Build());
 
             AutofacBuilder.init();
 

@@ -139,6 +139,7 @@
     <Compile Include="ResourceHandler\DefaultRequestHandler.cs" />
     <Compile Include="ResourceHandler\DefaultResourceHandler.cs" />
     <Compile Include="ResourceHandler\TransferRequestHandler.cs" />
+    <Compile Include="Resources\MimeResource.cs" />
     <Compile Include="Resources\Resource1.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

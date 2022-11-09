@@ -1484,17 +1484,17 @@ namespace AutoTest.UI.UC
                         return panel;
                     }, null);
 
-                    if (testPanel.IsRunning())
-                    {
-                        Util.SendMsg(this, "正在执行测试，请稍后再试");
-                        return false;
-                    }
+                    //if (testPanel.IsRunning())
+                    //{
+                    //    Util.SendMsg(this, "正在执行测试，请稍后再试");
+                    //    return false;
+                    //}
 
-                    if (!testPanel.Reset())
-                    {
-                        Util.SendMsg(this, "任务未开始，有测试在执行");
-                        return false;
-                    }
+                    //if (!testPanel.Reset())
+                    //{
+                    //    Util.SendMsg(this, "任务未开始，有测试在执行");
+                    //    return false;
+                    //}
                     testPanel.OnTaskStart += t =>
                     {
                         var rt = t as RunTestTask;

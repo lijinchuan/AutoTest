@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AutoTest.Domain.Entity
+namespace AutoTest.Domain.Entity.OldVerion
 {
     public class RequestInterceptConfig
     {
@@ -32,19 +32,7 @@ namespace AutoTest.Domain.Entity
             set;
         }
 
-        public string MimeType
-        {
-            get;
-            set;
-        }
-
         public string Response
-        {
-            get;
-            set;
-        }
-
-        public byte[] ResponseData
         {
             get;
             set;

@@ -1,10 +1,12 @@
 ﻿using AutoTest.Domain.Entity;
+using AutoTest.UI.Resources;
 using LJC.FrameWorkV3.Data.EntityDataBase;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Drawing;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -17,6 +19,7 @@ namespace AutoTest.UI.UC
     {
         private TestCase _testCase = null;
         private RequestInterceptConfig _currentInterceptConfig = null;
+        private string _file = null;
 
         public UCRequestInterceptConfigManager()
         {
@@ -85,6 +88,11 @@ namespace AutoTest.UI.UC
             CBTypes.ValueMember = "Key";
             CBTypes.DisplayMember = "Value";
             CBTypes.SelectedValue = 0;
+
+            CBMimeType.DataSource = MimeResource.GetMimes();
+            CBMimeType.ValueMember = "MimeName";
+            CBMimeType.DisplayMember = "MimeName";
+            CBMimeType.SelectedIndex = 0;
         }
 
         private void ContextMenuStrip_VisibleChanged(object sender, EventArgs e)
@@ -112,9 +120,10 @@ namespace AutoTest.UI.UC
         {
             _currentInterceptConfig = (GVRequestIntercept.DataSource as List<RequestInterceptConfig>)[e.RowIndex];
             TBUrl.Text = _currentInterceptConfig.MatchUrl;
-            TBContent.Text = _currentInterceptConfig.Response;
+            TBContent.Text = _currentInterceptConfig.Response??string.Empty;
             CBTypes.SelectedValue = _currentInterceptConfig.MatchType;
             CBEnable.Checked = _currentInterceptConfig.Enabled;
+            CBMimeType.SelectedValue = _currentInterceptConfig.MimeType;
 
             GVRequestIntercept.Visible = false;
             GBEdit.Visible = true;
@@ -152,6 +161,7 @@ namespace AutoTest.UI.UC
                         GVRequestIntercept.Visible = false;
                         GBEdit.Visible = true;
                         GBEdit.Dock = DockStyle.Fill;
+                        _file = null;
                         break;
                     }
                 case "启用":
@@ -207,7 +217,20 @@ namespace AutoTest.UI.UC
                 _currentInterceptConfig.MatchUrl = TBUrl.Text;
                 _currentInterceptConfig.MatchType = (int)CBTypes.SelectedValue;
                 _currentInterceptConfig.Enabled = CBEnable.Checked;
-                _currentInterceptConfig.Response = TBContent.Text;
+                if (_file != null && File.Exists(_file))
+                {
+                    _currentInterceptConfig.ResponseData = File.ReadAllBytes(_file);
+                    _currentInterceptConfig.Response = null;
+                }
+                else
+                {
+                    if (!string.IsNullOrWhiteSpace(TBContent.Text))
+                    {
+                        _currentInterceptConfig.ResponseData = null;
+                        _currentInterceptConfig.Response = TBContent.Text;
+                    }
+                }
+                _currentInterceptConfig.MimeType = (string)CBMimeType.SelectedValue;
 
                 BigEntityTableRemotingEngine.Upsert(nameof(RequestInterceptConfig), _currentInterceptConfig);
 
@@ -225,9 +248,19 @@ namespace AutoTest.UI.UC
         private void BtnCancel_Click(object sender, EventArgs e)
         {
             _currentInterceptConfig = null;
+            _file = null;
             GBEdit.Visible = false;
             GVRequestIntercept.Visible = true;
             GVRequestIntercept.Dock = DockStyle.Fill;
+        }
+
+        private void BtnChooseFile_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog dlg = new OpenFileDialog();
+            if (dlg.ShowDialog() == DialogResult.OK)
+            {
+                _file = dlg.FileName;
+            }
         }
     }
 }

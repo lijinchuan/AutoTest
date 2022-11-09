@@ -14,6 +14,7 @@ namespace AutoTest.UI.ResourceHandler
     public class TransferRequestHandler : IResourceHandler
     {
         private byte[] _localResourceData = null;
+        private string _mime = null;
         private string _localResourceFileName = null;
         private int _dataReadCount = 0;
 
@@ -22,8 +23,9 @@ namespace AutoTest.UI.ResourceHandler
             _localResourceFileName = localFileName;
         }
 
-        public TransferRequestHandler(byte[] content)
+        public TransferRequestHandler(string mime,byte[] content)
         {
+            _mime = mime;
             _localResourceData = content;
         }
 
@@ -39,6 +41,10 @@ namespace AutoTest.UI.ResourceHandler
 
         public void GetResponseHeaders(IResponse response, out long responseLength, out string redirectUrl)
         {
+            if (!string.IsNullOrWhiteSpace(_mime))
+            {
+                response.MimeType = _mime;
+            }
             response.Charset = "UTF-8";
             if (!string.IsNullOrWhiteSpace(_localResourceFileName))
             {

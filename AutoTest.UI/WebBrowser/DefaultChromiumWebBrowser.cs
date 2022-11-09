@@ -4,6 +4,7 @@ using AutoTest.UI.WebTask;
 using AutoTest.Util;
 using CefSharp;
 using CefSharp.WinForms;
+using LJC.FrameWorkV3.LogManager;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -243,6 +244,11 @@ namespace AutoTest.UI.WebBrowser
             }
         }
 
+        public List<IWebTask> GetTaskList()
+        {
+            return webTaskList.ToList();
+        }
+
         public bool ClearCookie(string url)
         {
             return this.GetCookieManager().DeleteCookies(url);
@@ -263,7 +269,12 @@ namespace AutoTest.UI.WebBrowser
                     {
                         webTaskList.Enqueue(webTask);
                     }
+                    LogHelper.Instance.Debug("添加任务成功:" + webTask.GetTaskName());
                     return true;
+                }
+                else
+                {
+                    LogHelper.Instance.Debug("webTaskListHash存在任务名称，已过滤:" + webTask.GetTaskName());
                 }
             }
 

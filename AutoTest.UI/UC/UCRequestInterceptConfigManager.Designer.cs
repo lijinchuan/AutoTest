@@ -31,15 +31,18 @@ namespace AutoTest.UI.UC
         {
             this.GVRequestIntercept = new System.Windows.Forms.DataGridView();
             this.GBEdit = new System.Windows.Forms.GroupBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.TBUrl = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.CBTypes = new System.Windows.Forms.ComboBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.TBContent = new System.Windows.Forms.TextBox();
-            this.BtnSave = new System.Windows.Forms.Button();
-            this.BtnCancel = new System.Windows.Forms.Button();
             this.CBEnable = new System.Windows.Forms.CheckBox();
+            this.BtnCancel = new System.Windows.Forms.Button();
+            this.BtnSave = new System.Windows.Forms.Button();
+            this.TBContent = new System.Windows.Forms.TextBox();
+            this.label3 = new System.Windows.Forms.Label();
+            this.CBTypes = new System.Windows.Forms.ComboBox();
+            this.label2 = new System.Windows.Forms.Label();
+            this.TBUrl = new System.Windows.Forms.TextBox();
+            this.label1 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.CBMimeType = new System.Windows.Forms.ComboBox();
+            this.BtnChooseFile = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.GVRequestIntercept)).BeginInit();
             this.GBEdit.SuspendLayout();
             this.SuspendLayout();
@@ -58,6 +61,9 @@ namespace AutoTest.UI.UC
             // 
             // GBEdit
             // 
+            this.GBEdit.Controls.Add(this.BtnChooseFile);
+            this.GBEdit.Controls.Add(this.CBMimeType);
+            this.GBEdit.Controls.Add(this.label4);
             this.GBEdit.Controls.Add(this.CBEnable);
             this.GBEdit.Controls.Add(this.BtnCancel);
             this.GBEdit.Controls.Add(this.BtnSave);
@@ -74,71 +80,17 @@ namespace AutoTest.UI.UC
             this.GBEdit.TabStop = false;
             this.GBEdit.Text = "groupBox1";
             // 
-            // label1
+            // CBEnable
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(8, 20);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(65, 12);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "拦截地址：";
-            // 
-            // TBUrl
-            // 
-            this.TBUrl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.TBUrl.Location = new System.Drawing.Point(77, 17);
-            this.TBUrl.Name = "TBUrl";
-            this.TBUrl.Size = new System.Drawing.Size(421, 21);
-            this.TBUrl.TabIndex = 1;
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(8, 49);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(65, 12);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "拦截方式：";
-            // 
-            // CBTypes
-            // 
-            this.CBTypes.FormattingEnabled = true;
-            this.CBTypes.Location = new System.Drawing.Point(77, 47);
-            this.CBTypes.Name = "CBTypes";
-            this.CBTypes.Size = new System.Drawing.Size(121, 20);
-            this.CBTypes.TabIndex = 3;
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(8, 80);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(65, 12);
-            this.label3.TabIndex = 4;
-            this.label3.Text = "返回内容：";
-            // 
-            // TBContent
-            // 
-            this.TBContent.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.TBContent.Location = new System.Drawing.Point(77, 80);
-            this.TBContent.Multiline = true;
-            this.TBContent.Name = "TBContent";
-            this.TBContent.Size = new System.Drawing.Size(469, 66);
-            this.TBContent.TabIndex = 5;
-            // 
-            // BtnSave
-            // 
-            this.BtnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.BtnSave.Location = new System.Drawing.Point(423, 152);
-            this.BtnSave.Name = "BtnSave";
-            this.BtnSave.Size = new System.Drawing.Size(51, 23);
-            this.BtnSave.TabIndex = 6;
-            this.BtnSave.Text = "保存";
-            this.BtnSave.UseVisualStyleBackColor = true;
-            this.BtnSave.Click += new System.EventHandler(this.BtnSave_Click);
+            this.CBEnable.AutoSize = true;
+            this.CBEnable.Checked = true;
+            this.CBEnable.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.CBEnable.Location = new System.Drawing.Point(498, 51);
+            this.CBEnable.Name = "CBEnable";
+            this.CBEnable.Size = new System.Drawing.Size(48, 16);
+            this.CBEnable.TabIndex = 8;
+            this.CBEnable.Text = "使用";
+            this.CBEnable.UseVisualStyleBackColor = true;
             // 
             // BtnCancel
             // 
@@ -151,17 +103,98 @@ namespace AutoTest.UI.UC
             this.BtnCancel.UseVisualStyleBackColor = true;
             this.BtnCancel.Click += new System.EventHandler(this.BtnCancel_Click);
             // 
-            // CBEnable
+            // BtnSave
             // 
-            this.CBEnable.AutoSize = true;
-            this.CBEnable.Checked = true;
-            this.CBEnable.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.CBEnable.Location = new System.Drawing.Point(233, 51);
-            this.CBEnable.Name = "CBEnable";
-            this.CBEnable.Size = new System.Drawing.Size(48, 16);
-            this.CBEnable.TabIndex = 8;
-            this.CBEnable.Text = "使用";
-            this.CBEnable.UseVisualStyleBackColor = true;
+            this.BtnSave.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.BtnSave.Location = new System.Drawing.Point(423, 152);
+            this.BtnSave.Name = "BtnSave";
+            this.BtnSave.Size = new System.Drawing.Size(51, 23);
+            this.BtnSave.TabIndex = 6;
+            this.BtnSave.Text = "保存";
+            this.BtnSave.UseVisualStyleBackColor = true;
+            this.BtnSave.Click += new System.EventHandler(this.BtnSave_Click);
+            // 
+            // TBContent
+            // 
+            this.TBContent.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.TBContent.Location = new System.Drawing.Point(77, 80);
+            this.TBContent.Multiline = true;
+            this.TBContent.Name = "TBContent";
+            this.TBContent.Size = new System.Drawing.Size(469, 66);
+            this.TBContent.TabIndex = 5;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(8, 80);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(65, 12);
+            this.label3.TabIndex = 4;
+            this.label3.Text = "返回内容：";
+            // 
+            // CBTypes
+            // 
+            this.CBTypes.FormattingEnabled = true;
+            this.CBTypes.Location = new System.Drawing.Point(77, 47);
+            this.CBTypes.Name = "CBTypes";
+            this.CBTypes.Size = new System.Drawing.Size(121, 20);
+            this.CBTypes.TabIndex = 3;
+            // 
+            // label2
+            // 
+            this.label2.AutoSize = true;
+            this.label2.Location = new System.Drawing.Point(8, 49);
+            this.label2.Name = "label2";
+            this.label2.Size = new System.Drawing.Size(65, 12);
+            this.label2.TabIndex = 2;
+            this.label2.Text = "拦截方式：";
+            // 
+            // TBUrl
+            // 
+            this.TBUrl.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.TBUrl.Location = new System.Drawing.Point(77, 17);
+            this.TBUrl.Name = "TBUrl";
+            this.TBUrl.Size = new System.Drawing.Size(421, 21);
+            this.TBUrl.TabIndex = 1;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(8, 20);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(65, 12);
+            this.label1.TabIndex = 0;
+            this.label1.Text = "拦截地址：";
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(227, 51);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(41, 12);
+            this.label4.TabIndex = 9;
+            this.label4.Text = "Mime：";
+            // 
+            // CBMimeType
+            // 
+            this.CBMimeType.FormattingEnabled = true;
+            this.CBMimeType.Location = new System.Drawing.Point(263, 46);
+            this.CBMimeType.Name = "CBMimeType";
+            this.CBMimeType.Size = new System.Drawing.Size(121, 20);
+            this.CBMimeType.TabIndex = 10;
+            // 
+            // BtnChooseFile
+            // 
+            this.BtnChooseFile.Location = new System.Drawing.Point(6, 95);
+            this.BtnChooseFile.Name = "BtnChooseFile";
+            this.BtnChooseFile.Size = new System.Drawing.Size(65, 23);
+            this.BtnChooseFile.TabIndex = 11;
+            this.BtnChooseFile.Text = "选择文件";
+            this.BtnChooseFile.UseVisualStyleBackColor = true;
+            this.BtnChooseFile.Click += new System.EventHandler(this.BtnChooseFile_Click);
             // 
             // UCRequestInterceptConfigManager
             // 
@@ -191,5 +224,8 @@ namespace AutoTest.UI.UC
         private System.Windows.Forms.Button BtnSave;
         private System.Windows.Forms.Button BtnCancel;
         private System.Windows.Forms.CheckBox CBEnable;
+        private System.Windows.Forms.ComboBox CBMimeType;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Button BtnChooseFile;
     }
 }

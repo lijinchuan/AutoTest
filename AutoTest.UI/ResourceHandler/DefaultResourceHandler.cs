@@ -42,13 +42,72 @@ namespace AutoTest.UI.ResourceHandler
 
                     foreach(var c in configs.Where(p=>p.Enabled))
                     {
+                        byte[] data = null;
+                        var mimeType = c.MimeType;
+                        if (mimeType == Mime.Default.MimeName)
+                        {
+                            var ext = Path.GetExtension(request.Url).ToLower();
+                            switch (ext)
+                            {
+                                case "png":
+                                case "jpg":
+                                case "gif":
+                                    {
+                                        mimeType = "image/" + ext;
+                                        break;
+                                    }
+                                case "js":
+                                    {
+                                        mimeType = Mime.JsMime;
+                                        break;
+                                    }
+                                case "json":
+                                    {
+                                        mimeType = Mime.JsonMime;
+                                        break;
+                                    }
+                                case "html":
+                                case "htm":
+                                    {
+                                        mimeType = Mime.HtmlMime;
+                                        break;
+                                    }
+                            }
+                        }
+                        if (c.ResponseData != null)
+                        {
+                            data = c.ResponseData;
+                        }
+                        else
+                        {
+                            if (string.IsNullOrWhiteSpace(c.Response))
+                            {
+                                var mime = Resources.MimeResource.Find(mimeType);
+                                if (mime?.DefaultBytes != null)
+                                {
+                                    data = mime.DefaultBytes;
+                                }
+                                else if (!string.IsNullOrWhiteSpace(mime?.DetaultText))
+                                {
+                                    data = Encoding.UTF8.GetBytes(mime.DetaultText);
+                                }
+                                else
+                                {
+                                    data = new byte[0];
+                                }
+                            }
+                            else
+                            {
+                                data = Encoding.UTF8.GetBytes(c.Response);
+                            }
+                        }
                         switch (c.MatchType)
                         {
                             case 0:
                                 {
                                     if (request.Url.Equals(c.MatchUrl, StringComparison.OrdinalIgnoreCase))
                                     {
-                                        return new TransferRequestHandler(Encoding.UTF8.GetBytes(c.Response));
+                                        return new TransferRequestHandler(mimeType, data);
                                     }
                                     break;
                                 }
@@ -56,7 +115,7 @@ namespace AutoTest.UI.ResourceHandler
                                 {
                                     if (request.Url.IndexOf(c.MatchUrl, StringComparison.OrdinalIgnoreCase)>-1)
                                     {
-                                        return new TransferRequestHandler(Encoding.UTF8.GetBytes(c.Response));
+                                        return new TransferRequestHandler(mimeType, data);
                                     }
                                     break;
                                 }
@@ -66,7 +125,7 @@ namespace AutoTest.UI.ResourceHandler
                                     {
                                         if (Regex.IsMatch(request.Url, c.MatchUrl, RegexOptions.IgnoreCase))
                                         {
-                                            return new TransferRequestHandler(Encoding.UTF8.GetBytes(c.Response));
+                                            return new TransferRequestHandler(mimeType, data);
                                         }
                                     }
                                     catch (Exception ex)
