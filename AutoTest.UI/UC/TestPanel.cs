@@ -97,7 +97,11 @@ namespace AutoTest.UI.UC
                         }
                         else
                         {
-                            tbMsg.AppendText(msg + Environment.NewLine);
+                            //ThreadPool.GetMaxThreads(out int work, out int completionPortNum);
+                            ThreadPool.GetMinThreads(out int minWork, out int minCompletionPortNum);
+                            ThreadPool.GetMaxThreads(out int maxWork, out int maxCompletionPortNum);
+                            ThreadPool.GetAvailableThreads(out int aWork, out int aCompletionPortNum);
+                            tbMsg.AppendText(msg + ("MaxThreads(" + (minWork - maxWork + aWork) + "," + (minCompletionPortNum - maxCompletionPortNum + aCompletionPortNum) + ")") + Environment.NewLine);
                         }
                     }));
                 });

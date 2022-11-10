@@ -148,7 +148,7 @@ namespace AutoTest.UI.WebTask
                 {
                     _readyFlag = true;
 
-                    OnTaskReady?.Invoke(this);
+                    OnTaskReady?.BeginInvoke(this, null, null);
                 }
             }
         }
