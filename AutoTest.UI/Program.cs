@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Runtime.InteropServices;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -13,6 +14,19 @@ namespace AutoTest.UI
 {
     static class Program
     {
+        [DllImport("kernel32.dll")]
+        static extern ErrorModes SetErrorMode(ErrorModes uMode);
+
+        [Flags]
+        public enum ErrorModes : uint
+        {
+            SYSTEM_DEFAULT = 0x0,
+            SEM_FAILCRITICALERRORS = 0x0001,
+            SEM_NOALIGNMENTFAULTEXCEPT = 0x0004,
+            SEM_NOGPFAULTERRORBOX = 0x0002,
+            SEM_NOOPENFILEERRORBOX = 0x8000
+        }
+
         [DllImport("user32.dll")]
         public static extern void SwitchToThisWindow(IntPtr hWnd, bool fAltTab);
 
@@ -51,7 +65,7 @@ namespace AutoTest.UI
                 Url = f.Url,
                 Used = false,
                 ValidCode = f.ValidCode
-            },nameof(TestLogin.Id),true,
+            }, nameof(TestLogin.Id), true,
             new IndexBuilder<TestLogin>().AddIndex(nameof(TestLogin.SiteId), c => c.Asc(m => m.SiteId)).Build());
 
             BigEntityTableEngine.LocalEngine.CreateTable<TestPage>(p => p.Id, b => b.AddIndex(nameof(TestPage.SiteId), c => c.Asc(m => m.SiteId)));
@@ -60,19 +74,19 @@ namespace AutoTest.UI
             BigEntityTableEngine.LocalEngine.Upgrade<Domain.Entity.OldVerion.TestCaseV2, TestCase>(nameof(TestCase),
                 f => new TestCase
                 {
-                    BodyDataType=f.BodyDataType,
-                    AuthType=f.AuthType,
-                    ApiEnvId=f.ApiEnvId,
-                    ApplicationType=f.ApplicationType,
-                    CaseName=f.CaseName,
-                    Desc=f.Desc,
-                    Order=f.Order,
-                    PageId=f.PageId,
-                    TestCode=f.TestCode,
-                    Url=f.Url,
-                    ValidCode=f.ValidCode,
-                    WebMethod=f.WebMethod,
-                    OnlyUserId=0
+                    BodyDataType = f.BodyDataType,
+                    AuthType = f.AuthType,
+                    ApiEnvId = f.ApiEnvId,
+                    ApplicationType = f.ApplicationType,
+                    CaseName = f.CaseName,
+                    Desc = f.Desc,
+                    Order = f.Order,
+                    PageId = f.PageId,
+                    TestCode = f.TestCode,
+                    Url = f.Url,
+                    ValidCode = f.ValidCode,
+                    WebMethod = f.WebMethod,
+                    OnlyUserId = 0
                 }, nameof(TestCase.Id), true, new IndexBuilder<TestCase>().AddIndex(nameof(TestCase.PageId), c => c.Asc(m => m.PageId)).Build());
 
             BigEntityTableEngine.LocalEngine.CreateTable<TestEnv>(p => p.Id, b => b.AddIndex(nameof(TestEnv.SiteId), p => p.Asc(q => q.SiteId)));
@@ -135,14 +149,32 @@ namespace AutoTest.UI
                     MimeType = string.Empty,
                     Response = o.Response,
                     TestCaseId = o.TestCaseId,
-                    ResponseData=null
+                    ResponseData = null
                 }, nameof(RequestInterceptConfig.Id), true, new IndexBuilder<RequestInterceptConfig>().AddIndex(nameof(RequestInterceptConfig.TestCaseId), b => b.Asc(m => m.TestCaseId)).Build());
 
             AutofacBuilder.init();
 
+            //处理未捕获的异常
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            Application.ThreadException += Application_ThreadException;
+
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new MainFrm());
+        }
+
+        private static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)
+        {
+            LJC.FrameWorkV3.LogManager.LogHelper.Instance.Error("Application_ThreadException", e.Exception);
+
+            Environment.Exit(-1);
+        }
+
+        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            LJC.FrameWorkV3.LogManager.LogHelper.Instance.Error("UnhandledException", new ApplicationException("程序中止"));
+
+            Environment.Exit(-1);
         }
     }
 }

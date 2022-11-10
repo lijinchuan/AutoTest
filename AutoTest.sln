@@ -13,6 +13,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoTest.Biz", "AutoTest.Bi
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoTest.BizTests", "AutoTest.BizTests\AutoTest.BizTests.csproj", "{BFC38DC4-1808-4425-92C2-44CEE450DAC0}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoTest.Guard", "AutoTest.Guard\AutoTest.Guard.csproj", "{22B14FF2-5140-4BCB-AC5C-0B23A1C130A6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{BFC38DC4-1808-4425-92C2-44CEE450DAC0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BFC38DC4-1808-4425-92C2-44CEE450DAC0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BFC38DC4-1808-4425-92C2-44CEE450DAC0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{22B14FF2-5140-4BCB-AC5C-0B23A1C130A6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{22B14FF2-5140-4BCB-AC5C-0B23A1C130A6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{22B14FF2-5140-4BCB-AC5C-0B23A1C130A6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{22B14FF2-5140-4BCB-AC5C-0B23A1C130A6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
