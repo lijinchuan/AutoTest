@@ -23,6 +23,7 @@ namespace AutoTest.UI.UC
             InitializeComponent();
 
             webBrowser1.ImeMode = ImeMode.On;
+            webBrowser1.ScriptErrorsSuppressed = true;
             this.webBrowser1.DocumentCompleted += (s, ee) =>
             {
                 //this.Text = this.webBrowser1.Document.Title;

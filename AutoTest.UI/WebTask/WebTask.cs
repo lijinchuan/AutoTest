@@ -4,6 +4,7 @@ using AutoTest.UI.EventListener;
 using AutoTest.UI.WebBrowser;
 using CefSharp;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -61,7 +62,7 @@ namespace AutoTest.UI.WebTask
         /// </summary>
         protected readonly WebBrowserTool webBrowserTool;
 
-        protected List<WebEvent> webEvents = new List<WebEvent>();
+        protected ConcurrentBag<WebEvent> webEvents = new ConcurrentBag<WebEvent>();
 
         private bool _readyFlag = false;
         private readonly object _locker = new object();
