@@ -34,6 +34,8 @@ namespace AutoTest.UI
                 }
             }
 
+            LJC.FrameWorkV3.Comm.ThreadPoolHelper.CheckSetMinThreads(1000, 1000);
+
             BigEntityTableEngine.LocalEngine.CreateTable<TestSource>(p => p.Id, b => b.AddIndex(nameof(TestSource.Id), c => c.Asc(m => m.Id)));
 
             BigEntityTableEngine.LocalEngine.CreateTable<TestSite>(p => p.Id, b => b.AddIndex(nameof(TestSite.Name), c => c.Asc(m => m.Name))

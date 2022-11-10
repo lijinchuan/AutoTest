@@ -222,13 +222,14 @@ namespace AutoTest.UI.WebBrowser
 
         public bool IsScriptBusy(IBrowser browser)
         {
-            var resp = browser.MainFrame.EvaluateScriptAsPromiseAsync("return 1");
+            var resp = browser.MainFrame.EvaluateScriptAsPromiseAsync("console.log('IsScriptBusy check');return 1;");
 
             if(Task.WaitAll(new[] { resp }, 100))
             {
                 return false;
             }
 
+            
             return true;
         }
     }
