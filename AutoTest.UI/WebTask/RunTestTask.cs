@@ -314,7 +314,7 @@ namespace AutoTest.UI.WebTask
                         UpdateUserVarData(browser, frame);
                         if (object.Equals(ret, false))
                         {
-                            if (tryCount++ >= 60)
+                            if (tryCount++ >= 600)
                             {
                                 PublishMsg("长时间返回false，超时");
                                 return await Task.FromResult(0);

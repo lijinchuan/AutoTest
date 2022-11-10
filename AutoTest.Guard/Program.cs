@@ -148,13 +148,13 @@ namespace AutoTest.Guard
                         {
                             if (p.Responding)
                             {
-                                //凌晨重置下爬虫程序,生产上发现浏览器组件有问题，运行几天后内部进程就会崩溃无法恢复
-                                if (DateTime.Now.Subtract(LastCloseDate).TotalMinutes > MaxRunMins && DateTime.Now.Hour >= CheckResetHour && DateTime.Now.Hour < CheckResetHour + 1)
-                                {
-                                    LastCloseDate = DateTime.Now;
-                                    PrintWarn($"运行超过{MaxRunMins}分钟后到点关闭重启......");
-                                }
-                                else
+                                ////凌晨重置下爬虫程序,生产上发现浏览器组件有问题，运行几天后内部进程就会崩溃无法恢复
+                                //if (DateTime.Now.Subtract(LastCloseDate).TotalMinutes > MaxRunMins && DateTime.Now.Hour >= CheckResetHour && DateTime.Now.Hour < CheckResetHour + 1)
+                                //{
+                                //    LastCloseDate = DateTime.Now;
+                                //    PrintWarn($"运行超过{MaxRunMins}分钟后到点关闭重启......");
+                                //}
+                                //else
                                 {
                                     processList.Add(p);
                                 }
