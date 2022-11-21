@@ -229,7 +229,7 @@ namespace AutoTest.UI.UC
 
             if (node.Nodes.Count > 0)
             {
-                foreach(TreeNode n in node.Nodes)
+                foreach (TreeNode n in node.Nodes)
                 {
                     list.AddRange(GetTestCaseTaskList(n));
                 }
@@ -238,9 +238,9 @@ namespace AutoTest.UI.UC
             return list;
         }
 
-        private TreeNode FindNode(TreeNodeCollection topNodes,object tag)
+        private TreeNode FindNode(TreeNodeCollection topNodes, object tag)
         {
-            foreach(TreeNode node in topNodes)
+            foreach (TreeNode node in topNodes)
             {
                 if (node.Tag != null && tag != null)
                 {
@@ -489,7 +489,7 @@ namespace AutoTest.UI.UC
                 testTasksView.Init(selnode.Tag as TestTaskBag, sources, testSites, testPages, testTaskList, testTaskList.Select(p => p.TestCase.Id).ToList());
             }
 
-            TestLogin GetTestLogin(TestCase testCase,TestSite testSite)
+            TestLogin GetTestLogin(TestCase testCase, TestSite testSite)
             {
                 TestLogin testLogin = null;
                 if (testCase.OnlyUserId > 0)
@@ -529,7 +529,7 @@ namespace AutoTest.UI.UC
             {
                 var lastNode = FindNode(tv_DBServers.Nodes, new TestCase
                 {
-                    Id=r.TestCaseId
+                    Id = r.TestCaseId
                 });
                 if (lastNode == null)
                 {
@@ -600,7 +600,7 @@ namespace AutoTest.UI.UC
                 {
                     node.Text = comparable.GetDisplayText();
                 }
-                
+
                 node.Tag = comparable;
             }
         }
@@ -614,7 +614,7 @@ namespace AutoTest.UI.UC
             }
         }
 
-        private void UpdateNode(TreeNode node,string text,object tag)
+        private void UpdateNode(TreeNode node, string text, object tag)
         {
             if (node.Text != text)
             {
@@ -704,17 +704,17 @@ namespace AutoTest.UI.UC
                             {
                                 var testBag = selnode.Tag as TestTaskBag;
                                 var parentNode = selnode.Parent;
-                                var taskBag = Util.TryAddToMainTab(this, $"编辑测试包{testBag.BagName}", () => new UCTestTaskBagView(testBag.SiteId, testBag.Id,(t)=>
-                                {
-                                    ReLoadDBObj(parentNode);
-                                }));
+                                var taskBag = Util.TryAddToMainTab(this, $"编辑测试包{testBag.BagName}", () => new UCTestTaskBagView(testBag.SiteId, testBag.Id, (t) =>
+                                 {
+                                     ReLoadDBObj(parentNode);
+                                 }));
                                 (taskBag as UCTestTaskBagView).Init();
                             }
                             break;
                         }
                     case "删除":
                         {
-                            
+
                             Func<bool> delFunc = null;
 
                             if (selnode.Tag is TestCase)
@@ -774,7 +774,7 @@ namespace AutoTest.UI.UC
                                 };
                             }
 
-                            if (delFunc!=null)
+                            if (delFunc != null)
                             {
                                 if (MessageBox.Show("确认删除吗？", "删除确认", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.No)
                                 {
@@ -789,7 +789,7 @@ namespace AutoTest.UI.UC
                         }
                     case "添加API":
                         {
-                            
+
                             break;
                         }
                     case "添加环境":
@@ -805,7 +805,7 @@ namespace AutoTest.UI.UC
                         }
                     case "添加环境变量":
                         {
-                            var testSite =FindParentNode<TestSite>(selnode);
+                            var testSite = FindParentNode<TestSite>(selnode);
                             var siteId = testSite.Id;
                             var dlg = new AddTestEnvParamDlg(siteId, 0);
                             if (dlg.ShowDialog() == DialogResult.OK)
@@ -856,7 +856,7 @@ namespace AutoTest.UI.UC
                     case "添加测试站点":
                         {
                             var testSource = FindParentNode<TestSource>(selnode);
-                            AddTestSiteDlg dlg = new AddTestSiteDlg(testSource.Id,0);
+                            AddTestSiteDlg dlg = new AddTestSiteDlg(testSource.Id, 0);
                             if (dlg.ShowDialog() == DialogResult.OK)
                             {
                                 ReLoadDBObj(selnode);
@@ -866,7 +866,7 @@ namespace AutoTest.UI.UC
                     case "添加测试页面":
                         {
                             var testSite = FindParentNode<TestSite>(selnode);
-                            var dlg = new AddTestPageDlg(testSite.Id,0);
+                            var dlg = new AddTestPageDlg(testSite.Id, 0);
                             if (dlg.ShowDialog() == DialogResult.OK)
                             {
                                 ReLoadDBObj(selnode);
@@ -882,7 +882,7 @@ namespace AutoTest.UI.UC
                             var siteScripts = BigEntityTableRemotingEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == testSource.Id && s.SiteId == testSite.Id).ToList();
                             scripts.AddRange(siteScripts);
                             var step1dlg = new AddTestCaseDlg(testPage.Id, 0, scripts);
-                            
+
                             if (step1dlg.ShowDialog() == DialogResult.OK)
                             {
                                 ReLoadDBObj(selnode);
@@ -909,10 +909,10 @@ namespace AutoTest.UI.UC
                         {
                             var testBag = FindParentNode<TestSource>(selnode);
 
-                            var tab = new UCTestTaskBagView(testBag.Id, 0,t=>
-                            {
-                                ReLoadDBObj(selnode);
-                            });
+                            var tab = new UCTestTaskBagView(testBag.Id, 0, t =>
+                             {
+                                 ReLoadDBObj(selnode);
+                             });
 
                             Util.AddToMainTab(this, "添加测试包", tab);
 
@@ -942,7 +942,7 @@ namespace AutoTest.UI.UC
                     case "退出":
                         {
                             var testSite = FindParentNode<TestSite>(selnode);
-                           
+
                             var testLogin = FindParentNode<TestLogin>(selnode);
                             var ep = GetCurrEnvData(selnode);
                             var testPanel = (TestPanel)Util.TryAddToMainTab(this, $"执行测试", () => null, typeof(TestPanel));
@@ -1012,7 +1012,7 @@ namespace AutoTest.UI.UC
                                     ReLoadDBObj(selnode.Parent);
                                 }
                             }
-                            
+
                             break;
                         }
                     case "添加脚本":
@@ -1022,8 +1022,8 @@ namespace AutoTest.UI.UC
                             var scriptNameDlg = new SubForm.InputStringDlg("输入脚本名称");
                             if (scriptNameDlg.ShowDialog() == DialogResult.OK)
                             {
-                                if(BigEntityTableRemotingEngine.Find<TestScript>(nameof(TestScript), 
-                                    $"{nameof(TestScript.SourceId)}_{nameof(TestScript.SiteId)}_{nameof(TestScript.ScriptName)}", 
+                                if (BigEntityTableRemotingEngine.Find<TestScript>(nameof(TestScript),
+                                    $"{nameof(TestScript.SourceId)}_{nameof(TestScript.SiteId)}_{nameof(TestScript.ScriptName)}",
                                     new object[] { testResource.Id, testSite == null ? 0 : testSite.Id, scriptNameDlg.InputString }).Count() > 0)
                                 {
                                     Util.SendMsg(this, $"{scriptNameDlg.InputString}已经存在，不能重复添加。");
@@ -1032,10 +1032,10 @@ namespace AutoTest.UI.UC
                                 {
                                     var testScript = new TestScript
                                     {
-                                        ScriptName=scriptNameDlg.InputString,
-                                        Enable=true,
+                                        ScriptName = scriptNameDlg.InputString,
+                                        Enable = true,
                                         SiteId = testSite == null ? 0 : testSite.Id,
-                                        SourceId=testResource.Id
+                                        SourceId = testResource.Id
                                     };
 
                                     BigEntityTableRemotingEngine.Insert(nameof(TestScript), testScript);
@@ -1200,14 +1200,14 @@ namespace AutoTest.UI.UC
                 添加测试用例ToolStripMenuItem.Visible = node.Tag is TestPage;
 
                 运行测试ToolStripMenuItem.Visible = node.Tag is TestCase
-                    ||node.Tag is TestPage
-                    ||node.Tag is TestSite
-                    ||node.Tag is TestSource
-                    ||node.Tag is TestTaskBag;
+                    || node.Tag is TestPage
+                    || node.Tag is TestSite
+                    || node.Tag is TestSource
+                    || node.Tag is TestTaskBag;
 
                 登陆ToolStripMenuItem.Visible = 退出ToolStripMenuItem.Visible = node.Tag is TestLogin;
 
-                添加脚本ToolStripMenuItem.Visible= (node.Tag as INodeContents)?.GetNodeContentType() == NodeContentType.SCRIPTPARENT;
+                添加脚本ToolStripMenuItem.Visible = (node.Tag as INodeContents)?.GetNodeContentType() == NodeContentType.SCRIPTPARENT;
 
                 复制ToolStripMenuItem.Visible = node.Tag is TestCase || node.Tag is TestLogin;
 
@@ -1277,7 +1277,7 @@ namespace AutoTest.UI.UC
             var find = matchall ? text.Equals(txt, StringComparison.OrdinalIgnoreCase) : text.IndexOf(txt, StringComparison.OrdinalIgnoreCase) > -1;
             if (!find)
             {
-                if((nodeStart.Tag as ISearch)!=null)
+                if ((nodeStart.Tag as ISearch) != null)
                 {
                     find = (nodeStart.Tag as ISearch).Search(txt);
                 }
@@ -1386,169 +1386,169 @@ namespace AutoTest.UI.UC
             EventBus.NotifyTestStartAction += NotifyTestStart;
             EventBus.NotifyTestThingChangeAction += NotifyTestThingChange;
 
-            autoTimer=TaskHelper.SetInterval(60 * 1000, () =>
-            {
-                var nextList = new AutoTaskBiz().GetNextRunTaskBagList();
-                if (nextList.Any())
-                {
-                    List<TestSource> sources = new List<TestSource>();
-                    List<TestSite> testSites = new List<TestSite>();
-                    List<TestPage> testPages = new List<TestPage>();
-                    List<TestCase> testCases = new List<TestCase>();
-                    Dictionary<string, object> cach = new Dictionary<string, object>();
-                    var testTaskList = new List<TestTask>();
-                    var testLoginList = BigEntityTableRemotingEngine.List<TestLogin>(nameof(TestLogin), 1, int.MaxValue).ToList();
+            autoTimer = TaskHelper.SetInterval(60 * 1000, () =>
+              {
+                  var allList = new AutoTaskBiz().GetNextRunTaskBagList();
+                  foreach (var nextList in allList.GroupBy(p => p.SiteId).Select(p => p.ToList()))
+                  {
+                      List<TestSource> sources = new List<TestSource>();
+                      List<TestSite> testSites = new List<TestSite>();
+                      List<TestPage> testPages = new List<TestPage>();
+                      List<TestCase> testCases = new List<TestCase>();
+                      Dictionary<string, object> cach = new Dictionary<string, object>();
+                      var testTaskList = new List<TestTask>();
+                      var testLoginList = BigEntityTableRemotingEngine.List<TestLogin>(nameof(TestLogin), 1, int.MaxValue).ToList();
 
-                    foreach (var testTaskBag in nextList)
-                    {
-                        var testSite = testSites.FirstOrDefault(p => p.Id == testTaskBag.SiteId);
-                        if (testSite == null)
-                        {
-                            testSite = BigEntityTableRemotingEngine.Find<TestSite>(nameof(TestSite), testTaskBag.SiteId);
-                            testSites.Add(testSite);
-                        }
+                      foreach (var testTaskBag in nextList)
+                      {
+                          var testSite = testSites.FirstOrDefault(p => p.Id == testTaskBag.SiteId);
+                          if (testSite == null)
+                          {
+                              testSite = BigEntityTableRemotingEngine.Find<TestSite>(nameof(TestSite), testTaskBag.SiteId);
+                              testSites.Add(testSite);
+                          }
 
-                        var testSource = sources.FirstOrDefault(p => p.Id == testSite.SourceId);
-                        if (testSource == null)
-                        {
-                            testSource = BigEntityTableRemotingEngine.Find<TestSource>(nameof(TestSource), testSite.SourceId);
-                            sources.Add(testSource);
-                        }
+                          var testSource = sources.FirstOrDefault(p => p.Id == testSite.SourceId);
+                          if (testSource == null)
+                          {
+                              testSource = BigEntityTableRemotingEngine.Find<TestSource>(nameof(TestSource), testSite.SourceId);
+                              sources.Add(testSource);
+                          }
 
-                        var tempTestCases = BigEntityTableRemotingEngine.FindBatch<TestCase>(nameof(TestCase), testTaskBag.CaseId.Select(p => (object)p));
-                        testCases.AddRange(tempTestCases);
-                        var tempTestPages = BigEntityTableRemotingEngine.FindBatch<TestPage>(nameof(TestPage), testCases.Select(p => (object)p.PageId).Distinct());
-                        testPages.AddRange(tempTestPages);
+                          var tempTestCases = BigEntityTableRemotingEngine.FindBatch<TestCase>(nameof(TestCase), testTaskBag.CaseId.Select(p => (object)p));
+                          testCases.AddRange(tempTestCases);
+                          var tempTestPages = BigEntityTableRemotingEngine.FindBatch<TestPage>(nameof(TestPage), testCases.Select(p => (object)p.PageId).Distinct());
+                          testPages.AddRange(tempTestPages);
 
-                        var key = "scripts" + testSite.SourceId;
-                        object globalScripts = null;
-                        if (!cach.TryGetValue(key, out globalScripts))
-                        {
-                            globalScripts = BigEntityTableRemotingEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == testSource.Id && s.SiteId == 0).ToList();
-                            cach.Add(key, globalScripts);
-                        }
+                          var key = "scripts" + testSite.SourceId;
+                          object globalScripts = null;
+                          if (!cach.TryGetValue(key, out globalScripts))
+                          {
+                              globalScripts = BigEntityTableRemotingEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == testSource.Id && s.SiteId == 0).ToList();
+                              cach.Add(key, globalScripts);
+                          }
 
-                        object siteScripts = null;
-                        var key2 = "scripts" + testSite.SourceId + "_" + testSite.Id;
-                        if (!cach.TryGetValue(key2, out siteScripts))
-                        {
-                            siteScripts = BigEntityTableRemotingEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == testSource.Id && s.SiteId == testSite.Id).ToList();
-                            cach.Add(key2, siteScripts);
-                        }
+                          object siteScripts = null;
+                          var key2 = "scripts" + testSite.SourceId + "_" + testSite.Id;
+                          if (!cach.TryGetValue(key2, out siteScripts))
+                          {
+                              siteScripts = BigEntityTableRemotingEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == testSource.Id && s.SiteId == testSite.Id).ToList();
+                              cach.Add(key2, siteScripts);
+                          }
 
-                        object env = null;
-                        var key3 = "env" + testTaskBag.TestEnvId;
-                        if (!cach.TryGetValue(key3, out env))
-                        {
-                            env = BigEntityTableRemotingEngine.Find<TestEnv>(nameof(TestEnv), testTaskBag.TestEnvId);
-                            cach.Add(key3, env);
-                        }
+                          object env = null;
+                          var key3 = "env" + testTaskBag.TestEnvId;
+                          if (!cach.TryGetValue(key3, out env))
+                          {
+                              env = BigEntityTableRemotingEngine.Find<TestEnv>(nameof(TestEnv), testTaskBag.TestEnvId);
+                              cach.Add(key3, env);
+                          }
 
-                        object envParams = null;
-                        if (env != null)
-                        {
-                            var key4 = "env" + testSite.Id + "_" + (env as TestEnv).Id;
-                            if (!cach.TryGetValue(key4, out envParams))
-                            {
-                                envParams = env == null ? new List<TestEnvParam>() : BigEntityTableRemotingEngine.Find<TestEnvParam>(nameof(TestEnvParam), "SiteId_EnvId", new object[] { testSite.Id, (env as TestEnv).Id }).ToList();
-                                cach.Add(key4, envParams);
-                            }
-                        }
-                        foreach (var tc in tempTestCases)
-                        {
-                            var testLogin = GetTestLogin(tc, testSite);
+                          object envParams = null;
+                          if (env != null)
+                          {
+                              var key4 = "env" + testSite.Id + "_" + (env as TestEnv).Id;
+                              if (!cach.TryGetValue(key4, out envParams))
+                              {
+                                  envParams = env == null ? new List<TestEnvParam>() : BigEntityTableRemotingEngine.Find<TestEnvParam>(nameof(TestEnvParam), "SiteId_EnvId", new object[] { testSite.Id, (env as TestEnv).Id }).ToList();
+                                  cach.Add(key4, envParams);
+                              }
+                          }
+                          foreach (var tc in tempTestCases)
+                          {
+                              var testLogin = GetTestLogin(tc, testSite);
 
-                            testTaskList.Add(new TestTask
-                            {
-                                TestSource = testSource,
-                                SiteTestScripts = (List<TestScript>)siteScripts,
-                                GlobalTestScripts = (List<TestScript>)globalScripts,
-                                TestCase = tc,
-                                TestLogin = testLogin,
-                                TestPage = tempTestPages.First(x => x.Id == tc.PageId),
-                                TestSite = testSite,
-                                TestEnv = env == null ? null : (TestEnv)env,
-                                TestEnvParams = envParams == null ? null : (List<TestEnvParam>)envParams
-                            });
-                        }
+                              testTaskList.Add(new TestTask
+                              {
+                                  TestSource = testSource,
+                                  SiteTestScripts = (List<TestScript>)siteScripts,
+                                  GlobalTestScripts = (List<TestScript>)globalScripts,
+                                  TestCase = tc,
+                                  TestLogin = testLogin,
+                                  TestPage = tempTestPages.First(x => x.Id == tc.PageId),
+                                  TestSite = testSite,
+                                  TestEnv = env == null ? null : (TestEnv)env,
+                                  TestEnvParams = envParams == null ? null : (List<TestEnvParam>)envParams
+                              });
+                          }
 
-                        testTaskList = TestTaskBagBiz.Order(testTaskList, testTaskBag);
-                    }
+                          testTaskList = TestTaskBagBiz.Order(testTaskList, testTaskBag);
+                      }
 
-                    //
-                    var testPanel = (TestPanel)Util.TryAddToMainTab(this, $"执行定时测试", () =>
-                    {
-                        var panel = new TestPanel("执行定时测试");
-                        panel.Load();
+                      //
+                      var testPanel = (TestPanel)Util.TryAddToMainTab(this, $"({testSites.First().Name})执行定时测试", () =>
+                      {
+                          var panel = new TestPanel("执行定时测试");
+                          panel.Load();
 
-                        return panel;
-                    }, null);
+                          return panel;
+                      }, null);
 
-                    //if (testPanel.IsRunning())
-                    //{
-                    //    Util.SendMsg(this, "正在执行测试，请稍后再试");
-                    //    return false;
-                    //}
+                      //if (testPanel.IsRunning())
+                      //{
+                      //    Util.SendMsg(this, "正在执行测试，请稍后再试");
+                      //    return false;
+                      //}
 
-                    //if (!testPanel.Reset())
-                    //{
-                    //    Util.SendMsg(this, "任务未开始，有测试在执行");
-                    //    return false;
-                    //}
-                    testPanel.OnTaskStart += t =>
-                    {
-                        var rt = t as RunTestTask;
-                        if (rt != null && rt.TestLogin != null && (currentTestLogin == null || currentTestLogin.Id != rt.TestLogin.Id))
-                        {
-                            currentTestLogin = rt.TestLogin;
-                            testPanel.ClearCookie(rt.TestLogin.Url);
+                      //if (!testPanel.Reset())
+                      //{
+                      //    Util.SendMsg(this, "任务未开始，有测试在执行");
+                      //    return false;
+                      //}
+                      testPanel.OnTaskStart += t =>
+                      {
+                          var rt = t as RunTestTask;
+                          if (rt != null && rt.TestLogin != null && (currentTestLogin == null || currentTestLogin.Id != rt.TestLogin.Id))
+                          {
+                              currentTestLogin = rt.TestLogin;
+                              testPanel.ClearCookie(rt.TestLogin.Url);
 
-                            var cookies = TestCookieContainerBiz.GetCookies(rt.TestLogin.SiteId, rt.TestEnv?.Id, rt.TestLogin.Id);
-                            if (cookies?.Count > 0)
-                            {
-                                testPanel.SetCookie(rt.GetStartPageUrl(), cookies);
-                            }
-                        }
-                    };
+                              var cookies = TestCookieContainerBiz.GetCookies(rt.TestLogin.SiteId, rt.TestEnv?.Id, rt.TestLogin.Id);
+                              if (cookies?.Count > 0)
+                              {
+                                  testPanel.SetCookie(rt.GetStartPageUrl(), cookies);
+                              }
+                          }
+                      };
 
-                    var runTaskList = testTaskList.Select(task => new RunTestTask(task.GetTaskName(), false, task.TestSite, task.TestLogin, task.TestPage, task.TestCase, task.TestEnv, task.TestEnvParams, task.GlobalTestScripts, task.SiteTestScripts, task.ResultNotify));
-                    BeginInvoke(new Action(() => testPanel.RunTest(runTaskList)));
+                      var runTaskList = testTaskList.Select(task => new RunTestTask(task.GetTaskName(), false, task.TestSite, task.TestLogin, task.TestPage, task.TestCase, task.TestEnv, task.TestEnvParams, task.GlobalTestScripts, task.SiteTestScripts, task.ResultNotify));
+                      BeginInvoke(new Action(() => testPanel.RunTest(runTaskList)));
 
-                    TestLogin GetTestLogin(TestCase testCase, TestSite testSite)
-                    {
-                        TestLogin testLogin = null;
-                        if (testCase.OnlyUserId > 0)
-                        {
-                            testLogin = testLoginList.FirstOrDefault(p => p.Id == testCase.OnlyUserId && p.SiteId == testSite.Id);
-                            if (testLogin == null)
-                            {
-                                Util.SendMsg(this, $"账号不存在：{testCase.OnlyUserId}");
-                                return testLogin;
-                            }
-                        }
-                        else
-                        {
-                            if (testLoginList.Where(p => p.SiteId == testSite.Id).Count() == 1)
-                            {
-                                testLogin = testLoginList.FirstOrDefault(p => p.SiteId == testSite.Id);
-                            }
-                            else if (testLoginList.Where(p => p.SiteId == testSite.Id).Count() > 1)
-                            {
-                                testLogin = testLoginList.FirstOrDefault(p => p.SiteId == testSite.Id && p.Used);
-                                if (testLogin == null)
-                                {
-                                    MessageBox.Show($"{testSite.Name}:请选择一个测试帐号");
-                                    return testLogin;
-                                }
-                            }
+                      TestLogin GetTestLogin(TestCase testCase, TestSite testSite)
+                      {
+                          TestLogin testLogin = null;
+                          if (testCase.OnlyUserId > 0)
+                          {
+                              testLogin = testLoginList.FirstOrDefault(p => p.Id == testCase.OnlyUserId && p.SiteId == testSite.Id);
+                              if (testLogin == null)
+                              {
+                                  Util.SendMsg(this, $"账号不存在：{testCase.OnlyUserId}");
+                                  return testLogin;
+                              }
+                          }
+                          else
+                          {
+                              if (testLoginList.Where(p => p.SiteId == testSite.Id).Count() == 1)
+                              {
+                                  testLogin = testLoginList.FirstOrDefault(p => p.SiteId == testSite.Id);
+                              }
+                              else if (testLoginList.Where(p => p.SiteId == testSite.Id).Count() > 1)
+                              {
+                                  testLogin = testLoginList.FirstOrDefault(p => p.SiteId == testSite.Id && p.Used);
+                                  if (testLogin == null)
+                                  {
+                                      MessageBox.Show($"{testSite.Name}:请选择一个测试帐号");
+                                      return testLogin;
+                                  }
+                              }
 
-                        }
+                          }
 
-                        return testLogin;
-                    }
-                }
-                return false;
-            }, runintime: false);
+                          return testLogin;
+                      }
+                  }
+                  return false;
+              }, runintime: false);
         }
     }
 }
