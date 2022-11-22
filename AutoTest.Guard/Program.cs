@@ -18,11 +18,31 @@ namespace AutoTest.Guard
         private static extern bool SetConsoleCtrlHandler(ControlCtrlDelegate HandlerRoutine, bool Add);
         private static ControlCtrlDelegate cancelHandler = new ControlCtrlDelegate(HandlerRoutine);
 
-        private static Process FindPidFromIndexedProcessName(string indexedProcessName)
-        {
-            var parentId = new PerformanceCounter("Process", "Creating Process ID", indexedProcessName);
-            return Process.GetProcessById((int)parentId.NextValue());
-        }
+        const int WM_LBUTTONDOWN = 0x0201;
+        const int WM_LBUTTONUP = 0x0202;
+
+        public delegate bool EnumWindowsProc(IntPtr hWnd, int lParam);
+
+        [DllImport("user32.dll")]
+
+        //EnumWindows函数，EnumWindowsProc 为处理函数
+
+        private static extern int EnumWindows(EnumWindowsProc ewp, int lParam);
+
+        [DllImport("user32.dll")]
+        private static extern int GetWindowText(IntPtr hWnd, StringBuilder title, int size);
+        [DllImport("user32.dll")]
+        private static extern bool IsWindowVisible(IntPtr hWnd);
+        [DllImport("user32.dll")]
+        private static extern int GetWindowTextLength(IntPtr hWnd);
+        [DllImport("USER32.DLL")]
+        private static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
+        [DllImport("USER32.DLL")]
+        private static extern bool ShowWindow(IntPtr hWnd, uint nCmdShow);
+        [DllImport("USER32.DLL")]
+        static extern bool PostMessage(IntPtr hWnd, uint Msg, int wParam, int lParam);
+        [DllImport("USER32.DLL")]
+        public static extern int EnumChildWindows(IntPtr hWndParent, EnumWindowsProc lpfn, int lParam);
 
         /// <summary>
         /// 上次关闭时间
@@ -94,6 +114,76 @@ namespace AutoTest.Guard
             return true;
         }
 
+        static int MakeLParam(int LoWord, int HiWord)
+        {
+            return (HiWord << 16) | (LoWord & 0xFFFF);
+        }
+
+        static bool CheckProcessStop(string processName, IntPtr processHWnd)
+        {
+            int cTxtLen;
+            string cTitle;
+
+            if (!string.IsNullOrWhiteSpace(processName))
+            {
+                _ = EnumWindows((hWnd, l) =>
+                {
+                    cTxtLen = GetWindowTextLength(hWnd) + 1;
+                    StringBuilder text = new StringBuilder(cTxtLen);
+                    _ = GetWindowText(hWnd, text, cTxtLen);
+                    cTitle = text.ToString();
+
+                    if (cTitle.Equals(processName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        processHWnd = hWnd;
+                        //PrintWarn("找到窗口句柄:" + hWnd);
+                        return false;
+                    }
+
+                    return true;
+                }, 0);
+
+                if (processHWnd == IntPtr.Zero)
+                {
+                    PrintInfo("没找到需要检查的程序");
+                    return false;
+                }
+            }
+
+            var targetHWnd = IntPtr.Zero;
+            _ = EnumChildWindows(processHWnd, (hWnd, l) =>
+            {
+
+                if (IsWindowVisible(hWnd))
+                {
+                    cTxtLen = GetWindowTextLength(hWnd) + 1;
+                    StringBuilder text = new StringBuilder(cTxtLen);
+                    _ = GetWindowText(hWnd, text, cTxtLen);
+                    cTitle = text.ToString();
+                    if (cTitle.IndexOf("关闭程序", StringComparison.OrdinalIgnoreCase) > -1)
+                    {
+                        targetHWnd = hWnd;
+                        return false;
+                    }
+                }
+
+                return true;
+            }, 0);
+
+            if (targetHWnd != IntPtr.Zero)
+            {
+                var boo1 = PostMessage(targetHWnd, WM_LBUTTONDOWN, 1, MakeLParam(5, 5));
+                Thread.Sleep(2);
+                var boo2 = PostMessage(targetHWnd, WM_LBUTTONUP, 0, MakeLParam(5, 5));
+
+                PrintInfo($"发送点击消息:{boo1},{boo2}");
+
+                return true;
+            }
+
+            return false;
+        }
+
         /// <summary>
         /// 结束进程
         /// </summary>
@@ -139,69 +229,76 @@ namespace AutoTest.Guard
             {
                 try
                 {
-
-                    Process[] pa = Process.GetProcesses();//获取当前进程数组。
-                    List<Process> processList = new List<Process>();
-                    foreach (Process p in pa)
+                    if (CheckProcessStop(processName, IntPtr.Zero))
                     {
-                        if (p.ProcessName == processName)
-                        {
-                            if (p.Responding)
-                            {
-                                ////凌晨重置下爬虫程序,生产上发现浏览器组件有问题，运行几天后内部进程就会崩溃无法恢复
-                                //if (DateTime.Now.Subtract(LastCloseDate).TotalMinutes > MaxRunMins && DateTime.Now.Hour >= CheckResetHour && DateTime.Now.Hour < CheckResetHour + 1)
-                                //{
-                                //    LastCloseDate = DateTime.Now;
-                                //    PrintWarn($"运行超过{MaxRunMins}分钟后到点关闭重启......");
-                                //}
-                                //else
-                                {
-                                    processList.Add(p);
-                                }
-                            }
-                            else
-                            {
-                                PrintWarn("主进程未响应，关闭......");
-                                Kill(p);
-                            }
-                        }
-                    }
-
-                    if (processList.Count == 0)
-                    {
-                        PrintWarn("检查到要守护的进程未启动，启动进程.....");
-                        //启动进程，并标识是由守护进程启动的
-                        _ = Process.Start($"{processName}.exe", "guarde");
-                    }
-                    else if (processList.Count > 1)
-                    {
-                        try
-                        {
-                            //保留最近一个进程，其它的关闭
-                            processList.OrderBy(p => p.StartTime).Skip(1).ToList().ForEach(p => Kill(p));
-                        }
-                        catch (Exception ex)
-                        {
-                            PrintError("关闭进程出错", ex);
-                        }
+                        PrintWarn("主进程崩溃，关闭......");
                     }
                     else
                     {
-                        var parentProcess = processList[0];
-                        ManagementObjectSearcher searcher = new ManagementObjectSearcher("Select * From Win32_Process Where ParentProcessID=" + parentProcess.Id);
-                        ManagementObjectCollection moc = searcher.Get();
-                        foreach (ManagementObject mo in moc)
+
+                        Process[] pa = Process.GetProcesses();//获取当前进程数组。
+                        List<Process> processList = new List<Process>();
+                        foreach (Process p in pa)
                         {
-                            var pName = Convert.ToString(mo["Name"]);
-                            var pId = Convert.ToInt32(mo["ProcessID"]);
-                            if ("CefSharp.BrowserSubprocess.exe".Equals(pName, StringComparison.OrdinalIgnoreCase))
+                            if (p.ProcessName == processName)
                             {
-                                var childProcess = Process.GetProcessById(pId);
-                                if (!childProcess.Responding)
+                                if (p.Responding)
                                 {
-                                    PrintWarn("子进程未响应，关闭......");
-                                    Kill(parentProcess);
-                                    break;
+                                    ////凌晨重置下爬虫程序,生产上发现浏览器组件有问题，运行几天后内部进程就会崩溃无法恢复
+                                    //if (DateTime.Now.Subtract(LastCloseDate).TotalMinutes > MaxRunMins && DateTime.Now.Hour >= CheckResetHour && DateTime.Now.Hour < CheckResetHour + 1)
+                                    //{
+                                    //    LastCloseDate = DateTime.Now;
+                                    //    PrintWarn($"运行超过{MaxRunMins}分钟后到点关闭重启......");
+                                    //}
+                                    //else
+                                    //{
+                                    //    processList.Add(p);
+                                    //}
+                                }
+                                else
+                                {
+                                    PrintWarn("主进程未响应，关闭......");
+                                    Kill(p);
+                                }
+                            }
+                        }
+
+                        if (processList.Count == 0)
+                        {
+                            PrintWarn("检查到要守护的进程未启动，启动进程.....");
+                            //启动进程，并标识是由守护进程启动的
+                            _ = Process.Start($"{processName}.exe", "guarde");
+                        }
+                        else if (processList.Count > 1)
+                        {
+                            try
+                            {
+                                //保留最近一个进程，其它的关闭
+                                processList.OrderBy(p => p.StartTime).Skip(1).ToList().ForEach(p => Kill(p));
+                            }
+                            catch (Exception ex)
+                            {
+                                PrintError("关闭进程出错", ex);
+                            }
+                        }
+                        else
+                        {
+                            var parentProcess = processList[0];
+                            ManagementObjectSearcher searcher = new ManagementObjectSearcher("Select * From Win32_Process Where ParentProcessID=" + parentProcess.Id);
+                            ManagementObjectCollection moc = searcher.Get();
+                            foreach (ManagementObject mo in moc)
+                            {
+                                var pName = Convert.ToString(mo["Name"]);
+                                var pId = Convert.ToInt32(mo["ProcessID"]);
+                                if ("CefSharp.BrowserSubprocess.exe".Equals(pName, StringComparison.OrdinalIgnoreCase))
+                                {
+                                    var childProcess = Process.GetProcessById(pId);
+                                    if (!childProcess.Responding)
+                                    {
+                                        PrintWarn("子进程未响应，关闭......");
+                                        Kill(parentProcess);
+                                        break;
+                                    }
                                 }
                             }
                         }
