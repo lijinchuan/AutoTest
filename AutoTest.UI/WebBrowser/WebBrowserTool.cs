@@ -220,6 +220,18 @@ namespace AutoTest.UI.WebBrowser
             }
         }
 
+        public void EnableMenu(IBrowser browser)
+        {
+            _ = browser.MainFrame.EvaluateScriptAsPromiseAsync(@"document.oncontextmenu = function(evt) { evt.returnValue = true;}");
+
+        }
+
+        public void DisableMenu(IBrowser browser)
+        {
+            _ = browser.MainFrame.EvaluateScriptAsPromiseAsync(@"document.oncontextmenu = function (evt) {  evt.preventDefault();};");
+
+        }
+
         public bool IsScriptBusy(IBrowser browser)
         {
             var resp = browser.MainFrame.EvaluateScriptAsPromiseAsync("console.log('IsScriptBusy check');return 1;");

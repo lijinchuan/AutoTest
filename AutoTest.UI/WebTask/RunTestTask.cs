@@ -187,6 +187,8 @@ namespace AutoTest.UI.WebTask
 
                 PublishDebugMsg("注入变量");
             }
+
+            webBrowserTool.EnableMenu(browser);
         }
 
 
