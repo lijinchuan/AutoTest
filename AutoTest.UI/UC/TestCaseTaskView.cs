@@ -183,7 +183,10 @@ namespace AutoTest.UI.UC
             _testCases = (List<TestTask>)recoverData[3];
             _testCasesChoose = (List<int>)recoverData[4];
             _testResults = (Dictionary<int, TestResult>)recoverData[6];
-            _testTaskBag = (TestTaskBag)recoverData[7];
+            if (recoverData.Length > 7)
+            {
+                _testTaskBag = (TestTaskBag)recoverData[7];
+            }
             UCTestCaseSelector1.Init(_testSources, _testSites, _testPages, _testCases, _testCasesChoose, _testResults);
             return this;
         }
