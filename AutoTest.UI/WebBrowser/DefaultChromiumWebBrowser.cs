@@ -622,7 +622,7 @@ namespace AutoTest.UI.WebBrowser
             {
                 var rc = GetBrowser().GetHost().RequestContext;
                 var nowdic = rc.GetAllPreferences(true);
-                if (!nowdic.ContainsKey("proxy") || nowdic["proxy"] == null || nowdic["proxy"].ToString() != ip)
+                if (!nowdic.ContainsKey("proxy") || nowdic["proxy"] == null || ((dynamic)nowdic["proxy"]).server != ip)
                 {
                     var dict = new Dictionary<string, object>();
                     dict.Add("mode", "fixed_servers");
