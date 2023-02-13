@@ -19,7 +19,7 @@ using AutoTest.Biz;
 
 namespace AutoTest.UI.UC
 {
-    public partial class UCAddCaseParam :TabPage, IRecoverAble, ISaveAble, IExcuteAble
+    public partial class UCAddCaseParam :TabPage, IRecoverAble, ISaveAble, IExcuteAble, IMessageFilter
     {
         private List<ParamInfo> Params = new List<ParamInfo>();
         private List<ParamInfo> Headers = new List<ParamInfo>();
@@ -60,6 +60,7 @@ namespace AutoTest.UI.UC
         private bool fromlogflag = false;
 
         private bool isFirstVisible = true;
+        private bool preFilterMessageFlag = false;
 
         public UCAddCaseParam()
         {
@@ -67,6 +68,8 @@ namespace AutoTest.UI.UC
             //rawTextBox.TextChanged += RawTextBox_TextChanged;
             rawTextBox.MaxLength = int.MaxValue;
             rawTextBox.ScrollBars = ScrollBars.Both;
+
+            CanAdjust();
         }
 
         public UCAddCaseParam(TestSite testSite,TestPage testPage,TestCase testCase)
@@ -94,6 +97,8 @@ namespace AutoTest.UI.UC
 
             Bind();
             BindData();
+
+            CanAdjust();
         }
 
         private void ChangeLayout()
@@ -1673,6 +1678,108 @@ namespace AutoTest.UI.UC
             {
                 CBUser.SelectedValue = _testCase.OnlyUserId;
             }
+        }
+
+
+        private void CanAdjust()
+        {
+            Application.AddMessageFilter(this);
+            var mousePos = Point.Empty;
+            this.MouseMove += mouseMouse;
+
+            void mouseUp(object s, MouseEventArgs e)
+            {
+                mousePos = Point.Empty;
+                this.MouseUp -= mouseUp;
+                preFilterMessageFlag = false;
+                this.Cursor = Cursors.Default;
+            }
+
+            void mouseMouse(object s, MouseEventArgs e)
+            {
+                //Util.SendMsg(this,string.Format("e.Y:{0},location.Y:{1}", e.Y, PannelBottom.Location.Y));
+                if (e.Y - this.PannelBottom.Location.Y < 10 && e.Y - this.PannelBottom.Location.Y > -10)
+                {
+                    this.Cursor = Cursors.SizeNS;
+                    preFilterMessageFlag = true;
+                    if ((e.Button & MouseButtons.Left) == MouseButtons.Left)
+                    {
+                        if (mousePos == Point.Empty)
+                        {
+                            mousePos = new Point(e.X, e.Y);
+                            this.MouseUp += mouseUp;
+                        }
+                    }
+                }
+
+                if (PannelBottom.Visible && mousePos != Point.Empty && (e.Button & MouseButtons.Left) == MouseButtons.Left)
+                {
+                    if (Math.Abs(e.Y - mousePos.Y) > 10 && Math.Abs(e.Y - mousePos.Y) < 100)
+                    {
+                        if (pannelmid.Location.Y + pannelmid.Height + e.Y - mousePos.Y >= 50 && pannelmid.Location.Y + pannelmid.Height + e.Y - mousePos.Y <= this.Height - 50
+                                   && this.PannelBottom.Height + mousePos.Y - e.Y >= 50 && this.PannelBottom.Height + mousePos.Y - e.Y <= this.Height - 50)
+                        {
+                            pannelmid.Height += e.Y - mousePos.Y;
+                            this.PannelBottom.Height += mousePos.Y - e.Y;
+                            var newLoaction = this.PannelBottom.Location;
+                            newLoaction.Offset(0, e.Y - mousePos.Y);
+                            this.PannelBottom.Location = newLoaction;
+                            mousePos = new Point(e.X, e.Y);
+                        }
+                    }
+                }
+                else if (preFilterMessageFlag && Math.Abs(e.Y - this.PannelBottom.Location.Y) > 10 && (e.Button & MouseButtons.Left) == MouseButtons.None)
+                {
+                    preFilterMessageFlag = false;
+                    this.Cursor = Cursors.Default;
+                }
+            }
+        }
+
+        static int MakeLParam(int x, int y)
+        {
+            return (y << 16) | (x & 0xFFFF);
+        }
+        /// <summary>
+        /// Y
+        /// </summary>
+        /// <param name="lp"></param>
+        /// <returns></returns>
+        static int GetHiWord(int lp)
+        {
+            return lp >> 16;
+        }
+        /// <summary>
+        /// X
+        /// </summary>
+        /// <param name="lp"></param>
+        /// <returns></returns>
+        static int GetLoWord(int lp)
+        {
+            return lp & 0xFFFF;
+        }
+
+        public bool PreFilterMessage(ref Message m)
+        {
+            if (/*!preFilterMessageFlag &&*/ m.Msg == 0x200)
+            {
+                //Util.SendMsg(this, Newtonsoft.Json.JsonConvert.SerializeObject(m));
+                //return true;
+                //mousemove
+                var x = GetLoWord(m.LParam.ToInt32());
+                var y = GetHiWord(m.LParam.ToInt32());
+                var sender = FromHandle(m.HWnd);
+                if (sender != null && sender != this)
+                {
+                    var pt = sender.PointToScreen(new Point(x, y));
+                    pt = PointToClient(pt);
+                    x = pt.X;
+                    y = pt.Y;
+                }
+                var wp = m.WParam.ToInt32();
+                this.OnMouseMove(new MouseEventArgs(wp == 1 ? MouseButtons.Left : (wp == 2 ? MouseButtons.Right : MouseButtons.None), 0, x, y, 0));
+            }
+            return false;
         }
     }
 }
