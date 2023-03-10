@@ -1698,7 +1698,7 @@ namespace AutoTest.UI.UC
             void mouseMouse(object s, MouseEventArgs e)
             {
                 //Util.SendMsg(this,string.Format("e.Y:{0},location.Y:{1}", e.Y, PannelBottom.Location.Y));
-                if (e.Y - this.PannelBottom.Location.Y < 10 && e.Y - this.PannelBottom.Location.Y > -10)
+                if (PannelBottom.Visible && e.Y - PannelBottom.Location.Y < 10 && e.Y - PannelBottom.Location.Y > -10)
                 {
                     this.Cursor = Cursors.SizeNS;
                     preFilterMessageFlag = true;
@@ -1762,9 +1762,10 @@ namespace AutoTest.UI.UC
             return lp & 0xFFFF;
         }
 
+        //注意所有的tab页都会收到消息
         public bool PreFilterMessage(ref Message m)
         {
-            if (/*!preFilterMessageFlag &&*/ m.Msg == 0x200)
+            if (m.Msg == 0x200)
             {
                 //Util.SendMsg(this, Newtonsoft.Json.JsonConvert.SerializeObject(m));
                 //return true;

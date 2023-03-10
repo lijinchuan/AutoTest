@@ -244,5 +244,22 @@ namespace AutoTest.UI.WebBrowser
             
             return true;
         }
+
+        /// <summary>
+        /// 关闭所有的底层连接
+        /// </summary>
+        /// <param name="browser"></param>
+        /// <returns></returns>
+        public bool CloseAllConnections(IBrowser browser)
+        {
+            var boo = false;
+
+            var callBack = new TaskCompletionCallback();
+            browser.GetHost().RequestContext.CloseAllConnections(callBack);
+            callBack.Task.Wait();
+            boo = callBack.Task.Result;
+
+            return boo;
+        }
     }
 }

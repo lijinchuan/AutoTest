@@ -47,5 +47,12 @@ namespace AutoTest.UI.WebBrowser
         object ExecuteScript(IBrowser browser, IFrame frame, string code,int timeOut);
 
         object ExecutePromiseScript(IBrowser browser, IFrame frame, string code, int timeOut);
+
+        /// <summary>
+        /// 关闭底层连接
+        /// </summary>
+        /// <param name="browser"></param>
+        /// <returns></returns>
+        bool CloseAllConnections(IBrowser browser);
     }
 }
