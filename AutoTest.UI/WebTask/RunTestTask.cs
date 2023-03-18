@@ -41,7 +41,7 @@ namespace AutoTest.UI.WebTask
         private List<TestScript> _siteScripts;
         private TestResult _testResult;
         private dynamic bag;
-        private int _testScriptExeCount = 0;
+        private int _maxScriptExeCount = 600;
         private event Action<TestResult> _notify;
         private object _locker = new object();
 
@@ -221,10 +221,10 @@ namespace AutoTest.UI.WebTask
                 bag = userData;
                 try
                 {
-                    var bagTestScriptExeCount = bag._testScriptExeCount;
-                    if (bagTestScriptExeCount != null && bagTestScriptExeCount != _testScriptExeCount)
+                    var bagMaxTestScriptExeCount = bag._maxScriptExeCount;
+                    if (bagMaxTestScriptExeCount != null && bagMaxTestScriptExeCount != _maxScriptExeCount)
                     {
-                        _testScriptExeCount = bagTestScriptExeCount;
+                        _maxScriptExeCount = bagMaxTestScriptExeCount;
                     }
                 }
                 catch
@@ -247,7 +247,7 @@ namespace AutoTest.UI.WebTask
             {
                 userData = new
                 {
-                    _testScriptExeCount
+                    _maxScriptExeCount
                 };
             }
 
@@ -312,9 +312,10 @@ namespace AutoTest.UI.WebTask
         {
             int sleepMills = 1000;
             string lastErr = string.Empty;
-            int tryCount = 0;
             if (!string.IsNullOrWhiteSpace(_testCase.TestCode))
             {
+                var tryCount = 0;
+
                 while (true)
                 {
                     if (_cancelFlag)
@@ -330,7 +331,7 @@ namespace AutoTest.UI.WebTask
                         UpdateUserVarData(browser, frame);
                         if (object.Equals(ret, false))
                         {
-                            if (_testScriptExeCount++ >= 600)
+                            if (tryCount++ >= _maxScriptExeCount)
                             {
                                 PublishMsg("长时间返回false，超时");
                                 return await Task.FromResult(0);

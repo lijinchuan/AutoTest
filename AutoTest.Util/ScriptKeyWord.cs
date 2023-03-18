@@ -94,8 +94,8 @@ namespace AutoTest.Util
 
             KeyWordDic.Add(new ScriptKeyWord
             {
-                KeyWord = "$VewBag.Bag._testScriptExeCount",
-                Desc = "页面脚本执行计数器，默认最多600次，可修改重置，int类型",
+                KeyWord = "$VewBag.Bag._maxScriptExeCount",
+                Desc = "页面脚本执行最多次数，默认最多600次，可修改，int类型",
                 HighColor = Color.Green
             });
 
