@@ -41,6 +41,7 @@ namespace AutoTest.UI.WebTask
         private List<TestScript> _siteScripts;
         private TestResult _testResult;
         private dynamic bag;
+        private int _testScriptExeCount = 0;
         private event Action<TestResult> _notify;
         private object _locker = new object();
 
@@ -218,6 +219,18 @@ namespace AutoTest.UI.WebTask
             if (userData != null)
             {
                 bag = userData;
+                try
+                {
+                    var bagTestScriptExeCount = bag._testScriptExeCount;
+                    if (bagTestScriptExeCount != null && bagTestScriptExeCount != _testScriptExeCount)
+                    {
+                        _testScriptExeCount = bagTestScriptExeCount;
+                    }
+                }
+                catch
+                {
+
+                }
             }
         }        
 
@@ -232,11 +245,13 @@ namespace AutoTest.UI.WebTask
 
             if (userData == null)
             {
-                userData = new object();
+                userData = new
+                {
+                    _testScriptExeCount
+                };
             }
 
             var code = $"var {WebVar.VarName}={WebVar.VarName}||{{}};\n";
-
             code += $"{WebVar.VarName}.{nameof(WebVar.Bag)}={Newtonsoft.Json.JsonConvert.SerializeObject(userData)}\n";
 
             //code += $"{WebVar.VarName}.{nameof(WebVar.WebRequestDatas)}={Newtonsoft.Json.JsonConvert.SerializeObject(webRequestDatas)}\n";
@@ -297,10 +312,9 @@ namespace AutoTest.UI.WebTask
         {
             int sleepMills = 1000;
             string lastErr = string.Empty;
+            int tryCount = 0;
             if (!string.IsNullOrWhiteSpace(_testCase.TestCode))
             {
-                var tryCount = 0;
-
                 while (true)
                 {
                     if (_cancelFlag)
@@ -316,7 +330,7 @@ namespace AutoTest.UI.WebTask
                         UpdateUserVarData(browser, frame);
                         if (object.Equals(ret, false))
                         {
-                            if (tryCount++ >= 600)
+                            if (_testScriptExeCount++ >= 600)
                             {
                                 PublishMsg("长时间返回false，超时");
                                 return await Task.FromResult(0);

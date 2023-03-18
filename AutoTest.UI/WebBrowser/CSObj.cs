@@ -21,6 +21,7 @@ namespace AutoTest.UI.WebBrowser
 {
     public class CSObj:IDisposable
     {
+        internal const string LoadVar = "___page_is_loading___";
         private SynchronizationContext context;
         private ChromiumWebBrowser browser;
         private IWebTask currentWebTask;
@@ -235,6 +236,10 @@ namespace AutoTest.UI.WebBrowser
             return RequestWebResource(url, json, "application/json", "POST");
         }
 
+        public void SetPageIsLoading()
+        {
+            browser.GetMainFrame().ExecuteJavaScriptAsync($"var {LoadVar}=true");
+        }
 
         public string RequestWebResource(string url, string data,string applicatonType,string method)
         {

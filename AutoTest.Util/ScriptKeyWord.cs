@@ -92,6 +92,13 @@ namespace AutoTest.Util
                 HighColor = Color.Green
             });
 
+            KeyWordDic.Add(new ScriptKeyWord
+            {
+                KeyWord = "$VewBag.Bag._testScriptExeCount",
+                Desc = "页面脚本执行计数器，默认最多600次，可修改重置，int类型",
+                HighColor = Color.Green
+            });
+
             //KeyWordDic.Add(new ScriptKeyWord
             //{
             //    KeyWord = "$VewBag.WebRequestDatas",
@@ -208,6 +215,13 @@ namespace AutoTest.Util
             {
                 KeyWord = "ServerDriverClient.setFileValue",
                 Desc = "设置file控件路径:ServerDriverClient.setFileValue(string fileName,string script)",
+                HighColor = Color.Red
+            });
+
+            KeyWordDic.Add(new ScriptKeyWord
+            {
+                KeyWord= "ServerDriverClient.setPageIsLoading",
+                Desc = "设置页面为加载状态，以确保后台在页面刷新前不会操作:ServerDriverClient.setPageIsLoading()",
                 HighColor = Color.Red
             });
 

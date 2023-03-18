@@ -198,10 +198,26 @@ namespace AutoTest.UI.WebBrowser
             }
         }
 
+        public bool IsLoading(IBrowser browser)
+        {
+            if (browser.IsLoading)
+            {
+                return true;
+            }
+
+            var task = browser.MainFrame.EvaluateScriptAsync($"{CSObj.LoadVar}");
+            if (task.Result.Success && task.Result.Result.Equals(true))
+            {
+                return true;
+            }
+
+            return false;
+        }
+
         public void WaitLoading(IBrowser browser, bool breakFlag, bool checkScript = false, int timeOutMs = 120000)
         {
             int ms = 0;
-            while (browser.IsLoading && !breakFlag)
+            while (IsLoading(browser) && !breakFlag)
             {
                 Thread.Sleep(10);
                 ms += 10;
