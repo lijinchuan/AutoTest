@@ -422,6 +422,7 @@ namespace AutoTest.UI.WebBrowser
         {
             try
             {
+                GetBrowser().MainFrame.LoadUrl("about:blank");
                 if (DocumentLoadCompleted?.GetInvocationList().Length > 0)
                 {
                     throw new NotSupportedException($"存在未清理的任务:{DocumentLoadCompleted?.GetInvocationList().Length}个");
