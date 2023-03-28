@@ -266,8 +266,8 @@ namespace AutoTest.UI.WebTask
                                 {
                                     Account = _testLogin.Id,
                                     CreateTime = DateTime.Now,
-                                    Expires=DateTime.Now.AddYears(1),
-                                    Env = _testEnv.Id,
+                                    Expires = DateTime.Now.AddYears(1),
+                                    Env = _testEnv?.Id ?? 0,
                                     SiteId = _testSite.Id,
                                     TestCookies = new List<TestCookie>()
                                 };

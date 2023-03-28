@@ -1,6 +1,7 @@
 ﻿using AutoTest.Domain.Entity;
 using AutoTest.Domain.Model;
 using AutoTest.UI.WebTask;
+using AutoTest.Util;
 using CefSharp;
 using CefSharp.WinForms;
 using HtmlAgilityPack;
@@ -174,13 +175,10 @@ namespace AutoTest.UI.WebBrowser
             browser.GetBrowser().MainFrame.LoadUrl(url);
         }
 
-        public void PutChars(string str)
+        public void SendInput(string str)
         {
-            SendKeys.SendWait(str);
-            //foreach (var ch in str)
-            //{
-            //    SendKeys.SendWait(ch.ToString());
-            //}
+            //SendKeys.SendWait(str);
+            IOUtils.SendUnicodeString(str);
         }
 
         public void SetFileValue(string file,string script)
@@ -438,6 +436,13 @@ namespace AutoTest.UI.WebBrowser
             {
                 return string.Empty;
             }
+        }
+
+        public void SetCursorPos(int x,int y)
+        {
+            IOUtils.SetCursorPos(x, y);
+
+            IOUtils.SendMouseClick(x, y);
         }
 
 

@@ -171,8 +171,8 @@ namespace AutoTest.Util
 
             KeyWordDic.Add(new ScriptKeyWord
             {
-                KeyWord = "ServerDriverClient.putChars",
-                Desc = "使用键盘输入字符串:ServerDriverClient.putChars(string s)",
+                KeyWord = "ServerDriverClient.sendInput",
+                Desc = "使用键盘输入字符串:ServerDriverClient.sendInput(string s)",
                 HighColor = Color.Red
             });
 
@@ -231,6 +231,14 @@ namespace AutoTest.Util
                 Desc = "设置页面为加载状态，以确保后台在页面刷新前不会操作:ServerDriverClient.setPageIsLoading()",
                 HighColor = Color.Red
             });
+
+            KeyWordDic.Add(new ScriptKeyWord
+            {
+                KeyWord = "ServerDriverClient.setCursorPos",
+                Desc = "设置鼠标位置:ServerDriverClient.setCursorPos(int x,int y)",
+                HighColor = Color.Red
+            });
+
 
             KeyWordDic.Add(new ScriptKeyWord
             {
