@@ -473,7 +473,7 @@ namespace AutoTest.UI.WebTask
                         throw new TestException("脚本检查没有登录，但是没有登录配置");
                     }
                     flag = false;
-                    var loginTask = new RunTestLoginTask(_testSite.Name + "登陆", UseProxy, _testSite, _testLogin, _testEnv, _testEnvParams);
+                    var loginTask = new RunTestLoginTask(_testSite.Name + "登陆", UseProxy, _testSite, _testLogin, _testEnv, _testEnvParams, _globScripts, _siteScripts);
                     loginTask.SetNext(new RunTestTask(GetTaskName(), UseProxy, _testSite, _testLogin, _testPage, _testCase, _testEnv, _testEnvParams,_globScripts,_siteScripts,_notify));
                     this.SetNext(loginTask);
                 }

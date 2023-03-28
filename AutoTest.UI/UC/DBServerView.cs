@@ -924,6 +924,9 @@ namespace AutoTest.UI.UC
                             var testLogin = FindParentNode<TestLogin>(selnode);
                             var ep = GetCurrEnvData(selnode);
 
+                            var globalScripts = BigEntityTableRemotingEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == testSite.SourceId && s.SiteId == 0).ToList();
+                            var siteScripts = BigEntityTableRemotingEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == testSite.SourceId && s.SiteId == testLogin.SiteId).ToList();
+
                             var testPanel = (TestPanel)Util.TryAddToMainTab(this, $"执行测试", () =>
                             {
                                 var panel = new UC.TestPanel(testSite.Name);
@@ -934,7 +937,7 @@ namespace AutoTest.UI.UC
 
                             LJC.FrameWorkV3.Comm.TaskHelper.SetInterval(1000, () =>
                             {
-                                BeginInvoke(new Action(() => testPanel.RunTest(new RunTestLoginTask(testLogin.Url, false, testSite, testLogin, ep.env, ep.envParams))));
+                                BeginInvoke(new Action(() => testPanel.RunTest(new RunTestLoginTask(testLogin.Url, false, testSite, testLogin, ep.env, ep.envParams, globalScripts, siteScripts))));
                                 return true;
                             }, runintime: false);
                             break;
@@ -953,7 +956,7 @@ namespace AutoTest.UI.UC
                                     return;
                                 }
                                 TestCookieContainerBiz.SetExpired(testSite.Id, ep.env?.Id, testLogin.Id);
-                                var loginTask = new RunTestLoginTask(testLogin.Url, false, testSite, testLogin, ep.env, ep.envParams);
+                                var loginTask = new RunTestLoginTask(testLogin.Url, false, testSite, testLogin, ep.env, ep.envParams,null,null);
                                 if (testPanel.ClearCookie(loginTask.GetStartPageUrl()))
                                 {
                                     Util.SendMsg(this, "cookie清理成功");

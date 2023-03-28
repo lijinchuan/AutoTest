@@ -32,7 +32,7 @@ namespace AutoTest.UI.WebTask
         private readonly dynamic bag;
 
         public RunTestLoginTask(string taskname, bool useProxy, TestSite testSite,
-            TestLogin testLogin, TestEnv testEnv, List<TestEnvParam> testEnvParams)
+            TestLogin testLogin, TestEnv testEnv, List<TestEnvParam> testEnvParams, List<TestScript> globScripts, List<TestScript> siteScripts)
             : base(taskname, Util.ReplaceEvnParams(testLogin.Url, testEnvParams), useProxy, false, testEnv, testEnvParams)
         {
 
@@ -46,6 +46,8 @@ namespace AutoTest.UI.WebTask
             _testSite = testSite;
             _testLogin = testLogin;
             _testEnv = testEnv;
+            _globScripts = globScripts;
+            _siteScripts = siteScripts;
         }
 
         public override void DocumentCompletedHandler(IBrowser browser, IFrame frame)

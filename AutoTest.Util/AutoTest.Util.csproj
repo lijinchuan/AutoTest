@@ -55,6 +55,7 @@
     <Compile Include="Consts.cs" />
     <Compile Include="IEUtil.cs" />
     <Compile Include="ILogger.cs" />
+    <Compile Include="IOUtils.cs" />
     <Compile Include="NLogger.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RequestAutoResetEvent.cs" />
