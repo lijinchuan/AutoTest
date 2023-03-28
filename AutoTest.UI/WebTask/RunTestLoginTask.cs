@@ -23,6 +23,9 @@ namespace AutoTest.UI.WebTask
         private readonly IMapper mapper = null;
         private readonly TestSite _testSite;
 
+        private List<TestScript> _globScripts;
+        private List<TestScript> _siteScripts;
+
         private readonly TestLogin _testLogin;
         private TestEnv _testEnv;
         private readonly List<TestEnvParam> _testEnvParams;
@@ -97,6 +100,26 @@ namespace AutoTest.UI.WebTask
                 webBrowserTool.AddJqueryLib(browser, frame);
 
                 //注入工具包
+                if (_globScripts != null && _globScripts.Count > 0)
+                {
+                    foreach (var s in _globScripts.OrderBy(p => p.Order))
+                    {
+                        RegistTestScript(browser, frame, s);
+                    }
+                }
+
+                PublishDebugMsg("注入全局工具包");
+
+
+                if (_siteScripts != null && _siteScripts.Count > 0)
+                {
+                    foreach (var s in _siteScripts.OrderBy(p => p.Order))
+                    {
+                        RegistTestScript(browser, frame, s);
+                    }
+                }
+
+                PublishDebugMsg("注入通用工具包");
 
                 //注入变量
                 SetVar(browser, frame, userData);

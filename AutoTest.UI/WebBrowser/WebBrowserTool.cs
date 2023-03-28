@@ -70,6 +70,34 @@ namespace AutoTest.UI.WebBrowser
 
         private const int SCRIPT_TIMEOUT = 30000;
 
+        private const string getBoundingClientRect = @"
+            var element=$1_12_4({0})[0];
+            if(!element)
+                return {{x:-1,y:-1}};
+            var rect = element.getBoundingClientRect();
+            var x = rect.x, y = rect.y;
+            while (element) {{
+                x += (element.offsetLeft - element.scrollLeft + element.clientLeft);
+                y += (element.offsetTop - element.scrollTop + element.clientTop);
+                element = element.offsetParent;
+            }}
+            return {{ x:x, y:y }};
+        ";
+
+        private const string getElementScreenCoordinates = @"
+            var element=$1_12_4({0})[0];
+            if(!element)
+                return {{x:-1,y:-1}};
+            var rect = element.getBoundingClientRect();
+            var x = rect.x, y = rect.y;
+            while (element) {{
+                x += (element.offsetLeft - element.scrollLeft + element.clientLeft);
+                y += (element.offsetTop - element.scrollTop + element.clientTop);
+                element = element.offsetParent;
+            }}
+            return {{ x:(window.screenLeft?window.screenLeft: window.screenX)+x, y:(window.screenTop?window.screenTop: window.screenY)+y }};
+        ";
+
         public void AddEvalFuntion(IBrowser browser, IFrame frame)
         {
             var resp = browser.MainFrame.EvaluateScriptAsync(ADDEVALFUNCTIONCODE);
@@ -196,6 +224,18 @@ namespace AutoTest.UI.WebBrowser
                 }
                 Task.Delay(30).Wait();
             }
+        }
+
+        public async Task<(double x, double y)> FindElementPosAsync(IBrowser browser,string ele)
+        {
+            var resp =await browser.MainFrame.EvaluateScriptAsPromiseAsync(string.Format(getBoundingClientRect, ele));
+            var rect = (dynamic)resp.Result;
+            if (rect == null)
+            {
+                return (-1, -1);
+            }
+
+            return (rect.x, rect.y);
         }
 
         public bool IsLoading(IBrowser browser)

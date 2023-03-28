@@ -171,6 +171,13 @@ namespace AutoTest.Util
 
             KeyWordDic.Add(new ScriptKeyWord
             {
+                KeyWord = "ServerDriverClient.putChars",
+                Desc = "使用键盘输入字符串:ServerDriverClient.putChars(string s)",
+                HighColor = Color.Red
+            });
+
+            KeyWordDic.Add(new ScriptKeyWord
+            {
                 KeyWord = "ServerDriverClient.sleep",
                 Desc = "休眠:ServerDriverClient.sleep(int ms)",
                 HighColor = Color.Red

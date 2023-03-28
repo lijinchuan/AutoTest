@@ -60,7 +60,7 @@ namespace AutoTest.UI.WebTask
         /// <summary>
         /// 
         /// </summary>
-        protected readonly WebBrowserTool webBrowserTool;
+        protected readonly IWebBrowserTool webBrowserTool;
 
         protected ConcurrentBag<WebEvent> webEvents = new ConcurrentBag<WebEvent>();
 
@@ -92,7 +92,7 @@ namespace AutoTest.UI.WebTask
         protected TestEnv _testEnv;
         protected List<TestEnvParam> _testEnvParams;
 
-        protected WebTask(string strTaskName, string strStartPageUrl, bool useProxy,bool clearCookies,
+        protected WebTask(string strTaskName, string strStartPageUrl, bool useProxy, bool clearCookies,
             TestEnv testEnv, List<TestEnvParam> testEnvParams)
         {
             taskName = strTaskName;
@@ -102,7 +102,7 @@ namespace AutoTest.UI.WebTask
             _testEnv = testEnv;
             _testEnvParams = testEnvParams;
 
-            webBrowserTool = new WebBrowserTool();
+            webBrowserTool = AutofacBuilder.GetFromFac<IWebBrowserTool>();
         }
 
         public abstract void DocumentCompletedHandler(IBrowser browser, IFrame frame);

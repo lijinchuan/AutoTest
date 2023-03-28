@@ -26,6 +26,8 @@ namespace AutoTest.UI.WebBrowser
         private ChromiumWebBrowser browser;
         private IWebTask currentWebTask;
 
+        private IWebBrowserTool webBrowserTool = AutofacBuilder.GetFromFac<IWebBrowserTool>();
+
         public event Action<string> OnPublishMsg;
 
         static CSObj()
@@ -170,6 +172,15 @@ namespace AutoTest.UI.WebBrowser
         public void LoadUrl(string url)
         {
             browser.GetBrowser().MainFrame.LoadUrl(url);
+        }
+
+        public void PutChars(string str)
+        {
+            SendKeys.SendWait(str);
+            //foreach (var ch in str)
+            //{
+            //    SendKeys.SendWait(ch.ToString());
+            //}
         }
 
         public void SetFileValue(string file,string script)

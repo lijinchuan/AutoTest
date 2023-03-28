@@ -84,7 +84,7 @@ namespace AutoTest.UI.WebBrowser
 
         private IWebTask lastTask = null;
 
-        readonly WebBrowserTool webBrowserTool = new WebBrowserTool();
+        readonly IWebBrowserTool webBrowserTool = AutofacBuilder.GetFromFac<IWebBrowserTool>();
 
         public bool CancelTasks()
         {

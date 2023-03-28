@@ -12,7 +12,7 @@ namespace AutoTest.UI.WebBrowser
         /// <summary>
         /// 加载JQUERY库
         /// </summary>
-        void AddJqueryLib(IBrowser browser, IFrame frame,bool force);
+        void AddJqueryLib(IBrowser browser, IFrame frame, bool force = false);
 
         /// <summary>
         /// 创建一个万能函数
@@ -44,9 +44,11 @@ namespace AutoTest.UI.WebBrowser
         /// <param name="frame"></param>
         /// <param name="code"></param>
         /// <returns></returns>
-        object ExecuteScript(IBrowser browser, IFrame frame, string code,int timeOut);
+        object ExecuteScript(IBrowser browser, IFrame frame, string code, int timeOut = 30000);
 
-        object ExecutePromiseScript(IBrowser browser, IFrame frame, string code, int timeOut);
+        object ExecutePromiseScript(IBrowser browser, IFrame frame, string code, int timeOut = 30000);
+
+        Task<(double x, double y)> FindElementPosAsync(IBrowser browser, string ele);
 
         /// <summary>
         /// 关闭底层连接
@@ -54,5 +56,15 @@ namespace AutoTest.UI.WebBrowser
         /// <param name="browser"></param>
         /// <returns></returns>
         bool CloseAllConnections(IBrowser browser);
+
+        void WaitLoading(IBrowser browser, bool breakFlag, bool checkScript = false, int timeOutMs = 120000);
+
+        bool RegisterScript(IBrowser browser, IFrame frame, string code);
+
+        bool RegisterRomoteScript(IBrowser browser, IFrame frame, string url);
+
+        void EnableMenu(IBrowser browser);
+
+        object TryExecuteScript(IBrowser browser, IFrame frame, string code, int timeOut = 30000);
     }
 }

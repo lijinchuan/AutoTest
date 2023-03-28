@@ -22,6 +22,7 @@ namespace AutoTest.UI.UC
         private UC.UCJsonViewer UCJsonViewer = null;
 
         private ChromiumWebBrowser WBResult = null;
+        private IWebBrowserTool webBrowserTool = AutofacBuilder.GetFromFac<IWebBrowserTool>();
 
         public UCApiResult()
         {
@@ -146,7 +147,7 @@ namespace AutoTest.UI.UC
                     return;
                 }
 
-                new WebBrowserTool().RegisterScript(WBResult.GetBrowser(), frame, "function replacedom(dom){document.documentElement.innerHTML=dom;return true;}");
+                webBrowserTool.RegisterScript(WBResult.GetBrowser(), frame, "function replacedom(dom){document.documentElement.innerHTML=dom;return true;}");
 
                 var startPos = newHtml.IndexOf("<head>", StringComparison.OrdinalIgnoreCase);
                 var endPos = newHtml.LastIndexOf("</body>", StringComparison.OrdinalIgnoreCase);
@@ -164,7 +165,7 @@ namespace AutoTest.UI.UC
                     var id = Guid.NewGuid().ToString("N");
                     var code = "var scripts =[];var ss= document.getElementsByTagName(\"SCRIPT\"); for(var i=0;i<ss.length;i++){scripts.push(ss[i]); ss[i].remove();};for(var i=0;i<scripts.length;i++){if(scripts[i].id=='" + id + "' || !scripts[i].innerHTML) continue;var newScript = document.createElement(\"SCRIPT\");alert(scripts[i].innerHTML);newScript.innerHTML=scripts[i].innerHTML;document.getElementsByTagName(\"HEAD\").item(0).appendChild(newScript);}";
 
-                    new WebBrowserTool().ExecutePromiseScript(WBResult.GetBrowser(), frame, code);
+                    webBrowserTool.ExecutePromiseScript(WBResult.GetBrowser(), frame, code);
                 }
             }
         }
