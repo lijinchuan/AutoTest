@@ -465,6 +465,11 @@ namespace AutoTest.UI.WebTask
             var flag = true;
             if (!string.IsNullOrWhiteSpace(_testSite.CheckLoginCode))
             {
+                //注入JQUERY
+                webBrowserTool.AddJqueryLib(browser, frame);
+
+                PublishDebugMsg("注入JQUERY");
+
                 var isLogin = webBrowserTool.TryExecuteScript(browser, frame, _testSite.CheckLoginCode);
                 if (!object.Equals(isLogin, true))
                 {
@@ -483,9 +488,17 @@ namespace AutoTest.UI.WebTask
 
         protected override async Task<int> ExecuteInner(IBrowser browser, IFrame frame, ICookieManager cookieManager)
         {
-            if (!Check(browser, frame))
+            try
             {
-                return await Task.FromResult(0);
+                if (!Check(browser, frame))
+                {
+                    return await Task.FromResult(0);
+                }
+            }
+            catch(Exception ex)
+            {
+                PublishMsg("检查登陆失败:"+ex.Message);
+                throw;
             }
 
             var ret = 0;
