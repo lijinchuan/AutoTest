@@ -101,7 +101,7 @@ namespace AutoTest.UI.UC
                 {
                     CaseId=_testCaseList.Select(p=>p.Id).ToList(),
                     OrderCaseId=new List<int>(),
-                    SiteId=_testSource.Id
+                    SiteId=siteId
                 };
             }
 

@@ -907,7 +907,7 @@ namespace AutoTest.UI.UC
                         }
                     case "添加测试包":
                         {
-                            var testBag = FindParentNode<TestSource>(selnode);
+                            var testBag = FindParentNode<TestSite>(selnode);
 
                             var tab = new UCTestTaskBagView(testBag.Id, 0, t =>
                              {
