@@ -41,7 +41,7 @@ namespace AutoTest.UI.WebTask
         private List<TestScript> _siteScripts;
         private TestResult _testResult;
         private dynamic bag;
-        private int _maxScriptExeCount = 600;
+        private int _maxScriptExeCount = int.Parse(ConfigHelper.AppConfig("MaxScriptExeCount") ?? "300");
         private event Action<TestResult> _notify;
         private object _locker = new object();
 
@@ -247,7 +247,7 @@ namespace AutoTest.UI.WebTask
             {
                 userData = new
                 {
-                    _maxScriptExeCount
+                    __maxScriptExeCount=_maxScriptExeCount
                 };
             }
 
