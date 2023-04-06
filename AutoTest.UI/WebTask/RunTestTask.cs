@@ -323,7 +323,7 @@ namespace AutoTest.UI.WebTask
                         throw new Exception("任务取消");
                     }
                     AssertWebHasNoError();
-                    webBrowserTool.WaitLoading(browser, _cancelFlag,true);
+                    webBrowserTool.WaitLoading(browser, _cancelFlag, true, true);
                     try
                     {
                         PrepareTest(browser, frame, bag);

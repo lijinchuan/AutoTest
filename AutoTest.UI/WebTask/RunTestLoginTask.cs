@@ -156,7 +156,7 @@ namespace AutoTest.UI.WebTask
                     }
                     try
                     {
-                        webBrowserTool.WaitLoading(browser, _cancelFlag, false);
+                        webBrowserTool.WaitLoading(browser, _cancelFlag, false,true);
                         PrepareTest(browser, frame, bag);
                         var ret = webBrowserTool.ExecutePromiseScript(browser, frame, Util.ReplaceEvnParams(_testLogin.LoginCode, _testEnvParams));
                         if (object.Equals(ret, false))
@@ -206,7 +206,7 @@ namespace AutoTest.UI.WebTask
                     }
                     try
                     {
-                        webBrowserTool.WaitLoading(browser, _cancelFlag, false);
+                        webBrowserTool.WaitLoading(browser, _cancelFlag, false,true);
                         PrepareTest(browser, frame, bag);
                         var ret = webBrowserTool.TryExecuteScript(browser, frame, Util.ReplaceEvnParams(_testLogin.ValidCode, _testEnvParams));
                         if (ret == null)

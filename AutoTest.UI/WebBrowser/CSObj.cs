@@ -245,9 +245,9 @@ namespace AutoTest.UI.WebBrowser
             return RequestWebResource(url, json, "application/json", "POST");
         }
 
-        public void SetPageIsLoading()
+        public void SetPageIsLoading(bool isLoading)
         {
-            browser.GetMainFrame().ExecuteJavaScriptAsync($"var {LoadVar}=true");
+            browser.GetMainFrame().ExecuteJavaScriptAsync($"var {LoadVar}={(isLoading?"true":"false")}");
         }
 
         public string RequestWebResource(string url, string data,string applicatonType,string method)

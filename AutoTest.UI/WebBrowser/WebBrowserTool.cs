@@ -238,26 +238,29 @@ namespace AutoTest.UI.WebBrowser
             return (rect.x, rect.y);
         }
 
-        public bool IsLoading(IBrowser browser)
+        public bool IsLoading(IBrowser browser,bool checkVar=false)
         {
             if (browser.IsLoading)
             {
                 return true;
             }
 
-            var task = browser.MainFrame.EvaluateScriptAsync($"{CSObj.LoadVar}");
-            if (task.Result.Success && task.Result.Result.Equals(true))
+            if (checkVar)
             {
-                return true;
+                var taskResult = browser.MainFrame.EvaluateScriptAsync($"{CSObj.LoadVar}", timeout: TimeSpan.FromSeconds(5)).Result;
+                if (taskResult.Success && true.Equals(taskResult.Result))
+                {
+                    return true;
+                }
             }
 
             return false;
         }
 
-        public void WaitLoading(IBrowser browser, bool breakFlag, bool checkScript = false, int timeOutMs = 120000)
+        public void WaitLoading(IBrowser browser, bool breakFlag, bool checkScript = false, bool checkVar = false, int timeOutMs = 120000)
         {
             int ms = 0;
-            while (IsLoading(browser) && !breakFlag)
+            while (IsLoading(browser, checkVar) && !breakFlag)
             {
                 Thread.Sleep(10);
                 ms += 10;

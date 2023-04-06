@@ -57,7 +57,7 @@ namespace AutoTest.UI.WebBrowser
         /// <returns></returns>
         bool CloseAllConnections(IBrowser browser);
 
-        void WaitLoading(IBrowser browser, bool breakFlag, bool checkScript = false, int timeOutMs = 120000);
+        void WaitLoading(IBrowser browser, bool breakFlag, bool checkScript = false, bool checkVar = false, int timeOutMs = 120000);
 
         bool RegisterScript(IBrowser browser, IFrame frame, string code);
 
