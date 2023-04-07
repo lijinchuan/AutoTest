@@ -228,7 +228,7 @@ namespace AutoTest.Util
             KeyWordDic.Add(new ScriptKeyWord
             {
                 KeyWord= "ServerDriverClient.setPageIsLoading",
-                Desc = "设置页面为加载状态，以确保后台在页面刷新前不会操作:ServerDriverClient.setPageIsLoading()",
+                Desc = "设置页面为加载状态，以确保后台在页面刷新前不会操作:ServerDriverClient.setPageIsLoading(bool isLoading)",
                 HighColor = Color.Red
             });
 
