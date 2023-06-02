@@ -152,7 +152,17 @@ namespace AutoTest.UI
                     ResponseData = null
                 }, nameof(RequestInterceptConfig.Id), true, new IndexBuilder<RequestInterceptConfig>().AddIndex(nameof(RequestInterceptConfig.TestCaseId), b => b.Asc(m => m.TestCaseId)).Build());
 
+            BigEntityTableEngine.LocalEngine.CreateTable<APITaskRequest>(p => p.Id, a => a.AddIndex(nameof(APITaskRequest.CaseId), b => b.Asc(m => m.CaseId)));
+
+            BigEntityTableEngine.LocalEngine.CreateTable<APITaskResult>(p => p.Id, a => a.AddIndex(nameof(APITaskResult.TaskId), b => b.Asc(m => m.TaskId)));
+
             AutofacBuilder.init();
+
+            var simulateServerPort = System.Configuration.ConfigurationManager.AppSettings["SimulateServerPort"];
+            if (!string.IsNullOrWhiteSpace(simulateServerPort))
+            {
+                Biz.SimulateServer.SimulateServerManager.StartServer(int.Parse(simulateServerPort));
+            }
 
             //处理未捕获的异常
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
@@ -161,6 +171,11 @@ namespace AutoTest.UI
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new MainFrm());
+
+            if (!string.IsNullOrWhiteSpace(simulateServerPort))
+            {
+                Biz.SimulateServer.SimulateServerManager.Stop();
+            }
         }
 
         private static void Application_ThreadException(object sender, ThreadExceptionEventArgs e)

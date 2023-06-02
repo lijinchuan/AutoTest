@@ -43,6 +43,9 @@ namespace AutoTest.UI.WebTask
         private dynamic bag;
         private int _maxScriptExeCount = int.Parse(ConfigHelper.AppConfig("MaxScriptExeCount") ?? "300");
         private event Action<TestResult> _notify;
+
+        private APITaskRequest _apiTaskRequest;
+
         private object _locker = new object();
 
         /// <summary>
@@ -76,9 +79,9 @@ namespace AutoTest.UI.WebTask
 
         public RunTestTask(string taskname, bool useProxy, TestSite testSite, TestLogin testLogin,
             TestPage testPage, TestCase testCase, TestEnv testEnv, List<TestEnvParam> testEnvParams,
-            List<TestScript> globScripts, List<TestScript> siteScripts,Action<TestResult> notify)
-            : base(taskname, Util.ReplaceEvnParams(string.IsNullOrWhiteSpace(testCase.Url)?testPage.Url:testCase.Url, testEnvParams),
-                  useProxy, false,testEnv,testEnvParams)
+            List<TestScript> globScripts, List<TestScript> siteScripts, Action<TestResult> notify, APITaskRequest apiTaskRequest = null)
+            : base(taskname, Util.ReplaceEvnParams(string.IsNullOrWhiteSpace(testCase.Url) ? testPage.Url : testCase.Url, testEnvParams),
+                  useProxy, false, testEnv, testEnvParams)
         {
 
             eventListener = new TestEventListener();
@@ -91,12 +94,14 @@ namespace AutoTest.UI.WebTask
             _testSite = testSite;
             _testPage = testPage;
             _testCase = testCase;
-            
+
             _testLogin = testLogin;
             _testCaseData = BigEntityTableRemotingEngine.Find<TestCaseData>(nameof(TestCaseData), nameof(TestCaseData.TestCaseId), new object[] { _testCase.Id }).FirstOrDefault();
             _globScripts = globScripts;
             _siteScripts = siteScripts;
             _notify = notify;
+
+            _apiTaskRequest = apiTaskRequest;
 
             _testCaseUrlConfig = BigEntityTableRemotingEngine.Find<TestCaseUrlConfig>(nameof(TestCaseUrlConfig),
                 nameof(TestCaseUrlConfig.TestCaseId), new object[] { testCase.Id }).FirstOrDefault();
@@ -247,7 +252,8 @@ namespace AutoTest.UI.WebTask
             {
                 userData = new
                 {
-                    __maxScriptExeCount=_maxScriptExeCount
+                    __maxScriptExeCount = _maxScriptExeCount,
+                    __apiTaskParams = _apiTaskRequest == null ? null : _apiTaskRequest.Params
                 };
             }
 
@@ -447,6 +453,22 @@ namespace AutoTest.UI.WebTask
                     _testResult.FailMsg = "没有验证脚本，默认为成功";
 
                     PublishDebugMsg("没有验证脚本，默认为成功");
+                }
+
+                if (_apiTaskRequest != null)
+                {
+                    if (bag.__apiTaskResult != null)
+                    {
+                        BigEntityTableEngine.LocalEngine.Insert(nameof(APITaskResult), new APITaskResult
+                        {
+                            CDate=DateTime.Now,
+                            TaskId=_apiTaskRequest.Id,
+                            Result=JsonUtil<object>.Serialize(bag.__apiTaskResult),
+                            UseMillSecs=DateTime.Now.Subtract(_testResult.TestStartDate).TotalMilliseconds
+                        });
+                        _apiTaskRequest.State = 1;
+                        BigEntityTableEngine.LocalEngine.Update(nameof(APITaskRequest), _apiTaskRequest);
+                    }
                 }
             }
             catch (Exception ex)

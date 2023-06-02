@@ -927,6 +927,13 @@ namespace AutoTest.UI.UC
                     this.TBUrl.Text = _testCase.Url;
                 }
                 this.TBName.Text = _testCase.CaseName;
+                var LableId = new Label();
+                LableId.Font = TBName.Font;
+                LableId.ForeColor = Color.Gray;
+                LableId.Text = "ID: " + _testCase.Id;
+
+                LableId.Location = new Point(TBName.Location.X + TBName.Width + 10, TBName.Location.Y + 2);
+                TBName.Parent.Controls.Add(LableId);
                 this.NUDOrder.Value = _testCase.Order;
                 this.TBValidCode.Text = _testCase.ValidCode;
                 this.TBCode.Text = _testCase.TestCode;

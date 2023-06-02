@@ -34,6 +34,12 @@
     <Reference Include="LJC.FrameWorkV3">
       <HintPath>..\Lib\LJC.FrameWorkV3.dll</HintPath>
     </Reference>
+    <Reference Include="LJC.FrameWorkV3.Net">
+      <HintPath>..\Lib\LJC.FrameWorkV3.Net.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
+      <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Windows.Forms" />
@@ -50,6 +56,10 @@
     <Compile Include="CronHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RecoverManager.cs" />
+    <Compile Include="SimulateServer\ApiSimulateHandler.cs" />
+    <Compile Include="SimulateServer\ApiTaskTrigger.cs" />
+    <Compile Include="SimulateServer\DefaultHander.cs" />
+    <Compile Include="SimulateServer\SimulateServerManager.cs" />
     <Compile Include="TestCookieContainerBiz.cs" />
     <Compile Include="TestTaskBagBiz.cs" />
     <Compile Include="TreeNodeEx.cs" />
@@ -60,6 +70,10 @@
       <Project>{8E857C55-C682-4241-834F-F3E43C49F255}</Project>
       <Name>AutoTest.Domain</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

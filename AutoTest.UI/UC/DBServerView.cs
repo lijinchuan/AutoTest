@@ -461,7 +461,7 @@ namespace AutoTest.UI.UC
                             currentTestLogin = rt.TestLogin;
                             testPanel.ClearCookie(rt.TestLogin.Url);
 
-                            var cookies = Biz.TestCookieContainerBiz.GetCookies(rt.TestLogin.SiteId, rt.TestEnv?.Id, rt.TestLogin.Id);
+                            var cookies = TestCookieContainerBiz.GetCookies(rt.TestLogin.SiteId, rt.TestEnv?.Id, rt.TestLogin.Id);
                             if (cookies?.Count > 0)
                             {
                                 testPanel.SetCookie(rt.GetStartPageUrl(), cookies);
@@ -470,7 +470,7 @@ namespace AutoTest.UI.UC
                     };
 
 
-                    LJC.FrameWorkV3.Comm.TaskHelper.SetInterval(1000, () =>
+                    TaskHelper.SetInterval(1000, () =>
                     {
                         var runTaskList = testTaskList.Select(task => new RunTestTask(task.GetTaskName(), false, task.TestSite, task.TestLogin, task.TestPage, task.TestCase, task.TestEnv, task.TestEnvParams, task.GlobalTestScripts, task.SiteTestScripts, task.ResultNotify));
                         BeginInvoke(new Action(() => testPanel.RunTest(runTaskList)));
@@ -1552,6 +1552,35 @@ namespace AutoTest.UI.UC
                   }
                   return false;
               }, runintime: false);
+
+            AutoTest.Biz.SimulateServer.ApiTaskTrigger.NewTaskRecived += ApiTaskTrigger_NewTaskRecived;
+        }
+
+        private void ApiTaskTrigger_NewTaskRecived(TestTask task,APITaskRequest apiTaskRequest)
+        {
+            //
+            var testPanel = (TestPanel)Util.TryAddToMainTab(this, $"执行API请求", () =>
+            {
+                var panel = new TestPanel("执行API请求");
+                panel.Load();
+
+                return panel;
+            }, null);
+
+            //if (testPanel.IsRunning())
+            //{
+            //    Util.SendMsg(this, "正在执行测试，请稍后再试");
+            //    return false;
+            //}
+
+            //if (!testPanel.Reset())
+            //{
+            //    Util.SendMsg(this, "任务未开始，有测试在执行");
+            //    return false;
+            //}
+
+            var runTaskList = new RunTestTask(task.GetTaskName(), false, task.TestSite, task.TestLogin, task.TestPage, task.TestCase, task.TestEnv, task.TestEnvParams, task.GlobalTestScripts, task.SiteTestScripts, task.ResultNotify);
+            BeginInvoke(new Action(() => testPanel.RunTest(runTaskList)));
         }
     }
 }

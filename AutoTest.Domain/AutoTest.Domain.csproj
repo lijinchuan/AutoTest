@@ -43,10 +43,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Contract\AddAPITaskRequest.cs" />
+    <Compile Include="Contract\AddAPITaskResponse.cs" />
+    <Compile Include="Contract\ApiTaskBaseResponse.cs" />
+    <Compile Include="Contract\GetApiTaskResultRequest.cs" />
+    <Compile Include="Contract\GetApiTaskResultResponse.cs" />
     <Compile Include="Entity\APIDoc.cs" />
     <Compile Include="Entity\APIDocExample.cs" />
     <Compile Include="Entity\APIParam.cs" />
     <Compile Include="Entity\APIResonseResult.cs" />
+    <Compile Include="Entity\APITaskRequest.cs" />
+    <Compile Include="Entity\APITaskResult.cs" />
     <Compile Include="Entity\ApplicationType.cs" />
     <Compile Include="Entity\AuthType.cs" />
     <Compile Include="Entity\BodyDataType.cs" />
@@ -104,5 +111,6 @@
     <Compile Include="Entity\RequestInterceptConfig.cs" />
     <Compile Include="ScriptException.cs" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

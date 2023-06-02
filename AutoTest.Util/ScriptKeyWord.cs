@@ -99,6 +99,20 @@ namespace AutoTest.Util
                 HighColor = Color.Green
             });
 
+            KeyWordDic.Add(new ScriptKeyWord
+            {
+                KeyWord = "$VewBag.Bag.__apiTaskResult",
+                Desc = "返回API结果给后台",
+                HighColor = Color.Green
+            });
+
+            KeyWordDic.Add(new ScriptKeyWord
+            {
+                KeyWord = "$VewBag.Bag.__apiTaskParams",
+                Desc="接收API参数",
+                HighColor=Color.Green
+            }) ;
+
             //KeyWordDic.Add(new ScriptKeyWord
             //{
             //    KeyWord = "$VewBag.WebRequestDatas",
