@@ -1579,7 +1579,7 @@ namespace AutoTest.UI.UC
             //    return false;
             //}
 
-            var runTaskList = new RunTestTask(task.GetTaskName(), false, task.TestSite, task.TestLogin, task.TestPage, task.TestCase, task.TestEnv, task.TestEnvParams, task.GlobalTestScripts, task.SiteTestScripts, task.ResultNotify);
+            var runTaskList = new RunTestTask(task.GetTaskName(), false, task.TestSite, task.TestLogin, task.TestPage, task.TestCase, task.TestEnv, task.TestEnvParams, task.GlobalTestScripts, task.SiteTestScripts, task.ResultNotify, apiTaskRequest);
             BeginInvoke(new Action(() => testPanel.RunTest(runTaskList)));
         }
     }

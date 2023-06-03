@@ -457,13 +457,13 @@ namespace AutoTest.UI.WebTask
 
                 if (_apiTaskRequest != null)
                 {
-                    if (bag.__apiTaskResult != null)
+                    if (bag.apiTaskResult != null)
                     {
                         BigEntityTableEngine.LocalEngine.Insert(nameof(APITaskResult), new APITaskResult
                         {
                             CDate=DateTime.Now,
                             TaskId=_apiTaskRequest.Id,
-                            Result=JsonUtil<object>.Serialize(bag.__apiTaskResult),
+                            Result=JsonUtil<object>.Serialize(bag.apiTaskResult),
                             UseMillSecs=DateTime.Now.Subtract(_testResult.TestStartDate).TotalMilliseconds
                         });
                         _apiTaskRequest.State = 1;
