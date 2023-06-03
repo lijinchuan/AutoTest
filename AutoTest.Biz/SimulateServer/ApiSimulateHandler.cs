@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace AutoTest.Biz.SimulateServer
@@ -93,16 +94,28 @@ namespace AutoTest.Biz.SimulateServer
                 {
                     var req = JsonUtil<GetApiTaskResultRequest>.Deserialize(request.Content);
 
-                    var taskResult = BigEntityTableEngine.LocalEngine.Find<APITaskResult>(nameof(APITaskResult), nameof(APITaskResult.TaskId), new object[] { req.TaskId }).FirstOrDefault();
-
-                    var result = new GetApiTaskResultResponse
+                    var waitSecs = Math.Min(120, req.WatingSecsForResult);
+                    var secsCount = 0;
+                    while (true)
                     {
-                        Result = taskResult
-                    };
+                        var taskResult = BigEntityTableEngine.LocalEngine.Find<APITaskResult>(nameof(APITaskResult), nameof(APITaskResult.TaskId), new object[] { req.TaskId }).FirstOrDefault();
 
-                    response.ContentType = "text/json;charset=utf-8;";
-                    response.Content = JsonUtil<object>.Serialize(result);
+                        if (taskResult != null || ++secsCount > waitSecs)
+                        {
+                            var result = new GetApiTaskResultResponse
+                            {
+                                Result = taskResult,
+                                Code = taskResult == null ? 404 : 200,
+                                Message = taskResult == null ? "没有查到结果" : "成功"
+                            };
 
+                            response.ContentType = "text/json;charset=utf-8;";
+                            response.Content = JsonUtil<object>.Serialize(result);
+                            break;
+                        }
+
+                        Thread.Sleep(1000);
+                    }
                     return true;
                 }
             }
