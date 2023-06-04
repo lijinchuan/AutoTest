@@ -102,13 +102,18 @@ namespace AutoTest.Biz.SimulateServer
 
                         if (taskResult != null || ++secsCount > waitSecs)
                         {
-                            var result = new GetApiTaskResultResponse
+                            var result = new
                             {
-                                Result = taskResult,
+                                Result = new
+                                {
+                                    taskResult.CDate,
+                                    taskResult.UseMillSecs,
+                                    Result=JsonUtil<dynamic>.Deserialize(taskResult.Result)
+                                },
                                 Code = taskResult == null ? 404 : 200,
                                 Message = taskResult == null ? "没有查到结果" : "成功"
                             };
-
+                            
                             response.ContentType = "text/json;charset=utf-8;";
                             response.Content = JsonUtil<object>.Serialize(result);
                             break;
