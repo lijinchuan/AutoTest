@@ -38,9 +38,7 @@ namespace AutoTest.UI.WebBrowser
 
         protected virtual DialogResult DealComfirm(string messageText)
         {
-            var dr = MessageBox.Show(messageText, "提示", MessageBoxButtons.YesNo);
-
-            return dr;
+            return new ConfirmDlg("来自网站的对话", messageText).ShowDialog();
         }
 
         public bool OnJSDialog(IWebBrowser browserControl, IBrowser browser, string originUrl, CefJsDialogType dialogType, string messageText, string defaultPromptText, IJsDialogCallback callback, ref bool suppressMessage)
