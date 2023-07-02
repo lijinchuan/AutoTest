@@ -568,6 +568,23 @@ namespace AutoTest.UI.WebTask
 
             _notify?.Invoke(_testResult);
             EventBus.NotifyTestResultAction?.Invoke(_testResult);
+
+            if (_apiTaskRequest != null)
+            {
+                var apiResult = BigEntityTableEngine.LocalEngine.Find<APITaskResult>(nameof(APITaskResult), nameof(APITaskResult.TaskId), new object[] { _apiTaskRequest.Id }).FirstOrDefault();
+                if (apiResult == null)
+                {
+                    BigEntityTableEngine.LocalEngine.Insert(nameof(APITaskResult), new APITaskResult
+                    {
+                        CDate = DateTime.Now,
+                        TaskId = _apiTaskRequest.Id,
+                        Result = "失败，任务已终止",
+                        UseMillSecs = DateTime.Now.Subtract(_testResult.TestStartDate).TotalMilliseconds
+                    });
+                    _apiTaskRequest.State = 1;
+                    BigEntityTableEngine.LocalEngine.Update(nameof(APITaskRequest), _apiTaskRequest);
+                }
+            }
         }
 
         /// <summary>

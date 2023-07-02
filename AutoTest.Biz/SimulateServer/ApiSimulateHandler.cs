@@ -2,6 +2,7 @@
 using AutoTest.Domain.Entity;
 using LJC.FrameWorkV3.Comm;
 using LJC.FrameWorkV3.Data.EntityDataBase;
+using LJC.FrameWorkV3.LogManager;
 using LJC.FrameWorkV3.Net.HTTP.Server;
 using System;
 using System.Collections.Generic;
@@ -32,10 +33,11 @@ namespace AutoTest.Biz.SimulateServer
 
             try
             {
+                ProcessTraceUtil.StartTrace();
                 if (url.EndsWith("api/AddAPITask", StringComparison.OrdinalIgnoreCase))
                 {
                     var req = JsonUtil<AddAPITaskRequest>.Deserialize(request.Content);
-
+                    ProcessTraceUtil.Trace($"收到请求:api/AddAPITask,{Newtonsoft.Json.JsonConvert.SerializeObject(req)}");
                     var testCase = BigEntityTableEngine.LocalEngine.Find<TestCase>(nameof(TestCase), req.CaseId);
 
                     if (testCase != null)
@@ -77,8 +79,10 @@ namespace AutoTest.Biz.SimulateServer
 
                         BigEntityTableEngine.LocalEngine.Insert(nameof(APITaskRequest), addReq);
 
+                        ProcessTraceUtil.Trace("创建任务入库完成,触发任务");
                         ApiTaskTrigger.Trigger(newTask, addReq);
 
+                        ProcessTraceUtil.Trace("触发任务完成");
                         var result = new AddAPITaskResponse
                         {
                             TaskId = addReq.Id
@@ -93,6 +97,7 @@ namespace AutoTest.Biz.SimulateServer
                 else if (url.EndsWith("api/GetAPITaskRequest", StringComparison.OrdinalIgnoreCase))
                 {
                     var req = JsonUtil<GetApiTaskResultRequest>.Deserialize(request.Content);
+                    ProcessTraceUtil.Trace($"收到请求:api/GetAPITaskRequest,{Newtonsoft.Json.JsonConvert.SerializeObject(req)}");
 
                     var waitSecs = Math.Min(120, req.WatingSecsForResult);
                     var secsCount = 0;
@@ -116,9 +121,13 @@ namespace AutoTest.Biz.SimulateServer
                             
                             response.ContentType = "text/json;charset=utf-8;";
                             response.Content = JsonUtil<object>.Serialize(result);
+
+                            ProcessTraceUtil.Trace($"{secsCount}次查询,{(taskResult==null?"无果":"成功")}，返回结果");
+
                             break;
                         }
 
+                        ProcessTraceUtil.Trace($"{secsCount}次查询，无果");
                         Thread.Sleep(1000);
                     }
                     return true;
@@ -135,6 +144,10 @@ namespace AutoTest.Biz.SimulateServer
                 response.ContentType = "text/json;charset=utf-8;";
                 response.Content = JsonUtil<object>.Serialize(result);
                 return true;
+            }
+            finally
+            {
+                LogHelper.Instance.Debug(ProcessTraceUtil.PrintTrace());
             }
 
             return false;
