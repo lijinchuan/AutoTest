@@ -36,7 +36,7 @@ namespace AutoTest.Biz.SimulateServer
                 ProcessTraceUtil.StartTrace();
                 if (url.EndsWith("api/AddAPITask", StringComparison.OrdinalIgnoreCase))
                 {
-                    var req = JsonUtil<AddAPITaskRequest>.Deserialize(request.Content);
+                    var req = JsonUtil<AddAPITaskRequest>.Deserialize(request.GetContent());
                     ProcessTraceUtil.Trace($"收到请求:api/AddAPITask,{Newtonsoft.Json.JsonConvert.SerializeObject(req)}");
                     var testCase = BigEntityTableEngine.LocalEngine.Find<TestCase>(nameof(TestCase), req.CaseId);
 
@@ -96,7 +96,7 @@ namespace AutoTest.Biz.SimulateServer
                 }
                 else if (url.EndsWith("api/GetAPITaskRequest", StringComparison.OrdinalIgnoreCase))
                 {
-                    var req = JsonUtil<GetApiTaskResultRequest>.Deserialize(request.Content);
+                    var req = JsonUtil<GetApiTaskResultRequest>.Deserialize(request.GetContent());
                     ProcessTraceUtil.Trace($"收到请求:api/GetAPITaskRequest,{Newtonsoft.Json.JsonConvert.SerializeObject(req)}");
 
                     var waitSecs = Math.Min(120, req.WatingSecsForResult);
