@@ -413,6 +413,30 @@ namespace AutoTest.UI.WebBrowser
             }
         }
 
+        private void CheckIsVisible()
+        {
+            var parent = this.Parent;
+
+            while (true)
+            {
+                if (parent == null)
+                {
+                    break;
+                }
+
+                if(parent is MainFrm)
+                {
+                    var mf = parent as MainFrm;
+                    if (mf.WindowState == FormWindowState.Minimized)
+                    {
+                        mf.WindowState = FormWindowState.Maximized;
+                    }
+                    break;
+                }
+
+                parent = parent.Parent;
+            }
+        }
 
         /// <summary>
         /// 执行任务
@@ -433,7 +457,7 @@ namespace AutoTest.UI.WebBrowser
                 webTask.OnMsgPublish += WebTask_OnMsgPublish;
                 (JsDialogHandler as JsDialogHandler)?.Clear();
 
-                
+                CheckIsVisible();
 
                 //if (webTask.UseProxy)
                 //{
