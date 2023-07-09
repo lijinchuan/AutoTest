@@ -59,7 +59,7 @@ namespace AutoTest.UI.WebBrowser
                 case CefSharp.CefJsDialogType.Confirm:
                     LastConfirmMsg = messageText;
                     var dr = DealComfirm(messageText);
-                    if (dr == DialogResult.Yes)
+                    if (dr == DialogResult.OK)
                     {
                         callback.Continue(true, string.Empty);
                         suppressMessage = false;
@@ -97,7 +97,18 @@ namespace AutoTest.UI.WebBrowser
 
         public bool OnBeforeUnloadDialog(IWebBrowser chromiumWebBrowser, IBrowser browser, string messageText, bool isReload, IJsDialogCallback callback)
         {
-            return false;
+            LastConfirmMsg = messageText;
+            var dr = DealComfirm(messageText);
+            if (dr == DialogResult.OK)
+            {
+                callback.Continue(true, string.Empty);
+                return true;
+            }
+            else
+            {
+                callback.Continue(false, string.Empty);
+                return true;
+            }
         }
     }
 }
