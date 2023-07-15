@@ -163,7 +163,6 @@ namespace AutoTest.Biz.SimulateServer
                         {
                             testEnvParams = BigEntityTableRemotingEngine.Find<TestEnvParam>(nameof(TestEnvParam), "SiteId_EnvId", new object[] { site.Id, currentEnv.Id }).ToList();
                         }
-
                         var newTask = new TestTask
                         {
                             TestSource = source,

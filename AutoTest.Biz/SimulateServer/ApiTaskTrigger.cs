@@ -9,10 +9,11 @@ namespace AutoTest.Biz.SimulateServer
 {
     public static class ApiTaskTrigger
     {
-        public static event Action<TestTask,APITaskRequest> NewTaskRecived;
+        public static event Action<TestTask, APITaskRequest> NewTaskRecived;
 
-        public static void Trigger(TestTask testTask,APITaskRequest apiTaskRequest)
+        public static void Trigger(TestTask testTask, APITaskRequest apiTaskRequest)
         {
+            testTask.TestCase.CaseName += "@" + apiTaskRequest.Id;
             NewTaskRecived?.Invoke(testTask, apiTaskRequest);
         }
     }

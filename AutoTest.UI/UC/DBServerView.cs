@@ -1566,7 +1566,6 @@ namespace AutoTest.UI.UC
 
                 return panel;
             }, null);
-
             //if (testPanel.IsRunning())
             //{
             //    Util.SendMsg(this, "正在执行测试，请稍后再试");
