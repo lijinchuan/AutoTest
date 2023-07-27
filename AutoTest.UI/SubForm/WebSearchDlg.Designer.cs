@@ -32,17 +32,17 @@ namespace AutoTest.UI.SubForm
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.PanelLeft = new System.Windows.Forms.Panel();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.BtnStart = new System.Windows.Forms.Button();
-            this.BtnEnd = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
             this.TBSearchContent = new System.Windows.Forms.TextBox();
             this.BtnSearch = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.TBUrl = new System.Windows.Forms.TextBox();
             this.DGVResult = new System.Windows.Forms.DataGridView();
+            this.PBBtn = new System.Windows.Forms.PictureBox();
             this.groupBox1.SuspendLayout();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.DGVResult)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.PBBtn)).BeginInit();
             this.SuspendLayout();
             // 
             // groupBox1
@@ -50,11 +50,10 @@ namespace AutoTest.UI.SubForm
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.PBBtn);
             this.groupBox1.Controls.Add(this.TBUrl);
             this.groupBox1.Controls.Add(this.PanelLeft);
             this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Controls.Add(this.BtnEnd);
-            this.groupBox1.Controls.Add(this.BtnStart);
             this.groupBox1.Location = new System.Drawing.Point(12, 12);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(601, 468);
@@ -84,28 +83,6 @@ namespace AutoTest.UI.SubForm
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(313, 448);
             this.panel1.TabIndex = 1;
-            // 
-            // BtnStart
-            // 
-            this.BtnStart.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.BtnStart.Location = new System.Drawing.Point(486, 13);
-            this.BtnStart.Name = "BtnStart";
-            this.BtnStart.Size = new System.Drawing.Size(37, 23);
-            this.BtnStart.TabIndex = 0;
-            this.BtnStart.Text = "开始";
-            this.BtnStart.UseVisualStyleBackColor = true;
-            this.BtnStart.Click += new System.EventHandler(this.BtnStart_Click);
-            // 
-            // BtnEnd
-            // 
-            this.BtnEnd.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.BtnEnd.Location = new System.Drawing.Point(529, 13);
-            this.BtnEnd.Name = "BtnEnd";
-            this.BtnEnd.Size = new System.Drawing.Size(40, 23);
-            this.BtnEnd.TabIndex = 1;
-            this.BtnEnd.Text = "结束";
-            this.BtnEnd.UseVisualStyleBackColor = true;
-            this.BtnEnd.Click += new System.EventHandler(this.BtnEnd_Click);
             // 
             // label1
             // 
@@ -163,6 +140,16 @@ namespace AutoTest.UI.SubForm
             this.DGVResult.Size = new System.Drawing.Size(293, 393);
             this.DGVResult.TabIndex = 5;
             // 
+            // PBBtn
+            // 
+            this.PBBtn.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.PBBtn.Location = new System.Drawing.Point(490, 17);
+            this.PBBtn.Name = "PBBtn";
+            this.PBBtn.Size = new System.Drawing.Size(17, 17);
+            this.PBBtn.TabIndex = 7;
+            this.PBBtn.TabStop = false;
+            this.PBBtn.Click += new System.EventHandler(this.PBBtn_Click);
+            // 
             // WebSearchDlg
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -178,6 +165,7 @@ namespace AutoTest.UI.SubForm
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.DGVResult)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.PBBtn)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -187,13 +175,12 @@ namespace AutoTest.UI.SubForm
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Panel PanelLeft;
         private System.Windows.Forms.Panel panel1;
-        private System.Windows.Forms.Button BtnStart;
-        private System.Windows.Forms.Button BtnEnd;
         private System.Windows.Forms.TextBox TBSearchContent;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button BtnSearch;
         private System.Windows.Forms.TextBox TBUrl;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.DataGridView DGVResult;
+        private System.Windows.Forms.PictureBox PBBtn;
     }
 }

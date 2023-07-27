@@ -22,7 +22,16 @@ namespace AutoTest.UI.WebBrowser.ResourceRequestHandler
         {
             var guid = StringUtil.GetMD5(request.Url + request.Identifier);
             //编码
-            return ResponseFilterFactory.CreateResponseFilter(guid, response.MimeType);
+            return ResponseFilterFactory.CreateResponseFilter(guid, response.MimeType, mime =>
+             {
+                 if (mime.StartsWith("text/", StringComparison.OrdinalIgnoreCase)
+                 || mime.Equals("application/javascript", StringComparison.OrdinalIgnoreCase))
+                 {
+                     return new TextResponseFilter();
+                 }
+
+                 return null;
+             });
         }
 
         protected override void OnResourceLoadComplete(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request, IResponse response, UrlRequestStatus status, long receivedContentLength)

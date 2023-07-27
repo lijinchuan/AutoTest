@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LJC.FrameWorkV3.LogManager;
+using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,25 +21,33 @@ namespace AutoTest.UI.WebBrowser.ResponseFilters
         /// <param name="guid"></param>
         /// <param name="mimetype">响应类型</param>
         /// <returns></returns>
-        public static BaseResponseFilter CreateResponseFilter(string guid, string mimetype)
+        public static BaseResponseFilter CreateResponseFilter(string guid, string mimetype, Func<string, BaseResponseFilter> getOtherFilter = null)
         {
+            BaseResponseFilter filter = null;
             if (mimetype.Equals("application/json", StringComparison.OrdinalIgnoreCase))
             {
-                var filter = new JsonResponseFilter();
-                if (RESPONSEFILTERDIC.TryAdd(guid, filter))
-                {
-                    return filter;
-                }
+                filter = new JsonResponseFilter();
             }
             else if (mimetype.Equals("text/html", StringComparison.OrdinalIgnoreCase)
                 || mimetype.Equals("text/plain", StringComparison.OrdinalIgnoreCase))
             {
-                var filter = new TextResponseFilter();
+                filter = new TextResponseFilter();
+            }
+
+            if (filter == null && getOtherFilter != null)
+            {
+                filter = getOtherFilter(mimetype);
+            }
+
+            if (filter != null)
+            {
                 if (RESPONSEFILTERDIC.TryAdd(guid, filter))
                 {
                     return filter;
                 }
             }
+
+            LogHelper.Instance.Warn("找不到过滤器:" + mimetype);
 
             return null;
         }

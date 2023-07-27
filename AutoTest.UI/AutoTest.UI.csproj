@@ -1074,8 +1074,11 @@
     <None Include="Resources\group.png" />
     <Content Include="Resources\number.png" />
     <None Include="Resources\package.png" />
+    <None Include="Resources\play_green.png" />
     <Content Include="Resources\record_blue.png" />
-    <Content Include="Resources\record_green.png" />
+    <None Include="Resources\stop.png" />
+    <None Include="Resources\record_red.png" />
+    <None Include="Resources\record_green.png" />
     <Content Include="Resources\text_ab.png" />
     <Content Include="Resources\text_bold.png" />
     <Content Include="Resources\text_underline.png" />

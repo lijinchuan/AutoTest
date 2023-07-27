@@ -10,7 +10,6 @@ namespace AutoTest.UI.WebBrowser.ResponseFilters
     /// </summary>
     public abstract class BaseResponseFilter : IResponseFilter
     {
-
         private readonly MemoryStream stream;
         /// <summary>
         /// 基础响应过滤器
