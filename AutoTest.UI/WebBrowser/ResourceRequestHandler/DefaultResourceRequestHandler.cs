@@ -148,14 +148,15 @@ namespace AutoTest.UI.WebBrowser.ResourceRequestHandler
 
         protected sealed override IResponseFilter GetResourceResponseFilter(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request, IResponse response)
         {
-            var guid = StringUtil.GetMD5(request.Url);
+            var guid = StringUtil.GetMD5(request.Url+ request.Identifier);
+            //var id = request.Identifier;
             //编码
             return ResponseFilterFactory.CreateResponseFilter(guid, response.MimeType);
         }
 
         protected sealed override void OnResourceLoadComplete(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request, IResponse response, UrlRequestStatus status, long receivedContentLength)
         {
-            var guid = StringUtil.GetMD5(request.Url);
+            var guid = StringUtil.GetMD5(request.Url + request.Identifier);
             if (guid != null)
             {
                 var filter = ResponseFilterFactory.GetResponseFilter(guid);

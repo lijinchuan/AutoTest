@@ -50,6 +50,8 @@ namespace AutoTest.UI
             this.jSON工具ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.hTTP状态码ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.swaggerMarkUpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.cron表达式生成ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.xPath在线测试ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.SubItemHelp = new System.Windows.Forms.ToolStripMenuItem();
             this.版本ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.TSMReportError = new System.Windows.Forms.ToolStripMenuItem();
@@ -64,8 +66,7 @@ namespace AutoTest.UI
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.MspPanel = new System.Windows.Forms.ToolStripStatusLabel();
             this.TSL_ClearMsg = new System.Windows.Forms.ToolStripStatusLabel();
-            this.cron表达式生成ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.xPath在线测试ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.TSMGrabWeb = new System.Windows.Forms.ToolStripMenuItem();
             this.mainMenuBar.SuspendLayout();
             this.panel1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -148,7 +149,8 @@ namespace AutoTest.UI
             this.hTTP状态码ToolStripMenuItem,
             this.swaggerMarkUpToolStripMenuItem,
             this.cron表达式生成ToolStripMenuItem,
-            this.xPath在线测试ToolStripMenuItem});
+            this.xPath在线测试ToolStripMenuItem,
+            this.TSMGrabWeb});
             this.SubItemTool.Name = "SubItemTool";
             this.SubItemTool.Size = new System.Drawing.Size(44, 21);
             this.SubItemTool.Text = "工具";
@@ -229,6 +231,20 @@ namespace AutoTest.UI
             this.swaggerMarkUpToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
             this.swaggerMarkUpToolStripMenuItem.Text = "Swagger->MarkUp";
             // 
+            // cron表达式生成ToolStripMenuItem
+            // 
+            this.cron表达式生成ToolStripMenuItem.Name = "cron表达式生成ToolStripMenuItem";
+            this.cron表达式生成ToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
+            this.cron表达式生成ToolStripMenuItem.Text = "cron表达式生成";
+            this.cron表达式生成ToolStripMenuItem.Click += new System.EventHandler(this.cron表达式生成ToolStripMenuItem_Click);
+            // 
+            // xPath在线测试ToolStripMenuItem
+            // 
+            this.xPath在线测试ToolStripMenuItem.Name = "xPath在线测试ToolStripMenuItem";
+            this.xPath在线测试ToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
+            this.xPath在线测试ToolStripMenuItem.Text = "XPath在线测试";
+            this.xPath在线测试ToolStripMenuItem.Click += new System.EventHandler(this.xPath在线测试ToolStripMenuItem_Click);
+            // 
             // SubItemHelp
             // 
             this.SubItemHelp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -265,6 +281,7 @@ namespace AutoTest.UI
             // 
             // TabControl
             // 
+            this.TabControl.CanDragOut = true;
             this.TabControl.Dock = System.Windows.Forms.DockStyle.Fill;
             this.TabControl.DrawMode = System.Windows.Forms.TabDrawMode.OwnerDrawFixed;
             this.TabControl.ItemSize = new System.Drawing.Size(0, 18);
@@ -354,19 +371,12 @@ namespace AutoTest.UI
             this.TSL_ClearMsg.Visible = false;
             this.TSL_ClearMsg.Click += new System.EventHandler(this.TSL_ClearMsg_Click);
             // 
-            // cron表达式生成ToolStripMenuItem
+            // TSMGrabWeb
             // 
-            this.cron表达式生成ToolStripMenuItem.Name = "cron表达式生成ToolStripMenuItem";
-            this.cron表达式生成ToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
-            this.cron表达式生成ToolStripMenuItem.Text = "cron表达式生成";
-            this.cron表达式生成ToolStripMenuItem.Click += new System.EventHandler(this.cron表达式生成ToolStripMenuItem_Click);
-            // 
-            // xPath在线测试ToolStripMenuItem
-            // 
-            this.xPath在线测试ToolStripMenuItem.Name = "xPath在线测试ToolStripMenuItem";
-            this.xPath在线测试ToolStripMenuItem.Size = new System.Drawing.Size(189, 22);
-            this.xPath在线测试ToolStripMenuItem.Text = "XPath在线测试";
-            this.xPath在线测试ToolStripMenuItem.Click += new System.EventHandler(this.xPath在线测试ToolStripMenuItem_Click);
+            this.TSMGrabWeb.Name = "TSMGrabWeb";
+            this.TSMGrabWeb.Size = new System.Drawing.Size(189, 22);
+            this.TSMGrabWeb.Text = "监听web资源";
+            this.TSMGrabWeb.Click += new System.EventHandler(this.TSMGrabWeb_Click);
             // 
             // MainFrm
             // 
@@ -432,6 +442,7 @@ namespace AutoTest.UI
         private System.Windows.Forms.ToolStripMenuItem 服务器设置ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem cron表达式生成ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem xPath在线测试ToolStripMenuItem;
+        private System.Windows.Forms.ToolStripMenuItem TSMGrabWeb;
     }
 }
 

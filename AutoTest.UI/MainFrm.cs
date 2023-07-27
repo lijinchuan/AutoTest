@@ -533,5 +533,11 @@ namespace AutoTest.UI
         {
             Process.Start("http://www.ab173.com/other/xpath.php");
         }
+
+        private void TSMGrabWeb_Click(object sender, EventArgs e)
+        {
+            var dlg = new WebSearchDlg();
+            dlg.Show();
+        }
     }
 }
