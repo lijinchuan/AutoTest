@@ -152,13 +152,14 @@ namespace AutoTest.UI.SubForm
                 {
                     网址 = p.SourceUrl,
                     文本 = p.Content,
+                    长度 = p.Content.Length,
                     mime = p.DataType,
-                    出现数量=sr.SubSearchResultItems.Count,
-                    搜索结果 =string.Join(Environment.NewLine, sr.SubSearchResultItems.Select(q =>
-                    {
-                        var w = p.Content.Substring(Math.Max(0, q.StartPos - 50), Math.Min(q.Len + 100, p.Content.Length - Math.Max(0, q.StartPos - 50)));
-                        return w;
-                    }))
+                    出现次数 = sr.SubSearchResultItems.Count,
+                    搜索结果 = string.Join(Environment.NewLine, sr.SubSearchResultItems.Select(q =>
+                     {
+                         var w = p.Content.Substring(Math.Max(0, q.StartPos - 50), Math.Min(q.Len + 100, p.Content.Length - Math.Max(0, q.StartPos - 50)));
+                         return w;
+                     }))
                 };
             }).ToList();
            
