@@ -2,7 +2,7 @@
 using AutoTest.Biz;
 using AutoTest.Domain.Entity;
 using AutoTest.Domain.Model;
-using AutoTest.UI.EventListener;
+using AutoTest.UI.WebBrowser.EventListener;
 using AutoTest.UI.WebBrowser;
 using AutoTest.Util;
 using CefSharp;

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AutoTest.UI.EventListener
+namespace AutoTest.UI.WebBrowser.EventListener
 {
     /// <summary>
     /// 事件监听抽象类

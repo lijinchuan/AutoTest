@@ -9,21 +9,21 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AutoTest.UI.ResourceHandler
+namespace AutoTest.UI.WebBrowser.ResourceHandler
 {
-    public class TransferRequestHandler : IResourceHandler
+    public class TransferResourceHandler : IResourceHandler
     {
         private byte[] _localResourceData = null;
         private string _mime = null;
         private string _localResourceFileName = null;
         private int _dataReadCount = 0;
 
-        public TransferRequestHandler(string localFileName)
+        public TransferResourceHandler(string localFileName)
         {
             _localResourceFileName = localFileName;
         }
 
-        public TransferRequestHandler(string mime,byte[] content)
+        public TransferResourceHandler(string mime,byte[] content)
         {
             _mime = mime;
             _localResourceData = content;

@@ -1,5 +1,6 @@
-using AutoTest.UI.EventListener;
-using AutoTest.UI.ResourceHandler;
+using AutoTest.UI.WebBrowser.EventListener;
+using AutoTest.UI.WebBrowser.RequestHandler;
+using AutoTest.UI.WebBrowser.ResourceHandler;
 using AutoTest.UI.WebTask;
 using AutoTest.Util;
 using CefSharp;
@@ -101,18 +102,6 @@ namespace AutoTest.UI.WebBrowser
             }
             return true;
         }
-
-        static DefaultChromiumWebBrowser()
-        {
-            if (!Cef.IsInitialized)
-            {
-                var settings = new CefSettings();
-                settings.LogSeverity = LogSeverity.Warning;
-                //settings.CefCommandLineArgs.Add("--js-flags", $"--max_old_space_size=2048");
-                Cef.Initialize(settings);
-            }
-        }
-
 
         public DefaultChromiumWebBrowser(string name, string address)
             : base(address)

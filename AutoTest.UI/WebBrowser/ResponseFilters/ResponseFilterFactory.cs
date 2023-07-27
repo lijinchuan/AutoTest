@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AutoTest.UI.ResponseFilters
+namespace AutoTest.UI.WebBrowser.ResponseFilters
 {
     public static class ResponseFilterFactory
     {

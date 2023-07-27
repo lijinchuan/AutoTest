@@ -1,6 +1,6 @@
 ﻿using AutoTest.Domain.Entity;
-using AutoTest.UI.EventListener;
-using AutoTest.UI.ResponseFilters;
+using AutoTest.UI.WebBrowser.EventListener;
+using AutoTest.UI.WebBrowser.ResponseFilters;
 using AutoTest.UI.WebBrowser;
 using AutoTest.Util;
 using CefSharp;
@@ -14,13 +14,14 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using AutoTest.UI.WebBrowser.ResourceHandler;
 
-namespace AutoTest.UI.ResourceHandler
+namespace AutoTest.UI.WebBrowser.ResourceRequestHandler
 {
     /// <summary>
     /// 默认的请求处理器
     /// </summary>
-    public class DefaultResourceHandler : ResourceRequestHandler
+    public class DefaultResourceRequestHandler :CefSharp.Handler.ResourceRequestHandler
     {
         protected override IResourceHandler GetResourceHandler(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request)
         {
@@ -107,7 +108,7 @@ namespace AutoTest.UI.ResourceHandler
                                 {
                                     if (request.Url.Equals(c.MatchUrl, StringComparison.OrdinalIgnoreCase))
                                     {
-                                        return new TransferRequestHandler(mimeType, data);
+                                        return new TransferResourceHandler(mimeType, data);
                                     }
                                     break;
                                 }
@@ -115,7 +116,7 @@ namespace AutoTest.UI.ResourceHandler
                                 {
                                     if (request.Url.IndexOf(c.MatchUrl, StringComparison.OrdinalIgnoreCase)>-1)
                                     {
-                                        return new TransferRequestHandler(mimeType, data);
+                                        return new TransferResourceHandler(mimeType, data);
                                     }
                                     break;
                                 }
@@ -125,7 +126,7 @@ namespace AutoTest.UI.ResourceHandler
                                     {
                                         if (Regex.IsMatch(request.Url, c.MatchUrl, RegexOptions.IgnoreCase))
                                         {
-                                            return new TransferRequestHandler(mimeType, data);
+                                            return new TransferResourceHandler(mimeType, data);
                                         }
                                     }
                                     catch (Exception ex)

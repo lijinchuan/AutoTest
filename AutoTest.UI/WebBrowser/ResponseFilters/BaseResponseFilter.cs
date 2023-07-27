@@ -1,9 +1,9 @@
-﻿using AutoTest.UI.EventListener;
+﻿using AutoTest.UI.WebBrowser.EventListener;
 using CefSharp;
 using System;
 using System.IO;
 
-namespace AutoTest.UI.ResponseFilters
+namespace AutoTest.UI.WebBrowser.ResponseFilters
 {
     /// <summary>
     /// 响应过滤器基类

@@ -1,4 +1,4 @@
-﻿using AutoTest.UI.EventListener;
+﻿using AutoTest.UI.WebBrowser.EventListener;
 using CefSharp;
 using System;
 using System.Collections.Generic;
@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AutoTest.UI.ResponseFilters
+namespace AutoTest.UI.WebBrowser.ResponseFilters
 {
     /// <summary>
     /// json过滤器

@@ -1,4 +1,6 @@
 ﻿using AutoTest.Domain.Entity;
+using AutoTest.UI.WebBrowser.ResourceHandler;
+using AutoTest.UI.WebBrowser.ResourceRequestHandler;
 using CefSharp;
 using System;
 using System.Collections.Generic;
@@ -7,7 +9,7 @@ using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AutoTest.UI.ResourceHandler
+namespace AutoTest.UI.WebBrowser.RequestHandler
 {
     public class DefaultRequestHandler : IRequestHandler
     {
@@ -27,7 +29,7 @@ namespace AutoTest.UI.ResourceHandler
 
         public IResourceRequestHandler GetResourceRequestHandler(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request, bool isNavigation, bool isDownload, string requestInitiator, ref bool disableDefaultHandling)
         {
-            return new DefaultResourceHandler();
+            return new DefaultResourceRequestHandler();
         }
 
         public bool OnBeforeBrowse(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request, bool userGesture, bool isRedirect)

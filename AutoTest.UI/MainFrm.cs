@@ -15,6 +15,7 @@ using System.Windows.Forms;
 using AutoTest.Domain.Entity;
 using System.Diagnostics;
 using CefSharp;
+using CefSharp.WinForms;
 
 namespace AutoTest.UI
 {
@@ -93,6 +94,14 @@ namespace AutoTest.UI
 
         public MainFrm()
         {
+            if (!Cef.IsInitialized)
+            {
+                var settings = new CefSettings();
+                settings.LogSeverity = LogSeverity.Warning;
+                //settings.CefCommandLineArgs.Add("--js-flags", $"--max_old_space_size=2048");
+                Cef.Initialize(settings);
+            }
+
             InitializeComponent();
             InitFrm();
 

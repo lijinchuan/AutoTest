@@ -1,5 +1,5 @@
 ﻿using AutoTest.Domain.Entity;
-using AutoTest.UI.EventListener;
+using AutoTest.UI.WebBrowser.EventListener;
 using CefSharp;
 using System;
 using System.Collections.Generic;
