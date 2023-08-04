@@ -46,6 +46,7 @@ namespace AutoTest.UI.WebBrowser.ResourceHandler
                 response.MimeType = _mime;
             }
             response.Charset = "UTF-8";
+            response.StatusCode = 200;
             if (!string.IsNullOrWhiteSpace(_localResourceFileName))
             {
                 using (FileStream fileStream = new FileStream(this._localResourceFileName, FileMode.Open, FileAccess.Read))

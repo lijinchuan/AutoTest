@@ -143,6 +143,11 @@ namespace AutoTest.UI.WebBrowser.ResourceRequestHandler
                 }
             }
 
+            if (request.Url.Contains(DownLoadResourceHandler.UrlFlag))
+            {
+                return new DownLoadResourceHandler(request);
+            }
+
             return base.GetResourceHandler(chromiumWebBrowser, browser, frame, request);
         }
 

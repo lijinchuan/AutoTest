@@ -145,6 +145,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="WebBrowser\RequestHandler\DefaultRequestHandler.cs" />
     <Compile Include="WebBrowser\RequestHandler\GrabRequestHandler.cs" />
+    <Compile Include="WebBrowser\ResourceHandler\DownLoadResourceHandler.cs" />
     <Compile Include="WebBrowser\ResourceRequestHandler\DefaultResourceRequestHandler.cs" />
     <Compile Include="WebBrowser\ResourceHandler\TransferResourceHandler.cs" />
     <Compile Include="Resources\MimeResource.cs" />

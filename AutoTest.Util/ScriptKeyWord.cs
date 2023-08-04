@@ -80,6 +80,14 @@ namespace AutoTest.Util
 
             KeyWordDic.Add(new ScriptKeyWord
             {
+                KeyWord = "_ask_back_download_",
+                Desc = "插入到URL中任意位置请求后端拦截下载",
+                HighColor = Color.Pink
+            });
+
+            
+            KeyWordDic.Add(new ScriptKeyWord
+            {
                 KeyWord = "$VewBag",
                 Desc = "页面变量",
                 HighColor=Color.Green
