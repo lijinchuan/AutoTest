@@ -1,4 +1,5 @@
 ﻿using AutoTest.UI.WebBrowser.EventListener;
+using AutoTest.UI.WebBrowser.ResourceHandler;
 using AutoTest.UI.WebBrowser.ResponseFilters;
 using AutoTest.Util;
 using CefSharp;
@@ -15,6 +16,11 @@ namespace AutoTest.UI.WebBrowser.ResourceRequestHandler
     {
         protected override IResourceHandler GetResourceHandler(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request)
         {
+            if (request.Url.Contains(DownLoadResourceHandler.UrlFlag))
+            {
+                return new DownLoadResourceHandler(request);
+            }
+
             return base.GetResourceHandler(chromiumWebBrowser, browser, frame, request);
         }
 
