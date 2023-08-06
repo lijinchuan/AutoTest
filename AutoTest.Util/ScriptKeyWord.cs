@@ -102,10 +102,18 @@ namespace AutoTest.Util
 
             KeyWordDic.Add(new ScriptKeyWord
             {
-                KeyWord = "$VewBag.Bag._maxScriptExeCount",
+                KeyWord = "$VewBag.Bag.maxScriptExeCount",
                 Desc = "页面脚本执行最多次数，默认最多600次，可修改，int类型",
                 HighColor = Color.Green
             });
+            //__runTestCodeTimeOut
+            KeyWordDic.Add(new ScriptKeyWord
+            {
+                KeyWord = "$VewBag.Bag.runTestCodeTimeOut",
+                Desc = "执行脚本最长时间，可修改，int类型,毫秒,大于60000有效",
+                HighColor = Color.Green
+            });
+
             //特别注意，给服务端的变量名不能以__开头，否则收不到，亲测
             KeyWordDic.Add(new ScriptKeyWord
             {

@@ -46,6 +46,8 @@ namespace AutoTest.UI.WebTask
 
         private APITaskRequest _apiTaskRequest;
 
+        private int _RunTestCodeTimeOut = 60 * 1000 * 3;
+
         private object _locker = new object();
 
         /// <summary>
@@ -226,10 +228,15 @@ namespace AutoTest.UI.WebTask
                 bag = userData;
                 try
                 {
-                    var bagMaxTestScriptExeCount = bag._maxScriptExeCount;
+                    var bagMaxTestScriptExeCount = bag.maxScriptExeCount;
                     if (bagMaxTestScriptExeCount != null && bagMaxTestScriptExeCount != _maxScriptExeCount)
                     {
                         _maxScriptExeCount = bagMaxTestScriptExeCount;
+                    }
+                    var runTestCodeTimeOut = bag.runTestCodeTimeOut;
+                    if(runTestCodeTimeOut!=null&& runTestCodeTimeOut != _RunTestCodeTimeOut)
+                    {
+                        _RunTestCodeTimeOut =Math.Max(60000, runTestCodeTimeOut);
                     }
                 }
                 catch
@@ -252,7 +259,8 @@ namespace AutoTest.UI.WebTask
             {
                 userData = new
                 {
-                    __maxScriptExeCount = _maxScriptExeCount,
+                    maxScriptExeCount = _maxScriptExeCount,
+                    runTestCodeTimeOut = _RunTestCodeTimeOut,
                     __apiTaskParams = _apiTaskRequest == null ? null : _apiTaskRequest.Params
                 };
             }
@@ -333,7 +341,8 @@ namespace AutoTest.UI.WebTask
                     try
                     {
                         PrepareTest(browser, frame, bag);
-                        var ret = webBrowserTool.ExecutePromiseScript(browser, frame, Util.ReplaceEvnParams(_testCase.TestCode, _testEnvParams), 60 * 1000 * 3);
+                        
+                        var ret = webBrowserTool.ExecutePromiseScript(browser, frame, Util.ReplaceEvnParams(_testCase.TestCode, _testEnvParams), _RunTestCodeTimeOut);
                         UpdateUserVarData(browser, frame);
                         if (object.Equals(ret, false))
                         {
