@@ -48,6 +48,8 @@ namespace AutoTest.UI.WebTask
 
         private int _RunTestCodeTimeOut = 60 * 1000 * 3;
 
+        private bool _ignoreError = false;
+
         private object _locker = new object();
 
         /// <summary>
@@ -238,6 +240,11 @@ namespace AutoTest.UI.WebTask
                     {
                         _RunTestCodeTimeOut =Math.Max(60000, runTestCodeTimeOut);
                     }
+                    var ignoreError = bag.ignoreError;
+                    if (ignoreError != null)
+                    {
+                        _ignoreError = ignoreError;
+                    }
                 }
                 catch
                 {
@@ -261,6 +268,7 @@ namespace AutoTest.UI.WebTask
                 {
                     maxScriptExeCount = _maxScriptExeCount,
                     runTestCodeTimeOut = _RunTestCodeTimeOut,
+                    ignoreError = _ignoreError,
                     __apiTaskParams = _apiTaskRequest == null ? null : _apiTaskRequest.Params
                 };
             }
@@ -303,7 +311,7 @@ namespace AutoTest.UI.WebTask
 
             if (sbError.Length > 0)
             {
-                throw new Exception($"请求出错：{sbError}");
+                throw new WebCheckException($"请求出错：{sbError}");
             }
 
             bool isWarn(string url)
@@ -336,14 +344,20 @@ namespace AutoTest.UI.WebTask
                     {
                         throw new Exception("任务取消");
                     }
-                    AssertWebHasNoError();
+
                     webBrowserTool.WaitLoading(browser, _cancelFlag, true, true);
                     try
                     {
                         PrepareTest(browser, frame, bag);
-                        
+
                         var ret = webBrowserTool.ExecutePromiseScript(browser, frame, Util.ReplaceEvnParams(_testCase.TestCode, _testEnvParams), _RunTestCodeTimeOut);
                         UpdateUserVarData(browser, frame);
+
+                        if (!_ignoreError)
+                        {
+                            AssertWebHasNoError();
+                        }
+
                         if (object.Equals(ret, false))
                         {
                             if (tryCount++ >= _maxScriptExeCount)
@@ -357,6 +371,10 @@ namespace AutoTest.UI.WebTask
                         {
                             break;
                         }
+                    }
+                    catch (WebCheckException)
+                    {
+                        throw;
                     }
                     catch (JSException)
                     {

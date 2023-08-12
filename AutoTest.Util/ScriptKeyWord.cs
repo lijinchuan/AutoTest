@@ -85,7 +85,14 @@ namespace AutoTest.Util
                 HighColor = Color.Pink
             });
 
-            
+
+            KeyWordDic.Add(new ScriptKeyWord
+            {
+                KeyWord = "ServerDriverClient.callTask",
+                Desc = "调用一个任务 bool ServerDriverClient.callTask(int caseId,bool priority)",
+                HighColor = Color.Red
+            });
+
             KeyWordDic.Add(new ScriptKeyWord
             {
                 KeyWord = "$VewBag",
@@ -115,6 +122,13 @@ namespace AutoTest.Util
             });
 
             //特别注意，给服务端的变量名不能以__开头，否则收不到，亲测
+            KeyWordDic.Add(new ScriptKeyWord
+            {
+                KeyWord = "$VewBag.Bag.ignoreError",
+                Desc = "指示是否忽略页面错误",
+                HighColor = Color.Green
+            });
+
             KeyWordDic.Add(new ScriptKeyWord
             {
                 KeyWord = "$VewBag.Bag.apiTaskResult",

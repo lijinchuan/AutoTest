@@ -60,6 +60,7 @@
     <Compile Include="SimulateServer\ApiTaskTrigger.cs" />
     <Compile Include="SimulateServer\DefaultHander.cs" />
     <Compile Include="SimulateServer\SimulateServerManager.cs" />
+    <Compile Include="TaskBiz.cs" />
     <Compile Include="TestCookieContainerBiz.cs" />
     <Compile Include="TestTaskBagBiz.cs" />
     <Compile Include="TreeNodeEx.cs" />

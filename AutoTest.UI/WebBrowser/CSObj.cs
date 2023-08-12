@@ -445,6 +445,23 @@ namespace AutoTest.UI.WebBrowser
             IOUtils.SendMouseClick(x, y);
         }
 
+        public bool CallTask(int caseId,bool priority)
+        {
+            if (browser is DefaultChromiumWebBrowser)
+            {
+                var task = new Biz.TaskBiz().CreateTask(caseId);
+                if (task != null)
+                {
+                    var runTaskList = new RunTestTask(task.GetTaskName(), false, task.TestSite, task.TestLogin, task.TestPage, task.TestCase, task.TestEnv, task.TestEnvParams, task.GlobalTestScripts, task.SiteTestScripts, task.ResultNotify);
+                    if((browser as DefaultChromiumWebBrowser).AddTask(runTaskList, priority))
+                    {
+                        Task.Factory.StartNew(() => (browser as DefaultChromiumWebBrowser).RunTask());
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
 
         public void Dispose()
         {

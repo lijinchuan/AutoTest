@@ -90,6 +90,7 @@
     <Compile Include="Exceptions\JSException.cs" />
     <Compile Include="Exceptions\JSSyntaxError.cs" />
     <Compile Include="Exceptions\TestException.cs" />
+    <Compile Include="Exceptions\WebCheckException.cs" />
     <Compile Include="INodeContents.cs" />
     <Compile Include="IOrder.cs" />
     <Compile Include="ISearch.cs" />

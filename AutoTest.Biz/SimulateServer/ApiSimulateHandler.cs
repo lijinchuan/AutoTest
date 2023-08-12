@@ -138,9 +138,10 @@ namespace AutoTest.Biz.SimulateServer
                     var req = GetRequest<AddAPITaskRequest>(request);
                     
                     ProcessTraceUtil.Trace($"收到请求:api/AddAPITask,{Newtonsoft.Json.JsonConvert.SerializeObject(req)}");
-                    var testCase = BigEntityTableEngine.LocalEngine.Find<TestCase>(nameof(TestCase), req.CaseId);
 
-                    if (testCase != null)
+                    var newTask = new TaskBiz().CreateTask(req.CaseId);
+                    
+                    if (newTask != null)
                     {
                         var addReq = new APITaskRequest
                         {
@@ -148,32 +149,6 @@ namespace AutoTest.Biz.SimulateServer
                             CDate = DateTime.Now,
                             Params = req.Params,
                             State = 0
-                        };
-
-                        var page = BigEntityTableEngine.LocalEngine.Find<TestPage>(nameof(TestPage), testCase.PageId);
-                        var site = BigEntityTableEngine.LocalEngine.Find<TestSite>(nameof(TestSite), page.SiteId);
-                        var source = BigEntityTableEngine.LocalEngine.Find<TestSource>(nameof(TestSource), site.SourceId);
-                        var scripts = BigEntityTableRemotingEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == source.Id).ToList();
-                        var testLogin = BigEntityTableRemotingEngine.Find<TestLogin>(nameof(TestLogin), nameof(TestLogin.SiteId), new object[] { site.Id }).FirstOrDefault(p => p.Used);
-
-                        var testEnvs = BigEntityTableRemotingEngine.Find<TestEnv>(nameof(TestEnv), nameof(TestEnv.SiteId), new object[] { site.Id });
-                        var currentEnv = testEnvs.FirstOrDefault(p => p.Used);
-                        List<TestEnvParam> testEnvParams = null;
-                        if (currentEnv != null)
-                        {
-                            testEnvParams = BigEntityTableRemotingEngine.Find<TestEnvParam>(nameof(TestEnvParam), "SiteId_EnvId", new object[] { site.Id, currentEnv.Id }).ToList();
-                        }
-                        var newTask = new TestTask
-                        {
-                            TestSource = source,
-                            SiteTestScripts = scripts.Where(p => p.SiteId > 0).ToList(),
-                            GlobalTestScripts = scripts.Where(p => p.SiteId == 0).ToList(),
-                            TestCase = testCase,
-                            TestLogin = testLogin,
-                            TestPage = page,
-                            TestSite = site,
-                            TestEnv = currentEnv,
-                            TestEnvParams = testEnvParams
                         };
 
                         BigEntityTableEngine.LocalEngine.Insert(nameof(APITaskRequest), addReq);

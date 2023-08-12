@@ -263,7 +263,13 @@ namespace AutoTest.UI.WebBrowser
                     _ = webTaskListHash.Add(webTask.GetTaskName());
                     if (priority)
                     {
-                        webTaskList.ToList().Insert(0, webTask);
+                        var newList = webTaskList.ToList();
+                        newList.Insert(0, webTask);
+                        while (webTaskList.TryDequeue(out _)) ;
+                        foreach(var item in newList)
+                        {
+                            webTaskList.Enqueue(item);
+                        }
                     }
                     else
                     {
