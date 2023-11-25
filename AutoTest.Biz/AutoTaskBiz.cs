@@ -12,6 +12,11 @@ namespace AutoTest.Biz
     {
         public List<TestTaskBag> GetNextRunTaskBagList()
         {
+            if (RuntimeConfig.IsRepirMode)
+            {
+                return new List<TestTaskBag>();
+            }
+
             var bagList = BigEntityTableRemotingEngine.Find<TestTaskBag>(nameof(TestTaskBag), p => !string.IsNullOrWhiteSpace(p.Corn)).ToList();
             List<TestTaskBag> list = new List<TestTaskBag>();
             foreach (var bag in bagList)

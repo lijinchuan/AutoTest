@@ -16,6 +16,8 @@ using AutoTest.Domain.Entity;
 using System.Diagnostics;
 using CefSharp;
 using CefSharp.WinForms;
+using CefSharp.DevTools.Overlay;
+using AutoTest.UI.UC;
 
 namespace AutoTest.UI
 {
@@ -145,6 +147,8 @@ namespace AutoTest.UI
 
             wdlg.Hide();
             this.Visible = true;
+
+            TSMRepairMode.Checked = RuntimeConfig.IsRepirMode;
         }
 
         protected override void OnClosing(CancelEventArgs e)
@@ -314,6 +318,17 @@ namespace AutoTest.UI
                 {
                     TabControl.SelectedTab = page;
                     break;
+                }
+            }
+        }
+
+        public IEnumerable<TestPanel> FindTestPanel()
+        {
+            foreach (TabPage page in this.TabControl.TabPages)
+            {
+                if (page is TestPanel tp)
+                {
+                    yield return tp;
                 }
             }
         }
@@ -538,6 +553,18 @@ namespace AutoTest.UI
         {
             var dlg = new WebSearchDlg();
             dlg.Show();
+        }
+
+        private void TSMRepairMode_Click(object sender, EventArgs e)
+        {
+            RuntimeConfig.IsRepirMode = TSMRepairMode.Checked = !TSMRepairMode.Checked;
+            if (RuntimeConfig.IsRepirMode)
+            {
+                foreach(var tp in FindTestPanel())
+                {
+                    tp.CancelTasks();
+                }
+            }
         }
     }
 }

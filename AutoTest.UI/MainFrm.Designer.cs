@@ -52,6 +52,7 @@ namespace AutoTest.UI
             this.swaggerMarkUpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.cron表达式生成ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.xPath在线测试ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.TSMGrabWeb = new System.Windows.Forms.ToolStripMenuItem();
             this.SubItemHelp = new System.Windows.Forms.ToolStripMenuItem();
             this.版本ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.TSMReportError = new System.Windows.Forms.ToolStripMenuItem();
@@ -66,7 +67,7 @@ namespace AutoTest.UI
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.MspPanel = new System.Windows.Forms.ToolStripStatusLabel();
             this.TSL_ClearMsg = new System.Windows.Forms.ToolStripStatusLabel();
-            this.TSMGrabWeb = new System.Windows.Forms.ToolStripMenuItem();
+            this.TSMRepairMode = new System.Windows.Forms.ToolStripMenuItem();
             this.mainMenuBar.SuspendLayout();
             this.panel1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -80,10 +81,10 @@ namespace AutoTest.UI
             this.mainMenuBar.GripStyle = System.Windows.Forms.ToolStripGripStyle.Visible;
             this.mainMenuBar.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.MenItem_File,
-            this.SubItemEdit,
             this.SubItemView,
             this.SubItemTool,
-            this.SubItemHelp});
+            this.SubItemHelp,
+            this.SubItemEdit});
             this.mainMenuBar.Location = new System.Drawing.Point(0, 0);
             this.mainMenuBar.Name = "mainMenuBar";
             this.mainMenuBar.Size = new System.Drawing.Size(830, 25);
@@ -108,23 +109,24 @@ namespace AutoTest.UI
             // 
             this.SubItemEdit.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.代理服务器ToolStripMenuItem,
-            this.服务器设置ToolStripMenuItem});
+            this.服务器设置ToolStripMenuItem,
+            this.TSMRepairMode});
             this.SubItemEdit.Name = "SubItemEdit";
             this.SubItemEdit.Size = new System.Drawing.Size(59, 21);
-            this.SubItemEdit.Text = "编辑(E)";
+            this.SubItemEdit.Text = "设置(S)";
             // 
             // 代理服务器ToolStripMenuItem
             // 
             this.代理服务器ToolStripMenuItem.Name = "代理服务器ToolStripMenuItem";
-            this.代理服务器ToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
+            this.代理服务器ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.代理服务器ToolStripMenuItem.Text = "代理服务器";
-            this.代理服务器ToolStripMenuItem.Visible = false;
+            this.代理服务器ToolStripMenuItem.Visible = true;
             this.代理服务器ToolStripMenuItem.Click += new System.EventHandler(this.代理服务器ToolStripMenuItem_Click);
             // 
             // 服务器设置ToolStripMenuItem
             // 
             this.服务器设置ToolStripMenuItem.Name = "服务器设置ToolStripMenuItem";
-            this.服务器设置ToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
+            this.服务器设置ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.服务器设置ToolStripMenuItem.Text = "服务器设置";
             this.服务器设置ToolStripMenuItem.Click += new System.EventHandler(this.服务器设置ToolStripMenuItem_Click);
             // 
@@ -245,6 +247,13 @@ namespace AutoTest.UI
             this.xPath在线测试ToolStripMenuItem.Text = "XPath在线测试";
             this.xPath在线测试ToolStripMenuItem.Click += new System.EventHandler(this.xPath在线测试ToolStripMenuItem_Click);
             // 
+            // TSMGrabWeb
+            // 
+            this.TSMGrabWeb.Name = "TSMGrabWeb";
+            this.TSMGrabWeb.Size = new System.Drawing.Size(189, 22);
+            this.TSMGrabWeb.Text = "监听web资源";
+            this.TSMGrabWeb.Click += new System.EventHandler(this.TSMGrabWeb_Click);
+            // 
             // SubItemHelp
             // 
             this.SubItemHelp.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
@@ -257,13 +266,13 @@ namespace AutoTest.UI
             // 版本ToolStripMenuItem
             // 
             this.版本ToolStripMenuItem.Name = "版本ToolStripMenuItem";
-            this.版本ToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
+            this.版本ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.版本ToolStripMenuItem.Text = "当前版本V1.1";
             // 
             // TSMReportError
             // 
             this.TSMReportError.Name = "TSMReportError";
-            this.TSMReportError.Size = new System.Drawing.Size(149, 22);
+            this.TSMReportError.Size = new System.Drawing.Size(180, 22);
             this.TSMReportError.Text = "故障报告";
             this.TSMReportError.Click += new System.EventHandler(this.TSMReportError_Click);
             // 
@@ -371,12 +380,12 @@ namespace AutoTest.UI
             this.TSL_ClearMsg.Visible = false;
             this.TSL_ClearMsg.Click += new System.EventHandler(this.TSL_ClearMsg_Click);
             // 
-            // TSMGrabWeb
+            // TSMRepairMode
             // 
-            this.TSMGrabWeb.Name = "TSMGrabWeb";
-            this.TSMGrabWeb.Size = new System.Drawing.Size(189, 22);
-            this.TSMGrabWeb.Text = "监听web资源";
-            this.TSMGrabWeb.Click += new System.EventHandler(this.TSMGrabWeb_Click);
+            this.TSMRepairMode.Name = "TSMRepairMode";
+            this.TSMRepairMode.Size = new System.Drawing.Size(180, 22);
+            this.TSMRepairMode.Text = "维护模式";
+            this.TSMRepairMode.Click += new System.EventHandler(this.TSMRepairMode_Click);
             // 
             // MainFrm
             // 
@@ -443,6 +452,7 @@ namespace AutoTest.UI
         private System.Windows.Forms.ToolStripMenuItem cron表达式生成ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem xPath在线测试ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem TSMGrabWeb;
+        private System.Windows.Forms.ToolStripMenuItem TSMRepairMode;
     }
 }
 

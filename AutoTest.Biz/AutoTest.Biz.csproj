@@ -9,9 +9,10 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>AutoTest.Biz</RootNamespace>
     <AssemblyName>AutoTest.Biz</AssemblyName>
-    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.8</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -56,6 +57,7 @@
     <Compile Include="CronHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RecoverManager.cs" />
+    <Compile Include="RuntimeConfig.cs" />
     <Compile Include="SimulateServer\ApiSimulateHandler.cs" />
     <Compile Include="SimulateServer\ApiTaskTrigger.cs" />
     <Compile Include="SimulateServer\DefaultHander.cs" />
