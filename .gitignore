@@ -2,3 +2,5 @@
 bin/
 obj/
 /.vs/AutoTest/v16/.suo
+/.vs/AutoTest
+/Visual Studio 2019/Visualizers
