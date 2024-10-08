@@ -437,8 +437,24 @@ namespace AutoTest.UI.UC
                     var testPanel = (TestPanel)Util.TryAddToMainTab(this, $"执行单个测试", () =>
                     {
                         var panel = new TestPanel("执行单个测试");
-                        panel.Load();
 
+                        panel.OnTaskStart += t =>
+                        {
+                            var rt = t as RunTestTask;
+                            if (rt != null && rt.TestLogin != null && (currentTestLogin == null || currentTestLogin.Id != rt.TestLogin.Id))
+                            {
+                                currentTestLogin = rt.TestLogin;
+                                panel.ClearCookie(rt.TestLogin.Url);
+
+                                var cookies = TestCookieContainerBiz.GetCookies(rt.TestLogin.SiteId, rt.TestEnv?.Id, rt.TestLogin.Id);
+                                if (cookies?.Count > 0)
+                                {
+                                    panel.SetCookie(rt.GetStartPageUrl(), cookies);
+                                }
+                            }
+                        };
+
+                        panel.Load();
                         return panel;
                     }, null);
 
@@ -453,21 +469,6 @@ namespace AutoTest.UI.UC
                         Util.SendMsg(this, "任务未开始，有测试在执行");
                         return;
                     }
-                    testPanel.OnTaskStart += t =>
-                    {
-                        var rt = t as RunTestTask;
-                        if (rt != null && rt.TestLogin != null && (currentTestLogin == null || currentTestLogin.Id != rt.TestLogin.Id))
-                        {
-                            currentTestLogin = rt.TestLogin;
-                            testPanel.ClearCookie(rt.TestLogin.Url);
-
-                            var cookies = TestCookieContainerBiz.GetCookies(rt.TestLogin.SiteId, rt.TestEnv?.Id, rt.TestLogin.Id);
-                            if (cookies?.Count > 0)
-                            {
-                                testPanel.SetCookie(rt.GetStartPageUrl(), cookies);
-                            }
-                        }
-                    };
 
 
                     TaskHelper.SetInterval(1000, () =>
@@ -1482,6 +1483,23 @@ namespace AutoTest.UI.UC
                       var testPanel = (TestPanel)Util.TryAddToMainTab(this, $"({testSites.First().Name})执行定时测试", () =>
                       {
                           var panel = new TestPanel("执行定时测试");
+
+                          panel.OnTaskStart += t =>
+                          {
+                              var rt = t as RunTestTask;
+                              if (rt != null && rt.TestLogin != null && (currentTestLogin == null || currentTestLogin.Id != rt.TestLogin.Id))
+                              {
+                                  currentTestLogin = rt.TestLogin;
+                                  panel.ClearCookie(rt.TestLogin.Url);
+
+                                  var cookies = TestCookieContainerBiz.GetCookies(rt.TestLogin.SiteId, rt.TestEnv?.Id, rt.TestLogin.Id);
+                                  if (cookies?.Count > 0)
+                                  {
+                                      panel.SetCookie(rt.GetStartPageUrl(), cookies);
+                                  }
+                              }
+                          };
+
                           panel.Load();
 
                           return panel;
@@ -1498,21 +1516,6 @@ namespace AutoTest.UI.UC
                       //    Util.SendMsg(this, "任务未开始，有测试在执行");
                       //    return false;
                       //}
-                      testPanel.OnTaskStart += t =>
-                      {
-                          var rt = t as RunTestTask;
-                          if (rt != null && rt.TestLogin != null && (currentTestLogin == null || currentTestLogin.Id != rt.TestLogin.Id))
-                          {
-                              currentTestLogin = rt.TestLogin;
-                              testPanel.ClearCookie(rt.TestLogin.Url);
-
-                              var cookies = TestCookieContainerBiz.GetCookies(rt.TestLogin.SiteId, rt.TestEnv?.Id, rt.TestLogin.Id);
-                              if (cookies?.Count > 0)
-                              {
-                                  testPanel.SetCookie(rt.GetStartPageUrl(), cookies);
-                              }
-                          }
-                      };
 
                       var runTaskList = testTaskList.Select(task => new RunTestTask(task.GetTaskName(), false, task.TestSite, task.TestLogin, task.TestPage, task.TestCase, task.TestEnv, task.TestEnvParams, task.GlobalTestScripts, task.SiteTestScripts, task.ResultNotify));
                       BeginInvoke(new Action(() => testPanel.RunTest(runTaskList)));

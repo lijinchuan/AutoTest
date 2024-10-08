@@ -150,7 +150,6 @@ namespace AutoTest.UI.UC
         {
             if (!webView.IsRunningJob())
             {
-                this.OnTaskStart = null;
                 return true;
             }
 

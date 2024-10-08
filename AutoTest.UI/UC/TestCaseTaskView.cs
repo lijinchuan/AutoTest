@@ -65,6 +65,24 @@ namespace AutoTest.UI.UC
                 testPanel = (TestPanel)Util.TryAddToMainTab(this, $"执行测试", () =>
                 {
                     var panel = new TestPanel("执行测试");
+
+                    panel.OnTaskStart += t =>
+                    {
+                        var rt = t as RunTestTask;
+                        if (rt != null && rt.TestLogin != null && (currentTestLogin == null || currentTestLogin.Id != rt.TestLogin.Id))
+                        {
+                            currentTestLogin = rt.TestLogin;
+                            panel.ClearCookie(rt.GetStartPageUrl());
+
+                            var cookies = Biz.TestCookieContainerBiz.GetCookies(rt.TestLogin.SiteId, rt.TestEnv?.Id, rt.TestLogin.Id);
+                            if (cookies?.Count > 0)
+                            {
+                                panel.SetCookie(rt.GetStartPageUrl(), cookies);
+                            }
+                        }
+                        OnTaskStart?.Invoke(t);
+                    };
+
                     panel.Load();
 
                     return panel;
@@ -81,22 +99,6 @@ namespace AutoTest.UI.UC
                     Util.SendMsg(this, "任务未开始，有测试在执行");
                     return;
                 }
-                testPanel.OnTaskStart += t =>
-                {
-                    var rt = t as RunTestTask;
-                    if (rt != null && rt.TestLogin != null && (currentTestLogin == null || currentTestLogin.Id != rt.TestLogin.Id))
-                    {
-                        currentTestLogin = rt.TestLogin;
-                        testPanel.ClearCookie(rt.GetStartPageUrl());
-
-                        var cookies = Biz.TestCookieContainerBiz.GetCookies(rt.TestLogin.SiteId, rt.TestEnv?.Id, rt.TestLogin.Id);
-                        if (cookies?.Count > 0)
-                        {
-                            testPanel.SetCookie(rt.GetStartPageUrl(), cookies);
-                        }
-                    }
-                    OnTaskStart?.Invoke(t);
-                };
 
                 if (_testTaskBag != null)
                 {
