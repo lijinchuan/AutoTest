@@ -1472,6 +1472,7 @@ namespace AutoTest.UI.UC
                                   TestPage = tempTestPages.First(x => x.Id == tc.PageId),
                                   TestSite = testSite,
                                   TestEnv = env == null ? null : (TestEnv)env,
+                                  Bag = testTaskBag,
                                   TestEnvParams = envParams == null ? null : (List<TestEnvParam>)envParams
                               });
                           }
@@ -1479,46 +1480,37 @@ namespace AutoTest.UI.UC
                           testTaskList = TestTaskBagBiz.Order(testTaskList, testTaskBag);
                       }
 
-                      //
-                      var testPanel = (TestPanel)Util.TryAddToMainTab(this, $"({testSites.First().Name})执行定时测试", () =>
+                      foreach(var kv in testTaskList.GroupBy(x => x.Bag))
                       {
-                          var panel = new TestPanel("执行定时测试");
-
-                          panel.OnTaskStart += t =>
+                          //
+                          var testPanel = (TestPanel)Util.TryAddToMainTab(this, $"({testSites.First().Name}.{kv.Key.BagName})执行定时测试", () =>
                           {
-                              var rt = t as RunTestTask;
-                              if (rt != null && rt.TestLogin != null && (currentTestLogin == null || currentTestLogin.Id != rt.TestLogin.Id))
+                              var panel = new TestPanel($"[{kv.Key.BagName}]执行定时测试");
+
+                              panel.OnTaskStart += t =>
                               {
-                                  currentTestLogin = rt.TestLogin;
-                                  panel.ClearCookie(rt.TestLogin.Url);
-
-                                  var cookies = TestCookieContainerBiz.GetCookies(rt.TestLogin.SiteId, rt.TestEnv?.Id, rt.TestLogin.Id);
-                                  if (cookies?.Count > 0)
+                                  var rt = t as RunTestTask;
+                                  if (rt != null && rt.TestLogin != null && (currentTestLogin == null || currentTestLogin.Id != rt.TestLogin.Id))
                                   {
-                                      panel.SetCookie(rt.GetStartPageUrl(), cookies);
+                                      currentTestLogin = rt.TestLogin;
+                                      panel.ClearCookie(rt.TestLogin.Url);
+
+                                      var cookies = TestCookieContainerBiz.GetCookies(rt.TestLogin.SiteId, rt.TestEnv?.Id, rt.TestLogin.Id);
+                                      if (cookies?.Count > 0)
+                                      {
+                                          panel.SetCookie(rt.GetStartPageUrl(), cookies);
+                                      }
                                   }
-                              }
-                          };
+                              };
 
-                          panel.Load();
+                              panel.Load();
 
-                          return panel;
-                      }, null);
+                              return panel;
+                          }, null);
 
-                      //if (testPanel.IsRunning())
-                      //{
-                      //    Util.SendMsg(this, "正在执行测试，请稍后再试");
-                      //    return false;
-                      //}
-
-                      //if (!testPanel.Reset())
-                      //{
-                      //    Util.SendMsg(this, "任务未开始，有测试在执行");
-                      //    return false;
-                      //}
-
-                      var runTaskList = testTaskList.Select(task => new RunTestTask(task.GetTaskName(), false, task.TestSite, task.TestLogin, task.TestPage, task.TestCase, task.TestEnv, task.TestEnvParams, task.GlobalTestScripts, task.SiteTestScripts, task.ResultNotify));
-                      BeginInvoke(new Action(() => testPanel.RunTest(runTaskList)));
+                          var runTaskList = kv.Select(task => new RunTestTask(task.GetTaskName(), false, task.TestSite, task.TestLogin, task.TestPage, task.TestCase, task.TestEnv, task.TestEnvParams, task.GlobalTestScripts, task.SiteTestScripts, task.ResultNotify));
+                          BeginInvoke(new Action(() => testPanel.RunTest(runTaskList)));
+                      }               
 
                       TestLogin GetTestLogin(TestCase testCase, TestSite testSite)
                       {

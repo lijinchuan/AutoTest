@@ -78,6 +78,12 @@ namespace AutoTest.Domain.Entity
             }
         }
 
+        public TestTaskBag Bag
+        {
+            get;
+            set;
+        }
+
         public bool Check
         {
             get;
