@@ -188,7 +188,8 @@ namespace AutoTest.UI.UC
 
         private void Parent_Resize(object sender, EventArgs e)
         {
-            MaxTabWidth = Math.Max(100, Parent.Width / 5);
+            //MaxTabWidth = Math.Max(100, Parent.Width / 5);
+            MaxTabWidth = Math.Max(20, Parent.Width / Math.Max(5, this.tabExDic.Count));
             ResetTabs();
             this.Invalidate();
         }
