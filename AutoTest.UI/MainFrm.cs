@@ -96,7 +96,7 @@ namespace AutoTest.UI
 
         public MainFrm()
         {
-            if (!Cef.IsInitialized)
+            if (Cef.IsInitialized != true)
             {
                 var settings = new CefSettings();
                 settings.LogSeverity = LogSeverity.Warning;

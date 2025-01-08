@@ -24,8 +24,7 @@ namespace AutoTest.UI.WebBrowser
             var setting = new RequestContextSettings()
             {
                 CachePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CefSharp\\Cache_" + name),
-                PersistSessionCookies = true,
-                PersistUserPreferences = true,
+                PersistSessionCookies = true
             };
             var context = new RequestContext(setting);
             RequestContext = context;

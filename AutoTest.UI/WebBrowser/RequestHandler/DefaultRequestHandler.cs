@@ -67,6 +67,11 @@ namespace AutoTest.UI.WebBrowser.RequestHandler
             // Method intentionally left empty.
         }
 
+        public void OnRenderProcessTerminated(IWebBrowser chromiumWebBrowser, IBrowser browser, CefTerminationStatus status, int errorCode, string errorMessage)
+        {
+            //throw new NotImplementedException();
+        }
+
         public void OnRenderViewReady(IWebBrowser chromiumWebBrowser, IBrowser browser)
         {
             // Method intentionally left empty.

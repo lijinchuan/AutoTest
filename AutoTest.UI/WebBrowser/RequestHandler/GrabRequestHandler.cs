@@ -63,6 +63,11 @@ namespace AutoTest.UI.WebBrowser.RequestHandler
         {
         }
 
+        public void OnRenderProcessTerminated(IWebBrowser chromiumWebBrowser, IBrowser browser, CefTerminationStatus status, int errorCode, string errorMessage)
+        {
+            //throw new NotImplementedException();
+        }
+
         public void OnRenderViewReady(IWebBrowser chromiumWebBrowser, IBrowser browser)
         {
         }
