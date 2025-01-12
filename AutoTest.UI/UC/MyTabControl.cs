@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LJC.FrameWorkV3.LogManager;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -189,7 +190,7 @@ namespace AutoTest.UI.UC
         private void Parent_Resize(object sender, EventArgs e)
         {
             //MaxTabWidth = Math.Max(100, Parent.Width / 5);
-            MaxTabWidth = Math.Max(20, Parent.Width / Math.Max(5, this.tabExDic.Count));
+            MaxTabWidth = Math.Max(5, Parent.Width / Math.Max(5, this.tabExDic.Count));
             ResetTabs();
             this.Invalidate();
         }
@@ -639,6 +640,7 @@ namespace AutoTest.UI.UC
                         {
                             currwidth += (int)item.Value.StripRect.Width;
                             isfull = true;
+                            LogHelper.Instance.Debug($"tab已满，{item.Value.Text}");
                         }
                     }
                     else
