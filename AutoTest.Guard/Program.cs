@@ -51,7 +51,7 @@ namespace AutoTest.Guard
         /// <summary>
         /// 最大运行分钟数，超过时间后会启动重置程序
         /// </summary>
-        private const int MaxRunMins = 720;
+        private const int MaxRunMins = 72000000;
 
         /// <summary>
         /// 重启检查小时时间
@@ -160,7 +160,8 @@ namespace AutoTest.Guard
                     StringBuilder text = new StringBuilder(cTxtLen);
                     _ = GetWindowText(hWnd, text, cTxtLen);
                     cTitle = text.ToString();
-                    if (cTitle.IndexOf("关闭程序", StringComparison.OrdinalIgnoreCase) > -1)
+                    if (cTitle.IndexOf("关闭程序", StringComparison.OrdinalIgnoreCase) > -1
+                    || cTitle.IndexOf("确定", StringComparison.OrdinalIgnoreCase) > -1)
                     {
                         targetHWnd = hWnd;
                         return false;
@@ -233,6 +234,22 @@ namespace AutoTest.Guard
                     {
                         PrintWarn("主进程崩溃，关闭......");
                     }
+                    else if (CheckProcessStop("CefSharp.BrowserSubprocess.exe - 应用程序错误", IntPtr.Zero))
+                    {
+                        PrintWarn("CefSharp.BrowserSubprocess 应用程序错误，关闭......");
+
+                        for (var i=0;i<10;i++)
+                        {
+                            if(CheckProcessStop("CefSharp.BrowserSubprocess.exe - 应用程序错误", IntPtr.Zero))
+                            {
+                                PrintWarn("CefSharp.BrowserSubprocess 应用程序错误，关闭......");
+                            }
+                            else
+                            {
+                                break;
+                            }
+                        }
+                    }
                     else
                     {
 
@@ -244,16 +261,16 @@ namespace AutoTest.Guard
                             {
                                 if (p.Responding)
                                 {
-                                    ////凌晨重置下爬虫程序,生产上发现浏览器组件有问题，运行几天后内部进程就会崩溃无法恢复
-                                    //if (DateTime.Now.Subtract(LastCloseDate).TotalMinutes > MaxRunMins && DateTime.Now.Hour >= CheckResetHour && DateTime.Now.Hour < CheckResetHour + 1)
-                                    //{
-                                    //    LastCloseDate = DateTime.Now;
-                                    //    PrintWarn($"运行超过{MaxRunMins}分钟后到点关闭重启......");
-                                    //}
-                                    //else
-                                    //{
-                                    //    processList.Add(p);
-                                    //}
+                                    //凌晨重置下爬虫程序,生产上发现浏览器组件有问题，运行几天后内部进程就会崩溃无法恢复
+                                    if (DateTime.Now.Subtract(LastCloseDate).TotalMinutes > MaxRunMins && DateTime.Now.Hour >= CheckResetHour && DateTime.Now.Hour < CheckResetHour + 1)
+                                    {
+                                        LastCloseDate = DateTime.Now;
+                                        PrintWarn($"运行超过{MaxRunMins}分钟后到点关闭重启......");
+                                    }
+                                    else
+                                    {
+                                        processList.Add(p);
+                                    }
                                 }
                                 else
                                 {
