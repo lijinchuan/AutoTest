@@ -187,7 +187,7 @@ namespace AutoTest.UI
 
         private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            LJC.FrameWorkV3.LogManager.LogHelper.Instance.Error("UnhandledException", new ApplicationException("程序中止"));
+            LJC.FrameWorkV3.LogManager.LogHelper.Instance.Error("UnhandledException", new ApplicationException("程序中止:" + e.ExceptionObject.ToString()));
 
             Environment.Exit(-1);
         }
