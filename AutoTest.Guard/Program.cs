@@ -1,6 +1,9 @@
-﻿using System;
+﻿using Microsoft.Win32;
+using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Management;
 using System.Runtime.InteropServices;
@@ -194,6 +197,46 @@ namespace AutoTest.Guard
             p.Kill();
         }
 
+        static void AutoRunOnBoot()
+        {
+            if (ConfigurationManager.AppSettings["IsBoot"].ToString().Trim().ToUpper() == "TRUE")
+            {
+                try
+                {
+                    //设置开机启动
+                    string path = Process.GetCurrentProcess().MainModule.FileName;
+                    RegistryKey rk = Registry.LocalMachine;
+                    RegistryKey rk2 = rk.CreateSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run");
+                    rk2.SetValue("AutoTest.Guard", path);
+                    rk2.Close();
+                    rk.Close();
+                    Console.WriteLine("注册自启动成功......");
+                }
+                catch
+                {
+                    Console.WriteLine("注册自启动失败，请使用管理员身份启动......");
+                }
+
+            }
+            else
+            {
+                try
+                {
+                    string path = Process.GetCurrentProcess().MainModule.FileName;
+                    RegistryKey rk = Registry.LocalMachine;
+                    RegistryKey rk2 = rk.CreateSubKey(@"Software\Microsoft\Windows\CurrentVersion\Run");
+                    rk2.DeleteValue("AutoTest.Guard", false);
+                    rk2.Close();
+                    rk.Close();
+                    Console.WriteLine("取消自启动成功......");
+                }
+                catch
+                {
+                    Console.WriteLine("取消自启动失败，请使用管理员身份启动......");
+                }
+            }
+        }
+
         static void Main(string[] args)
         {
             if (!CheckNoOtherProcess())
@@ -203,6 +246,10 @@ namespace AutoTest.Guard
                 Thread.Sleep(3000);
                 return;
             }
+
+            AutoRunOnBoot();
+
+            PrintInfo($"当前运行目录：{AppDomain.CurrentDomain.BaseDirectory}");
 
             PrintInfo("守护进程启动......");
             PrintWarn("开始守护，请不要手动关闭......");
@@ -243,6 +290,8 @@ namespace AutoTest.Guard
                             if(CheckProcessStop("CefSharp.BrowserSubprocess.exe - 应用程序错误", IntPtr.Zero))
                             {
                                 PrintWarn("CefSharp.BrowserSubprocess 应用程序错误，关闭......");
+
+                                Thread.Sleep(1000);
                             }
                             else
                             {
@@ -284,7 +333,7 @@ namespace AutoTest.Guard
                         {
                             PrintWarn("检查到要守护的进程未启动，启动进程.....");
                             //启动进程，并标识是由守护进程启动的
-                            _ = Process.Start($"{processName}.exe", "guarde");
+                            _ = Process.Start($"{Path.Combine(AppDomain.CurrentDomain.BaseDirectory, processName)}.exe", "guarde");
                         }
                         else if (processList.Count > 1)
                         {
