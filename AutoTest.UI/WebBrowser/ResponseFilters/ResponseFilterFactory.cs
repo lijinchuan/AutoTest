@@ -28,6 +28,10 @@ namespace AutoTest.UI.WebBrowser.ResponseFilters
             {
                 filter = new JsonResponseFilter();
             }
+            else if (mimetype.Equals("application/javascript", StringComparison.OrdinalIgnoreCase))
+            {
+                filter = new JsonResponseFilter();
+            }
             else if (mimetype.Equals("text/html", StringComparison.OrdinalIgnoreCase)
                 || mimetype.Equals("text/plain", StringComparison.OrdinalIgnoreCase))
             {

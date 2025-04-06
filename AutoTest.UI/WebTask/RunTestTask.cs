@@ -210,6 +210,7 @@ namespace AutoTest.UI.WebTask
         /// <returns></returns>
         private dynamic GetUserVarData(IBrowser browser, IFrame frame)
         {
+            //这里老是出错
             var code = $"if(typeof {WebVar.VarName}!='undefined'&&{WebVar.VarName}.{nameof(WebVar.Bag)}) return {WebVar.VarName}.{nameof(WebVar.Bag)}";
 
             return webBrowserTool.ExecutePromiseScript(browser, frame, code) as dynamic;
@@ -337,6 +338,7 @@ namespace AutoTest.UI.WebTask
             if (!string.IsNullOrWhiteSpace(_testCase.TestCode))
             {
                 var tryCount = 0;
+                var start = DateTime.Now;
 
                 while (true)
                 {
@@ -382,18 +384,18 @@ namespace AutoTest.UI.WebTask
                     }
                     catch (Exception ex)
                     {
-                        UpdateUserVarData(browser, frame);
                         if (ex.Message != lastErr)
                         {
                             lastErr = ex.Message;
-                            PublishMsg(ex.Message);
+                            PublishMsg($"运行时间:{DateTime.Now.Subtract(start).TotalSeconds}秒，出错：" + ex.Message);
                         }
 
                         if (tryCount++ > 3)
                         {
-                            PublishMsg("错误" + ex.Message + "，且重试次数超过3次");
+                            PublishMsg($"运行时间:{DateTime.Now.Subtract(start).TotalSeconds}秒，出错：" + ex.Message + "，且重试次数超过3次");
                             return await Task.FromResult(0);
                         }
+                        UpdateUserVarData(browser, frame);
                         Thread.Sleep(sleepMills);
                     }
                 }
