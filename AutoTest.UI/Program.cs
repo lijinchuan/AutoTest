@@ -156,6 +156,8 @@ namespace AutoTest.UI
 
             BigEntityTableEngine.LocalEngine.CreateTable<APITaskResult>(p => p.Id, a => a.AddIndex(nameof(APITaskResult.TaskId), b => b.Asc(m => m.TaskId)));
 
+            BigEntityTableEngine.LocalEngine.OpenRemotingService();
+
             AutofacBuilder.init();
 
             var simulateServerPort = System.Configuration.ConfigurationManager.AppSettings["SimulateServerPort"];
