@@ -300,6 +300,13 @@ namespace AutoTest.Util
 
             KeyWordDic.Add(new ScriptKeyWord
             {
+                KeyWord = "ServerDriverClient.getWeb",
+                Desc = "ServerDriverClient.getWeb(string url,string applicationType)",
+                HighColor = Color.Red
+            });
+
+            KeyWordDic.Add(new ScriptKeyWord
+            {
                 KeyWord= "ServerDriverClient.getWebRequestData",
                 Desc= "获取请求数据，需要再转换为JSON:ServerDriverClient.getWebRequestData(string url)",
                 HighColor=Color.Red

@@ -1,0 +1,1624 @@
+<!DOCTYPE html>
+<!-- saved from url=(0022)https://cron.qqe2.com/ -->
+<html lang="zh-cn"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <title>在线Cron表达式生成器</title>
+    <meta http-equiv="x-dns-prefetch-control" content="on">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="renderer" content="webkit">
+    <link rel="shortcut icon" href="https://qqe2.com/favicon.ico">
+    <!--[if gte IE 9]><!-->
+    <script src="./Cron_files/hm.js"></script><script src="./Cron_files/push.js"></script>
+	<script src="./Cron_files/jquery.min.js"></script>
+    <!--<![endif]-->
+    <!--[if lt IE 9]>
+    <!--<script src="//cdn.bootcss.com/jquery/1.9.1/jquery.min.js"></script>-->
+    <script src="./Cron_files/html5.min.js"></script>
+    <script src="./Cron_files/respond.min.js"></script>
+    <script src="./Cron_files/es5-sham.min.js"></script>
+    <script src="./Cron_files/es5-shim.min.js"></script>
+    <!--[endif]----> 
+    <script src="./Cron_files/jquery.cookie.min.js"></script>
+    <meta name="keywords" content="cron creater,generate Cron Expression,Cron Expression online,Quartz Cron Expresssion,cron在线生成工具">
+	<meta name="description" content="通过这个生成器,您可以在线生成任务调度比如Quartz的Cron表达式,对Quartz Cron 表达式的可视化双向解析和生成.">
+	<meta name="csrf-param" content="_csrf">
+	<meta name="csrf-token" content="AQFCvse8c84ehcXyaZXlLXB5SLU6JjCUYqqR409PC594Rg3RjsgR_Gvvjcc8469-HRp5wmhfSMNP-9CiDBtorA==">
+	<link href="./Cron_files/easyui.css" rel="stylesheet">
+	<link href="./Cron_files/bootstrap.min.css" rel="stylesheet">
+	<link href="./Cron_files/site.css" rel="stylesheet">
+	<link href="./Cron_files/normalize.min.css" rel="stylesheet">
+	<script>
+var _hmt = _hmt || [];
+(function() {
+  var hm = document.createElement("script");
+  hm.src = "https://hm.baidu.com/hm.js?f1f7e7f9e77aacb07fea31a733631389";
+  var s = document.getElementsByTagName("script")[0]; 
+  s.parentNode.insertBefore(hm, s);
+})();
+</script>
+    <style>
+
+		h1{
+		font-size:18px;font-weight: bold;
+		}
+			h2{
+		font-size:14px;
+		}
+        #content {
+            padding-right: 40px;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+
+        p.accent {
+            color: #dbed8a;
+        }
+
+        p.caption {
+            color: #ccc;
+            font-size: 16px;
+        }
+
+        .button {
+            margin: 20px auto;
+            display: inline-block;
+            padding: 16px 40px;
+            background: #70b3eb;
+            text-decoration: none;
+            font-size: 30px;
+            color: #ffffff;
+            text-shadow: 0px -1px 1px rgba(26, 62, 103, 0.42);
+            box-shadow: inset 0 0 0 1px #70b3eb, inset 0 1px 0 1px rgba(255, 255, 255, 0.5);
+            border-radius: 5px;
+            -webkit-transition: 0.2s ease -webkit-transform;
+            -moz-transition: 0.2s ease -moz-transform;
+            transition: 0.2s ease transform;
+            border-bottom: 1px rgba(255, 255, 255, 0.8) solid;
+        }
+
+        .button:hover {
+            -webkit-transform: translateY(-3px);
+            -moz-transform: translateY(-3px);
+            transform: translateY(-3px);
+        }
+
+        .field {
+            position: relative;
+        }
+
+        .field input {
+                position: absolute;
+    width: 100%;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    color: #000000;
+    height: 36px;
+    font-size: 14px;
+    padding: 0 12px;
+    border: 1px solid #ddd;
+        }
+
+        .field input:focus {
+            outline: 0;
+        }
+
+        .iconSearch {
+          position: absolute;
+    right: 10px;
+    top: -30px;
+    height: 36px;
+        }
+
+        .iconSearch > i {
+            font-size: 24px;
+            color: #ddd;
+        }
+
+        /**
+         * Autocompleter styles
+         */
+
+        .autocompleter {
+            width: 100%;
+            background: #f8f8f8;
+            position: absolute;
+            top: 60px;
+            left: 0;
+            z-index: 999999;
+        }
+
+        .autocompleter,
+        .autocompleter-hint {
+            position: absolute;
+        }
+
+        .autocompleter-list {
+            box-shadow: inset 0px 0px 6px rgba(0, 0, 0, 0.1);
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            text-align: left;
+            -webkit-box-sizing: border-box;
+            box-sizing: border-box;
+            line-height: 30px;
+        }
+
+        .autocompleter-item-selected {
+            background: #f8f8f8;
+        }
+
+        .autocompleter-item {
+            padding: 6px 12px;
+            color: #444444;
+            font-size: 18px;
+            cursor: pointer;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .autocompleter-item:hover {
+            background: #0b72b8;
+        }
+
+        .autocompleter-item strong {
+            background: #f9de8f;
+            text-shadow: 0 1px 0 #ffffff;
+        }
+
+        .autocompleter-item span {
+            color: #bbbbbb;
+        }
+
+        .autocompleter-hint {
+            color: #ccc;
+            text-align: left;
+            top: -76px;
+            font-weight: 400;
+            left: 0;
+            width: 100%;
+            padding: 12px 12px 12px 13px;
+            font-size: 24px;
+            display: none;
+        }
+
+        .autocompleter-hint span {
+            color: transparent;
+        }
+
+        .autocompleter-hint-show {
+            display: block;
+        }
+
+        .autocompleter-closed {
+            display: none;
+        }
+		
+.xf2-gg-left, .xf-gg-right {
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    height: 200px;
+    width: 120px;
+    border-radius: 5px;
+    overflow: hidden;
+    margin-top: -100px;
+    margin-left: -714px;
+    z-index: 99;
+}
+.xf2-gg-left .alert-dismissable, .xf-gg-right .alert-dismissable {
+    padding: 15px;
+    text-align: center;
+}
+.alert {
+    padding: 15px;
+    margin-bottom: 20px;
+    color: #282828;
+    background-color: #f1f1f1;
+    border-radius: 3px;
+    -webkit-transition: all .4s cubic-bezier(.175,.885,.32,1);
+    -o-transition: all .4s cubic-bezier(.175,.885,.32,1);
+    transition: all .4s cubic-bezier(.175,.885,.32,1);
+}
+.xf2-gg-left .close, .xf-gg-right .close {
+    position: absolute;
+    top: 5px;
+    right: 7px;
+    color: #333;
+}
+.xf2-gg-left a, .xf-gg-rightQ a {
+    display: block;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+}
+.xf2-gg-left h1 {
+    color: #940000;
+    margin-top: 0;
+}
+    </style>
+</head>
+<body>
+<header class="header-area"><!--header-top-->
+    <div class="header-tool pc-show ">
+        <div class="container">
+            <div class="row">-
+                <div class="col-xs-x">
+                    <a href="https://www.qqe2.com/" title="JSON工具网"><img src="./Cron_files/logo.png"></a>
+                </div>
+                <div class="clo-xs-m"></div>
+                <div class="col-xs-r">
+                    <div class="field">
+                        <div class="iconSearch">
+                            <i class="iconfont"></i>
+                        </div>
+                        <input type="text" name="nope" id="nope" placeholder="请
+                        拉搜索" maxlength="40" class="autocompleter-node" autocomplete="off"><div class="autocompleter " id="autocompleter-1"><ul class="autocompleter-list"></ul></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--Menu Nav-->
+    <nav class="nav-menu pc-show col-12">
+        <div class="container">
+			
+		
+            <div class="col-md-12">
+                <ul class="menu">
+    
+                <li class="dropdown"><a id="nav_2" data-toggle="dropdown" aria-expanded="false" href="javascript:void(0);">JSON工具</a>
+                    <ul class="dropdown-menu width-min500 " aria-labelledby="nav_2">
+                                                    <li>
+                                <blockquote>
+                                    <p>JSON编辑器/JSON视图/JSON解析</p>
+                                </blockquote>
+                            </li>
+                            <li>
+                                <ul class="navsub clearfix">
+                                                                            <li>
+                                            <a href="https://qqe2.com/">JSON在线编辑器</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/json/analysis">JSON解析</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/jsonlint/index">JSON校验</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/jsontool/jsoncolor">JSON着色</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/jsontool/jsondiff">JSON对比</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/jsonview/index">JSON视图</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/json/editview">JSON视图查看器</a>
+                                        </li>
+                                                                        </ul>
+                            </li>
+                                                    <li>
+                                <blockquote>
+                                    <p>JSON转换/JSON压缩/JSON格式化</p>
+                                </blockquote>
+                            </li>
+                            <li>
+                                <ul class="navsub clearfix">
+                                                                            <li>
+                                            <a href="https://qqe2.com/json/zip">JSON压缩/转义</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/json/json2entity">JSON转实体类</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/json/jsongenerator">JSON生成器</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/json/json2protobuf">JSON转Protobuf</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/json/json2java">JSON转JAVA实体</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/json/json2csharp">JSON转C#实体</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/json/json2php">JSON转PHP</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/json/json2phparray">JSON转PHP数组</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/json/json2js">JSON转JS</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/json/json2go">JSON转Go</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/json/jsonxml">JSON|XML互转</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/json/jsonyaml">JSON|YAML互转</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/json/jsonexcel">Excel转JSON</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/json/json2csv">JSON转CSV</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/json/jsonget">JSON|Get互转</a>
+                                        </li>
+                                                                        </ul>
+                            </li>
+                                            </ul>
+                </li>
+                
+
+    
+                <li class="dropdown"><a id="nav_27" data-toggle="dropdown" aria-expanded="false" href="javascript:void(0);">加密解密</a>
+                    <ul class="dropdown-menu width-min500 " aria-labelledby="nav_27">
+                                                    <li>
+                                <blockquote>
+                                    <p>加密/解密</p>
+                                </blockquote>
+                            </li>
+                            <li>
+                                <ul class="navsub clearfix">
+                                                                            <li>
+                                            <a href="https://qqe2.com/ed/md5">MD5</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/ed/htpasswd">.htpasswd在线生成</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/ed/base64">Base64编码解码</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/ed/hash">散列/哈希</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/ed/en">加密/解密</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/ed/sha">SHA加密</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/ed/thunder">迅雷URL加密解密</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/ed/escape">Escape加密、解密</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/ed/urlencode">URL编码解码</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/ed/morse">摩尔斯电码加/解密</a>
+                                        </li>
+                                                                        </ul>
+                            </li>
+                                                    <li>
+                                <blockquote>
+                                    <p>JS加密/解密/压缩/解压缩</p>
+                                </blockquote>
+                            </li>
+                            <li>
+                                <ul class="navsub clearfix">
+                                                                            <li>
+                                            <a href="https://qqe2.com/ed/jsencrypt">JS混淆高级版</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/ed/jsconfusion">js混淆基础版本</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/ed/jsfuck">JSFuck加密</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/ed/jjencode">jjencode加密</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/ed/aaencode">aaencode加密</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/ed/jsunpack">JS解密</a>
+                                        </li>
+                                                                        </ul>
+                            </li>
+                                            </ul>
+                </li>
+                
+
+    
+                <li class="dropdown"><a id="nav_46" data-toggle="dropdown" aria-expanded="false" href="javascript:void(0);">转换/美化</a>
+                    <ul class="dropdown-menu width-min500 " aria-labelledby="nav_46">
+                                                    <li>
+                                <blockquote>
+                                    <p>格式化/美化/压缩</p>
+                                </blockquote>
+                            </li>
+                            <li>
+                                <ul class="navsub clearfix">
+                                                                            <li>
+                                            <a href="https://qqe2.com/ed/jsunpack">JS美化解密</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/format/js">HTML&amp;JS格式化</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/format/html">Html/Js/Css过滤</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/format/css">CSS压缩/格式化</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/format/xml">XML压缩/格式化</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/format/sql">SQL压缩/格式化</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/format/csharp">C#美化</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/format/java">Java美化</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/format/php">PHP美化</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/format/vbs">VBScript美化</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/format/python">Python美化</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/format/ruby">Ruby美化</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/format/perl">Perl美化</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/format/cpp">C/C++美化</a>
+                                        </li>
+                                                                        </ul>
+                            </li>
+                                                    <li>
+                                <blockquote>
+                                    <p>转换/转义</p>
+                                </blockquote>
+                            </li>
+                            <li>
+                                <ul class="navsub clearfix">
+                                                                            <li>
+                                            <a href="https://qqe2.com/format/js2html">HTML&amp;JS互转</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/format/html2ubb">HTML&amp;Ubb互转</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/format/html2code">HTML代码转换</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/format/csv2html">CSV转HTML</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/format/ip2int">IP转数字</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/format/subnetmask">IP计算换算</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/format/rgbhex">HEX16色转Rgb</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/format/keycode">获取键盘按键值</a>
+                                        </li>
+                                                                        </ul>
+                            </li>
+                                            </ul>
+                </li>
+                
+
+    
+                <li class="dropdown"><a id="nav_68" data-toggle="dropdown" aria-expanded="false" href="javascript:void(0);">编程开发</a>
+                    <ul class="dropdown-menu width-min500 " aria-labelledby="nav_68">
+                                                    <li>
+                                <blockquote>
+                                    <p>编辑器、生成器、模拟器</p>
+                                </blockquote>
+                            </li>
+                            <li>
+                                <ul class="navsub clearfix">
+                                                                            <li>
+                                            <a href="https://qqe2.com/dev/cron">Cron在线生成</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/dev/websocket">Websocket模拟</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/dev/markdown">Markdown 编辑</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/dev/yaml">YAML、YML编辑</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://font.qqe2.com/">在线字体制作</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/dev/xpath">xPath测试</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/dev/createreg">正则表达式生成</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/dev/regex">正则表达式测试</a>
+                                        </li>
+                                                                        </ul>
+                            </li>
+                                                    <li>
+                                <blockquote>
+                                    <p>Web前端</p>
+                                </blockquote>
+                            </li>
+                            <li>
+                                <ul class="navsub clearfix">
+                                                                            <li>
+                                            <a href="https://qqe2.com/dev/clientinfo">浏览器信息</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/dev/giffps">Gif转每帧</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/dev/fontawesome">FontAwesome</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/dev/xtz">线条字生成</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/dev/imgtobase64">图片Base64互转</a>
+                                        </li>
+                                                                        </ul>
+                            </li>
+                                                    <li>
+                                <blockquote>
+                                    <p>常用对照表</p>
+                                </blockquote>
+                            </li>
+                            <li>
+                                <ul class="navsub clearfix">
+                                                                            <li>
+                                            <a href="https://qqe2.com/dev/useragent">User-Agent大全</a>
+                                        </li>
+                                                                        </ul>
+                            </li>
+                                            </ul>
+                </li>
+                
+
+    
+                <li class="dropdown"><a id="nav_87" data-toggle="dropdown" aria-expanded="false" href="javascript:void(0);">文字工具</a>
+                    <ul class="dropdown-menu width-min500 " aria-labelledby="nav_87">
+                                                    <li>
+                                <blockquote>
+                                    <p>对比、匹配生成</p>
+                                </blockquote>
+                            </li>
+                            <li>
+                                <ul class="navsub clearfix">
+                                                                            <li>
+                                            <a href="https://qqe2.com/word/txtdiff">文本在线对比</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/word/diff">代码在线对比</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/word/barcode">条形码生成</a>
+                                        </li>
+                                                                        </ul>
+                            </li>
+                                            </ul>
+                </li>
+                
+
+    
+                <li class="dropdown"><a id="nav_91" data-toggle="dropdown" aria-expanded="false" href="javascript:void(0);">教程文档</a>
+                    <ul class="dropdown-menu width-min500 " aria-labelledby="nav_91">
+                                                    <li>
+                                <blockquote>
+                                    <p>教程/对照表</p>
+                                </blockquote>
+                            </li>
+                            <li>
+                                <ul class="navsub clearfix">
+                                                                            <li>
+                                            <a href="https://qqe2.com/json/doc">JSON教程</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/doc/androidmanifest">安卓权限描述</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/doc/useragent">User-Agent大全</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/doc/contenttype">Mime-Type对照表</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/doc/httpcode">HTTP状态码</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/doc/escapechar">特殊字符转义对照表</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/doc/httprequest">HTTP请求方法表</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/doc/websafecolors">Web安全色</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/doc/bootstrapicons">Bootstrap图标</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/doc/portcode">常见HTTP端口</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/doc/ascii">Ascii码对照表</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/doc/eascii">EASCII码对照表</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/doc/gb2312">GB2312编码表</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/doc/gbk">GBK编码</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/doc/linux">Linux常用命令</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/doc/httpheader">HTTP请求头</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/doc/jsescape">JS转义字符</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/doc/jsevent">JS事件</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/doc/phpfunction">PHP常用函数</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/doc/levelnet">C#运算符</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/doc/levelcpp">C++运算符</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/doc/levec">C语言运算符</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/doc/leveljava">Java运算符</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/doc/levelphp">PHP运算符</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/doc/levelpython">Python运算符</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/doc/leveljavascript">Javascript运算符</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/doc/levelvb">VB运算符</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/doc/leveloc">OC运算符</a>
+                                        </li>
+                                                                                <li>
+                                            <a href="https://qqe2.com/doc/levelgo">Go运算符</a>
+                                        </li>
+                                                                        </ul>
+                            </li>
+                                            </ul>
+                </li>
+                
+
+        
+    <li><a href="https://qqe2.com/java/" target="_blank">大厂面试必备</a></li>
+
+</ul>            </div>
+
+        </div>
+    </nav>
+
+    <nav class="nav-mobile-menu mobile-show">
+        <div class="container">
+            <div class="col-xs-2"><a href="https://qqe2.com/"><i class="iconfont"></i></a></div>
+            <div class="col-xs-8 text-center">JSON在线工具网</div>
+            <div class="col-xs-2"><a id="menuside" href="javascript:void(0);"><i class="iconfont pull-right"></i></a>
+            </div>
+        </div>
+    </nav>
+
+</header>
+<div class="clearfix"></div>
+<div class="container">
+    <!--<div class="banner-img col-12 col-md-12 col-xs-12">
+        <a href="https://qqe2.com/java/post/593.html" rel="nofollow" target="_blank">
+            <img src="/img/banner-index.png" class="img-responsive"/>
+        </a></div>-->
+</div>
+    <div class="container">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <blockquote>
+                    <h1>在线Cron表达式生成器 <a href="https://cron.qqe2.com/index-old.html" target="_blank" style="font-size:12px">[老版本Cron表达式生成器]</a> </h1>
+                    <h2>
+                        通过这个生成器,您可以在线生成任务调度比如Quartz的Cron表达式,对Quartz Cron 表达式的可视化双向解析和生成.
+						
+                    </h2>
+                </blockquote>
+
+            </div>
+            <div class="panel-body">
+                <style type="text/css">
+                    .easyui-tabs .line {
+                        height: 25px;
+                        line-height: 25px;
+                        margin: 3px;
+                    }
+
+                    .easyui-tabs .imp {
+                        padding-left: 25px;
+                    }
+
+                    .col {
+                        width: 95px;
+                    }
+
+                    .easyui-tabs ul {
+                        list-style: none;
+                        padding-left: 10px;
+                    }
+
+                    .easyui-tabs li {
+                        height: 20px;
+                    }
+
+                    table td {
+                        padding-top: 10px;
+                        padding-left: 5px;
+                    }
+
+                    .nav-tabs {
+                        background-color: #F2F2F2;
+                    }
+
+                    .tab-pane {
+                        padding: 10px;
+                        font-size: 16px;
+                    }
+                    .tab-pane label{
+                        cursor: pointer;
+                    }
+
+                </style>
+                <div style="width:100%;border: 1px rgb(202, 196, 196) solid; border-radius: 5px;">
+                    <ul class="nav nav-tabs nav-pills" role="tablist">
+                        <li role="p_second" class="active"><a href="https://qqe2.com/cron#p_second" aria-controls="p_second" role="tab" data-toggle="tab">秒</a></li>
+                        <li role="p_min"><a href="https://qqe2.com/cron#p_min" aria-controls="p_min" role="tab" data-toggle="tab">分钟</a></li>
+                        <li role="p_hour"><a href="https://qqe2.com/cron#p_hour" aria-controls="p_hour" role="tab" data-toggle="tab">小时</a>
+                        </li>
+                        <li role="p_day"><a href="https://qqe2.com/cron#p_day" aria-controls="p_day" role="tab" data-toggle="tab">日</a></li>
+                        <li role="p_month"><a href="https://qqe2.com/cron#p_month" aria-controls="p_month" role="tab" data-toggle="tab">月份</a>
+                        </li>
+                        <li role="p_week"><a href="https://qqe2.com/cron#p_week" aria-controls="p_week" role="tab" data-toggle="tab">周（星期）</a>
+                        </li>
+                        <li role="p_year"><a href="https://qqe2.com/cron#p_year" aria-controls="p_year" role="tab" data-toggle="tab">年份</a>
+                        </li>
+                    </ul>
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="p_second">
+                            <div class="form-group">
+                                <input type="radio" checked="checked" id="second" name="second" onclick="everyTime(this)">
+                                <label for="second">每秒</label> 允许的通配符[, - * /]
+                            </div>
+                            <div class="form-group">
+                                <input type="radio" id="s_cycle" name="second" onclick="cycle(this)">
+                                <label for="s_cycle">周期</label> 从
+                                <span class="spinner" style="width: 62px; height: 24px;"><span class="spinner" style="width: 48px; height: 24px;"><input class="numberspinner numberspinner-f spinner-text spinner-f validatebox-text numberbox-f" style="width: 32px; height: 22px; line-height: 22px;" data-options="min:1,max:58" value="1" id="secondStart_0"><input type="hidden" value="1"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span><input type="hidden" value="1"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span>
+                                -
+                                <span class="spinner" style="width: 62px; height: 24px;"><span class="spinner" style="width: 48px; height: 24px;"><input class="numberspinner numberspinner-f spinner-text spinner-f validatebox-text numberbox-f" style="width: 32px; height: 22px; line-height: 22px;" data-options="min:2,max:59" value="2" id="secondEnd_0"><input type="hidden" value="2"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span><input type="hidden" value="2"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span>
+                                秒
+                            </div>
+                            <div class="form-group">
+                                <input type="radio" name="second" onclick="startOn(this)">
+                                从
+                                <span class="spinner" style="width: 62px; height: 24px;"><span class="spinner" style="width: 48px; height: 24px;"><input class="numberspinner numberspinner-f spinner-text spinner-f validatebox-text numberbox-f" style="width: 32px; height: 22px; line-height: 22px;" data-options="min:0,max:59" value="0" id="secondStart_1"><input type="hidden" value="0"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span><input type="hidden" value="0"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span>
+                                秒开始,每
+                                <span class="spinner" style="width: 62px; height: 24px;"><span class="spinner" style="width: 48px; height: 24px;"><input class="numberspinner numberspinner-f spinner-text spinner-f validatebox-text numberbox-f" style="width: 32px; height: 22px; line-height: 22px;" data-options="min:1,max:59" value="1" id="secondEnd_1"><input type="hidden" value="1"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span><input type="hidden" value="1"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span>
+                                秒执行一次
+                            </div>
+                            <div class="form-group">
+                                <input type="radio" name="second" id="sencond_appoint">
+                                <label for="sencond_appoint">指定</label>
+                            </div>
+                            <div class="imp secondList">
+                                <input type="checkbox" id="s_0" value="0"><label for="s_0">00</label>
+                                <input type="checkbox" id="s_1" value="1"><label for="s_1">01</label>
+                                <input type="checkbox" id="s_2" value="2"><label for="s_2">02</label>
+                                <input type="checkbox" id="s_3" value="3"><label for="s_3">03</label>
+                                <input type="checkbox" id="s_4" value="4"><label for="s_4">04</label>
+                                <input type="checkbox" id="s_5" value="5"><label for="s_5">05</label>
+                                <input type="checkbox" id="s_6" value="6"><label for="s_6">06</label>
+                                <input type="checkbox" id="s_7" value="7"><label for="s_7">07</label>
+                                <input type="checkbox" id="s_8" value="8"><label for="s_8">08</label>
+                                <input type="checkbox" id="s_9" value="9"><label for="s_9">09</label>
+                            </div>
+                            <div class="imp secondList">
+                                <input type="checkbox" id="s_10" value="10"><label for="s_10">10</label>
+                                <input type="checkbox" id="s_11" value="11"><label for="s_11">11</label>
+                                <input type="checkbox" id="s_12" value="12"><label for="s_12">12</label>
+                                <input type="checkbox" id="s_13" value="13"><label for="s_13">13</label>
+                                <input type="checkbox" id="s_14" value="14"><label for="s_14">14</label>
+                                <input type="checkbox" id="s_15" value="15"><label for="s_15">15</label>
+                                <input type="checkbox" id="s_16" value="16"><label for="s_16">16</label>
+                                <input type="checkbox" id="s_17" value="17"><label for="s_17">17</label>
+                                <input type="checkbox" id="s_18" value="18"><label for="s_18">18</label>
+                                <input type="checkbox" id="s_19" value="19"><label for="s_19">19</label>
+                            </div>
+                            <div class="imp secondList">
+                                <input type="checkbox" id="s_20" value="20"><label for="s_20">20</label>
+                                <input type="checkbox" id="s_21" value="21"><label for="s_21">21</label>
+                                <input type="checkbox" id="s_22" value="22"><label for="s_22">22</label>
+                                <input type="checkbox" id="s_23" value="23"><label for="s_23">23</label>
+                                <input type="checkbox" id="s_24" value="24"><label for="s_24">24</label>
+                                <input type="checkbox" id="s_25" value="25"><label for="s_25">25</label>
+                                <input type="checkbox" id="s_26" value="26"><label for="s_26">26</label>
+                                <input type="checkbox" id="s_27" value="27"><label for="s_27">27</label>
+                                <input type="checkbox" id="s_28" value="28"><label for="s_28">28</label>
+                                <input type="checkbox" id="s_29" value="29"><label for="s_29">29</label>
+                            </div>
+                            <div class="imp secondList">
+                                <input type="checkbox" id="s_30" value="30"><label for="s_30">30</label>
+                                <input type="checkbox" id="s_31" value="31"><label for="s_31">31</label>
+                                <input type="checkbox" id="s_32" value="32"><label for="s_32">32</label>
+                                <input type="checkbox" id="s_33" value="33"><label for="s_33">33</label>
+                                <input type="checkbox" id="s_34" value="34"><label for="s_34">34</label>
+                                <input type="checkbox" id="s_35" value="35"><label for="s_35">35</label>
+                                <input type="checkbox" id="s_36" value="36"><label for="s_36">36</label>
+                                <input type="checkbox" id="s_37" value="37"><label for="s_37">37</label>
+                                <input type="checkbox" id="s_38" value="38"><label for="s_38">38</label>
+                                <input type="checkbox" id="s_39" value="39"><label for="s_39">39</label>
+                            </div>
+                            <div class="imp secondList">
+                                <input type="checkbox" id="s_40" value="40"><label for="s_40">40</label>
+                                <input type="checkbox" id="s_41" value="41"><label for="s_41">41</label>
+                                <input type="checkbox" id="s_42" value="42"><label for="s_42">42</label>
+                                <input type="checkbox" id="s_43" value="43"><label for="s_43">43</label>
+                                <input type="checkbox" id="s_44" value="44"><label for="s_44">44</label>
+                                <input type="checkbox" id="s_45" value="45"><label for="s_45">45</label>
+                                <input type="checkbox" id="s_46" value="46"><label for="s_46">46</label>
+                                <input type="checkbox" id="s_47" value="47"><label for="s_47">47</label>
+                                <input type="checkbox" id="s_48" value="48"><label for="s_48">48</label>
+                                <input type="checkbox" id="s_49" value="49"><label for="s_49">49</label>
+                            </div>
+                            <div class="imp secondList">
+                                <input type="checkbox" id="s_50" value="50"><label for="s_50">50</label>
+                                <input type="checkbox" id="s_51" value="51"><label for="s_51">51</label>
+                                <input type="checkbox" id="s_52" value="52"><label for="s_52">52</label>
+                                <input type="checkbox" id="s_53" value="53"><label for="s_53">53</label>
+                                <input type="checkbox" id="s_54" value="54"><label for="s_54">54</label>
+                                <input type="checkbox" id="s_55" value="55"><label for="s_55">55</label>
+                                <input type="checkbox" id="s_56" value="56"><label for="s_56">56</label>
+                                <input type="checkbox" id="s_57" value="57"><label for="s_57">57</label>
+                                <input type="checkbox" id="s_58" value="58"><label for="s_58">58</label>
+                                <input type="checkbox" id="s_59" value="59"><label for="s_59">59</label>
+
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="p_min">
+                            <div class="form-group">
+                                <input type="radio" checked="checked" id="min" name="min" onclick="everyTime(this)">
+                                <label for="min">分钟</label> 允许的通配符[, - * /]
+                            </div>
+                            <div class="form-group">
+                                <input type="radio" name="min" id="m_cycle" onclick="cycle(this)">
+                                <label for="m_cycle">周期</label> 从
+                                <span class="spinner" style="width: 62px; height: 24px;"><span class="spinner" style="width: 48px; height: 24px;"><input class="numberspinner numberspinner-f spinner-text spinner-f validatebox-text numberbox-f" style="width: 32px; height: 22px; line-height: 22px;" data-options="min:1,max:58" value="1" id="minStart_0"><input type="hidden" value="1"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span><input type="hidden" value="1"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span>
+                                -
+                                <span class="spinner" style="width: 62px; height: 24px;"><span class="spinner" style="width: 48px; height: 24px;"><input class="numberspinner numberspinner-f spinner-text spinner-f validatebox-text numberbox-f" style="width: 32px; height: 22px; line-height: 22px;" data-options="min:2,max:59" value="2" id="minEnd_0"><input type="hidden" value="2"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span><input type="hidden" value="2"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span>
+                                分钟
+                            </div>
+                            <div class="form-group">
+                                <input type="radio" name="min" onclick="startOn(this)">
+                                从
+                                <span class="spinner" style="width: 62px; height: 24px;"><span class="spinner" style="width: 48px; height: 24px;"><input class="numberspinner numberspinner-f spinner-text spinner-f validatebox-text numberbox-f" style="width: 32px; height: 22px; line-height: 22px;" data-options="min:0,max:59" value="0" id="minStart_1"><input type="hidden" value="0"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span><input type="hidden" value="0"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span>
+                                分钟开始,每
+                                <span class="spinner" style="width: 62px; height: 24px;"><span class="spinner" style="width: 48px; height: 24px;"><input class="numberspinner numberspinner-f spinner-text spinner-f validatebox-text numberbox-f" style="width: 32px; height: 22px; line-height: 22px;" data-options="min:1,max:59" value="1" id="minEnd_1"><input type="hidden" value="1"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span><input type="hidden" value="1"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span>
+                                分钟执行一次
+                            </div>
+                            <div class="form-group">
+                                <input type="radio" name="min" id="min_appoint">
+                                <label for="min_appoint">指定</label>
+                            </div>
+                            <div class="imp minList">
+                                <input type="checkbox" id="m_0" value="0"><label for="m_0">00</label>
+                                <input type="checkbox" id="m_1" value="1"><label for="m_1">01</label>
+                                <input type="checkbox" id="m_2" value="2"><label for="m_2">02</label>
+                                <input type="checkbox" id="m_3" value="3"><label for="m_3">03</label>
+                                <input type="checkbox" id="m_4" value="4"><label for="m_4">04</label>
+                                <input type="checkbox" id="m_5" value="5"><label for="m_5">05</label>
+                                <input type="checkbox" id="m_6" value="6"><label for="m_6">06</label>
+                                <input type="checkbox" id="m_7" value="7"><label for="m_7">07</label>
+                                <input type="checkbox" id="m_8" value="8"><label for="m_8">08</label>
+                                <input type="checkbox" id="m_9" value="9"><label for="m_9">09</label>
+                            </div>
+                            <div class="imp minList">
+                                <input type="checkbox" id="m_10" value="10"><label for="m_10">10</label>
+                                <input type="checkbox" id="m_11" value="11"><label for="m_11">11</label>
+                                <input type="checkbox" id="m_12" value="12"><label for="m_12">12</label>
+                                <input type="checkbox" id="m_13" value="13"><label for="m_13">13</label>
+                                <input type="checkbox" id="m_14" value="14"><label for="m_14">14</label>
+                                <input type="checkbox" id="m_15" value="15"><label for="m_15">15</label>
+                                <input type="checkbox" id="m_16" value="16"><label for="m_16">16</label>
+                                <input type="checkbox" id="m_17" value="17"><label for="m_17">17</label>
+                                <input type="checkbox" id="m_18" value="18"><label for="m_18">18</label>
+                                <input type="checkbox" id="m_19" value="19"><label for="m_19">19</label>
+                            </div>
+                            <div class="imp minList">
+                                <input type="checkbox" id="m_20" value="20"><label for="m_20">20</label>
+                                <input type="checkbox" id="m_21" value="21"><label for="m_21">21</label>
+                                <input type="checkbox" id="m_22" value="22"><label for="m_22">22</label>
+                                <input type="checkbox" id="m_23" value="23"><label for="m_23">23</label>
+                                <input type="checkbox" id="m_24" value="24"><label for="m_24">24</label>
+                                <input type="checkbox" id="m_25" value="25"><label for="m_25">25</label>
+                                <input type="checkbox" id="m_26" value="26"><label for="m_26">26</label>
+                                <input type="checkbox" id="m_27" value="27"><label for="m_27">27</label>
+                                <input type="checkbox" id="m_28" value="28"><label for="m_28">28</label>
+                                <input type="checkbox" id="m_29" value="29"><label for="m_29">29</label>
+                            </div>
+                            <div class="imp minList">
+                                <input type="checkbox" id="m_30" value="30"><label for="m_30">30</label>
+                                <input type="checkbox" id="m_31" value="31"><label for="m_31">31</label>
+                                <input type="checkbox" id="m_32" value="32"><label for="m_32">32</label>
+                                <input type="checkbox" id="m_33" value="33"><label for="m_33">33</label>
+                                <input type="checkbox" id="m_34" value="34"><label for="m_34">34</label>
+                                <input type="checkbox" id="m_35" value="35"><label for="m_35">35</label>
+                                <input type="checkbox" id="m_36" value="36"><label for="m_36">36</label>
+                                <input type="checkbox" id="m_37" value="37"><label for="m_37">37</label>
+                                <input type="checkbox" id="m_38" value="38"><label for="m_38">38</label>
+                                <input type="checkbox" id="m_39" value="39"><label for="m_39">39</label>
+                            </div>
+                            <div class="imp minList">
+                                <input type="checkbox" id="m_40" value="40"><label for="m_40">40</label>
+                                <input type="checkbox" id="m_41" value="41"><label for="m_41">41</label>
+                                <input type="checkbox" id="m_42" value="42"><label for="m_42">42</label>
+                                <input type="checkbox" id="m_43" value="43"><label for="m_43">43</label>
+                                <input type="checkbox" id="m_44" value="44"><label for="m_44">44</label>
+                                <input type="checkbox" id="m_45" value="45"><label for="m_45">45</label>
+                                <input type="checkbox" id="m_46" value="46"><label for="m_46">46</label>
+                                <input type="checkbox" id="m_47" value="47"><label for="m_47">47</label>
+                                <input type="checkbox" id="m_48" value="48"><label for="m_48">48</label>
+                                <input type="checkbox" id="m_49" value="49"><label for="m_49">49</label>
+                            </div>
+                            <div class="imp minList">
+                                <input type="checkbox" id="m_50" value="50"><label for="m_50">50</label>
+                                <input type="checkbox" id="m_51" value="51"><label for="m_51">51</label>
+                                <input type="checkbox" id="m_52" value="52"><label for="m_52">52</label>
+                                <input type="checkbox" id="m_53" value="53"><label for="m_53">53</label>
+                                <input type="checkbox" id="m_54" value="54"><label for="m_54">54</label>
+                                <input type="checkbox" id="m_55" value="55"><label for="m_55">55</label>
+                                <input type="checkbox" id="m_56" value="56"><label for="m_56">56</label>
+                                <input type="checkbox" id="m_57" value="57"><label for="m_57">57</label>
+                                <input type="checkbox" id="m_58" value="58"><label for="m_58">58</label>
+                                <input type="checkbox" id="m_59" value="59"><label for="m_59">59</label>
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="p_hour">
+                            <div class="form-group">
+                                <input type="radio" checked="checked" name="hour" id="hour" onclick="everyTime(this)">
+                                <label for="hour">小时</label> 允许的通配符[, - * /]
+                            </div>
+                            <div class="form-group">
+                                <input type="radio" name="hour" id="h_cycle" onclick="cycle(this)">
+                                <label for="h_cycle">周期</label> 从
+                                <span class="spinner" style="width: 62px; height: 24px;"><span class="spinner" style="width: 48px; height: 24px;"><input class="numberspinner numberspinner-f spinner-text spinner-f validatebox-text numberbox-f" style="width: 32px; height: 22px; line-height: 22px;" data-options="min:0,max:23" value="0" id="hourStart_0"><input type="hidden" value="0"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span><input type="hidden" value="0"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span>
+                                -
+                                <span class="spinner" style="width: 62px; height: 24px;"><span class="spinner" style="width: 48px; height: 24px;"><input class="numberspinner numberspinner-f spinner-text spinner-f validatebox-text numberbox-f" style="width: 32px; height: 22px; line-height: 22px;" data-options="min:2,max:23" value="2" id="hourEnd_1"><input type="hidden" value="2"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span><input type="hidden" value="2"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span>
+                                小时
+                            </div>
+                            <div class="form-group">
+                                <input type="radio" name="hour" onclick="startOn(this)">
+                                从
+                                <span class="spinner" style="width: 62px; height: 24px;"><span class="spinner" style="width: 48px; height: 24px;"><input class="numberspinner numberspinner-f spinner-text spinner-f validatebox-text numberbox-f" style="width: 32px; height: 22px; line-height: 22px;" data-options="min:0,max:23" value="0" id="hourStart_1"><input type="hidden" value="0"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span><input type="hidden" value="0"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span>
+                                小时开始,每
+                                <span class="spinner" style="width: 62px; height: 24px;"><span class="spinner" style="width: 48px; height: 24px;"><input class="numberspinner numberspinner-f spinner-text spinner-f validatebox-text numberbox-f" style="width: 32px; height: 22px; line-height: 22px;" data-options="min:1,max:23" value="1" id="Text1"><input type="hidden" value="1"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span><input type="hidden" value="1"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span>
+                                小时执行一次
+                            </div>
+                            <div class="form-group">
+                                <input type="radio" name="hour" id="hour_appoint">
+                                <label for="hour_appoint">指定</label>
+                            </div>
+                            <div class="imp hourList">
+                                上午:
+                                <input type="checkbox" id="h_0" value="0"><label for="h_0">00</label>
+                                <input type="checkbox" id="h_1" value="1"><label for="h_1">01</label>
+                                <input type="checkbox" id="h_2" value="2"><label for="h_2">02</label>
+                                <input type="checkbox" id="h_3" value="3"><label for="h_3">03</label>
+                                <input type="checkbox" id="h_4" value="4"><label for="h_4">04</label>
+                                <input type="checkbox" id="h_5" value="5"><label for="h_5">05</label>
+                                <input type="checkbox" id="h_6" value="6"><label for="h_6">06</label>
+                                <input type="checkbox" id="h_7" value="7"><label for="h_7">07</label>
+                                <input type="checkbox" id="h_8" value="8"><label for="h_8">08</label>
+                                <input type="checkbox" id="h_9" value="9"><label for="h_9">09</label>
+                                <input type="checkbox" id="h_10" value="10"><label for="h_10">10</label>
+                                <input type="checkbox" id="h_11" value="11"><label for="h_11">11</label>
+                            </div>
+                            <div class="imp hourList">
+                                下午:
+                                <input type="checkbox" id="h_12" value="12"><label for="h_12">12</label>
+                                <input type="checkbox" id="h_13" value="13"><label for="h_13">13</label>
+                                <input type="checkbox" id="h_14" value="14"><label for="h_14">14</label>
+                                <input type="checkbox" id="h_15" value="15"><label for="h_15">15</label>
+                                <input type="checkbox" id="h_16" value="16"><label for="h_16">16</label>
+                                <input type="checkbox" id="h_17" value="17"><label for="h_17">17</label>
+                                <input type="checkbox" id="h_18" value="18"><label for="h_18">18</label>
+                                <input type="checkbox" id="h_19" value="19"><label for="h_19">19</label>
+                                <input type="checkbox" id="h_20" value="20"><label for="h_20">20</label>
+                                <input type="checkbox" id="h_21" value="21"><label for="h_21">21</label>
+                                <input type="checkbox" id="h_22" value="22"><label for="h_22">22</label>
+                                <input type="checkbox" id="h_23" value="23"><label for="h_23">23</label>
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="p_day">
+                            <div class="form-group">
+                                <input type="radio" checked="checked" id="day" name="day" onclick="everyTime(this)">
+                                <label for="day">日</label> 允许的通配符[, - * / L W]
+                            </div>
+                            <div class="form-group">
+                                <input type="radio" name="day" id="d_unAppoint" onclick="unAppoint(this)">
+                                <label for="d_unAppoint">不指定</label>
+                            </div>
+                            <div class="form-group">
+                                <input type="radio" name="day" id="d_cycle" onclick="cycle(this)">
+                                <label for="d_cycle">周期</label> 从
+                                <span class="spinner" style="width: 62px; height: 24px;"><span class="spinner" style="width: 48px; height: 24px;"><input class="numberspinner numberspinner-f spinner-text spinner-f validatebox-text numberbox-f" style="width: 32px; height: 22px; line-height: 22px;" data-options="min:1,max:31" value="1" id="dayStart_0"><input type="hidden" value="1"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span><input type="hidden" value="1"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span>
+                                -
+                                <span class="spinner" style="width: 62px; height: 24px;"><span class="spinner" style="width: 48px; height: 24px;"><input class="numberspinner numberspinner-f spinner-text spinner-f validatebox-text numberbox-f" style="width: 32px; height: 22px; line-height: 22px;" data-options="min:2,max:31" value="2" id="dayEnd_0"><input type="hidden" value="2"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span><input type="hidden" value="2"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span>
+                                日
+                            </div>
+                            <div class="form-group">
+                                <input type="radio" name="day" onclick="startOn(this)">
+                                从
+                                <span class="spinner" style="width: 62px; height: 24px;"><span class="spinner" style="width: 48px; height: 24px;"><input class="numberspinner numberspinner-f spinner-text spinner-f validatebox-text numberbox-f" style="width: 32px; height: 22px; line-height: 22px;" data-options="min:1,max:31" value="1" id="dayStart_1"><input type="hidden" value="1"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span><input type="hidden" value="1"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span>
+                                日开始,每
+                                <span class="spinner" style="width: 62px; height: 24px;"><span class="spinner" style="width: 48px; height: 24px;"><input class="numberspinner numberspinner-f spinner-text spinner-f validatebox-text numberbox-f" style="width: 32px; height: 22px; line-height: 22px;" data-options="min:1,max:31" value="1" id="dayEnd_1"><input type="hidden" value="1"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span><input type="hidden" value="1"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span>
+                                天执行一次
+                            </div>
+                            <div class="form-group">
+                                <input type="radio" name="day" id="d_workDay" onclick="workDay(this)">
+                               <label for="d_workDay">每月</label>
+                                <span class="spinner" style="width: 62px; height: 24px;"><span class="spinner" style="width: 48px; height: 24px;"><input class="numberspinner numberspinner-f spinner-text spinner-f validatebox-text numberbox-f" style="width: 32px; height: 22px; line-height: 22px;" data-options="min:1,max:31" value="1" id="dayStart_2"><input type="hidden" value="1"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span><input type="hidden" value="1"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span>
+                                号最近的那个工作日
+                            </div>
+                            <div class="form-group">
+                                <input type="radio" name="day" id="d_lastDay" onclick="lastDay(this)">
+                                <label for="d_lastDay">本月最后一天</label>
+                            </div>
+                            <div class="line">
+                                <input type="radio" name="day" id="day_appoint">
+                               <label for="day_appoint">指定</label>
+                            </div>
+                            <div class="imp dayList">
+                                <input type="checkbox" id="d_1" value="1"><label for="d_1">1</label>
+                                <input type="checkbox" id="d_2" value="2"><label for="d_2">2</label>
+                                <input type="checkbox" id="d_3" value="3"><label for="d_3">3</label>
+                                <input type="checkbox" id="d_4" value="4"><label for="d_4">4</label>
+                                <input type="checkbox" id="d_5" value="5"><label for="d_5">5</label>
+                                <input type="checkbox" id="d_6" value="6"><label for="d_6">6</label>
+                                <input type="checkbox" id="d_7" value="7"><label for="d_7">7</label>
+                                <input type="checkbox" id="d_8" value="8"><label for="d_8">8</label>
+                                <input type="checkbox" id="d_9" value="9"><label for="d_9">9</label>
+                                <input type="checkbox" id="d_10" value="10"><label for="d_10">10</label>
+                                <input type="checkbox" id="d_11" value="11"><label for="d_11">11</label>
+                                <input type="checkbox" id="d_12" value="12"><label for="d_12">12</label>
+                                <input type="checkbox" id="d_13" value="13"><label for="d_13">13</label>
+                                <input type="checkbox" id="d_14" value="14"><label for="d_14">14</label>
+                                <input type="checkbox" id="d_15" value="15"><label for="d_15">15</label>
+                                <input type="checkbox" id="d_16" value="16"><label for="d_16">16</label>
+                            </div>
+                            <div class="imp dayList">
+                                <input type="checkbox" id="d_17" value="17"><label for="d_17">17</label>
+                                <input type="checkbox" id="d_18" value="18"><label for="d_18">18</label>
+                                <input type="checkbox" id="d_19" value="19"><label for="d_19">19</label>
+                                <input type="checkbox" id="d_20" value="20"><label for="d_20">20</label>
+                                <input type="checkbox" id="d_21" value="21"><label for="d_21">21</label>
+                                <input type="checkbox" id="d_22" value="22"><label for="d_22">22</label>
+                                <input type="checkbox" id="d_23" value="23"><label for="d_23">23</label>
+                                <input type="checkbox" id="d_24" value="24"><label for="d_24">24</label>
+                                <input type="checkbox" id="d_25" value="25"><label for="d_25">25</label>
+                                <input type="checkbox" id="d_26" value="26"><label for="d_26">26</label>
+                                <input type="checkbox" id="d_27" value="27"><label for="d_27">27</label>
+                                <input type="checkbox" id="d_28" value="28"><label for="d_28">28</label>
+                                <input type="checkbox" id="d_29" value="29"><label for="d_29">29</label>
+                                <input type="checkbox" id="d_30" value="30"><label for="d_30">30</label>
+                                <input type="checkbox" id="d_31" value="31"><label for="d_31">31</label>
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="p_month">
+                            <div class="form-group">
+                                <input type="radio" checked="checked" name="mouth" id="mouth" onclick="everyTime(this)">
+                                <label for="mouth">月</label> 允许的通配符[, - * /]
+                            </div>
+
+                            <div class="form-group">
+                                <input type="radio" name="mouth" id="mouth_cycle" onclick="cycle(this)">
+                               <label for="mouth_cycle">周期</label> 从
+                                <span class="spinner" style="width: 62px; height: 24px;"><span class="spinner" style="width: 48px; height: 24px;"><input class="numberspinner numberspinner-f spinner-text spinner-f validatebox-text numberbox-f" style="width: 32px; height: 22px; line-height: 22px;" data-options="min:1,max:12" value="1" id="mouthStart_0"><input type="hidden" value="1"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span><input type="hidden" value="1"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span>
+                                -
+                                <span class="spinner" style="width: 62px; height: 24px;"><span class="spinner" style="width: 48px; height: 24px;"><input class="numberspinner numberspinner-f spinner-text spinner-f validatebox-text numberbox-f" style="width: 32px; height: 22px; line-height: 22px;" data-options="min:2,max:12" value="2" id="mouthEnd_0"><input type="hidden" value="2"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span><input type="hidden" value="2"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span>
+                                月
+                            </div>
+                            <div class="form-group">
+                                <input type="radio" name="mouth" id="m_startOn" onclick="startOn(this)">
+                                从
+                                <span class="spinner" style="width: 62px; height: 24px;"><span class="spinner" style="width: 48px; height: 24px;"><input class="numberspinner numberspinner-f spinner-text spinner-f validatebox-text numberbox-f" style="width: 32px; height: 22px; line-height: 22px;" data-options="min:1,max:12" value="1" id="mouthStart_1"><input type="hidden" value="1"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span><input type="hidden" value="1"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span>
+                                日开始,每
+                                <span class="spinner" style="width: 62px; height: 24px;"><span class="spinner" style="width: 48px; height: 24px;"><input class="numberspinner numberspinner-f spinner-text spinner-f validatebox-text numberbox-f" style="width: 32px; height: 22px; line-height: 22px;" data-options="min:1,max:12" value="1" id="mouthEnd_1"><input type="hidden" value="1"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span><input type="hidden" value="1"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span>
+                                月执行一次
+                            </div>
+                            <div class="form-group">
+                                <input type="radio" name="mouth" id="mouth_appoint">
+                               <label for="mouth_appoint">指定</label>
+                            </div>
+                            <div class="imp mouthList">
+                                <input type="checkbox" id="m_1" value="1"><label for="m_1">1</label>
+                                <input type="checkbox" id="m_2" value="2"><label for="m_2">2</label>
+                                <input type="checkbox" id="m_3" value="3"><label for="m_3">3</label>
+                                <input type="checkbox" id="m_4" value="4"><label for="m_4">4</label>
+                                <input type="checkbox" id="m_5" value="5"><label for="m_5">5</label>
+                                <input type="checkbox" id="m_6" value="6"><label for="m_6">6</label>
+                                <input type="checkbox" id="m_7" value="7"><label for="m_7">7</label>
+                                <input type="checkbox" id="m_8" value="8"><label for="m_8">8</label>
+                                <input type="checkbox" id="m_9" value="9"><label for="m_9">9</label>
+                                <input type="checkbox" id="m_10" value="10"><label for="m_10">10</label>
+                                <input type="checkbox" id="m_11" value="11"><label for="m_11">11</label>
+                                <input type="checkbox" id="m_12" value="12"><label for="m_12">12</label>
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="p_week">
+                            <div class="form-group">
+                                <input type="radio" checked="checked" name="week" id="week" onclick="everyTime(this)">
+                                <label for="week">周</label> 允许的通配符[, - * / L #]
+                            </div>
+                            <div class="form-group">
+                                <input type="radio" name="week" id="w_unAppoint" onclick="unAppoint(this)">
+                                <label for="w_unAppoint">不指定</label>
+                            </div>
+                            <div class="form-group">
+                                <input type="radio" name="week" id="w_cycle" onclick="startOn(this)">
+                                <label for="w_cycle">周期</label> 从星期<span class="spinner" style="width: 62px; height: 24px;"><span class="spinner" style="width: 48px; height: 24px;"><input class="numberspinner numberspinner-f spinner-text spinner-f validatebox-text numberbox-f" style="width: 32px; height: 22px; line-height: 22px;" data-options="min:1,max:7" id="weekStart_0" value="1"><input type="hidden" value="1"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span><input type="hidden" value="1"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span>
+                                -
+                                <span class="spinner" style="width: 62px; height: 24px;"><span class="spinner" style="width: 48px; height: 24px;"><input class="numberspinner numberspinner-f spinner-text spinner-f validatebox-text numberbox-f" style="width: 32px; height: 22px; line-height: 22px;" data-options="min:2,max:7" value="2" id="weekEnd_0"><input type="hidden" value="2"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span><input type="hidden" value="2"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span>
+                            </div>
+                            <div class="form-group">
+                                <input type="radio" name="week" onclick="weekOfDay(this)">
+                                第<span class="spinner" style="width: 62px; height: 24px;"><span class="spinner" style="width: 48px; height: 24px;"><input class="numberspinner numberspinner-f spinner-text spinner-f validatebox-text numberbox-f" style="width: 32px; height: 22px; line-height: 22px;" data-options="min:1,max:4" value="1" id="weekStart_1"><input type="hidden" value="1"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span><input type="hidden" value="1"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span>
+                                周 的星期<span class="spinner" style="width: 62px; height: 24px;"><span class="spinner" style="width: 48px; height: 24px;"><input class="numberspinner numberspinner-f spinner-text spinner-f validatebox-text numberbox-f" style="width: 32px; height: 22px; line-height: 22px;" data-options="min:1,max:7" id="weekEnd_1" value="1"><input type="hidden" value="1"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span><input type="hidden" value="1"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span>
+                            </div>
+                            <div class="form-group">
+                                <input type="radio" name="week" onclick="lastWeek(this)">
+                                本月最后一个星期<span class="spinner" style="width: 62px; height: 24px;"><span class="spinner" style="width: 48px; height: 24px;"><input class="numberspinner numberspinner-f spinner-text spinner-f validatebox-text numberbox-f" style="width: 32px; height: 22px; line-height: 22px;" data-options="min:1,max:7" id="weekStart_2" value="1"><input type="hidden" value="1"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span><input type="hidden" value="1"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span>
+                            </div>
+                            <div class="form-group">
+                                <input type="radio" name="week" id="week_appoint">
+                                <label for="week_appoint">指定</label>
+                            </div>
+                            <div class="imp weekList">
+                                <input type="checkbox" id="w_1" value="1"><label for="w_1">1</label>
+                                <input type="checkbox" id="w_2" value="2"><label for="w_2">2</label>
+                                <input type="checkbox" id="w_3" value="3"><label for="w_3">3</label>
+                                <input type="checkbox" id="w_4" value="4"><label for="w_4">4</label>
+                                <input type="checkbox" id="w_5" value="5"><label for="w_5">5</label>
+                                <input type="checkbox" id="w_6" value="6"><label for="w_6">6</label>
+                                <input type="checkbox" id="w_7" value="7"><label for="w_7">7</label>
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="p_year">
+                            <div class="form-group">
+                                <input type="radio" checked="checked" name="year" id="y_unAppoint" onclick="unAppoint(this)">
+                                <label for="y_unAppoint">不指定</label> 允许的通配符[, - * /] 非必填
+                            </div>
+                            <div class="form-group">
+                                <input type="radio" name="year" id="y_everyTime" onclick="everyTime(this)">
+                                <label for="y_everyTime">每年</label>
+                            </div>
+                            <div class="form-group">
+                                <input type="radio" name="year" id="y_cycle" onclick="cycle(this)"><label for="y_cycle">周期</label> 从
+                                <span class="spinner" style="width: 92px; height: 24px;"><span class="spinner" style="width: 78px; height: 24px;"><input class="numberspinner numberspinner-f spinner-text spinner-f validatebox-text numberbox-f" style="width: 62px; height: 22px; line-height: 22px;" data-options="min:2013,max:3000" id="yearStart_0" value="2019"><input type="hidden" value="2019"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span><input type="hidden" value="2019"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span>
+                                -
+                                <span class="spinner" style="width: 92px; height: 24px;"><span class="spinner" style="width: 78px; height: 24px;"><input class="numberspinner numberspinner-f spinner-text spinner-f validatebox-text numberbox-f" style="width: 62px; height: 22px; line-height: 22px;" data-options="min:2014,max:3000" id="yearEnd_0" value="2020"><input type="hidden" value="2020"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span><input type="hidden" value="2020"><span class="spinner-arrow" style="height: 22px;"><span class="spinner-arrow-up" style="height: 11px;"></span><span class="spinner-arrow-down" style="height: 11px;"></span></span></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="alert alert-danger" role="alert" id="errorCron" style="display: none;"></div>
+                    <div data-options="region:&#39;south&#39;,border:false">
+                        <fieldset style="border-radius: 3px;">
+                            <legend>表达式</legend>
+                            <div class="form-group">
+                                <label>表达式字段:</label>
+                                <div class="row">
+                                    <div class="col-md-2">
+                                        <div class="input-group">
+                                            <input class="form-control" type="text" name="v_second" value="*" readonly="readonly">
+                                            <span class="input-group-addon">秒</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="input-group">
+                                            <input class="form-control" type="text" id="v_min" name="v_min" value="*" readonly="readonly">
+                                            <span class="input-group-addon">分钟</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="input-group">
+                                            <input class="form-control" type="text" name="v_hour" value="*" readonly="readonly">
+                                            <span class="input-group-addon">小时</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="input-group">
+                                            <input class="form-control" type="text" name="v_day" value="*" readonly="readonly">
+                                            <span class="input-group-addon">日</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="input-group">
+                                            <input class="form-control" type="text" name="v_mouth" value="*" readonly="readonly">
+                                            <span class="input-group-addon">月</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-1">
+                                        <div class="input-group">
+                                            <input class="form-control" type="text" name="v_week" value="?" readonly="readonly">
+                                            <span class="input-group-addon">星期</span>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <div class="input-group">
+                                            <input class="form-control" type="text" name="v_year" readonly="readonly">
+                                            <span class="input-group-addon">年</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>Cron 表达式:</label>
+                                    <input class="form-control" type="text" name="cron" value="* * * * * ?" id="cron" style="">
+                                </div>
+                                <div class="form-group">
+                                    <button type="button" class="btn btn-info" onclick="btnFan()">反解析到UI</button>&nbsp;&nbsp;<button type="button" class="btn btn-info" onclick="btnrun()">运行
+                                    </button>
+                                </div>
+								
+                                <div class="form-group">
+                                    <label>最近10次运行时间</label>
+                                    <textarea class="form-control" rows="10" id="runTime" style="width: 100%"></textarea>
+                                </div>
+								
+								 <div class="form-group" style="font-size: 14px;">
+                                    <label>常用cron表达式例子</label>
+                                    <div>
+
+          
+            <p>
+                  <span><span style="line-height:18px;color:#0000FF;"><span style="line-height:18px;color:#000000;">（1）</span></span><span><span style="line-height:18px;color:#0000FF;">0/2 * * * * ?</span></span>&nbsp;&nbsp;</span>&nbsp;表示每2秒
+                执行任务
+            </p>
+            <p>
+                  <span><span style="line-height:18px;color:#0000FF;"><span style="line-height:18px;color:#000000;">（1）</span></span><span><span style="line-height:18px;color:#0000FF;">0 0/2 * * * ?&nbsp;</span></span>&nbsp;&nbsp;</span>&nbsp;表示每2分钟
+                执行任务
+            </p>
+            <p>
+                  <span><span style="line-height:18px;color:#0000FF;"><span style="line-height:18px;color:#000000;">（1）</span></span><span><span style="line-height:18px;color:#0000FF;">0 0 2 1 * ?</span></span>&nbsp;&nbsp;</span>&nbsp;表示在每月的1日的凌晨2点调整任务
+            </p>
+            <p>
+                  <span style="line-height:18px;color:#0000FF;"><span style="line-height:18px;color:#000000;">（2）</span></span><span><span style="line-height:18px;color:#0000FF;">0 15 10 ? * MON-FRI</span>&nbsp;</span>&nbsp;
+                表示周一到周五每天上午10:15执行作业
+            </p>
+            <p>
+                  （3）<span><span style="line-height:18px;color:#0000FF;">0 15 10 ? 6L 2002-2006</span></span>&nbsp;&nbsp;
+                表示2002-2006年的每个月的最后一个星期五上午10:15执行作
+            </p>
+            <p>
+                  （4）<span><span style="line-height:18px;color:#0000FF;">0 0 10,14,16 * * ?</span></span>&nbsp;&nbsp;&nbsp;每天上午10点，下午2点，4点&nbsp;
+            </p>
+            <p>
+                  （5）<span><span style="line-height:18px;color:#0000FF;">0 0/30 9-17 * * ?</span></span>&nbsp;&nbsp;
+                朝九晚五工作时间内每半小时&nbsp;
+            </p>
+            <p>
+                  （6）<span><span style="line-height:18px;color:#0000FF;">0 0 12 ? * WED</span></span>&nbsp;&nbsp;
+                &nbsp;表示每个星期三中午12点&nbsp;
+            </p>
+            <p>
+                  （7）<span><span style="line-height:18px;color:#0000FF;">0 0 12 * * ?</span></span>&nbsp;&nbsp;&nbsp;每天中午12点触发&nbsp;
+            </p>
+            <p>
+                  （8）<span><span style="line-height:18px;color:#0000FF;">0 15 10 ? * * &nbsp;</span></span>&nbsp;&nbsp;每天上午10:15触发&nbsp;
+            </p>
+            <p>
+                  （9）<span><span style="line-height:18px;color:#0000FF;">0 15 10 * * ?</span></span>&nbsp;&nbsp;
+                &nbsp; 每天上午10:15触发&nbsp;
+            </p>
+            <p>
+                  （10）<span><span style="line-height:18px;color:#0000FF;">0 15 10 * * ?</span>&nbsp;</span>&nbsp;
+                &nbsp;每天上午10:15触发&nbsp;
+            </p>
+            <p>
+                  （11）<span><span style="line-height:18px;color:#0000FF;">0 15 10 * * ? 2005</span></span>&nbsp;&nbsp;
+                &nbsp;2005年的每天上午10:15触发&nbsp;
+            </p>
+            <p>
+                  （12）<span><span style="line-height:18px;color:#0000FF;">0 * 14 * * ?</span></span>&nbsp;&nbsp;
+                &nbsp; 在每天下午2点到下午2:59期间的每1分钟触发&nbsp;
+            </p>
+            <p>
+                  （13）<span><span style="line-height:18px;color:#0000FF;">0 0/5 14 * * ?</span></span>&nbsp;&nbsp;
+                &nbsp;在每天下午2点到下午2:55期间的每5分钟触发&nbsp;
+            </p>
+            <p>
+                  （14）<span><span style="line-height:18px;color:#0000FF;">0 0/5 14,18 * * ?</span></span>&nbsp;&nbsp;
+                &nbsp; 在每天下午2点到2:55期间和下午6点到6:55期间的每5分钟触发&nbsp;
+            </p>
+            <p>
+                  （15）<span><span style="line-height:18px;color:#0000FF;">0 0-5 14 * * ?</span>&nbsp;</span>&nbsp;
+                &nbsp;在每天下午2点到下午2:05期间的每1分钟触发&nbsp;
+            </p>
+            <p>
+                  （16）<span><span style="line-height:18px;color:#0000FF;">0 10,44 14 ? 3 WED</span></span>&nbsp;&nbsp;
+                &nbsp;每年三月的星期三的下午2:10和2:44触发&nbsp;
+            </p>
+            <p>
+                  （17）<span><span style="line-height:18px;color:#0000FF;">0 15 10 ? * MON-FRI</span>&nbsp;</span>&nbsp; &nbsp;周一至周五的上午10:15触发&nbsp;
+            </p>
+            <p>
+                  （18）<span><span style="line-height:18px;color:#0000FF;">0 15 10 15 * ?</span>&nbsp;</span>&nbsp;
+                &nbsp;每月15日上午10:15触发&nbsp;
+            </p>
+            <p>
+                  （19）<span><span style="line-height:18px;color:#0000FF;">0 15 10 L * ?</span>&nbsp;</span>&nbsp;
+                &nbsp;每月最后一日的上午10:15触发&nbsp;
+            </p>
+            <p>
+                  （20）<span><span style="line-height:18px;color:#0000FF;">0 15 10 ? * 6L</span>&nbsp;</span>&nbsp;
+                &nbsp;每月的最后一个星期五上午10:15触发&nbsp;
+            </p>
+            <p>
+                  （21）<span><span style="line-height:18px;color:#0000FF;">0 15 10 ? * 6L 2002-2005</span></span>&nbsp;&nbsp;
+                2002年至2005年的每月的最后一个星期五上午10:15触发&nbsp;
+            </p>
+            <p>
+                  （22）<span><span style="line-height:18px;color:#0000FF;">0 15 10 ? * 6#3</span></span>&nbsp;&nbsp;
+                每月的第三个星期五上午10:15触发
+            </p>
+
+        </div>
+                                </div>
+								
+                            </div>
+                        </fieldset>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<div class="clearfix"></div>
+
+<div class="cleanfix">
+    <footer class="footer">
+        <div class="container">
+
+<p>友情链接:
+    
+	<a href="https://qqe2.com/" target="_blank">JSON在线编辑器</a>
+	</p>
+        
+            <p>
+                站内声明：本网站部分工具由站长整合网络上现有的工具及其开源包等内容，且全部遵循原有协议发布，著作权归原作者或团队所有。
+            </p>
+            <p>© CopyRight 2014-2022,QQE2.com,Inc.All Rights Reservd.•
+        </p></div>
+    </footer>
+</div>
+<div class="clearfix">
+    <div class="fixed-btn">
+        <a id="go-top" class="go-top" href="javascript:void(0)" title="返回顶部" style="display: inline-block;"> <i class="iconfont"></i></a>
+    </div>
+</div>
+<!--侧边栏菜单-->
+<div id="sideMenu" class="mobile-show bootsidemenu container bootsidemenu-left" style="width: 15%; display: none; left: -287px;">
+
+    <div class="menu-wrapper">
+        <div class="logo-Title text-center">
+            JSON在线工具网
+        </div>
+        <div class="list-group">
+                                    <a href="https://qqe2.com/cron#mnav-2" class="list-group-item" data-toggle="collapse"><span class="icon glyphicon glyphicon-chevron-right"></span><span class="icon glyphicon glyphicon-chevron-right"></span>JSON工具</a>
+
+                        <div class="list-group collapse" id="mnav-2">
+                                                                <a href="https://qqe2.com/cron#mnav-2-3" class="list-group-item" data-toggle="collapse"><span class="icon glyphicon glyphicon-chevron-right"></span><span class="icon glyphicon glyphicon-chevron-right"></span>JSON编辑器/JSON视图/JSON解析</a>
+                                    <div class="list-group collapse" id="mnav-2-3">
+                                                                                    <a href="https://qqe2.com/" class="list-group-item">JSON在线编辑器</a>
+                                                                                        <a href="https://qqe2.com/json/analysis" class="list-group-item">JSON解析</a>
+                                                                                        <a href="https://qqe2.com/jsonlint/index" class="list-group-item">JSON校验</a>
+                                                                                        <a href="https://qqe2.com/jsontool/jsoncolor" class="list-group-item">JSON着色</a>
+                                                                                        <a href="https://qqe2.com/jsontool/jsondiff" class="list-group-item">JSON对比</a>
+                                                                                        <a href="https://qqe2.com/jsonview/index" class="list-group-item">JSON视图</a>
+                                                                                        <a href="https://qqe2.com/json/editview" class="list-group-item">JSON视图查看器</a>
+                                                                                </div>
+                                                                        <a href="https://qqe2.com/cron#mnav-2-11" class="list-group-item" data-toggle="collapse"><span class="icon glyphicon glyphicon-chevron-right"></span><span class="icon glyphicon glyphicon-chevron-right"></span>JSON转换/JSON压缩/JSON格式化</a>
+                                    <div class="list-group collapse" id="mnav-2-11">
+                                                                                    <a href="https://qqe2.com/json/zip" class="list-group-item">JSON压缩/转义</a>
+                                                                                        <a href="https://qqe2.com/json/json2entity" class="list-group-item">JSON转实体类</a>
+                                                                                        <a href="https://qqe2.com/json/jsongenerator" class="list-group-item">JSON生成器</a>
+                                                                                        <a href="https://qqe2.com/json/json2protobuf" class="list-group-item">JSON转Protobuf</a>
+                                                                                        <a href="https://qqe2.com/json/json2java" class="list-group-item">JSON转JAVA实体</a>
+                                                                                        <a href="https://qqe2.com/json/json2csharp" class="list-group-item">JSON转C#实体</a>
+                                                                                        <a href="https://qqe2.com/json/json2php" class="list-group-item">JSON转PHP</a>
+                                                                                        <a href="https://qqe2.com/json/json2phparray" class="list-group-item">JSON转PHP数组</a>
+                                                                                        <a href="https://qqe2.com/json/json2js" class="list-group-item">JSON转JS</a>
+                                                                                        <a href="https://qqe2.com/json/json2go" class="list-group-item">JSON转Go</a>
+                                                                                        <a href="https://qqe2.com/json/jsonxml" class="list-group-item">JSON|XML互转</a>
+                                                                                        <a href="https://qqe2.com/json/jsonyaml" class="list-group-item">JSON|YAML互转</a>
+                                                                                        <a href="https://qqe2.com/json/jsonexcel" class="list-group-item">Excel转JSON</a>
+                                                                                        <a href="https://qqe2.com/json/json2csv" class="list-group-item">JSON转CSV</a>
+                                                                                        <a href="https://qqe2.com/json/jsonget" class="list-group-item">JSON|Get互转</a>
+                                                                                </div>
+                                                            </div>
+                                                <a href="https://qqe2.com/cron#mnav-27" class="list-group-item" data-toggle="collapse"><span class="icon glyphicon glyphicon-chevron-right"></span><span class="icon glyphicon glyphicon-chevron-right"></span>加密解密</a>
+
+                        <div class="list-group collapse" id="mnav-27">
+                                                                <a href="https://qqe2.com/cron#mnav-27-28" class="list-group-item" data-toggle="collapse"><span class="icon glyphicon glyphicon-chevron-right"></span><span class="icon glyphicon glyphicon-chevron-right"></span>加密/解密</a>
+                                    <div class="list-group collapse" id="mnav-27-28">
+                                                                                    <a href="https://qqe2.com/ed/md5" class="list-group-item">MD5</a>
+                                                                                        <a href="https://qqe2.com/ed/htpasswd" class="list-group-item">.htpasswd在线生成</a>
+                                                                                        <a href="https://qqe2.com/ed/base64" class="list-group-item">Base64编码解码</a>
+                                                                                        <a href="https://qqe2.com/ed/hash" class="list-group-item">散列/哈希</a>
+                                                                                        <a href="https://qqe2.com/ed/en" class="list-group-item">加密/解密</a>
+                                                                                        <a href="https://qqe2.com/ed/sha" class="list-group-item">SHA加密</a>
+                                                                                        <a href="https://qqe2.com/ed/thunder" class="list-group-item">迅雷URL加密解密</a>
+                                                                                        <a href="https://qqe2.com/ed/escape" class="list-group-item">Escape加密、解密</a>
+                                                                                        <a href="https://qqe2.com/ed/urlencode" class="list-group-item">URL编码解码</a>
+                                                                                        <a href="https://qqe2.com/ed/morse" class="list-group-item">摩尔斯电码加/解密</a>
+                                                                                </div>
+                                                                        <a href="https://qqe2.com/cron#mnav-27-29" class="list-group-item" data-toggle="collapse"><span class="icon glyphicon glyphicon-chevron-right"></span><span class="icon glyphicon glyphicon-chevron-right"></span>JS加密/解密/压缩/解压缩</a>
+                                    <div class="list-group collapse" id="mnav-27-29">
+                                                                                    <a href="https://qqe2.com/ed/jsencrypt" class="list-group-item">JS混淆高级版</a>
+                                                                                        <a href="https://qqe2.com/ed/jsconfusion" class="list-group-item">js混淆基础版本</a>
+                                                                                        <a href="https://qqe2.com/ed/jsfuck" class="list-group-item">JSFuck加密</a>
+                                                                                        <a href="https://qqe2.com/ed/jjencode" class="list-group-item">jjencode加密</a>
+                                                                                        <a href="https://qqe2.com/ed/aaencode" class="list-group-item">aaencode加密</a>
+                                                                                        <a href="https://qqe2.com/ed/jsunpack" class="list-group-item">JS解密</a>
+                                                                                </div>
+                                                            </div>
+                                                <a href="https://qqe2.com/cron#mnav-46" class="list-group-item" data-toggle="collapse"><span class="icon glyphicon glyphicon-chevron-right"></span><span class="icon glyphicon glyphicon-chevron-right"></span>转换/美化</a>
+
+                        <div class="list-group collapse" id="mnav-46">
+                                                                <a href="https://qqe2.com/cron#mnav-46-47" class="list-group-item" data-toggle="collapse"><span class="icon glyphicon glyphicon-chevron-right"></span><span class="icon glyphicon glyphicon-chevron-right"></span>格式化/美化/压缩</a>
+                                    <div class="list-group collapse" id="mnav-46-47">
+                                                                                    <a href="https://qqe2.com/ed/jsunpack" class="list-group-item">JS美化解密</a>
+                                                                                        <a href="https://qqe2.com/format/js" class="list-group-item">HTML&amp;JS格式化</a>
+                                                                                        <a href="https://qqe2.com/format/html" class="list-group-item">Html/Js/Css过滤</a>
+                                                                                        <a href="https://qqe2.com/format/css" class="list-group-item">CSS压缩/格式化</a>
+                                                                                        <a href="https://qqe2.com/format/xml" class="list-group-item">XML压缩/格式化</a>
+                                                                                        <a href="https://qqe2.com/format/sql" class="list-group-item">SQL压缩/格式化</a>
+                                                                                        <a href="https://qqe2.com/format/csharp" class="list-group-item">C#美化</a>
+                                                                                        <a href="https://qqe2.com/format/java" class="list-group-item">Java美化</a>
+                                                                                        <a href="https://qqe2.com/format/php" class="list-group-item">PHP美化</a>
+                                                                                        <a href="https://qqe2.com/format/vbs" class="list-group-item">VBScript美化</a>
+                                                                                        <a href="https://qqe2.com/format/python" class="list-group-item">Python美化</a>
+                                                                                        <a href="https://qqe2.com/format/ruby" class="list-group-item">Ruby美化</a>
+                                                                                        <a href="https://qqe2.com/format/perl" class="list-group-item">Perl美化</a>
+                                                                                        <a href="https://qqe2.com/format/cpp" class="list-group-item">C/C++美化</a>
+                                                                                </div>
+                                                                        <a href="https://qqe2.com/cron#mnav-46-61" class="list-group-item" data-toggle="collapse"><span class="icon glyphicon glyphicon-chevron-right"></span><span class="icon glyphicon glyphicon-chevron-right"></span>转换/转义</a>
+                                    <div class="list-group collapse" id="mnav-46-61">
+                                                                                    <a href="https://qqe2.com/format/js2html" class="list-group-item">HTML&amp;JS互转</a>
+                                                                                        <a href="https://qqe2.com/format/html2ubb" class="list-group-item">HTML&amp;Ubb互转</a>
+                                                                                        <a href="https://qqe2.com/format/html2code" class="list-group-item">HTML代码转换</a>
+                                                                                        <a href="https://qqe2.com/format/csv2html" class="list-group-item">CSV转HTML</a>
+                                                                                        <a href="https://qqe2.com/format/ip2int" class="list-group-item">IP转数字</a>
+                                                                                        <a href="https://qqe2.com/format/subnetmask" class="list-group-item">IP计算换算</a>
+                                                                                        <a href="https://qqe2.com/format/rgbhex" class="list-group-item">HEX16色转Rgb</a>
+                                                                                        <a href="https://qqe2.com/format/keycode" class="list-group-item">获取键盘按键值</a>
+                                                                                </div>
+                                                            </div>
+                                                <a href="https://qqe2.com/cron#mnav-68" class="list-group-item" data-toggle="collapse"><span class="icon glyphicon glyphicon-chevron-right"></span><span class="icon glyphicon glyphicon-chevron-right"></span>编程开发</a>
+
+                        <div class="list-group collapse" id="mnav-68">
+                                                                <a href="https://qqe2.com/cron#mnav-68-69" class="list-group-item" data-toggle="collapse"><span class="icon glyphicon glyphicon-chevron-right"></span><span class="icon glyphicon glyphicon-chevron-right"></span>编辑器、生成器、模拟器</a>
+                                    <div class="list-group collapse" id="mnav-68-69">
+                                                                                    <a href="https://qqe2.com/dev/cron" class="list-group-item">Cron在线生成</a>
+                                                                                        <a href="https://qqe2.com/dev/websocket" class="list-group-item">Websocket模拟</a>
+                                                                                        <a href="https://qqe2.com/dev/markdown" class="list-group-item">Markdown 编辑</a>
+                                                                                        <a href="https://qqe2.com/dev/yaml" class="list-group-item">YAML、YML编辑</a>
+                                                                                        <a href="https://font.qqe2.com/" class="list-group-item">在线字体制作</a>
+                                                                                        <a href="https://qqe2.com/dev/xpath" class="list-group-item">xPath测试</a>
+                                                                                        <a href="https://qqe2.com/dev/createreg" class="list-group-item">正则表达式生成</a>
+                                                                                        <a href="https://qqe2.com/dev/regex" class="list-group-item">正则表达式测试</a>
+                                                                                </div>
+                                                                        <a href="https://qqe2.com/cron#mnav-68-78" class="list-group-item" data-toggle="collapse"><span class="icon glyphicon glyphicon-chevron-right"></span><span class="icon glyphicon glyphicon-chevron-right"></span>Web前端</a>
+                                    <div class="list-group collapse" id="mnav-68-78">
+                                                                                    <a href="https://qqe2.com/dev/clientinfo" class="list-group-item">浏览器信息</a>
+                                                                                        <a href="https://qqe2.com/dev/giffps" class="list-group-item">Gif转每帧</a>
+                                                                                        <a href="https://qqe2.com/dev/fontawesome" class="list-group-item">FontAwesome</a>
+                                                                                        <a href="https://qqe2.com/dev/xtz" class="list-group-item">线条字生成</a>
+                                                                                        <a href="https://qqe2.com/dev/imgtobase64" class="list-group-item">图片Base64互转</a>
+                                                                                </div>
+                                                                        <a href="https://qqe2.com/cron#mnav-68-80" class="list-group-item" data-toggle="collapse"><span class="icon glyphicon glyphicon-chevron-right"></span><span class="icon glyphicon glyphicon-chevron-right"></span>常用对照表</a>
+                                    <div class="list-group collapse" id="mnav-68-80">
+                                                                                    <a href="https://qqe2.com/dev/useragent" class="list-group-item">User-Agent大全</a>
+                                                                                </div>
+                                                            </div>
+                                                <a href="https://qqe2.com/cron#mnav-87" class="list-group-item" data-toggle="collapse"><span class="icon glyphicon glyphicon-chevron-right"></span><span class="icon glyphicon glyphicon-chevron-right"></span>文字工具</a>
+
+                        <div class="list-group collapse" id="mnav-87">
+                                                                <a href="https://qqe2.com/cron#mnav-87-88" class="list-group-item" data-toggle="collapse"><span class="icon glyphicon glyphicon-chevron-right"></span><span class="icon glyphicon glyphicon-chevron-right"></span>对比、匹配生成</a>
+                                    <div class="list-group collapse" id="mnav-87-88">
+                                                                                    <a href="https://qqe2.com/word/txtdiff" class="list-group-item">文本在线对比</a>
+                                                                                        <a href="https://qqe2.com/word/diff" class="list-group-item">代码在线对比</a>
+                                                                                        <a href="https://qqe2.com/word/barcode" class="list-group-item">条形码生成</a>
+                                                                                </div>
+                                                            </div>
+                                                <a href="https://qqe2.com/cron#mnav-91" class="list-group-item" data-toggle="collapse"><span class="icon glyphicon glyphicon-chevron-right"></span><span class="icon glyphicon glyphicon-chevron-right"></span>教程文档</a>
+
+                        <div class="list-group collapse" id="mnav-91">
+                                                                <a href="https://qqe2.com/cron#mnav-91-97" class="list-group-item" data-toggle="collapse"><span class="icon glyphicon glyphicon-chevron-right"></span><span class="icon glyphicon glyphicon-chevron-right"></span>教程/对照表</a>
+                                    <div class="list-group collapse" id="mnav-91-97">
+                                                                                    <a href="https://qqe2.com/json/doc" class="list-group-item">JSON教程</a>
+                                                                                        <a href="https://qqe2.com/doc/androidmanifest" class="list-group-item">安卓权限描述</a>
+                                                                                        <a href="https://qqe2.com/doc/useragent" class="list-group-item">User-Agent大全</a>
+                                                                                        <a href="https://qqe2.com/doc/contenttype" class="list-group-item">Mime-Type对照表</a>
+                                                                                        <a href="https://qqe2.com/doc/httpcode" class="list-group-item">HTTP状态码</a>
+                                                                                        <a href="https://qqe2.com/doc/escapechar" class="list-group-item">特殊字符转义对照表</a>
+                                                                                        <a href="https://qqe2.com/doc/httprequest" class="list-group-item">HTTP请求方法表</a>
+                                                                                        <a href="https://qqe2.com/doc/websafecolors" class="list-group-item">Web安全色</a>
+                                                                                        <a href="https://qqe2.com/doc/bootstrapicons" class="list-group-item">Bootstrap图标</a>
+                                                                                        <a href="https://qqe2.com/doc/portcode" class="list-group-item">常见HTTP端口</a>
+                                                                                        <a href="https://qqe2.com/doc/ascii" class="list-group-item">Ascii码对照表</a>
+                                                                                        <a href="https://qqe2.com/doc/eascii" class="list-group-item">EASCII码对照表</a>
+                                                                                        <a href="https://qqe2.com/doc/gb2312" class="list-group-item">GB2312编码表</a>
+                                                                                        <a href="https://qqe2.com/doc/gbk" class="list-group-item">GBK编码</a>
+                                                                                        <a href="https://qqe2.com/doc/linux" class="list-group-item">Linux常用命令</a>
+                                                                                        <a href="https://qqe2.com/doc/httpheader" class="list-group-item">HTTP请求头</a>
+                                                                                        <a href="https://qqe2.com/doc/jsescape" class="list-group-item">JS转义字符</a>
+                                                                                        <a href="https://qqe2.com/doc/jsevent" class="list-group-item">JS事件</a>
+                                                                                        <a href="https://qqe2.com/doc/phpfunction" class="list-group-item">PHP常用函数</a>
+                                                                                        <a href="https://qqe2.com/doc/levelnet" class="list-group-item">C#运算符</a>
+                                                                                        <a href="https://qqe2.com/doc/levelcpp" class="list-group-item">C++运算符</a>
+                                                                                        <a href="https://qqe2.com/doc/levec" class="list-group-item">C语言运算符</a>
+                                                                                        <a href="https://qqe2.com/doc/leveljava" class="list-group-item">Java运算符</a>
+                                                                                        <a href="https://qqe2.com/doc/levelphp" class="list-group-item">PHP运算符</a>
+                                                                                        <a href="https://qqe2.com/doc/levelpython" class="list-group-item">Python运算符</a>
+                                                                                        <a href="https://qqe2.com/doc/leveljavascript" class="list-group-item">Javascript运算符</a>
+                                                                                        <a href="https://qqe2.com/doc/levelvb" class="list-group-item">VB运算符</a>
+                                                                                        <a href="https://qqe2.com/doc/leveloc" class="list-group-item">OC运算符</a>
+                                                                                        <a href="https://qqe2.com/doc/levelgo" class="list-group-item">Go运算符</a>
+                                                                                </div>
+                                                            </div>
+                                </div>
+    </div>
+</div>
+<script src="./Cron_files/jquery.easyui.min.js"></script>
+<script src="./Cron_files/bootstrap.min.js"></script>
+<script src="./Cron_files/ktool.js"></script>
+<script src="./Cron_files/auto.js"></script>
+<script src="./Cron_files/jquery.autocompleter.js"></script>
+<script>
+$('.close').click(function(){
+	$('.xf2-gg-left').hide();
+})
+</script>
+</body></html>

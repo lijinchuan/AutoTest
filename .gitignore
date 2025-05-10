@@ -4,3 +4,5 @@ obj/
 /.vs/AutoTest/v16/.suo
 /.vs/AutoTest
 /Visual Studio 2019/Visualizers
+/.vs
+/AutoTest.UI/AutoTest.UI.csproj.user

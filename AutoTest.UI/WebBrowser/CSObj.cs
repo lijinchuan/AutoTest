@@ -1,4 +1,12 @@
-﻿using AutoTest.Domain.Entity;
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+using AutoTest.Domain.Entity;
 using AutoTest.Domain.Model;
 using AutoTest.UI.WebTask;
 using AutoTest.Util;
@@ -9,14 +17,6 @@ using LJC.FrameWorkV3.Comm;
 using LJC.FrameWorkV3.Data.EntityDataBase;
 using LJC.FrameWorkV3.LogManager;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 
 namespace AutoTest.UI.WebBrowser
 {
@@ -243,6 +243,15 @@ namespace AutoTest.UI.WebBrowser
             }
 
             return RequestWebResource(url, json, "application/json", "POST");
+        }
+
+        public string GetWeb(string url,string applicationType)
+        {
+            if (string.IsNullOrWhiteSpace(applicationType))
+            {
+                applicationType = "text/html";
+            }
+            return RequestWebResource(url, null, applicationType, "GET");
         }
 
         public void SetPageIsLoading(bool isLoading = true)
