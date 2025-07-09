@@ -3,6 +3,7 @@ using AutoTest.Domain;
 using AutoTest.Domain.Entity;
 using AutoTest.UI.SubForm;
 using AutoTest.UI.WebTask;
+using CefSharp;
 using LJC.FrameWorkV3.Comm;
 using LJC.FrameWorkV3.Data.EntityDataBase;
 using System;
@@ -1392,6 +1393,11 @@ namespace AutoTest.UI.UC
 
             autoTimer = TaskHelper.SetInterval(60 * 1000, () =>
               {
+                  if (!Cef.IsInitialized)
+                  {
+                      return false;
+                  }
+
                   var allList = new AutoTaskBiz().GetNextRunTaskBagList();
                   foreach (var nextList in allList.GroupBy(p => p.SiteId).Select(p => p.ToList()))
                   {

@@ -18,6 +18,7 @@ using CefSharp;
 using CefSharp.WinForms;
 using CefSharp.DevTools.Overlay;
 using AutoTest.UI.UC;
+using System.IO;
 
 namespace AutoTest.UI
 {
@@ -96,14 +97,6 @@ namespace AutoTest.UI
 
         public MainFrm()
         {
-            if (!Cef.IsInitialized)
-            {
-                var settings = new CefSettings();
-                settings.LogSeverity = LogSeverity.Warning;
-                //settings.CefCommandLineArgs.Add("--js-flags", $"--max_old_space_size=2048");
-                Cef.Initialize(settings);
-            }
-
             InitializeComponent();
             InitFrm();
 
@@ -114,7 +107,40 @@ namespace AutoTest.UI
         {
             base.OnLoad(e);
             this.Visible = false;
+
             wdlg.Show("初始化数据，请稍候...");
+
+            try
+            {
+                var cefSharpDir = "CefSharp";
+                if (Directory.Exists(cefSharpDir))
+                {
+                    wdlg.Msg = "清除浏览器文件，请稍后...";
+                    foreach (var file in Directory.GetFiles("CefSharp"))
+                    {
+                        wdlg.Msg = $"删除文件{file}...";
+                        File.Delete(file);
+                    }
+
+                    foreach (var dir in Directory.GetDirectories(cefSharpDir))
+                    {
+                        wdlg.Msg = $"删除文件夹{dir}...";
+                        Directory.Delete(dir, true);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Util.SendMsg(this, $"清除浏览器文件失败:{ex.Message}", 180);
+            }
+
+            if (!Cef.IsInitialized)
+            {
+                var settings = new CefSettings();
+                settings.LogSeverity = LogSeverity.Warning;
+                //settings.CefCommandLineArgs.Add("--js-flags", $"--max_old_space_size=2048");
+                Cef.Initialize(settings);
+            }
 
             try
             {
