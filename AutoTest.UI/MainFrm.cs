@@ -137,7 +137,8 @@ namespace AutoTest.UI
             if (!Cef.IsInitialized)
             {
                 var settings = new CefSettings();
-                settings.LogSeverity = LogSeverity.Warning;
+                settings.LogSeverity = LogSeverity.Disable;
+                //settings.LogSeverity = LogSeverity.Error;
                 //settings.CefCommandLineArgs.Add("--js-flags", $"--max_old_space_size=2048");
                 Cef.Initialize(settings);
             }
