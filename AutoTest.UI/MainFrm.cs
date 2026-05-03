@@ -197,7 +197,11 @@ namespace AutoTest.UI
             try
             {
                 wdlg.Msg = "其它工作...";
-                BigEntityTableEngine.LocalEngine.ShutDown();
+                var store = AutoTest.Data.DataStoreSwitcher.Current;
+                if (store is IDisposable d)
+                {
+                    try { d.Dispose(); } catch { }
+                }
             }
             catch(Exception ex)
             {
@@ -445,7 +449,7 @@ namespace AutoTest.UI
         {
             var dlg = new SubBaseDlg();
             dlg.Text = "全局代理服务器";
-            var globProxyServer = BigEntityTableEngine.LocalEngine.Find<ProxyServer>(nameof(ProxyServer), p => p.Name.Equals(ProxyServer.GlobName)).FirstOrDefault();
+            var globProxyServer = AutoTest.Data.DataStoreSwitcher.Current.Find<ProxyServer>(nameof(ProxyServer), nameof(ProxyServer.Name), new object[] { ProxyServer.GlobName }).FirstOrDefault();
 
             var ucproxy = new UC.UCProxy(globProxyServer);
             ucproxy.Dock = DockStyle.Fill;
@@ -456,17 +460,17 @@ namespace AutoTest.UI
 
                 if (ucproxy.HasChanged && MessageBox.Show("要保存吗?", "提示", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
                 {
-                    if (proxyserver.Id == 0)
-                    {
-                        proxyserver.Name = ProxyServer.GlobName;
-                        BigEntityTableEngine.LocalEngine.Insert<ProxyServer>(nameof(ProxyServer), proxyserver);
-                        Util.SendMsg(this, "新增成功");
-                    }
-                    else
-                    {
-                        BigEntityTableEngine.LocalEngine.Update<ProxyServer>(nameof(ProxyServer), proxyserver);
-                        Util.SendMsg(this, "修改成功");
-                    }
+                        if (proxyserver.Id == 0)
+                        {
+                            proxyserver.Name = ProxyServer.GlobName;
+                            AutoTest.Data.DataStoreSwitcher.Current.Insert(nameof(ProxyServer), proxyserver);
+                            Util.SendMsg(this, "新增成功");
+                        }
+                        else
+                        {
+                            AutoTest.Data.DataStoreSwitcher.Current.Update(nameof(ProxyServer), proxyserver);
+                            Util.SendMsg(this, "修改成功");
+                        }
 
                 }
             };

@@ -1,6 +1,7 @@
 ﻿using AutoTest.Domain;
 using AutoTest.Domain.Entity;
 using LJC.FrameWorkV3.Data.EntityDataBase;
+using AutoTest.Data;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,7 +25,7 @@ namespace AutoTest.Biz
         public static void LoadTestResurce(Form parent, TreeNode pnode, bool isExpanded)
         {
             List<TreeNode> treeNodes = new List<TreeNode>();
-            var aPISources = BigEntityTableRemotingEngine.List<TestSource>(nameof(TestSource), 1, int.MaxValue);
+            var aPISources = DataStoreSwitcher.Current.List<TestSource>(nameof(TestSource), 1, int.MaxValue);
             foreach (var s in aPISources)
             {
                 TreeNode node = new TreeNodeEx(s.SourceName, 12, 12, 12, 12);
@@ -48,7 +49,7 @@ namespace AutoTest.Biz
         {
             List<TreeNode> treeNodes = new List<TreeNode>();
 
-            var testSiteList = BigEntityTableRemotingEngine.Find<TestSite>(nameof(TestSite), nameof(TestSite.SourceId), new object[] { sourceId }).ToList();
+            var testSiteList = DataStoreSwitcher.Current.Find<TestSite>(nameof(TestSite), nameof(TestSite.SourceId), new object[] { sourceId }).ToList();
 
             foreach (var page in testSiteList)
             {
@@ -94,7 +95,7 @@ namespace AutoTest.Biz
             usersNode.Tag = new NodeContents(NodeContentType.LOGINACCOUNTS);
             treeNodes.Add(usersNode);
 
-            var testPageList = BigEntityTableRemotingEngine.Find<TestPage>(nameof(TestPage), nameof(TestPage.SiteId), new object[] { siteId })
+            var testPageList = DataStoreSwitcher.Current.Find<TestPage>(nameof(TestPage), nameof(TestPage.SiteId), new object[] { siteId })
                 .OrderBy(p=>p.Order).ToList();
 
             foreach (var page in testPageList)
@@ -155,7 +156,7 @@ namespace AutoTest.Biz
         public static void LoadTestCase(Form parent, TreeNode pnode, int pageId,int envId,bool isExpanded)
         {
             List<TreeNode> treeNodes = new List<TreeNode>();
-            var testCaseList = BigEntityTableRemotingEngine.Find<TestCase>(nameof(TestCase), nameof(TestCase.PageId), new object[] { pageId })
+            var testCaseList = DataStoreSwitcher.Current.Find<TestCase>(nameof(TestCase), nameof(TestCase.PageId), new object[] { pageId })
                 .OrderBy(p => p.Order).ToList();
 
             foreach (var @case in testCaseList)
@@ -164,8 +165,9 @@ namespace AutoTest.Biz
 
                 //if (envId != 0)
                 {
-                    var testResult = BigEntityTableRemotingEngine.Scan<TestResult>(nameof(TestResult), TestResult.Index_TestCaseId_EnvId_TestDate,
-                        new object[] { @case.Id, envId, DateTime.Now }, new object[] { @case.Id, envId, DateTime.MinValue }, 1, 1).FirstOrDefault();
+                    long _total = 0;
+                    var testResult = DataStoreSwitcher.Current.Scan<TestResult>(nameof(TestResult), TestResult.Index_TestCaseId_EnvId_TestDate,
+                        new object[] { @case.Id, envId, DateTime.Now }, new object[] { @case.Id, envId, DateTime.MinValue }, 1, 1, ref _total).FirstOrDefault();
 
                     if (testResult != null)
                     {
@@ -213,7 +215,7 @@ namespace AutoTest.Biz
         public static void LoadTestEnv(Form parent, TreeNode pnode, int siteId,bool isExpanded)
         {
             List<TreeNode> treeNodes = new List<TreeNode>();
-            var envlist = BigEntityTableRemotingEngine.Find<TestEnv>(nameof(TestEnv), nameof(TestEnv.SiteId), new object[] { siteId }).ToList();
+            var envlist = DataStoreSwitcher.Current.Find<TestEnv>(nameof(TestEnv), nameof(TestEnv.SiteId), new object[] { siteId }).ToList();
             foreach (var s in envlist)
             {
                 int imageIndex = 0, selectedImageIndex = 2;
@@ -244,7 +246,7 @@ namespace AutoTest.Biz
             try
             {
                 List<TreeNode> treeNodes = new List<TreeNode>();
-                var allenvparamslist = BigEntityTableRemotingEngine.Find<TestEnvParam>(nameof(TestEnvParam), "SiteId", new object[] { siteId }).ToList();
+                var allenvparamslist = DataStoreSwitcher.Current.Find<TestEnvParam>(nameof(TestEnvParam), "SiteId", new object[] { siteId }).ToList();
                 var allparamnames = allenvparamslist.Select(p => p.Name).Distinct();
                 foreach (var s in allparamnames)
                 {
@@ -292,9 +294,10 @@ namespace AutoTest.Biz
             try
             {
                 List<TreeNode> treeNodes = new List<TreeNode>();
-                var testScriptList = BigEntityTableRemotingEngine.Scan<TestScript>(nameof(TestScript), $"{nameof(TestScript.SourceId)}_{nameof(TestScript.SiteId)}_{nameof(TestScript.ScriptName)}",
-                    new object[] { sourceid, siteId, Consts.STRINGCOMPAIRMIN }, new object[] { sourceid, siteId, Consts.STRINGCOMPAIRMAX }, 1, int.MaxValue)
-                    .OrderBy(p => p.Order).ToList();
+                var testScriptList = DataStoreSwitcher.Current
+                    .Find<TestScript>(nameof(TestScript), $"{nameof(TestScript.SourceId)}_{nameof(TestScript.SiteId)}_{nameof(TestScript.ScriptName)}", new object[] { sourceid, siteId })
+                    .OrderBy(p => p.Order)
+                    .ToList();
 
                 foreach (var s in testScriptList)
                 {
@@ -326,7 +329,7 @@ namespace AutoTest.Biz
             try
             {
                 List<TreeNode> treeNodes = new List<TreeNode>();
-                var testLoginList = BigEntityTableRemotingEngine.Find<TestLogin>(nameof(TestLogin), nameof(TestLogin.SiteId), new object[] { siteId });
+                var testLoginList = DataStoreSwitcher.Current.Find<TestLogin>(nameof(TestLogin), nameof(TestLogin.SiteId), new object[] { siteId });
 
                 foreach (var testLogin in testLoginList)
                 {
@@ -363,7 +366,7 @@ namespace AutoTest.Biz
         {
 
             List<TreeNode> treeNodes = new List<TreeNode>();
-            var testTaskBagList = BigEntityTableRemotingEngine.Find<TestTaskBag>(nameof(TestTaskBag), nameof(TestTaskBag.SiteId), new object[] { siteId });
+            var testTaskBagList = DataStoreSwitcher.Current.Find<TestTaskBag>(nameof(TestTaskBag), nameof(TestTaskBag.SiteId), new object[] { siteId });
             var imgIndex = 25;
             foreach (var testBag in testTaskBagList)
             {

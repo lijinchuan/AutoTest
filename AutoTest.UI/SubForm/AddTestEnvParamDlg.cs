@@ -27,7 +27,7 @@ namespace AutoTest.UI.SubForm
             _siteId = siteId;
             _envparamid = envparamid;
 
-            apiEnvs = BigEntityTableRemotingEngine.Find<TestEnv>(nameof(TestEnv), nameof(TestEnv.SiteId), new object[] { _siteId }).ToList();
+            apiEnvs = AutoTest.Data.DataStoreSwitcher.Current.Find<TestEnv>(nameof(TestEnv), nameof(TestEnv.SiteId), new object[] { _siteId }).ToList();
             if (_envparamid == 0)
             {
                 apiEnvParams.AddRange(apiEnvs.Select(p => new ParamInfo
@@ -37,8 +37,8 @@ namespace AutoTest.UI.SubForm
             }
             else
             {
-                var apienvparam = BigEntityTableRemotingEngine.Find<TestEnvParam>(nameof(TestEnvParam), _envparamid);
-                var envparamlist = BigEntityTableRemotingEngine.Find<TestEnvParam>(nameof(TestEnvParam), "SiteId_Name", new object[] { _siteId, apienvparam.Name }).ToList();
+                var apienvparam = AutoTest.Data.DataStoreSwitcher.Current.Find<TestEnvParam>(nameof(TestEnvParam), _envparamid);
+                var envparamlist = AutoTest.Data.DataStoreSwitcher.Current.Find<TestEnvParam>(nameof(TestEnvParam), "SiteId_Name", new object[] { _siteId, apienvparam.Name }).ToList();
                 apiEnvParams.AddRange(apiEnvs.Select(p =>
                 {
                     return new ParamInfo
@@ -97,13 +97,13 @@ namespace AutoTest.UI.SubForm
 
             if (list.Any(p => p.Id == 0))
             {
-                BigEntityTableRemotingEngine.InsertBatch(nameof(TestEnvParam), list.Where(p => p.Id == 0));
+                AutoTest.Data.DataStoreSwitcher.Current.InsertBatch(nameof(TestEnvParam), list.Where(p => p.Id == 0));
             }
             else
             {
                 foreach (var item in list.Where(p => p.Id > 0))
                 {
-                    BigEntityTableRemotingEngine.Update(nameof(TestEnvParam), item);
+                    AutoTest.Data.DataStoreSwitcher.Current.Update(nameof(TestEnvParam), item);
                 }
             }
 
@@ -111,3 +111,4 @@ namespace AutoTest.UI.SubForm
         }
     }
 }
+

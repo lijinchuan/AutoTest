@@ -100,14 +100,14 @@ namespace AutoTest.UI.WebTask
             _testCase = testCase;
 
             _testLogin = testLogin;
-            _testCaseData = BigEntityTableRemotingEngine.Find<TestCaseData>(nameof(TestCaseData), nameof(TestCaseData.TestCaseId), new object[] { _testCase.Id }).FirstOrDefault();
+            _testCaseData = AutoTest.Data.DataStoreSwitcher.Current.Find<TestCaseData>(nameof(TestCaseData), nameof(TestCaseData.TestCaseId), new object[] { _testCase.Id }).FirstOrDefault();
             _globScripts = globScripts;
             _siteScripts = siteScripts;
             _notify = notify;
 
             _apiTaskRequest = apiTaskRequest;
 
-            _testCaseUrlConfig = BigEntityTableRemotingEngine.Find<TestCaseUrlConfig>(nameof(TestCaseUrlConfig),
+            _testCaseUrlConfig = AutoTest.Data.DataStoreSwitcher.Current.Find<TestCaseUrlConfig>(nameof(TestCaseUrlConfig),
                 nameof(TestCaseUrlConfig.TestCaseId), new object[] { testCase.Id }).FirstOrDefault();
 
             _testResult = new TestResult
@@ -486,7 +486,7 @@ namespace AutoTest.UI.WebTask
                 {
                     if (bag.apiTaskResult != null)
                     {
-                        BigEntityTableEngine.LocalEngine.Insert(nameof(APITaskResult), new APITaskResult
+                        AutoTest.Data.DataStoreSwitcher.Current.Insert(nameof(APITaskResult), new APITaskResult
                         {
                             CDate=DateTime.Now,
                             TaskId=_apiTaskRequest.Id,
@@ -494,7 +494,7 @@ namespace AutoTest.UI.WebTask
                             UseMillSecs=DateTime.Now.Subtract(_testResult.TestStartDate).TotalMilliseconds
                         });
                         _apiTaskRequest.State = 1;
-                        BigEntityTableEngine.LocalEngine.Update(nameof(APITaskRequest), _apiTaskRequest);
+                        AutoTest.Data.DataStoreSwitcher.Current.Update(nameof(APITaskRequest), _apiTaskRequest);
                     }
                 }
             }
@@ -591,17 +591,17 @@ namespace AutoTest.UI.WebTask
         private void FinishTest()
         {
             _testResult.TestEndDate = DateTime.Now;
-            BigEntityTableRemotingEngine.Insert(nameof(TestResult), _testResult);
+            AutoTest.Data.DataStoreSwitcher.Current.Insert(nameof(TestResult), _testResult);
 
             _notify?.Invoke(_testResult);
             EventBus.NotifyTestResultAction?.Invoke(_testResult);
 
             if (_apiTaskRequest != null)
             {
-                var apiResult = BigEntityTableEngine.LocalEngine.Find<APITaskResult>(nameof(APITaskResult), nameof(APITaskResult.TaskId), new object[] { _apiTaskRequest.Id }).FirstOrDefault();
+                var apiResult = AutoTest.Data.DataStoreSwitcher.Current.Find<APITaskResult>(nameof(APITaskResult), nameof(APITaskResult.TaskId), new object[] { _apiTaskRequest.Id }).FirstOrDefault();
                 if (apiResult == null)
                 {
-                    BigEntityTableEngine.LocalEngine.Insert(nameof(APITaskResult), new APITaskResult
+                    AutoTest.Data.DataStoreSwitcher.Current.Insert(nameof(APITaskResult), new APITaskResult
                     {
                         CDate = DateTime.Now,
                         TaskId = _apiTaskRequest.Id,
@@ -609,7 +609,7 @@ namespace AutoTest.UI.WebTask
                         UseMillSecs = DateTime.Now.Subtract(_testResult.TestStartDate).TotalMilliseconds
                     });
                     _apiTaskRequest.State = 1;
-                    BigEntityTableEngine.LocalEngine.Update(nameof(APITaskRequest), _apiTaskRequest);
+                    AutoTest.Data.DataStoreSwitcher.Current.Update(nameof(APITaskRequest), _apiTaskRequest);
                 }
             }
         }
@@ -790,3 +790,4 @@ namespace AutoTest.UI.WebTask
         }
     }
 }
+

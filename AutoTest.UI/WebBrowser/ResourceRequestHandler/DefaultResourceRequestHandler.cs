@@ -38,7 +38,7 @@ namespace AutoTest.UI.WebBrowser.ResourceRequestHandler
                 if (currTask != null && currTask.GetTestCase() != null)
                 {
                     var configs = (List<RequestInterceptConfig>)LocalCacheManager<object>.Find("RequestInterceptConfig_" + currTask.GetTestCase().Id,
-                        () => BigEntityTableRemotingEngine.Find<RequestInterceptConfig>(nameof(RequestInterceptConfig),
+                        () => AutoTest.Data.DataStoreSwitcher.Current.Find<RequestInterceptConfig>(nameof(RequestInterceptConfig),
                     nameof(RequestInterceptConfig.TestCaseId), new object[] { currTask.GetTestCase().Id }).ToList(), 1);
 
                     foreach(var c in configs.Where(p=>p.Enabled))
@@ -210,3 +210,4 @@ namespace AutoTest.UI.WebBrowser.ResourceRequestHandler
         }
     }
 }
+

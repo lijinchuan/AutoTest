@@ -59,7 +59,7 @@ namespace AutoTest.UI.UC
 
             if (_testCase != null)
             {
-                var configs = BigEntityTableRemotingEngine.Find<RequestInterceptConfig>(nameof(RequestInterceptConfig),
+                var configs = AutoTest.Data.DataStoreSwitcher.Current.Find<RequestInterceptConfig>(nameof(RequestInterceptConfig),
                      nameof(RequestInterceptConfig.TestCaseId), new object[] { _testCase.Id }).ToList();
 
                 GVRequestIntercept.DataSource = configs;
@@ -137,7 +137,7 @@ namespace AutoTest.UI.UC
 
         private void BindData()
         {
-            var configs = BigEntityTableRemotingEngine.Find<RequestInterceptConfig>(nameof(RequestInterceptConfig),
+            var configs = AutoTest.Data.DataStoreSwitcher.Current.Find<RequestInterceptConfig>(nameof(RequestInterceptConfig),
                     nameof(RequestInterceptConfig.TestCaseId), new object[] { _testCase.Id }).ToList();
 
             GVRequestIntercept.DataSource = configs;
@@ -171,7 +171,7 @@ namespace AutoTest.UI.UC
                         {
                             var config = (row.DataBoundItem as RequestInterceptConfig);
                             config.Enabled = true;
-                            BigEntityTableRemotingEngine.Update(nameof(RequestInterceptConfig), config);
+                            AutoTest.Data.DataStoreSwitcher.Current.Update(nameof(RequestInterceptConfig), config);
                             BindData();
                         }
                         break;
@@ -183,7 +183,7 @@ namespace AutoTest.UI.UC
                         {
                             var config = (row.DataBoundItem as RequestInterceptConfig);
                             config.Enabled = false;
-                            BigEntityTableRemotingEngine.Update(nameof(RequestInterceptConfig), config);
+                            AutoTest.Data.DataStoreSwitcher.Current.Update(nameof(RequestInterceptConfig), config);
                             BindData();
                         }
                         break;
@@ -232,7 +232,7 @@ namespace AutoTest.UI.UC
                 }
                 _currentInterceptConfig.MimeType = (string)CBMimeType.SelectedValue;
 
-                BigEntityTableRemotingEngine.Upsert(nameof(RequestInterceptConfig), _currentInterceptConfig);
+                AutoTest.Data.DataStoreSwitcher.Current.Upsert(nameof(RequestInterceptConfig), _currentInterceptConfig);
 
                 GBEdit.Visible = false;
                 _currentInterceptConfig = null;
@@ -264,3 +264,4 @@ namespace AutoTest.UI.UC
         }
     }
 }
+

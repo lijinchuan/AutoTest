@@ -55,6 +55,10 @@
     <Compile Include="AutoTaskBiz.cs" />
     <Compile Include="CounterBiz.cs" />
     <Compile Include="CronHelper.cs" />
+    <Compile Include="Data\BigEntityStore.cs" />
+    <Compile Include="Data\DataStoreSwitcher.cs" />
+    <Compile Include="Data\IDataStore.cs" />
+    <Compile Include="Data\SqliteStore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="RecoverManager.cs" />
     <Compile Include="RuntimeConfig.cs" />

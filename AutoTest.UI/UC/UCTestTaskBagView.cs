@@ -36,17 +36,17 @@ namespace AutoTest.UI.UC
 
             _siteId = siteId;
 
-            var _testSite = BigEntityTableRemotingEngine.Find<TestSite>(nameof(TestSite), _siteId);
-            var _testSource = BigEntityTableRemotingEngine.Find<TestSource>(nameof(TestSource), _testSite.SourceId);
+            var _testSite = AutoTest.Data.DataStoreSwitcher.Current.Find<TestSite>(nameof(TestSite), _siteId);
+            var _testSource = AutoTest.Data.DataStoreSwitcher.Current.Find<TestSource>(nameof(TestSource), _testSite.SourceId);
             var _testPageList = new List<TestPage>();
 
-            var testPageList = BigEntityTableRemotingEngine.Find<TestPage>(nameof(TestPage), nameof(TestPage.SiteId), new object[] { _testSite.Id }).ToList();
+            var testPageList = AutoTest.Data.DataStoreSwitcher.Current.Find<TestPage>(nameof(TestPage), nameof(TestPage.SiteId), new object[] { _testSite.Id }).ToList();
             if (testPageList.Any())
             {
                 _testPageList.AddRange(testPageList);
             }
 
-            var _testEnvList = BigEntityTableRemotingEngine.Find<TestEnv>(nameof(TestEnv), nameof(TestEnv.SiteId), new object[] { _testSite.Id }).ToList();
+            var _testEnvList = AutoTest.Data.DataStoreSwitcher.Current.Find<TestEnv>(nameof(TestEnv), nameof(TestEnv.SiteId), new object[] { _testSite.Id }).ToList();
             if (_testEnvList.Any())
             {
                 CBEvn.DataSource = _testEnvList;
@@ -54,7 +54,7 @@ namespace AutoTest.UI.UC
                 CBEvn.ValueMember = nameof(TestEnv.Id);
             }
 
-            var _testLoginList = BigEntityTableRemotingEngine.Find<TestLogin>(nameof(TestLogin), nameof(TestLogin.SiteId), new object[] { _testSite.Id }).ToList();
+            var _testLoginList = AutoTest.Data.DataStoreSwitcher.Current.Find<TestLogin>(nameof(TestLogin), nameof(TestLogin.SiteId), new object[] { _testSite.Id }).ToList();
             if (_testLoginList.Any())
             {
                 CBUser.DataSource = _testLoginList;
@@ -65,7 +65,7 @@ namespace AutoTest.UI.UC
             var _testCaseList = new List<TestCase>();
             foreach (var page in _testPageList)
             {
-                var testCaseList = BigEntityTableRemotingEngine.Find<TestCase>(nameof(TestCase), nameof(TestCase.PageId), new object[] { page.Id }).ToList();
+                var testCaseList = AutoTest.Data.DataStoreSwitcher.Current.Find<TestCase>(nameof(TestCase), nameof(TestCase.PageId), new object[] { page.Id }).ToList();
                 if (testCaseList.Any())
                 {
                     _testCaseList.AddRange(testCaseList);
@@ -93,7 +93,7 @@ namespace AutoTest.UI.UC
 
             if (testBagId > 0)
             {
-                _testTaskBag = BigEntityTableRemotingEngine.Find<TestTaskBag>(nameof(TestTaskBag), testBagId);
+                _testTaskBag = AutoTest.Data.DataStoreSwitcher.Current.Find<TestTaskBag>(nameof(TestTaskBag), testBagId);
             }
             else
             {
@@ -155,12 +155,12 @@ namespace AutoTest.UI.UC
 
             if (_testTaskBag.Id > 0)
             {
-                BigEntityTableRemotingEngine.Update(nameof(TestTaskBag), _testTaskBag);
+                AutoTest.Data.DataStoreSwitcher.Current.Update(nameof(TestTaskBag), _testTaskBag);
                 Util.SendMsg(this, "测试包更新成功");
             }
             else
             {
-                BigEntityTableRemotingEngine.Insert(nameof(TestTaskBag), _testTaskBag);
+                AutoTest.Data.DataStoreSwitcher.Current.Insert(nameof(TestTaskBag), _testTaskBag);
                 Util.SendMsg(this, "测试包添加成功");
             }
 
@@ -204,3 +204,4 @@ namespace AutoTest.UI.UC
         }
     }
 }
+

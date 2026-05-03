@@ -12,22 +12,22 @@ namespace AutoTest.Biz
     {
         public TestTask CreateTask(int caseId)
         {
-            var testCase = BigEntityTableEngine.LocalEngine.Find<TestCase>(nameof(TestCase), caseId);
+            var testCase = AutoTest.Data.DataStoreSwitcher.Current.Find<TestCase>(nameof(TestCase), caseId);
 
             if (testCase != null)
             {
-                var page = BigEntityTableEngine.LocalEngine.Find<TestPage>(nameof(TestPage), testCase.PageId);
-                var site = BigEntityTableEngine.LocalEngine.Find<TestSite>(nameof(TestSite), page.SiteId);
-                var source = BigEntityTableEngine.LocalEngine.Find<TestSource>(nameof(TestSource), site.SourceId);
-                var scripts = BigEntityTableRemotingEngine.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == source.Id).ToList();
-                var testLogins = BigEntityTableRemotingEngine.Find<TestLogin>(nameof(TestLogin), nameof(TestLogin.SiteId), new object[] { site.Id });
+                var page = AutoTest.Data.DataStoreSwitcher.Current.Find<TestPage>(nameof(TestPage), testCase.PageId);
+                var site = AutoTest.Data.DataStoreSwitcher.Current.Find<TestSite>(nameof(TestSite), page.SiteId);
+                var source = AutoTest.Data.DataStoreSwitcher.Current.Find<TestSource>(nameof(TestSource), site.SourceId);
+                var scripts = AutoTest.Data.DataStoreSwitcher.Current.Find<TestScript>(nameof(TestScript), s => s.Enable && s.SourceId == source.Id).ToList();
+                var testLogins = AutoTest.Data.DataStoreSwitcher.Current.Find<TestLogin>(nameof(TestLogin), nameof(TestLogin.SiteId), new object[] { site.Id });
 
-                var testEnvs = BigEntityTableRemotingEngine.Find<TestEnv>(nameof(TestEnv), nameof(TestEnv.SiteId), new object[] { site.Id });
+                var testEnvs = AutoTest.Data.DataStoreSwitcher.Current.Find<TestEnv>(nameof(TestEnv), nameof(TestEnv.SiteId), new object[] { site.Id });
                 var currentEnv = testEnvs.FirstOrDefault(p => p.Used);
                 List<TestEnvParam> testEnvParams = null;
                 if (currentEnv != null)
                 {
-                    testEnvParams = BigEntityTableRemotingEngine.Find<TestEnvParam>(nameof(TestEnvParam), "SiteId_EnvId", new object[] { site.Id, currentEnv.Id }).ToList();
+                    testEnvParams = AutoTest.Data.DataStoreSwitcher.Current.Find<TestEnvParam>(nameof(TestEnvParam), "SiteId_EnvId", new object[] { site.Id, currentEnv.Id }).ToList();
                 }
                 var newTask = new TestTask
                 {
@@ -49,3 +49,4 @@ namespace AutoTest.Biz
         }
     }
 }
+

@@ -17,11 +17,11 @@ namespace AutoTest.Biz
                 return new List<TestTaskBag>();
             }
 
-            var bagList = BigEntityTableRemotingEngine.Find<TestTaskBag>(nameof(TestTaskBag), p => !string.IsNullOrWhiteSpace(p.Corn)).ToList();
+            var bagList = AutoTest.Data.DataStoreSwitcher.Current.Find<TestTaskBag>(nameof(TestTaskBag), nameof(TestTaskBag.BagName), new object[] { }).ToList();
             List<TestTaskBag> list = new List<TestTaskBag>();
             foreach (var bag in bagList)
             {
-                var log = BigEntityTableRemotingEngine.Find<TaskBagLog>(nameof(TaskBagLog), nameof(TaskBagLog.TaskBagId), new object[] { bag.Id }).FirstOrDefault();
+                var log = AutoTest.Data.DataStoreSwitcher.Current.Find<TaskBagLog>(nameof(TaskBagLog), nameof(TaskBagLog.TaskBagId), new object[] { bag.Id }).FirstOrDefault();
 
                 if (log == null)
                 {
@@ -30,7 +30,7 @@ namespace AutoTest.Biz
                         TaskBagId = bag.Id,
                         LastTime = DateTime.Now
                     };
-                    BigEntityTableRemotingEngine.Insert(nameof(TaskBagLog), log);
+                    AutoTest.Data.DataStoreSwitcher.Current.Insert(nameof(TaskBagLog), log);
                     continue;
                 }
 
@@ -46,7 +46,7 @@ namespace AutoTest.Biz
                 {
 
                     log.LastTime = DateTime.Now;
-                    BigEntityTableRemotingEngine.Update(nameof(TaskBagLog), log);
+                    AutoTest.Data.DataStoreSwitcher.Current.Update(nameof(TaskBagLog), log);
 
 
                     list.Add(bag);

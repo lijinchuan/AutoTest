@@ -268,7 +268,7 @@ namespace AutoTest.UI.UC
                     {
                         if (apiEnv != null)
                         {
-                            var apienvparamlist = BigEntityTableRemotingEngine.Find<TestEnvParam>(nameof(TestEnvParam), "SiteId_EnvId", new object[] { apiEnv.SiteId, apiEnv.Id }).ToList();
+                            var apienvparamlist = AutoTest.Data.DataStoreSwitcher.Current.Find<TestEnvParam>(nameof(TestEnvParam), "SiteId_EnvId", new object[] { apiEnv.SiteId, apiEnv.Id }).ToList();
                             DataGridView dgv = null;
                             if (this.DGVHeader.Visible)
                             {
@@ -301,13 +301,13 @@ namespace AutoTest.UI.UC
                                                 if (apienvparam.Val != kv[1].ToString())
                                                 {
                                                     apienvparam.Val = kv[1].ToString();
-                                                    BigEntityTableRemotingEngine.Update<TestEnvParam>(nameof(TestEnvParam), apienvparam);
+                                                    AutoTest.Data.DataStoreSwitcher.Current.Update<TestEnvParam>(nameof(TestEnvParam), apienvparam);
                                                     count++;
                                                 }
                                             }
                                             else
                                             {
-                                                BigEntityTableRemotingEngine.Insert<TestEnvParam>(nameof(TestEnvParam), new TestEnvParam
+                                                AutoTest.Data.DataStoreSwitcher.Current.Insert<TestEnvParam>(nameof(TestEnvParam), new TestEnvParam
                                                 {
                                                     SiteId = apiEnv.SiteId,
                                                     EnvId = apiEnv.Id,
@@ -611,3 +611,4 @@ namespace AutoTest.UI.UC
         }
     }
 }
+

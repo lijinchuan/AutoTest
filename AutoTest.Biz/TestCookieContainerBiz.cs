@@ -16,7 +16,7 @@ namespace AutoTest.Biz
             {
                 envId = 0;
             }
-            var container = BigEntityTableRemotingEngine.Find<TestCookieContainer>(nameof(TestCookieContainer), TestCookieContainer.IX,
+            var container = AutoTest.Data.DataStoreSwitcher.Current.Find<TestCookieContainer>(nameof(TestCookieContainer), TestCookieContainer.IX,
                                 new object[] { siteId, envId, loginId }).FirstOrDefault();
 
             return container;
@@ -28,7 +28,7 @@ namespace AutoTest.Biz
             {
                 envId = 0;
             }
-            var cookieContainer = BigEntityTableRemotingEngine.Find<TestCookieContainer>(nameof(TestCookieContainer), TestCookieContainer.IX,
+            var cookieContainer = AutoTest.Data.DataStoreSwitcher.Current.Find<TestCookieContainer>(nameof(TestCookieContainer), TestCookieContainer.IX,
                              new object[] { siteId, envId, loginId }).FirstOrDefault();
 
             if (cookieContainer == null || cookieContainer.Expires < DateTime.Now)
@@ -45,7 +45,7 @@ namespace AutoTest.Biz
             {
                 envId = 0;
             }
-            var cookieContainer = BigEntityTableRemotingEngine.Find<TestCookieContainer>(nameof(TestCookieContainer), TestCookieContainer.IX,
+            var cookieContainer = AutoTest.Data.DataStoreSwitcher.Current.Find<TestCookieContainer>(nameof(TestCookieContainer), TestCookieContainer.IX,
                              new object[] { siteId, envId, loginId }).FirstOrDefault();
 
             if (cookieContainer == null || cookieContainer.Expires < DateTime.Now)
@@ -55,12 +55,13 @@ namespace AutoTest.Biz
 
             cookieContainer.Expires = DateTime.Now.AddYears(-1);
 
-            BigEntityTableRemotingEngine.Update(nameof(TestCookieContainer), cookieContainer);
+            AutoTest.Data.DataStoreSwitcher.Current.Update(nameof(TestCookieContainer), cookieContainer);
         }
 
         public static bool Upsert(TestCookieContainer cookieContainer)
         {
-            return BigEntityTableRemotingEngine.Upsert(nameof(TestCookieContainer), cookieContainer);
+            AutoTest.Data.DataStoreSwitcher.Current.Upsert(nameof(TestCookieContainer), cookieContainer);
+            return true;
         }
     }
 }

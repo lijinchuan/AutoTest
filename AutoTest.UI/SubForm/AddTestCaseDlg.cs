@@ -55,14 +55,14 @@ namespace AutoTest.UI.SubForm
         {
             base.OnLoad(e);
 
-            var testPage = BigEntityTableRemotingEngine.Find<TestPage>(nameof(TestPage), _pageId);
+            var testPage = AutoTest.Data.DataStoreSwitcher.Current.Find<TestPage>(nameof(TestPage), _pageId);
             if (testPage == null)
             {
                 new AlertDlg("添加测试用例", "页面不存在",null).ShowDialog();
                 DialogResult = DialogResult.Abort;
                 return;
             }
-            var testLoginList = BigEntityTableRemotingEngine.Find<TestLogin>(nameof(TestLogin), nameof(TestLogin.SiteId), new object[] { testPage.SiteId }).ToList();
+            var testLoginList = AutoTest.Data.DataStoreSwitcher.Current.Find<TestLogin>(nameof(TestLogin), nameof(TestLogin.SiteId), new object[] { testPage.SiteId }).ToList();
             testLoginList.Insert(0, new TestLogin
             {
                 Id=0,
@@ -74,7 +74,7 @@ namespace AutoTest.UI.SubForm
 
             if (_caseId > 0)
             {
-                var testCase = BigEntityTableRemotingEngine.Find<TestCase>(nameof(TestCase), _caseId);
+                var testCase = AutoTest.Data.DataStoreSwitcher.Current.Find<TestCase>(nameof(TestCase), _caseId);
                 if (testCase == null)
                 {
                     MessageBox.Show("case不存在");
@@ -102,7 +102,7 @@ namespace AutoTest.UI.SubForm
                     }
                 }
 
-                var cnt = BigEntityTableRemotingEngine.Count(nameof(TestCase), nameof(TestCase.PageId), new object[] { _pageId });
+                var cnt = AutoTest.Data.DataStoreSwitcher.Current.Count(nameof(TestCase), nameof(TestCase.PageId), new object[] { _pageId });
                 NUDOrder.Value = cnt + 1;
             }
         }
@@ -133,19 +133,20 @@ namespace AutoTest.UI.SubForm
             };
             if (_caseId == 0)
             {
-                var list = BigEntityTableRemotingEngine.Find<TestCase>(nameof(TestCase), nameof(TestCase.PageId), new object[] { _pageId });
+                var list = AutoTest.Data.DataStoreSwitcher.Current.Find<TestCase>(nameof(TestCase), nameof(TestCase.PageId), new object[] { _pageId });
                 if (list.Any(p => p.CaseName == TestCase.CaseName))
                 {
                     new AlertDlg("添加测试用例", $"用例名[{TestCase.CaseName}]不能重复", null).ShowDialog();
                     return;
                 }
-                BigEntityTableRemotingEngine.Insert(nameof(TestCase), TestCase);
+                AutoTest.Data.DataStoreSwitcher.Current.Insert(nameof(TestCase), TestCase);
             }
             else
             {
-                BigEntityTableRemotingEngine.Update(nameof(TestCase), TestCase);
+                AutoTest.Data.DataStoreSwitcher.Current.Update(nameof(TestCase), TestCase);
             }
             this.DialogResult = DialogResult.OK;
         }
     }
 }
+

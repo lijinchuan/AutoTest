@@ -16,7 +16,7 @@ namespace AutoTest.Biz
         {
             lock (locker)
             {
-                var cnt = BigEntityTableRemotingEngine.Find<Counter>(nameof(Counter), nameof(Counter.CounterName), new object[] { name }).FirstOrDefault();
+                var cnt = AutoTest.Data.DataStoreSwitcher.Current.Find<Counter>(nameof(Counter), nameof(Counter.CounterName), new object[] { name }).FirstOrDefault();
                 if (cnt == null)
                 {
                     return 0;
@@ -29,7 +29,7 @@ namespace AutoTest.Biz
         {
             lock (locker)
             {
-                var cnt = BigEntityTableRemotingEngine.Find<Counter>(nameof(Counter),nameof(Counter.CounterName),new object[] { name }).FirstOrDefault();
+                var cnt = AutoTest.Data.DataStoreSwitcher.Current.Find<Counter>(nameof(Counter),nameof(Counter.CounterName),new object[] { name }).FirstOrDefault();
                 if (cnt == null)
                 {
                     cnt = new Counter
@@ -46,7 +46,7 @@ namespace AutoTest.Biz
 
                 cnt.Value++;
 
-                BigEntityTableRemotingEngine.Upsert(nameof(Counter), cnt);
+                AutoTest.Data.DataStoreSwitcher.Current.Upsert(nameof(Counter), cnt);
                 return cnt.Value;
             }
         }

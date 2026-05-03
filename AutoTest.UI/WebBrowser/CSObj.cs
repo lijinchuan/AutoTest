@@ -90,7 +90,7 @@ namespace AutoTest.UI.WebBrowser
 
         public bool SaveFile(string fileName,bool replace,string content)
         {
-            var isExists = BigEntityTableRemotingEngine.Count(nameof(FileDB), nameof(FileDB.FileName), new object[] { fileName }) > 0;
+            var isExists = AutoTest.Data.DataStoreSwitcher.Current.Count(nameof(FileDB), nameof(FileDB.FileName), new object[] { fileName }) > 0;
             if (!replace && isExists)
             {
                 return false;
@@ -98,7 +98,7 @@ namespace AutoTest.UI.WebBrowser
 
             if (!isExists)
             {
-                BigEntityTableRemotingEngine.Insert(nameof(FileDB), new FileDB
+                AutoTest.Data.DataStoreSwitcher.Current.Insert(nameof(FileDB), new FileDB
                 {
                     CDate = DateTime.Now,
                     MDate = DateTime.Now,
@@ -108,11 +108,11 @@ namespace AutoTest.UI.WebBrowser
             }
             else
             {
-                var file = BigEntityTableRemotingEngine.Find<FileDB>(nameof(FileDB), nameof(FileDB.FileName), new object[] { fileName }).First();
+                var file = AutoTest.Data.DataStoreSwitcher.Current.Find<FileDB>(nameof(FileDB), nameof(FileDB.FileName), new object[] { fileName }).First();
                 file.MDate = DateTime.Now;
                 file.FileContent = content;
 
-                BigEntityTableRemotingEngine.Update<FileDB>(nameof(FileDB), file);
+                AutoTest.Data.DataStoreSwitcher.Current.Update<FileDB>(nameof(FileDB), file);
             }
             
 
@@ -121,7 +121,7 @@ namespace AutoTest.UI.WebBrowser
 
         public string ReadFile(string fileName)
         {
-            var file = BigEntityTableRemotingEngine.Find<FileDB>(nameof(FileDB), nameof(FileDB.FileName), new object[] { fileName }).FirstOrDefault();
+            var file = AutoTest.Data.DataStoreSwitcher.Current.Find<FileDB>(nameof(FileDB), nameof(FileDB.FileName), new object[] { fileName }).FirstOrDefault();
 
             if (file == null)
             {
@@ -469,3 +469,4 @@ namespace AutoTest.UI.WebBrowser
         }
     }
 }
+

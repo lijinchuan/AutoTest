@@ -21,7 +21,7 @@ namespace AutoTest.Biz.SimulateServer
             var secsCount = 0;
             while (true)
             {
-                var taskResult = BigEntityTableEngine.LocalEngine.Find<APITaskResult>(nameof(APITaskResult), nameof(APITaskResult.TaskId), new object[] { taskId }).FirstOrDefault();
+                var taskResult = AutoTest.Data.DataStoreSwitcher.Current.Find<APITaskResult>(nameof(APITaskResult), nameof(APITaskResult.TaskId), new object[] { taskId }).FirstOrDefault();
 
                 if (taskResult != null || ++secsCount > waitSecs)
                 {
@@ -151,7 +151,7 @@ namespace AutoTest.Biz.SimulateServer
                             State = 0
                         };
 
-                        BigEntityTableEngine.LocalEngine.Insert(nameof(APITaskRequest), addReq);
+                        AutoTest.Data.DataStoreSwitcher.Current.Insert(nameof(APITaskRequest), addReq);
 
                         ProcessTraceUtil.Trace("创建任务入库完成,触发任务");
                         ApiTaskTrigger.Trigger(newTask, addReq);
@@ -212,3 +212,4 @@ namespace AutoTest.Biz.SimulateServer
         }
     }
 }
+
