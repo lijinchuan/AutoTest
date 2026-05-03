@@ -502,6 +502,16 @@ namespace AutoTest.Data
                 }
                 cmd.ExecuteNonQuery();
             }
+
+            if (idProp != null && (idVal == null || Convert.ToInt64(idVal) == 0))
+            {
+                using (var idCmd = _conn.CreateCommand())
+                {
+                    idCmd.CommandText = "SELECT last_insert_rowid();";
+                    var newId = Convert.ToInt32(idCmd.ExecuteScalar());
+                    idProp.SetValue(entity, Convert.ChangeType(newId, idProp.PropertyType));
+                }
+            }
         }
 
         public void Update<T>(string tableName, T entity) where T : class, new()

@@ -23,6 +23,8 @@ namespace AutoTest.UI.UC
         private DefaultChromiumWebBrowser webView = null;
         public event Action<IWebTask> OnTaskStart;
 
+        public bool AutoCloseWhenCompleted { get; set; }
+
         public TestPanel()
         {
             InitializeComponent();
@@ -106,6 +108,38 @@ namespace AutoTest.UI.UC
                     }));
                 });
                 webView.OnTaskStart += WebView_OnTaskStart;
+                webView.OnAllTasksCompleted += WebView_OnAllTasksCompleted;
+            }
+        }
+
+        private void WebView_OnAllTasksCompleted()
+        {
+            if (!AutoCloseWhenCompleted || IsDisposed)
+            {
+                return;
+            }
+
+            void closeTab()
+            {
+                if (IsDisposed)
+                {
+                    return;
+                }
+
+                if (Parent is TabControl tabControl && tabControl.TabPages.Contains(this))
+                {
+                    tabControl.TabPages.Remove(this);
+                    Dispose();
+                }
+            }
+
+            if (Parent != null && Parent.InvokeRequired)
+            {
+                Parent.Invoke((Action)closeTab);
+            }
+            else
+            {
+                closeTab();
             }
         }
 

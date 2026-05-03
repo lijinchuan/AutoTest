@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using AutoTest.Biz.SimulateServer;
 using AutoTest.Domain.Entity;
 using AutoTest.Domain.Exceptions;
 using AutoTest.Domain.Model;
@@ -24,6 +25,8 @@ namespace AutoTest.UI.WebTask
     public class RunTestTask : WebTask
     {
         private const int TestTimeOut = 60000;
+
+        public int? ApiTaskRequestId => _apiTaskRequest?.Id;
 
         private readonly IEventListener eventListener = null;
         private readonly RequestAutoResetEvent pageRequestAutoResetEvent = null;
@@ -528,7 +531,7 @@ namespace AutoTest.UI.WebTask
                     }
                     flag = false;
                     var loginTask = new RunTestLoginTask(_testSite.Name + "登陆", UseProxy, _testSite, _testLogin, _testEnv, _testEnvParams, _globScripts, _siteScripts);
-                    loginTask.SetNext(new RunTestTask(GetTaskName(), UseProxy, _testSite, _testLogin, _testPage, _testCase, _testEnv, _testEnvParams,_globScripts,_siteScripts,_notify));
+                    loginTask.SetNext(new RunTestTask(GetTaskName(), UseProxy, _testSite, _testLogin, _testPage, _testCase, _testEnv, _testEnvParams, _globScripts, _siteScripts, _notify, _apiTaskRequest));
                     this.SetNext(loginTask);
                 }
             }
@@ -596,7 +599,7 @@ namespace AutoTest.UI.WebTask
             _notify?.Invoke(_testResult);
             EventBus.NotifyTestResultAction?.Invoke(_testResult);
 
-            if (_apiTaskRequest != null)
+            if (_apiTaskRequest != null && GetNext() == null)
             {
                 var apiResult = AutoTest.Data.DataStoreSwitcher.Current.Find<APITaskResult>(nameof(APITaskResult), nameof(APITaskResult.TaskId), new object[] { _apiTaskRequest.Id }).FirstOrDefault();
                 if (apiResult == null)

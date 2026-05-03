@@ -136,46 +136,53 @@ namespace AutoTest.Biz.SimulateServer
                 if (url.EndsWith("api/AddAPITask", StringComparison.OrdinalIgnoreCase))
                 {
                     var req = GetRequest<AddAPITaskRequest>(request);
-                    
+
                     ProcessTraceUtil.Trace($"收到请求:api/AddAPITask,{Newtonsoft.Json.JsonConvert.SerializeObject(req)}");
 
                     var newTask = new TaskBiz().CreateTask(req.CaseId);
-                    
-                    if (newTask != null)
+                    if (newTask == null)
                     {
-                        var addReq = new APITaskRequest
+                        response.ContentType = "text/json;charset=utf-8;";
+                        response.Content = JsonUtil<object>.Serialize(new AddAPITaskResponse
                         {
-                            CaseId = req.CaseId,
-                            CDate = DateTime.Now,
-                            Params = req.Params,
-                            State = 0
-                        };
-
-                        AutoTest.Data.DataStoreSwitcher.Current.Insert(nameof(APITaskRequest), addReq);
-
-                        ProcessTraceUtil.Trace("创建任务入库完成,触发任务");
-                        ApiTaskTrigger.Trigger(newTask, addReq);
-
-                        ProcessTraceUtil.Trace("触发任务完成");
-
-                        if (req.WatingSecsForResult <= 0)
-                        {
-                            var result = new AddAPITaskResponse
-                            {
-                                TaskId = addReq.Id
-                            };
-
-                            response.ContentType = "text/json;charset=utf-8;";
-                            response.Content = JsonUtil<object>.Serialize(result);
-                        }
-                        else
-                        {
-                            var result = QueryAPIResult(addReq.Id, req.WatingSecsForResult);
-
-                            response.ContentType = "text/json;charset=utf-8;";
-                            response.Content = JsonUtil<object>.Serialize(result);
-                        }
+                            Code = 404,
+                            Message = "没有找到任务",
+                            TaskId = 0
+                        });
+                        return true;
                     }
+
+                    var addReq = new APITaskRequest
+                    {
+                        CaseId = req.CaseId,
+                        CDate = DateTime.Now,
+                        Params = req.Params,
+                        State = 0
+                    };
+
+                    AutoTest.Data.DataStoreSwitcher.Current.Insert(nameof(APITaskRequest), addReq);
+
+                    ProcessTraceUtil.Trace("创建任务入库完成,准备进入队列");
+                    if (!ApiTaskTrigger.TryEnqueue(newTask, addReq))
+                    {
+                        AutoTest.Data.DataStoreSwitcher.Current.Delete<APITaskRequest>(nameof(APITaskRequest), addReq.Id);
+                        response.ContentType = "text/json;charset=utf-8;";
+                        response.Content = JsonUtil<object>.Serialize(new AddAPITaskResponse
+                        {
+                            Code = 429,
+                            Message = "队列已满",
+                            TaskId = 0
+                        });
+                        return true;
+                    }
+
+                    ProcessTraceUtil.Trace("任务已入队");
+
+                    response.ContentType = "text/json;charset=utf-8;";
+                    response.Content = JsonUtil<object>.Serialize(new AddAPITaskResponse
+                    {
+                        TaskId = addReq.Id
+                    });
 
                     return true;
                 }

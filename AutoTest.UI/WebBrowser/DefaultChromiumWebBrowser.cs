@@ -2,6 +2,7 @@ using AutoTest.UI.WebBrowser.EventListener;
 using AutoTest.UI.WebBrowser.RequestHandler;
 using AutoTest.UI.WebBrowser.ResourceHandler;
 using AutoTest.UI.WebTask;
+using AutoTest.Biz.SimulateServer;
 using AutoTest.Util;
 using CefSharp;
 using CefSharp.WinForms;
@@ -80,6 +81,7 @@ namespace AutoTest.UI.WebBrowser
         private CSObj cSObj = null;
 
         public event Action<IWebTask> OnTaskStart;
+        public event Action OnAllTasksCompleted;
 
         private volatile bool cancelFlag = false;
 
@@ -431,7 +433,7 @@ namespace AutoTest.UI.WebBrowser
                     if (mf.WindowState == FormWindowState.Minimized)
                     {
                         mf.WindowState = FormWindowState.Maximized;
-                    }
+                      }
                     break;
                 }
 
@@ -636,6 +638,11 @@ namespace AutoTest.UI.WebBrowser
                     {
                         isRunningJob = false;
                         WebTask_OnMsgPublish("所有测试完成");
+                        OnAllTasksCompleted?.Invoke();
+                        if (webTask is RunTestTask runTestTask && runTestTask.ApiTaskRequestId.HasValue)
+                        {
+                            ApiTaskTrigger.NotifyCompleted(runTestTask.ApiTaskRequestId.Value);
+                        }
                     }
                 }
 

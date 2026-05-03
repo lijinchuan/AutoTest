@@ -2,6 +2,7 @@
 using AutoTest.Domain.Exceptions;
 using CefSharp;
 using System;
+using System.Configuration;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -68,7 +69,18 @@ namespace AutoTest.UI.WebBrowser
                                 }"";
                                 document.getElementsByTagName('head')[0].appendChild(script);";
 
-        private const int SCRIPT_TIMEOUT = 30000;
+        private static readonly int SCRIPT_TIMEOUT = GetScriptTimeout();
+
+        private static int GetScriptTimeout()
+        {
+            var configValue = ConfigurationManager.AppSettings["BrowserScriptTimeoutMs"];
+            if (int.TryParse(configValue, out var timeout))
+            {
+                return Math.Max(30000, timeout);
+            }
+
+            return 60000;
+        }
 
         private const string getBoundingClientRect = @"
             var element=$1_12_4({0})[0];
@@ -162,14 +174,21 @@ namespace AutoTest.UI.WebBrowser
             return resp.Result.Success;
         }
 
-        public object ExecuteScript(IBrowser browser, IFrame frame, string code, int timeOut = SCRIPT_TIMEOUT)
+        private static string WrapScriptAsPromise(string code)
+        {
+            return $@"(async function() {{
+{code}
+}})()";
+        }
+
+        public object ExecuteScript(IBrowser browser, IFrame frame, string code, int timeOut = 0)
         {
             var resp = browser.MainFrame.EvaluateScriptAsync(code);
             AssertJavaScriptResult(resp, timeOut);
             return resp.Result.Result;
         }
 
-        public object ExecutePromiseScript(IBrowser browser, IFrame frame, string code, int timeOut = SCRIPT_TIMEOUT)
+        public object ExecutePromiseScript(IBrowser browser, IFrame frame, string code, int timeOut = 0)
         {
             var resp = browser.MainFrame.EvaluateScriptAsPromiseAsync(code);
             AssertJavaScriptResult(resp, timeOut);
@@ -178,17 +197,39 @@ namespace AutoTest.UI.WebBrowser
 
         public static bool IsPromiseScript(string code)
         {
-            return Regex.IsMatch(code, @"([^\w]|^)return([\r\n\s]+|$)", RegexOptions.IgnoreCase);
+            return Regex.IsMatch(code, @"(^|[\r\n\s;])return\s+new\s+Promise\s*\(|(^|[\r\n\s;])await\s+|\.then\s*\(|Promise\.", RegexOptions.IgnoreCase);
         }
 
-        public object TryExecuteScript(IBrowser browser, IFrame frame, string code, int timeOut = SCRIPT_TIMEOUT)
+        public object TryExecuteScript(IBrowser browser, IFrame frame, string code, int timeOut = 0)
         {
-            if (IsPromiseScript(code))
+            var preferPromise = IsPromiseScript(code);
+            Exception lastEx = null;
+
+            try
             {
-                return ExecutePromiseScript(browser, frame, code, timeOut);
+                return preferPromise
+                    ? ExecutePromiseScript(browser, frame, code, timeOut)
+                    : ExecuteScript(browser, frame, code, timeOut);
+            }
+            catch (TimeoutException ex)
+            {
+                lastEx = ex;
+            }
+            catch (ScriptException ex)
+            {
+                lastEx = ex;
             }
 
-            return ExecuteScript(browser, frame, code);
+            try
+            {
+                return preferPromise
+                    ? ExecuteScript(browser, frame, code, timeOut)
+                    : ExecutePromiseScript(browser, frame, code, timeOut);
+            }
+            catch
+            {
+                throw lastEx;
+            }
         }
 
 
@@ -271,7 +312,8 @@ namespace AutoTest.UI.WebBrowser
             }
             while (checkScript && IsScriptBusy(browser) && !breakFlag)
             {
-                ms += 100;
+                Thread.Sleep(10);
+                ms += 10;
                 if (ms > timeOutMs)
                 {
                     throw new TimeoutException($"{browser.MainFrame.Url}页面脚本超时");
