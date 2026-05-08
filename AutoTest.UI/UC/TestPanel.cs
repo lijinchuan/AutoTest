@@ -25,6 +25,8 @@ namespace AutoTest.UI.UC
 
         public bool AutoCloseWhenCompleted { get; set; }
 
+        private CancellationTokenSource _autoCloseCts = null;
+
         public TestPanel()
         {
             InitializeComponent();
@@ -119,32 +121,53 @@ namespace AutoTest.UI.UC
                 return;
             }
 
-            void closeTab()
+            var cts = new CancellationTokenSource();
+            var old = Interlocked.Exchange(ref _autoCloseCts, cts);
+            old?.Cancel();
+
+            var token = cts.Token;
+            Task.Delay(TimeSpan.FromMinutes(1), token).ContinueWith(t =>
             {
-                if (IsDisposed)
+                if (t.IsCanceled || IsDisposed)
                 {
                     return;
                 }
 
-                if (Parent is TabControl tabControl && tabControl.TabPages.Contains(this))
+                void closeTab()
                 {
-                    tabControl.TabPages.Remove(this);
-                    Dispose();
-                }
-            }
+                    if (IsDisposed)
+                    {
+                        return;
+                    }
 
-            if (Parent != null && Parent.InvokeRequired)
-            {
-                Parent.Invoke((Action)closeTab);
-            }
-            else
-            {
-                closeTab();
-            }
+                    if (webView != null && webView.IsRunningJob())
+                    {
+                        return;
+                    }
+
+                    if (Parent is TabControl tabControl && tabControl.TabPages.Contains(this))
+                    {
+                        tabControl.TabPages.Remove(this);
+                        Dispose();
+                    }
+                }
+
+                if (Parent != null && Parent.InvokeRequired)
+                {
+                    Parent.Invoke((Action)closeTab);
+                }
+                else
+                {
+                    closeTab();
+                }
+            }, TaskScheduler.Default);
         }
 
         private void WebView_OnTaskStart(IWebTask task)
         {
+            var old = Interlocked.Exchange(ref _autoCloseCts, null);
+            old?.Cancel();
+
             OnTaskStart?.Invoke(task);
             EventBus.NotifyTestStartAction?.Invoke(task);
         }

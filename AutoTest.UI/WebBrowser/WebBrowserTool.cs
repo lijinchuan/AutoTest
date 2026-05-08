@@ -2,7 +2,6 @@
 using AutoTest.Domain.Exceptions;
 using CefSharp;
 using System;
-using System.Configuration;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -69,18 +68,7 @@ namespace AutoTest.UI.WebBrowser
                                 }"";
                                 document.getElementsByTagName('head')[0].appendChild(script);";
 
-        private static readonly int SCRIPT_TIMEOUT = GetScriptTimeout();
-
-        private static int GetScriptTimeout()
-        {
-            var configValue = ConfigurationManager.AppSettings["BrowserScriptTimeoutMs"];
-            if (int.TryParse(configValue, out var timeout))
-            {
-                return Math.Max(30000, timeout);
-            }
-
-            return 60000;
-        }
+        private const int SCRIPT_TIMEOUT = 30000;
 
         private const string getBoundingClientRect = @"
             var element=$1_12_4({0})[0];
@@ -116,7 +104,7 @@ namespace AutoTest.UI.WebBrowser
             Task.WaitAll(new[] { resp }, SCRIPT_TIMEOUT);
         }
 
-        private void AssertJavaScriptResult(Task<JavascriptResponse> resp,int timeOut=0)
+        private void AssertJavaScriptResult(Task<JavascriptResponse> resp, int timeOut = 0)
         {
             if (timeOut <= 0)
             {
@@ -129,7 +117,7 @@ namespace AutoTest.UI.WebBrowser
 
             if (!resp.Result.Success)
             {
-                if (resp.Result.Message.IndexOf("SyntaxError", StringComparison.OrdinalIgnoreCase)>-1)
+                if (resp.Result.Message.IndexOf("SyntaxError", StringComparison.OrdinalIgnoreCase) > -1)
                 {
                     throw new JSSyntaxError(resp.Result.Message);
                 }
@@ -137,7 +125,7 @@ namespace AutoTest.UI.WebBrowser
             }
         }
 
-        public void AddJqueryLib(IBrowser browser, IFrame frame,bool force=false)
+        public void AddJqueryLib(IBrowser browser, IFrame frame, bool force = false)
         {
             if (!force)
             {
@@ -158,7 +146,7 @@ namespace AutoTest.UI.WebBrowser
             return resp.Result.Success;
         }
 
-        public bool RegisterRomoteScript(IBrowser browser,IFrame frame,string url)
+        public bool RegisterRomoteScript(IBrowser browser, IFrame frame, string url)
         {
             var code = string.Format(REGISTERREMOTESCRIPTCODE, url);
             var resp = browser.MainFrame.EvaluateScriptAsync(code);
@@ -168,27 +156,20 @@ namespace AutoTest.UI.WebBrowser
 
         public bool RegisterScript(IBrowser browser, IFrame frame, string code)
         {
-            code = string.Format(REGISTERRSCRIPTCODE, code.Replace("\"","\\\""));
+            code = string.Format(REGISTERRSCRIPTCODE, code.Replace("\"", "\\\""));
             var resp = browser.MainFrame.EvaluateScriptAsync(code);
             AssertJavaScriptResult(resp);
             return resp.Result.Success;
         }
 
-        private static string WrapScriptAsPromise(string code)
-        {
-            return $@"(async function() {{
-{code}
-}})()";
-        }
-
-        public object ExecuteScript(IBrowser browser, IFrame frame, string code, int timeOut = 0)
+        public object ExecuteScript(IBrowser browser, IFrame frame, string code, int timeOut = SCRIPT_TIMEOUT)
         {
             var resp = browser.MainFrame.EvaluateScriptAsync(code);
             AssertJavaScriptResult(resp, timeOut);
             return resp.Result.Result;
         }
 
-        public object ExecutePromiseScript(IBrowser browser, IFrame frame, string code, int timeOut = 0)
+        public object ExecutePromiseScript(IBrowser browser, IFrame frame, string code, int timeOut = SCRIPT_TIMEOUT)
         {
             var resp = browser.MainFrame.EvaluateScriptAsPromiseAsync(code);
             AssertJavaScriptResult(resp, timeOut);
@@ -197,39 +178,17 @@ namespace AutoTest.UI.WebBrowser
 
         public static bool IsPromiseScript(string code)
         {
-            return Regex.IsMatch(code, @"(^|[\r\n\s;])return\s+new\s+Promise\s*\(|(^|[\r\n\s;])await\s+|\.then\s*\(|Promise\.", RegexOptions.IgnoreCase);
+            return Regex.IsMatch(code, @"([^\w]|^)return([\r\n\s]+|$)", RegexOptions.IgnoreCase);
         }
 
-        public object TryExecuteScript(IBrowser browser, IFrame frame, string code, int timeOut = 0)
+        public object TryExecuteScript(IBrowser browser, IFrame frame, string code, int timeOut = SCRIPT_TIMEOUT)
         {
-            var preferPromise = IsPromiseScript(code);
-            Exception lastEx = null;
-
-            try
+            if (IsPromiseScript(code))
             {
-                return preferPromise
-                    ? ExecutePromiseScript(browser, frame, code, timeOut)
-                    : ExecuteScript(browser, frame, code, timeOut);
-            }
-            catch (TimeoutException ex)
-            {
-                lastEx = ex;
-            }
-            catch (ScriptException ex)
-            {
-                lastEx = ex;
+                return ExecutePromiseScript(browser, frame, code, timeOut);
             }
 
-            try
-            {
-                return preferPromise
-                    ? ExecuteScript(browser, frame, code, timeOut)
-                    : ExecutePromiseScript(browser, frame, code, timeOut);
-            }
-            catch
-            {
-                throw lastEx;
-            }
+            return ExecuteScript(browser, frame, code);
         }
 
 
@@ -267,9 +226,9 @@ namespace AutoTest.UI.WebBrowser
             }
         }
 
-        public async Task<(double x, double y)> FindElementPosAsync(IBrowser browser,string ele)
+        public async Task<(double x, double y)> FindElementPosAsync(IBrowser browser, string ele)
         {
-            var resp =await browser.MainFrame.EvaluateScriptAsPromiseAsync(string.Format(getBoundingClientRect, ele));
+            var resp = await browser.MainFrame.EvaluateScriptAsPromiseAsync(string.Format(getBoundingClientRect, ele));
             var rect = (dynamic)resp.Result;
             if (rect == null)
             {
@@ -279,7 +238,7 @@ namespace AutoTest.UI.WebBrowser
             return (rect.x, rect.y);
         }
 
-        public bool IsLoading(IBrowser browser,bool checkVar=false)
+        public bool IsLoading(IBrowser browser, bool checkVar = false)
         {
             if (browser.IsLoading)
             {
@@ -312,8 +271,7 @@ namespace AutoTest.UI.WebBrowser
             }
             while (checkScript && IsScriptBusy(browser) && !breakFlag)
             {
-                Thread.Sleep(10);
-                ms += 10;
+                ms += 100;
                 if (ms > timeOutMs)
                 {
                     throw new TimeoutException($"{browser.MainFrame.Url}页面脚本超时");
@@ -337,12 +295,12 @@ namespace AutoTest.UI.WebBrowser
         {
             var resp = browser.MainFrame.EvaluateScriptAsPromiseAsync("console.log('IsScriptBusy check');return 1;");
 
-            if(Task.WaitAll(new[] { resp }, 100))
+            if (Task.WaitAll(new[] { resp }, 100))
             {
                 return false;
             }
 
-            
+
             return true;
         }
 

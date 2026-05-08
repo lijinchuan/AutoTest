@@ -25,17 +25,33 @@ namespace AutoTest.Biz.SimulateServer
 
                 if (taskResult != null || ++secsCount > waitSecs)
                 {
+                    var content = taskResult?.Result;
+                    var code = 200;
+                    var message = "成功";
+                    if (taskResult == null)
+                    {
+                        code = 404;
+                        message = "没有查到结果";
+                    }
+
+                    if (content?.Contains("失败，任务已终止") == true)
+                    {
+                        content = null;
+                        code = 500;
+                        message = content;
+                    }
+
                     var result = new
                     {
                         Result = new
                         {
-                            CDate = taskResult == null ? DateTime.Now : taskResult.CDate,
-                            UseMillSecs = taskResult == null ? 0 : taskResult.UseMillSecs,
+                            CDate = taskResult?.CDate ?? DateTime.Now,
+                            UseMillSecs = taskResult?.UseMillSecs ?? 0,
                             TaskId = taskId,
-                            Result = taskResult == null ? null : JsonUtil<dynamic>.Deserialize(taskResult.Result)
+                            Result = JsonUtil<dynamic>.Deserialize(content)
                         },
-                        Code = taskResult == null ? 404 : 200,
-                        Message = taskResult == null ? "没有查到结果" : "成功"
+                        Code = code,
+                        Message = message
                     };
 
                     ProcessTraceUtil.Trace($"{secsCount}次查询,{(taskResult == null ? "无果" : "成功")}，返回结果");
