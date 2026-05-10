@@ -126,7 +126,7 @@ namespace AutoTest.UI.UC
             old?.Cancel();
 
             var token = cts.Token;
-            Task.Delay(TimeSpan.FromMinutes(1), token).ContinueWith(t =>
+            Task.Delay(TimeSpan.FromMinutes(10), token).ContinueWith(t =>
             {
                 if (t.IsCanceled || IsDisposed)
                 {

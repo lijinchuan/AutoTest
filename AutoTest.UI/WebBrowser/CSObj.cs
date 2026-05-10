@@ -138,7 +138,7 @@ namespace AutoTest.UI.WebBrowser
 
         public void Ehco(string msg)
         {
-            this.OnPublishMsg?.Invoke(msg);
+            this.OnPublishMsg?.Invoke(msg + Environment.NewLine);
         }
 
         public void LogInfo(string content)
