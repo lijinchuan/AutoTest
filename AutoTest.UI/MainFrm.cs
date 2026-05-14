@@ -1,4 +1,5 @@
 ﻿using AutoTest.Biz;
+using AutoTest.Biz.SimulateServer;
 using AutoTest.Domain;
 using AutoTest.UI.SubForm;
 using LJC.FrameWorkV3.Data.EntityDataBase;
@@ -24,6 +25,7 @@ namespace AutoTest.UI
     public partial class MainFrm : Form
     {
         private System.Timers.Timer tasktimer = null;
+        private readonly System.Windows.Forms.Timer apiQueueTimer = new System.Windows.Forms.Timer();
         private WatingDlg wdlg = new WatingDlg();
 
         public static MainFrm Instance
@@ -52,6 +54,11 @@ namespace AutoTest.UI
 
             TSBar.Image = Resources.Resource1.side_contract;
             TSBar.Click += TSBar_Click;
+
+            apiQueueTimer.Interval = 1000;
+            apiQueueTimer.Tick += ApiQueueTimer_Tick;
+            apiQueueTimer.Start();
+            RefreshApiQueueStatus();
         }
 
         private void TSBar_Click(object sender, EventArgs e)
@@ -174,6 +181,8 @@ namespace AutoTest.UI
                 tasktimer.Stop();
                 tasktimer.Close();
             }
+
+            apiQueueTimer.Stop();
 
             try
             {
@@ -411,6 +420,23 @@ namespace AutoTest.UI
             this.MspPanel.Text = "";
             TSL_ClearMsg.Visible = false;
             this.MspPanel.Spring = false;
+        }
+
+        private void ApiQueueTimer_Tick(object sender, EventArgs e)
+        {
+            RefreshApiQueueStatus();
+        }
+
+        private void RefreshApiQueueStatus()
+        {
+            if (TSL_ApiQueue == null)
+            {
+                return;
+            }
+
+            TSL_ApiQueue.Text = $"API队列:{ApiTaskTrigger.QueueCount}/{ApiTaskTrigger.QueueCapacity} 运行:{ApiTaskTrigger.RunningCount}";
+            TSL_ApiQueue.ToolTipText = "API任务队列状态";
+            TSL_ApiQueue.ForeColor = Color.Green;
         }
 
         private void mD5签名ToolStripMenuItem_Click(object sender, EventArgs e)

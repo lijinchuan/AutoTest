@@ -67,6 +67,7 @@ namespace AutoTest.UI
             this.statusStrip1 = new System.Windows.Forms.StatusStrip();
             this.MspPanel = new System.Windows.Forms.ToolStripStatusLabel();
             this.TSL_ClearMsg = new System.Windows.Forms.ToolStripStatusLabel();
+            this.TSL_ApiQueue = new System.Windows.Forms.ToolStripStatusLabel();
             this.TSMRepairMode = new System.Windows.Forms.ToolStripMenuItem();
             this.mainMenuBar.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -358,7 +359,8 @@ namespace AutoTest.UI
             // 
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.MspPanel,
-            this.TSL_ClearMsg});
+            this.TSL_ClearMsg,
+            this.TSL_ApiQueue});
             this.statusStrip1.Location = new System.Drawing.Point(0, 531);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(830, 22);
@@ -379,6 +381,13 @@ namespace AutoTest.UI
             this.TSL_ClearMsg.Size = new System.Drawing.Size(16, 17);
             this.TSL_ClearMsg.Visible = false;
             this.TSL_ClearMsg.Click += new System.EventHandler(this.TSL_ClearMsg_Click);
+            // 
+            // TSL_ApiQueue
+            // 
+            this.TSL_ApiQueue.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
+            this.TSL_ApiQueue.Name = "TSL_ApiQueue";
+            this.TSL_ApiQueue.Size = new System.Drawing.Size(112, 17);
+            this.TSL_ApiQueue.Text = "API队列:0/100 运行:0";
             // 
             // TSMRepairMode
             // 
@@ -431,6 +440,7 @@ namespace AutoTest.UI
         private System.Windows.Forms.ToolStripStatusLabel MspPanel;
         private System.Windows.Forms.ToolStripLabel TSCBServer;
         private System.Windows.Forms.ToolStripStatusLabel TSL_ClearMsg;
+        private System.Windows.Forms.ToolStripStatusLabel TSL_ApiQueue;
         private System.Windows.Forms.ToolStripMenuItem 监控任务ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem swaggerMarkUpToolStripMenuItem;
         private System.Windows.Forms.ToolStripButton TSBSave;

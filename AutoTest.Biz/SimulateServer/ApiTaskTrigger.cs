@@ -22,6 +22,12 @@ namespace AutoTest.Biz.SimulateServer
         private static readonly ConcurrentDictionary<int, TaskCompletionSource<bool>> runningTasks = new ConcurrentDictionary<int, TaskCompletionSource<bool>>();
         private static int started = 0;
 
+        public static int QueueCount => queue.Count;
+
+        public static int QueueCapacity => MaxQueueLength;
+
+        public static int RunningCount => runningTasks.Count;
+
         public static event Action<int, TestTask, APITaskRequest> NewTaskRecived;
 
         public static void Start()
