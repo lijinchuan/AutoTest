@@ -175,6 +175,18 @@ namespace AutoTest.UI.WebBrowser
             browser.GetBrowser().MainFrame.LoadUrl(url);
         }
 
+        public bool ActivateCurrentTab()
+        {
+            var tabPage = Util.FindParent<TabPage>(browser);
+            if (tabPage == null)
+            {
+                return false;
+            }
+
+            Util.SelectedTab(browser, tabPage);
+            return true;
+        }
+
         public void SendInput(string str)
         {
             //SendKeys.SendWait(str);

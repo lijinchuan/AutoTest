@@ -85,6 +85,12 @@ namespace AutoTest.Util
                 HighColor = Color.Pink
             });
 
+            KeyWordDic.Add(new ScriptKeyWord
+            {
+                KeyWord= "ServerDriverClient.activateCurrentTab",
+                Desc = "ServerDriverClient.activateCurrentTab(),激活当前标签页，确保后续操作在当前标签页进行",
+                HighColor = Color.Red
+            });
 
             KeyWordDic.Add(new ScriptKeyWord
             {
