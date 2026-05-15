@@ -601,18 +601,25 @@ namespace AutoTest.UI.WebTask
 
             if (_apiTaskRequest != null && GetNext() == null)
             {
-                var apiResult = AutoTest.Data.DataStoreSwitcher.Current.Find<APITaskResult>(nameof(APITaskResult), nameof(APITaskResult.TaskId), new object[] { _apiTaskRequest.Id }).FirstOrDefault();
-                if (apiResult == null)
+                try
                 {
-                    AutoTest.Data.DataStoreSwitcher.Current.Insert(nameof(APITaskResult), new APITaskResult
+                    var apiResult = AutoTest.Data.DataStoreSwitcher.Current.Find<APITaskResult>(nameof(APITaskResult), nameof(APITaskResult.TaskId), new object[] { _apiTaskRequest.Id }).FirstOrDefault();
+                    if (apiResult == null)
                     {
-                        CDate = DateTime.Now,
-                        TaskId = _apiTaskRequest.Id,
-                        Result = "失败，任务已终止",
-                        UseMillSecs = DateTime.Now.Subtract(_testResult.TestStartDate).TotalMilliseconds
-                    });
-                    _apiTaskRequest.State = 1;
-                    AutoTest.Data.DataStoreSwitcher.Current.Update(nameof(APITaskRequest), _apiTaskRequest);
+                        AutoTest.Data.DataStoreSwitcher.Current.Insert(nameof(APITaskResult), new APITaskResult
+                        {
+                            CDate = DateTime.Now,
+                            TaskId = _apiTaskRequest.Id,
+                            Result = "失败，任务已终止",
+                            UseMillSecs = DateTime.Now.Subtract(_testResult.TestStartDate).TotalMilliseconds
+                        });
+                        _apiTaskRequest.State = 1;
+                        AutoTest.Data.DataStoreSwitcher.Current.Update(nameof(APITaskRequest), _apiTaskRequest);
+                    }
+                }
+                finally
+                {
+                    ApiTaskTrigger.NotifyCompleted(_apiTaskRequest.Id);
                 }
             }
         }

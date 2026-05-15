@@ -639,10 +639,6 @@ namespace AutoTest.UI.WebBrowser
                         isRunningJob = false;
                         WebTask_OnMsgPublish("所有测试完成");
                         OnAllTasksCompleted?.Invoke();
-                        if (webTask is RunTestTask runTestTask && runTestTask.ApiTaskRequestId.HasValue)
-                        {
-                            ApiTaskTrigger.NotifyCompleted(runTestTask.ApiTaskRequestId.Value);
-                        }
                     }
                 }
 
