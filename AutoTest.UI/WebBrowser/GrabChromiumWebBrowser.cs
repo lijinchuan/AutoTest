@@ -30,8 +30,10 @@ namespace AutoTest.UI.WebBrowser
             RequestContext = context;
 
             RequestHandler = new RequestHandler.GrabRequestHandler();
-           
+
             LifeSpanHandler = new DefLifeSpanHandler();
+
+            CefRemoteCaptureBridge.Register(this);
         }
 
         /// <summary>

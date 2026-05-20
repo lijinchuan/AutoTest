@@ -141,6 +141,7 @@ namespace AutoTest.UI.WebBrowser
             //注册C#对象
             this.JavascriptObjectRepository.Register("ServerDriverClient", cSObj, false, BindingOptions.DefaultBinder);
 
+            CefRemoteCaptureBridge.Register(this);
         }
 
         private void DefaultChromiumWebBrowser_FrameLoadStart(object sender, FrameLoadStartEventArgs e)

@@ -39,7 +39,8 @@ namespace AutoTest.Biz.RemoteControl
                     {
                         var p = ParseMouseRequest(request);
                         var pt = Win32MouseSimulator.NormalizedToScreen(p.x, p.y, ScreenCaptureService.Instance.CaptureRegion);
-                        Win32MouseSimulator.LeftDown(pt.X, pt.Y);
+                        var hwnd = ScreenCaptureService.Instance.CurrentWindowHandle;
+                        Win32MouseSimulator.LeftDownOnWindow(hwnd, pt.X, pt.Y);
                         WriteOk(response);
                         return true;
                     }
@@ -48,7 +49,8 @@ namespace AutoTest.Biz.RemoteControl
                     {
                         var p = ParseMouseRequest(request);
                         var pt = Win32MouseSimulator.NormalizedToScreen(p.x, p.y, ScreenCaptureService.Instance.CaptureRegion);
-                        Win32MouseSimulator.MoveTo(pt.X, pt.Y);
+                        var hwnd = ScreenCaptureService.Instance.CurrentWindowHandle;
+                        Win32MouseSimulator.MoveToOnWindow(hwnd, pt.X, pt.Y);
                         WriteOk(response);
                         return true;
                     }
@@ -57,7 +59,8 @@ namespace AutoTest.Biz.RemoteControl
                     {
                         var p = ParseMouseRequest(request);
                         var pt = Win32MouseSimulator.NormalizedToScreen(p.x, p.y, ScreenCaptureService.Instance.CaptureRegion);
-                        Win32MouseSimulator.LeftUp(pt.X, pt.Y);
+                        var hwnd = ScreenCaptureService.Instance.CurrentWindowHandle;
+                        Win32MouseSimulator.LeftUpOnWindow(hwnd, pt.X, pt.Y);
                         WriteOk(response);
                         return true;
                     }
