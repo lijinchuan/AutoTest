@@ -20,8 +20,9 @@ namespace AutoTest.UI
         {
             ContainerBuilder builder = new ContainerBuilder();
 
-            //注册当前程序集的所有类成员
+            //注册当前程序集的所有类成员（仅注册可由容器构造的类型）
             _ = builder.RegisterAssemblyTypes(Assembly.GetExecutingAssembly())
+                .Where(t => t.GetConstructors(BindingFlags.Public | BindingFlags.Instance).Any())
                 .AsImplementedInterfaces().AsSelf();
 
             var readAssemblies = ReadAssemblies(AppDomain.CurrentDomain.BaseDirectory, new[] { "AutoTest*.dll" });
@@ -29,6 +30,7 @@ namespace AutoTest.UI
             foreach (var a in assemblies)
             {
                 _ = builder.RegisterAssemblyTypes(a)
+                .Where(t => t.GetConstructors(BindingFlags.Public | BindingFlags.Instance).Any())
                 .AsImplementedInterfaces().AsSelf();
             }
 

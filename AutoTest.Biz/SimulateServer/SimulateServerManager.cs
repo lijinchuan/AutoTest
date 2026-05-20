@@ -1,9 +1,6 @@
-﻿using LJC.FrameWorkV3.Net.HTTP.Server;
-using System;
+﻿using AutoTest.Biz.RemoteControl;
+using LJC.FrameWorkV3.Net.HTTP.Server;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AutoTest.Biz.SimulateServer
 {
@@ -15,6 +12,7 @@ namespace AutoTest.Biz.SimulateServer
         {
             manhttpserver.Handlers.Add(new RESTfulApiHandlerBase(HMethod.GET, "/index", new List<string>() { }, new DefaultHander()));
             manhttpserver.Handlers.Add(new ApiSimulateHandler());
+            manhttpserver.Handlers.Add(new RemoteControlHandler());
         }
 
         /// <summary>
@@ -53,6 +51,14 @@ namespace AutoTest.Biz.SimulateServer
             }
 
             return false;
+        }
+
+        /// <summary>
+        /// 配置远程控制截图区域（屏幕坐标）
+        /// </summary>
+        public static void SetRemoteControlRegion(int x, int y, int width, int height)
+        {
+            ScreenCaptureService.Instance.SetRegion(x, y, width, height);
         }
     }
 }
