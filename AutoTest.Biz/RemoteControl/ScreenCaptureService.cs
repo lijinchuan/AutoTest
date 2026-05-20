@@ -54,10 +54,14 @@ namespace AutoTest.Biz.RemoteControl
         /// </summary>
         public byte[] CaptureJpegBytes()
         {
-            var hwnd = Process.GetCurrentProcess().MainWindowHandle;
-            if (hwnd == IntPtr.Zero)
-                throw new InvalidOperationException("未找到主窗口句柄");
-            CurrentWindowHandle = hwnd;
+            var hwnd = CurrentWindowHandle;
+            if (hwnd == IntPtr.Zero || !IsWindow(hwnd))
+            {
+                hwnd = Process.GetCurrentProcess().MainWindowHandle;
+                if (hwnd == IntPtr.Zero)
+                    throw new InvalidOperationException("未找到主窗口句柄");
+                CurrentWindowHandle = hwnd;
+            }
 
             RECT windowRect;
             if (!GetWindowRect(hwnd, out windowRect))
@@ -83,7 +87,7 @@ namespace AutoTest.Biz.RemoteControl
 
                     var encoder = GetJpegEncoder();
                     var encoderParams = new EncoderParameters(1);
-                    encoderParams.Param[0] = new EncoderParameter(Encoder.Quality, JpegQuality);
+                    encoderParams.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, JpegQuality);
 
                     using (var ms = new MemoryStream())
                     {
@@ -200,8 +204,123 @@ namespace AutoTest.Biz.RemoteControl
             return total > 0 && (black * 100 / total) >= 95;
         }
 
+        private static void ComposeOwnedPopupOverlays(IntPtr rootHwnd, Bitmap baseBmp, Rectangle rootRect)
+        {
+            try
+            {
+                uint rootProcessId;
+                GetWindowThreadProcessId(rootHwnd, out rootProcessId);
+
+                using (var g = Graphics.FromImage(baseBmp))
+                {
+                    EnumWindows((candidate, lParam) =>
+                    {
+                        if (candidate == IntPtr.Zero || candidate == rootHwnd)
+                            return true;
+                        if (!IsWindowVisible(candidate))
+                            return true;
+                        if (!IsPopupCandidate(candidate, rootHwnd, rootProcessId))
+                            return true;
+
+                        RECT popupRectRaw;
+                        if (!GetWindowRect(candidate, out popupRectRaw))
+                            return true;
+
+                        var popupRect = Rectangle.FromLTRB(popupRectRaw.Left, popupRectRaw.Top, popupRectRaw.Right, popupRectRaw.Bottom);
+                        if (popupRect.Width <= 0 || popupRect.Height <= 0)
+                            return true;
+
+                        var overlap = Rectangle.Intersect(rootRect, popupRect);
+                        if (overlap.Width <= 0 || overlap.Height <= 0)
+                            return true;
+
+                        var dstRect = new Rectangle(overlap.Left - rootRect.Left, overlap.Top - rootRect.Top, overlap.Width, overlap.Height);
+                        var srcRect = new Rectangle(overlap.Left - popupRect.Left, overlap.Top - popupRect.Top, overlap.Width, overlap.Height);
+
+                        using (var popupBmp = new Bitmap(popupRect.Width, popupRect.Height, PixelFormat.Format32bppArgb))
+                        {
+                            if (TryCaptureWindow(candidate, popupBmp))
+                            {
+                                g.DrawImage(popupBmp, dstRect, srcRect, GraphicsUnit.Pixel);
+                            }
+                            else
+                            {
+                                g.CopyFromScreen(overlap.Left, overlap.Top, dstRect.Left, dstRect.Top, overlap.Size, CopyPixelOperation.SourceCopy);
+                            }
+                        }
+
+                        return true;
+                    }, IntPtr.Zero);
+                }
+            }
+            catch
+            {
+            }
+        }
+
+        private static bool IsPopupCandidate(IntPtr candidate, IntPtr rootHwnd, uint rootProcessId)
+        {
+            uint candidateProcessId;
+            GetWindowThreadProcessId(candidate, out candidateProcessId);
+            if (candidateProcessId != rootProcessId)
+                return false;
+
+            if (IsOwnedBy(candidate, rootHwnd))
+                return true;
+
+            if (IsMenuWindow(candidate))
+                return true;
+
+            return HasPopupStyle(candidate);
+        }
+
+        private static bool HasPopupStyle(IntPtr hwnd)
+        {
+            var style = GetWindowStyle(hwnd);
+            return (style & WS_POPUP) != 0 && (style & WS_CHILD) == 0;
+        }
+
+        private static long GetWindowStyle(IntPtr hwnd)
+        {
+            if (IntPtr.Size == 8)
+                return GetWindowLongPtr64(hwnd, GWL_STYLE).ToInt64();
+
+            return GetWindowLong32(hwnd, GWL_STYLE);
+        }
+
+        private static bool IsMenuWindow(IntPtr hwnd)
+        {
+            var sb = new System.Text.StringBuilder(64);
+            var len = GetClassName(hwnd, sb, sb.Capacity);
+            if (len <= 0)
+                return false;
+
+            return string.Equals(sb.ToString(), "#32768", StringComparison.Ordinal);
+        }
+
+        private static bool IsOwnedBy(IntPtr hwnd, IntPtr rootHwnd)
+        {
+            var owner = GetWindow(hwnd, GW_OWNER);
+            while (owner != IntPtr.Zero)
+            {
+                if (owner == rootHwnd)
+                    return true;
+                owner = GetWindow(owner, GW_OWNER);
+            }
+
+            return false;
+        }
+
+        private const uint GW_OWNER = 4;
+        private const int GWL_STYLE = -16;
+        private const long WS_CHILD = 0x40000000L;
+        private const long WS_POPUP = unchecked((int)0x80000000);
+
         [DllImport("user32.dll")]
         private static extern bool PrintWindow(IntPtr hwnd, IntPtr hdcBlt, uint nFlags);
+
+        [DllImport("user32.dll")]
+        private static extern bool IsWindow(IntPtr hWnd);
 
         [DllImport("user32.dll", SetLastError = true)]
         private static extern bool GetWindowRect(IntPtr hWnd, out RECT lpRect);
@@ -212,8 +331,31 @@ namespace AutoTest.Biz.RemoteControl
         [DllImport("user32.dll")]
         private static extern int ReleaseDC(IntPtr hWnd, IntPtr hDC);
 
+        [DllImport("user32.dll")]
+        private static extern bool EnumWindows(EnumWindowsProc lpEnumFunc, IntPtr lParam);
+
+        [DllImport("user32.dll")]
+        private static extern bool IsWindowVisible(IntPtr hWnd);
+
+        [DllImport("user32.dll")]
+        private static extern IntPtr GetWindow(IntPtr hWnd, uint uCmd);
+
+        [DllImport("user32.dll", EntryPoint = "GetWindowLong")]
+        private static extern int GetWindowLong32(IntPtr hWnd, int nIndex);
+
+        [DllImport("user32.dll", EntryPoint = "GetWindowLongPtr")]
+        private static extern IntPtr GetWindowLongPtr64(IntPtr hWnd, int nIndex);
+
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
+        private static extern int GetClassName(IntPtr hWnd, System.Text.StringBuilder lpClassName, int nMaxCount);
+
+        [DllImport("user32.dll")]
+        private static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+
         [DllImport("gdi32.dll", SetLastError = true)]
         private static extern bool BitBlt(IntPtr hdcDest, int nXDest, int nYDest, int nWidth, int nHeight, IntPtr hdcSrc, int nXSrc, int nYSrc, int dwRop);
+
+        private delegate bool EnumWindowsProc(IntPtr hWnd, IntPtr lParam);
 
         [StructLayout(LayoutKind.Sequential)]
         private struct RECT

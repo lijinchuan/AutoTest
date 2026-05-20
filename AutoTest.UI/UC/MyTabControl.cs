@@ -58,6 +58,12 @@ namespace AutoTest.UI.UC
             //this.SetStyle(ControlStyles.SupportsTransparentBackColor, true);
             this.SetStyle(ControlStyles.UserPaint, true);
 
+            this.MouseClick += Parent_MouseClick;
+            this.MouseDown += Parent_MouseDown;
+            this.MouseMove += Parent_MouseMove;
+            this.MouseUp += Parent_MouseUp;
+            this.MouseLeave += Parent_MouseLeave;
+
             morelistbox = new ListBox();
             morelistbox.BorderStyle = BorderStyle.FixedSingle;
             morelistbox.Visible = false;
@@ -166,6 +172,11 @@ namespace AutoTest.UI.UC
         protected override void OnParentChanged(EventArgs e)
         {
             base.OnParentChanged(e);
+            if (this.Parent == null)
+            {
+                return;
+            }
+
             this.Parent.MouseClick += Parent_MouseClick;
             this.Parent.MouseDown += Parent_MouseDown;
             this.Parent.MouseMove += Parent_MouseMove;
@@ -245,6 +256,7 @@ namespace AutoTest.UI.UC
         }
 
         private volatile int parentMouseX = 0, parentMouseY = 0;
+        private bool handledByMouseUp = false;
 
         private void Parent_MouseMove(object sender, MouseEventArgs e)
         {
@@ -369,6 +381,11 @@ namespace AutoTest.UI.UC
                 {
                     IsDraging = false;
                     OnTabDragEnd(null);
+                    handledByMouseUp = true;
+                }
+                else if (!IsDraging)
+                {
+                    handledByMouseUp = HandleLeftClickCore(e.X, e.Y);
                 }
 
                 if (IsDraging)
@@ -403,56 +420,15 @@ namespace AutoTest.UI.UC
         {
             if (e.Button == MouseButtons.Left)
             {
-                if (moreTabRect.Contains(e.X, e.Y))
+                if (handledByMouseUp)
                 {
-                    if (morelistbox.Visible)
-                    {
-                        morelistbox.Visible = false;
-                        morelistbox.DataSource = null;
-                    }
-                    else
-                    {
-
-                        morelistbox.DataSource = moretabtablelist;
-                        var maxwidth = 0;
-                        foreach (var item in moretabtablelist)
-                        {
-                            var w = this.CreateGraphics().MeasureString(item.Text, morelistbox.Font);
-                            if (w.Width > maxwidth)
-                            {
-                                maxwidth = (int)w.Width;
-                            }
-                        }
-                        morelistbox.Width = maxwidth;
-                        morelistbox.DisplayMember = "Text";
-
-                        morelistbox.Location = new Point(moreTabRect.X - morelistbox.Width - 1, moreTabRect.Height * 2);
-                        morelistbox.Visible = true;
-                        morelistbox.BringToFront();
-                    }
+                    handledByMouseUp = false;
+                    return;
                 }
-                else
+
+                if (!IsDraging)
                 {
-                    if (!IsDraging)
-                    {
-                        foreach (var tab in tabExDic)
-                        {
-                            if (tab.Value.StripRect.Contains(e.X, e.Y) && tab.Value.Visible)
-                            {
-                                if (this.SelectedIndex != tab.Key)
-                                {
-                                    this.SelectedIndex = tab.Key;
-                                    this.Invalidate();
-                                }
-                                else if (tab.Value.CloseButtonBand.Contains(e.X, e.Y))
-                                {
-                                    this.TabPages.Remove(tab.Value.TabPage);
-                                    tab.Value.TabPage.Dispose();
-                                    break;
-                                }
-                            }
-                        }
-                    }
+                    HandleLeftClickCore(e.X, e.Y);
                 }
             }
             else if (e.Button == MouseButtons.Right)
@@ -472,6 +448,60 @@ namespace AutoTest.UI.UC
                     }
                 }
             }
+        }
+
+        private bool HandleLeftClickCore(int x, int y)
+        {
+            if (moreTabRect.Contains(x, y))
+            {
+                if (morelistbox.Visible)
+                {
+                    morelistbox.Visible = false;
+                    morelistbox.DataSource = null;
+                }
+                else
+                {
+                    morelistbox.DataSource = moretabtablelist;
+                    var maxwidth = 0;
+                    foreach (var item in moretabtablelist)
+                    {
+                        var w = this.CreateGraphics().MeasureString(item.Text, morelistbox.Font);
+                        if (w.Width > maxwidth)
+                        {
+                            maxwidth = (int)w.Width;
+                        }
+                    }
+                    morelistbox.Width = maxwidth;
+                    morelistbox.DisplayMember = "Text";
+
+                    morelistbox.Location = new Point(moreTabRect.X - morelistbox.Width - 1, moreTabRect.Height * 2);
+                    morelistbox.Visible = true;
+                    morelistbox.BringToFront();
+                }
+
+                return true;
+            }
+
+            foreach (var tab in tabExDic)
+            {
+                if (tab.Value.StripRect.Contains(x, y) && tab.Value.Visible)
+                {
+                    if (this.SelectedIndex != tab.Key)
+                    {
+                        this.SelectedIndex = tab.Key;
+                        this.Invalidate();
+                    }
+                    else if (tab.Value.CloseButtonBand.Contains(x, y))
+                    {
+                        this.TabPages.Remove(tab.Value.TabPage);
+                        tab.Value.TabPage.Dispose();
+                    }
+
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         protected override void OnSelected(TabControlEventArgs e)

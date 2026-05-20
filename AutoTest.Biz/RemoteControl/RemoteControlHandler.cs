@@ -126,8 +126,8 @@ namespace AutoTest.Biz.RemoteControl
 *{margin:0;padding:0;box-sizing:border-box}
 body{background:#1a1a1a;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;font-family:monospace}
 #info{color:#aaa;font-size:13px;margin-bottom:8px}
-#wrap{position:relative;cursor:crosshair;border:2px solid #555;display:inline-block;max-width:100vw}
-#screen{display:block;max-width:100%;height:auto;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+#wrap{position:relative;cursor:crosshair;border:2px solid #555;display:inline-block;max-width:100vw;touch-action:none}
+#screen{display:block;max-width:100%;height:auto;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:none}
 #status{color:#4caf50;font-size:12px;margin-top:6px}
 #cfg{margin-top:12px;color:#888;font-size:12px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
 #cfg input{width:60px;padding:2px 4px;background:#333;border:1px solid #555;color:#ccc;font-size:12px}
@@ -195,14 +195,25 @@ body{background:#1a1a1a;display:flex;flex-direction:column;align-items:center;ju
   }
 
   img.addEventListener('mousedown',function(e){
-    if(e.button!==0)return;e.preventDefault();isDown=true;send('mousedown',norm(e));
+    if(e.button!==0)return;
+    e.preventDefault();
+    isDown=true;
+    send('mousedown',norm(e));
   });
-  window.addEventListener('mousemove',function(e){if(!isDown)return;sendMove(norm(e));});
-  window.addEventListener('mouseup',function(e){if(!isDown)return;isDown=false;send('mouseup',norm(e));});
+  window.addEventListener('mousemove',function(e){
+    if(!isDown)return;
+    sendMove(norm(e));
+  });
+  window.addEventListener('mouseup',function(e){
+    if(!isDown)return;
+    isDown=false;
+    send('mouseup',norm(e));
+  });
 
   img.addEventListener('touchstart',function(e){e.preventDefault();isDown=true;send('mousedown',norm(e));},{passive:false});
-  img.addEventListener('touchmove',function(e){e.preventDefault();sendMove(norm(e));},{passive:false});
-  img.addEventListener('touchend',function(e){e.preventDefault();isDown=false;send('mouseup',normEnd(e));},{passive:false});
+  window.addEventListener('touchmove',function(e){if(!isDown)return;e.preventDefault();sendMove(norm(e));},{passive:false});
+  window.addEventListener('touchend',function(e){if(!isDown)return;e.preventDefault();isDown=false;send('mouseup',normEnd(e));},{passive:false});
+  window.addEventListener('touchcancel',function(e){if(!isDown)return;e.preventDefault();isDown=false;send('mouseup',normEnd(e));},{passive:false});
 })();
 
 function applyRegion(){
