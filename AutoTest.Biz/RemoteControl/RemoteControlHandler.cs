@@ -28,10 +28,19 @@ namespace AutoTest.Biz.RemoteControl
                         return true;
 
                     case "screenshot":
-                        var bytes = ScreenCaptureService.Instance.CaptureJpegBytes();
+                        var frame = ScreenCaptureService.Instance.CaptureJpegFrame();
+                        var bytes = frame.Bytes;
+                        var metrics = frame.Metrics;
                         response.ContentType = "image/jpeg";
                         response.Header["Cache-Control"] = "no-store, no-cache";
                         response.Header["Pragma"] = "no-cache";
+                        response.Header["Server-Timing"] = string.Format("capture;dur={0},overlay;dur={1},encode;dur={2},server;dur={3}", metrics.CaptureMs, metrics.OverlayMs, metrics.EncodeMs, metrics.TotalMs);
+                        response.Header["X-Capture-Ms"] = metrics.CaptureMs.ToString();
+                        response.Header["X-Overlay-Ms"] = metrics.OverlayMs.ToString();
+                        response.Header["X-Encode-Ms"] = metrics.EncodeMs.ToString();
+                        response.Header["X-Server-Ms"] = metrics.TotalMs.ToString();
+                        response.Header["X-Frame-Bytes"] = metrics.ByteSize.ToString();
+                        response.Header["X-Frame-Size"] = string.Format("{0}x{1}", metrics.Width, metrics.Height);
                         response.RawContent = bytes;
                         return true;
 
@@ -120,7 +129,7 @@ namespace AutoTest.Biz.RemoteControl
 <html lang='zh-CN'>
 <head>
 <meta charset='UTF-8'>
-<meta name='viewport' content='width=device-width,initial-scale=1.0,user-scalable=no'>
+<meta name='viewport' content='width=device-width,initial-scale=1.0,maximum-scale=3.0,user-scalable=yes'>
 <title>远程控制</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
@@ -135,7 +144,7 @@ body{background:#1a1a1a;display:flex;flex-direction:column;align-items:center;ju
 </style>
 </head>
 <body>
-<div id='info'>实时远程控制 &nbsp;|&nbsp; 鼠标 / 触控拖动以同步操作</div>
+<div id='info'>实时远程控制 &nbsp;|&nbsp; 单指拖动操作，双指捏合缩放</div>
 <div id='wrap'><img id='screen' src='/remotecontrol/screenshot' alt='screen' draggable='false'></div>
 <div id='status'>连接中...</div>
 <div id='cfg'>
@@ -151,15 +160,126 @@ body{background:#1a1a1a;display:flex;flex-direction:column;align-items:center;ju
 (function(){
   var img=document.getElementById('screen'),
       status=document.getElementById('status'),
-      isDown=false,pending=null,moving=false;
+      isDown=false,pending=null,moving=false,
+      inflight=false,currentUrl='',
+      pollDelay=60,minDelay=40,maxDelay=300,
+      lastFrameDone=0,
+      zoomScale=1,minZoom=1,maxZoom=3,
+      panX=0,panY=0,panStartX=0,panStartY=0,startPanX=0,startPanY=0,isPanning=false,panMoved=false,tapMaxMove=8,
+      pinchStartDist=0,pinchStartScale=1,isPinching=false,
+      metricAvg={server:0,capture:0,overlay:0,encode:0,network:0,decode:0,total:0,bytes:0,fps:0,count:0};
+
+  function toNum(v){var n=parseFloat(v);return isNaN(n)?0:n;}
+  function smooth(oldV,newV){return oldV?oldV*0.75+newV*0.25:newV;}
+  function updateMetric(frame){
+    metricAvg.server=smooth(metricAvg.server,frame.server);
+    metricAvg.capture=smooth(metricAvg.capture,frame.capture);
+    metricAvg.overlay=smooth(metricAvg.overlay,frame.overlay);
+    metricAvg.encode=smooth(metricAvg.encode,frame.encode);
+    metricAvg.network=smooth(metricAvg.network,frame.network);
+    metricAvg.decode=smooth(metricAvg.decode,frame.decode);
+    metricAvg.total=smooth(metricAvg.total,frame.total);
+    metricAvg.bytes=smooth(metricAvg.bytes,frame.bytes);
+    metricAvg.count++;
+
+    if(lastFrameDone>0){
+      var fps=1000/Math.max(1,frame.end-lastFrameDone);
+      metricAvg.fps=smooth(metricAvg.fps,fps);
+    }
+    lastFrameDone=frame.end;
+  }
+
+  function renderStatus(frameSize){
+    status.textContent='平均 '+metricAvg.fps.toFixed(1)+'fps | 总'+metricAvg.total.toFixed(0)+'ms = 服'+metricAvg.server.toFixed(0)+' + 网'+metricAvg.network.toFixed(0)+' + 解渲'+metricAvg.decode.toFixed(0)+' | 捕'+metricAvg.capture.toFixed(0)+' 编'+metricAvg.encode.toFixed(0)+' | '+(metricAvg.bytes/1024).toFixed(1)+'KB '+(frameSize||'')+' | 缩放 '+zoomScale.toFixed(2)+'x';
+  }
+
+  function applyTransform(){
+    img.style.transformOrigin='center center';
+    img.style.transform='translate('+panX+'px,'+panY+'px) scale('+zoomScale+')';
+  }
+
+  function applyZoom(scale){
+    zoomScale=Math.max(minZoom,Math.min(maxZoom,scale));
+    if(zoomScale<=1.001){
+      panX=0;
+      panY=0;
+    }
+    applyTransform();
+  }
+
+  function touchDistance(t0,t1){
+    var dx=t0.clientX-t1.clientX;
+    var dy=t0.clientY-t1.clientY;
+    return Math.sqrt(dx*dx+dy*dy);
+  }
+
+  function scheduleNext(delay){
+    window.setTimeout(refreshScreen,delay);
+  }
 
   function refreshScreen(){
-    var t=new Image();
-    t.onload=function(){img.src=t.src;status.textContent='已连接 '+new Date().toLocaleTimeString();};
-    t.onerror=function(){status.textContent='截图失败，重试中...';};
-    t.src='/remotecontrol/screenshot?_='+Date.now();
+    if(inflight){return;}
+    inflight=true;
+
+    var started=performance.now();
+    fetch('/remotecontrol/screenshot?_='+Date.now(),{cache:'no-store'})
+      .then(function(res){
+        if(!res.ok){throw new Error('HTTP '+res.status);}
+        var receiveAt=performance.now();
+        var captureMs=toNum(res.headers.get('X-Capture-Ms'));
+        var overlayMs=toNum(res.headers.get('X-Overlay-Ms'));
+        var encodeMs=toNum(res.headers.get('X-Encode-Ms'));
+        var serverMs=toNum(res.headers.get('X-Server-Ms'));
+        var frameBytes=toNum(res.headers.get('X-Frame-Bytes'));
+        var frameSize=res.headers.get('X-Frame-Size')||'';
+
+        return res.blob().then(function(blob){
+          var blobAt=performance.now();
+          var nextUrl=URL.createObjectURL(blob);
+
+          return new Promise(function(resolve,reject){
+            img.onload=function(){
+              var done=performance.now();
+              if(currentUrl){URL.revokeObjectURL(currentUrl);}
+              currentUrl=nextUrl;
+              var networkMs=Math.max(0,receiveAt-started-serverMs);
+              var decodeMs=Math.max(0,done-blobAt);
+              var totalMs=Math.max(0,done-started);
+
+              updateMetric({
+                capture:captureMs,
+                overlay:overlayMs,
+                encode:encodeMs,
+                server:serverMs,
+                network:networkMs,
+                decode:decodeMs,
+                total:totalMs,
+                bytes:frameBytes||blob.size,
+                end:done
+              });
+              renderStatus(frameSize);
+
+              pollDelay=Math.max(minDelay,Math.min(maxDelay,Math.round(metricAvg.total*0.25)));
+              resolve();
+            };
+            img.onerror=function(){
+              URL.revokeObjectURL(nextUrl);
+              reject(new Error('图片解码失败'));
+            };
+            img.src=nextUrl;
+          });
+        });
+      })
+      .catch(function(){
+        status.textContent='截图失败，重试中...';
+        pollDelay=300;
+      })
+      .finally(function(){
+        inflight=false;
+        scheduleNext(pollDelay);
+      });
   }
-  setInterval(refreshScreen,200);
+  refreshScreen();
 
   function norm(e){
     var r=img.getBoundingClientRect(),
@@ -210,25 +330,115 @@ body{background:#1a1a1a;display:flex;flex-direction:column;align-items:center;ju
     send('mouseup',norm(e));
   });
 
-  img.addEventListener('touchstart',function(e){e.preventDefault();isDown=true;send('mousedown',norm(e));},{passive:false});
-  window.addEventListener('touchmove',function(e){if(!isDown)return;e.preventDefault();sendMove(norm(e));},{passive:false});
-  window.addEventListener('touchend',function(e){if(!isDown)return;e.preventDefault();isDown=false;send('mouseup',normEnd(e));},{passive:false});
-  window.addEventListener('touchcancel',function(e){if(!isDown)return;e.preventDefault();isDown=false;send('mouseup',normEnd(e));},{passive:false});
-})();
+  img.addEventListener('touchstart',function(e){
+    if(e.touches&&e.touches.length===2){
+      e.preventDefault();
+      isPinching=true;
+      isPanning=false;
+      pinchStartDist=touchDistance(e.touches[0],e.touches[1]);
+      pinchStartScale=zoomScale;
+      if(isDown){isDown=false;}
+      return;
+    }
+    e.preventDefault();
+    if(isPinching)return;
+    if(zoomScale>1.001&&e.touches&&e.touches.length===1){
+      isPanning=true;
+      panMoved=false;
+      panStartX=e.touches[0].clientX;
+      panStartY=e.touches[0].clientY;
+      startPanX=panX;
+      startPanY=panY;
+      if(isDown){isDown=false;}
+      return;
+    }
+    isDown=true;
+    send('mousedown',norm(e));
+  },{passive:false});
 
-function applyRegion(){
-  var d={
-    x:parseInt(document.getElementById('rx').value)||0,
-    y:parseInt(document.getElementById('ry').value)||0,
-    width:parseInt(document.getElementById('rw').value)||1280,
-    height:parseInt(document.getElementById('rh').value)||720,
-    quality:parseInt(document.getElementById('rq').value)||70
+  window.addEventListener('touchmove',function(e){
+    if(isPinching){
+      if(e.touches&&e.touches.length===2){
+        e.preventDefault();
+        var d=touchDistance(e.touches[0],e.touches[1]);
+        if(pinchStartDist>0){applyZoom(pinchStartScale*(d/pinchStartDist));}
+      }
+      return;
+    }
+    if(isPanning){
+      if(e.touches&&e.touches.length===1){
+        e.preventDefault();
+        var moveX=e.touches[0].clientX-panStartX;
+        var moveY=e.touches[0].clientY-panStartY;
+        if(!panMoved&&(Math.abs(moveX)>tapMaxMove||Math.abs(moveY)>tapMaxMove)){panMoved=true;}
+        if(panMoved){
+          panX=startPanX+moveX;
+          panY=startPanY+moveY;
+          applyTransform();
+        }
+      }
+      return;
+    }
+    if(!isDown)return;
+    e.preventDefault();
+    sendMove(norm(e));
+  },{passive:false});
+
+  window.addEventListener('touchend',function(e){
+    if(isPinching){
+      e.preventDefault();
+      if(!e.touches||e.touches.length<2){isPinching=false;pinchStartDist=0;}
+      return;
+    }
+    if(isPanning){
+      e.preventDefault();
+      if(!panMoved){
+        var tapPos=normEnd(e);
+        send('mousedown',tapPos);
+        send('mouseup',tapPos);
+      }
+      if(!e.touches||e.touches.length===0){isPanning=false;panMoved=false;}
+      return;
+    }
+    if(!isDown)return;
+    e.preventDefault();
+    isDown=false;
+    send('mouseup',normEnd(e));
+  },{passive:false});
+
+  window.addEventListener('touchcancel',function(e){
+    if(isPinching){
+      e.preventDefault();
+      isPinching=false;
+      pinchStartDist=0;
+      return;
+    }
+    if(isPanning){
+      e.preventDefault();
+      isPanning=false;
+      return;
+    }
+    if(!isDown)return;
+    e.preventDefault();
+    isDown=false;
+    send('mouseup',normEnd(e));
+  },{passive:false});
+
+  window.applyRegion=function(){
+    var d={
+      x:parseInt(document.getElementById('rx').value)||0,
+      y:parseInt(document.getElementById('ry').value)||0,
+      width:parseInt(document.getElementById('rw').value)||1280,
+      height:parseInt(document.getElementById('rh').value)||720,
+      quality:parseInt(document.getElementById('rq').value)||70
+    };
+    var xhr=new XMLHttpRequest();
+    xhr.open('POST','/remotecontrol/setregion',true);
+    xhr.setRequestHeader('Content-Type','application/json');
+    xhr.send(JSON.stringify(d));
+    pollDelay=50;
   };
-  var xhr=new XMLHttpRequest();
-  xhr.open('POST','/remotecontrol/setregion',true);
-  xhr.setRequestHeader('Content-Type','application/json');
-  xhr.send(JSON.stringify(d));
-}
+})();
 </script>
 </body>
 </html>";

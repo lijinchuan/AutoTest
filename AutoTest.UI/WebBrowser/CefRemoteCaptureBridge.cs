@@ -6,6 +6,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -13,9 +14,18 @@ namespace AutoTest.UI.WebBrowser
 {
     public static class CefRemoteCaptureBridge
     {
+        private sealed class BrowserCaptureState
+        {
+            public readonly object SyncRoot = new object();
+            public Bitmap Frame;
+            public int LastCaptureTick;
+            public int Capturing;
+        }
+
         private static readonly object locker = new object();
-        private static readonly HashSet<ChromiumWebBrowser> browsers = new HashSet<ChromiumWebBrowser>();
+        private static readonly Dictionary<ChromiumWebBrowser, BrowserCaptureState> browserStates = new Dictionary<ChromiumWebBrowser, BrowserCaptureState>();
         private static bool initialized = false;
+        private const int CaptureRefreshIntervalMs = 80;
 
         public static void Register(ChromiumWebBrowser browser)
         {
@@ -26,8 +36,10 @@ namespace AutoTest.UI.WebBrowser
 
             lock (locker)
             {
-                if (!browsers.Add(browser))
+                if (browserStates.ContainsKey(browser))
                     return;
+
+                browserStates[browser] = new BrowserCaptureState();
             }
 
             browser.Disposed += Browser_Disposed;
@@ -39,10 +51,17 @@ namespace AutoTest.UI.WebBrowser
                 return;
 
             browser.Disposed -= Browser_Disposed;
+
+            BrowserCaptureState state = null;
             lock (locker)
             {
-                browsers.Remove(browser);
+                if (browserStates.TryGetValue(browser, out state))
+                {
+                    browserStates.Remove(browser);
+                }
             }
+
+            DisposeState(state);
         }
 
         private static void EnsureInitialized()
@@ -62,10 +81,10 @@ namespace AutoTest.UI.WebBrowser
 
         private static Bitmap CaptureOverlay(Rectangle captureRegion)
         {
-            List<ChromiumWebBrowser> snapshot;
+            List<KeyValuePair<ChromiumWebBrowser, BrowserCaptureState>> snapshot;
             lock (locker)
             {
-                snapshot = browsers.Where(p => p != null && !p.IsDisposed).ToList();
+                snapshot = browserStates.Where(p => p.Key != null && !p.Key.IsDisposed).ToList();
             }
 
             if (snapshot.Count == 0 || captureRegion.Width <= 0 || captureRegion.Height <= 0)
@@ -78,9 +97,9 @@ namespace AutoTest.UI.WebBrowser
             {
                 g.Clear(Color.Transparent);
 
-                foreach (var browser in snapshot)
+                foreach (var item in snapshot)
                 {
-                    DrawSingleBrowser(browser, captureRegion, g, ref hasDraw);
+                    DrawSingleBrowser(item.Key, item.Value, captureRegion, g, ref hasDraw);
                 }
             }
 
@@ -93,7 +112,7 @@ namespace AutoTest.UI.WebBrowser
             return overlay;
         }
 
-        private static void DrawSingleBrowser(ChromiumWebBrowser browser, Rectangle captureRegion, Graphics g, ref bool hasDraw)
+        private static void DrawSingleBrowser(ChromiumWebBrowser browser, BrowserCaptureState state, Rectangle captureRegion, Graphics g, ref bool hasDraw)
         {
             Rectangle browserRect = Rectangle.Empty;
             if (!TryInvoke(browser, () =>
@@ -115,36 +134,91 @@ namespace AutoTest.UI.WebBrowser
             if (hit.Width <= 0 || hit.Height <= 0)
                 return;
 
-            Bitmap browserBmp = null;
-            try
+            TryRefreshFrameAsync(browser, state);
+
+            lock (state.SyncRoot)
             {
-                var task = browser.CaptureScreenshotAsync();
-                if (!task.Wait(3000) || task.IsFaulted || task.Result == null)
+                if (state.Frame == null)
                     return;
 
-                using (var ms = new MemoryStream(task.Result))
-                {
-                    browserBmp = new Bitmap(ms);
-                }
-            }
-            catch
-            {
-                return;
-            }
-
-            if (browserBmp == null)
-                return;
-
-            using (browserBmp)
-            {
                 var srcRect = new Rectangle(hit.X - browserRect.X, hit.Y - browserRect.Y, hit.Width, hit.Height);
-                srcRect = Rectangle.Intersect(srcRect, new Rectangle(0, 0, browserBmp.Width, browserBmp.Height));
+                srcRect = Rectangle.Intersect(srcRect, new Rectangle(0, 0, state.Frame.Width, state.Frame.Height));
                 if (srcRect.Width <= 0 || srcRect.Height <= 0)
                     return;
 
                 var destRect = new Rectangle(hit.X - captureRegion.X, hit.Y - captureRegion.Y, srcRect.Width, srcRect.Height);
-                g.DrawImage(browserBmp, destRect, srcRect, GraphicsUnit.Pixel);
+                g.DrawImage(state.Frame, destRect, srcRect, GraphicsUnit.Pixel);
                 hasDraw = true;
+            }
+        }
+
+        private static void TryRefreshFrameAsync(ChromiumWebBrowser browser, BrowserCaptureState state)
+        {
+            var now = Environment.TickCount;
+            lock (state.SyncRoot)
+            {
+                if (state.Frame != null && unchecked(now - state.LastCaptureTick) < CaptureRefreshIntervalMs)
+                    return;
+            }
+
+            if (Interlocked.CompareExchange(ref state.Capturing, 1, 0) != 0)
+                return;
+
+            Task.Run(async () =>
+            {
+                Bitmap newFrame = null;
+                try
+                {
+                    if (browser.IsDisposed)
+                        return;
+
+                    var bytes = await browser.CaptureScreenshotAsync().ConfigureAwait(false);
+                    if (bytes == null || bytes.Length == 0)
+                        return;
+
+                    using (var ms = new MemoryStream(bytes))
+                    using (var bmp = new Bitmap(ms))
+                    {
+                        newFrame = new Bitmap(bmp);
+                    }
+
+                    Bitmap oldFrame = null;
+                    lock (state.SyncRoot)
+                    {
+                        oldFrame = state.Frame;
+                        state.Frame = newFrame;
+                        state.LastCaptureTick = Environment.TickCount;
+                    }
+
+                    newFrame = null;
+                    if (oldFrame != null)
+                        oldFrame.Dispose();
+                }
+                catch
+                {
+                }
+                finally
+                {
+                    if (newFrame != null)
+                        newFrame.Dispose();
+
+                    Interlocked.Exchange(ref state.Capturing, 0);
+                }
+            });
+        }
+
+        private static void DisposeState(BrowserCaptureState state)
+        {
+            if (state == null)
+                return;
+
+            lock (state.SyncRoot)
+            {
+                if (state.Frame != null)
+                {
+                    state.Frame.Dispose();
+                    state.Frame = null;
+                }
             }
         }
 

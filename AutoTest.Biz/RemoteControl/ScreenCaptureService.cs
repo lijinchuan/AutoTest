@@ -19,6 +19,24 @@ namespace AutoTest.Biz.RemoteControl
 
         private ScreenCaptureService() { }
 
+        public sealed class CaptureFrameMetrics
+        {
+            public long CaptureMs { get; set; }
+            public long OverlayMs { get; set; }
+            public long EncodeMs { get; set; }
+            public long TotalMs { get; set; }
+            public int Width { get; set; }
+            public int Height { get; set; }
+            public int ByteSize { get; set; }
+            public DateTime CapturedAtUtc { get; set; }
+        }
+
+        public sealed class CaptureFrameResult
+        {
+            public byte[] Bytes { get; set; }
+            public CaptureFrameMetrics Metrics { get; set; }
+        }
+
         /// <summary>
         /// 当前捕获区域（屏幕坐标）
         /// </summary>
@@ -54,6 +72,13 @@ namespace AutoTest.Biz.RemoteControl
         /// </summary>
         public byte[] CaptureJpegBytes()
         {
+            return CaptureJpegFrame().Bytes;
+        }
+
+        public CaptureFrameResult CaptureJpegFrame()
+        {
+            var totalSw = Stopwatch.StartNew();
+            var captureSw = Stopwatch.StartNew();
             var hwnd = CurrentWindowHandle;
             if (hwnd == IntPtr.Zero || !IsWindow(hwnd))
             {
@@ -80,11 +105,15 @@ namespace AutoTest.Biz.RemoteControl
                 var captured = TryCaptureWindow(hwnd, fullBmp);
                 if (!captured)
                     throw new InvalidOperationException("抓取主窗口失败");
+                captureSw.Stop();
 
                 using (var cropBmp = fullBmp.Clone(localClipped, PixelFormat.Format32bppArgb))
                 {
+                    var overlaySw = Stopwatch.StartNew();
                     ComposeCefOverlay(cropBmp, CaptureRegion);
+                    overlaySw.Stop();
 
+                    var encodeSw = Stopwatch.StartNew();
                     var encoder = GetJpegEncoder();
                     var encoderParams = new EncoderParameters(1);
                     encoderParams.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, JpegQuality);
@@ -92,7 +121,27 @@ namespace AutoTest.Biz.RemoteControl
                     using (var ms = new MemoryStream())
                     {
                         cropBmp.Save(ms, encoder, encoderParams);
-                        return ms.ToArray();
+                        encodeSw.Stop();
+                        totalSw.Stop();
+
+                        var bytes = ms.ToArray();
+                        var metrics = new CaptureFrameMetrics
+                        {
+                            CaptureMs = captureSw.ElapsedMilliseconds,
+                            OverlayMs = overlaySw.ElapsedMilliseconds,
+                            EncodeMs = encodeSw.ElapsedMilliseconds,
+                            TotalMs = totalSw.ElapsedMilliseconds,
+                            Width = cropBmp.Width,
+                            Height = cropBmp.Height,
+                            ByteSize = bytes.Length,
+                            CapturedAtUtc = DateTime.UtcNow
+                        };
+
+                        return new CaptureFrameResult
+                        {
+                            Bytes = bytes,
+                            Metrics = metrics
+                        };
                     }
                 }
             }
