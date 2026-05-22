@@ -137,6 +137,8 @@ body{background:#1a1a1a;display:flex;flex-direction:column;align-items:center;ju
 #info{color:#aaa;font-size:13px;margin-bottom:8px}
 #wrap{position:relative;cursor:crosshair;border:2px solid #555;display:inline-block;max-width:100vw;touch-action:none}
 #screen{display:block;max-width:100%;height:auto;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:none}
+#panHandle{position:absolute;right:8px;top:8px;z-index:5;padding:4px 8px;background:rgba(30,30,30,.75);border:1px solid #777;border-radius:4px;color:#ddd;font-size:12px;cursor:grab;-webkit-user-select:none;user-select:none;touch-action:none}
+#panHandle.active{background:rgba(33,150,243,.75);border-color:#6ec6ff;color:#fff;cursor:grabbing}
 #status{color:#4caf50;font-size:12px;margin-top:6px}
 #cfg{margin-top:12px;color:#888;font-size:12px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
 #cfg input{width:60px;padding:2px 4px;background:#333;border:1px solid #555;color:#ccc;font-size:12px}
@@ -144,8 +146,8 @@ body{background:#1a1a1a;display:flex;flex-direction:column;align-items:center;ju
 </style>
 </head>
 <body>
-<div id='info'>实时远程控制 &nbsp;|&nbsp; 单指拖动操作，双指捏合缩放</div>
-<div id='wrap'><img id='screen' src='/remotecontrol/screenshot' alt='screen' draggable='false'></div>
+<div id='info'>实时远程控制 &nbsp;|&nbsp; 单指操作远程，双指捏合缩放，拖动把用于移动图片</div>
+<div id='wrap'><img id='screen' src='/remotecontrol/screenshot' alt='screen' draggable='false'><div id='panHandle'>拖动把</div></div>
 <div id='status'>连接中...</div>
 <div id='cfg'>
   截图区域 &nbsp;
@@ -159,6 +161,7 @@ body{background:#1a1a1a;display:flex;flex-direction:column;align-items:center;ju
 <script>
 (function(){
   var img=document.getElementById('screen'),
+      panHandle=document.getElementById('panHandle'),
       status=document.getElementById('status'),
       isDown=false,pending=null,moving=false,
       inflight=false,currentUrl='',
@@ -168,6 +171,24 @@ body{background:#1a1a1a;display:flex;flex-direction:column;align-items:center;ju
       panX=0,panY=0,panStartX=0,panStartY=0,startPanX=0,startPanY=0,isPanning=false,panMoved=false,tapMaxMove=8,
       pinchStartDist=0,pinchStartScale=1,isPinching=false,
       metricAvg={server:0,capture:0,overlay:0,encode:0,network:0,decode:0,total:0,bytes:0,fps:0,count:0};
+
+  function beginPan(clientX,clientY){
+    if(zoomScale<=1.001){return;}
+    isPanning=true;
+    panMoved=false;
+    panStartX=clientX;
+    panStartY=clientY;
+    startPanX=panX;
+    startPanY=panY;
+    panHandle.classList.add('active');
+    if(isDown){isDown=false;}
+  }
+
+  function endPan(){
+    isPanning=false;
+    panMoved=false;
+    panHandle.classList.remove('active');
+  }
 
   function toNum(v){var n=parseFloat(v);return isNaN(n)?0:n;}
   function smooth(oldV,newV){return oldV?oldV*0.75+newV*0.25:newV;}
@@ -334,26 +355,24 @@ body{background:#1a1a1a;display:flex;flex-direction:column;align-items:center;ju
     if(e.touches&&e.touches.length===2){
       e.preventDefault();
       isPinching=true;
-      isPanning=false;
+      endPan();
       pinchStartDist=touchDistance(e.touches[0],e.touches[1]);
       pinchStartScale=zoomScale;
       if(isDown){isDown=false;}
       return;
     }
     e.preventDefault();
-    if(isPinching)return;
-    if(zoomScale>1.001&&e.touches&&e.touches.length===1){
-      isPanning=true;
-      panMoved=false;
-      panStartX=e.touches[0].clientX;
-      panStartY=e.touches[0].clientY;
-      startPanX=panX;
-      startPanY=panY;
-      if(isDown){isDown=false;}
-      return;
-    }
+    if(isPinching||isPanning)return;
     isDown=true;
     send('mousedown',norm(e));
+  },{passive:false});
+
+  panHandle.addEventListener('touchstart',function(e){
+    if(!e.touches||e.touches.length!==1){return;}
+    e.preventDefault();
+    e.stopPropagation();
+    isPinching=false;
+    beginPan(e.touches[0].clientX,e.touches[0].clientY);
   },{passive:false});
 
   window.addEventListener('touchmove',function(e){
@@ -371,11 +390,9 @@ body{background:#1a1a1a;display:flex;flex-direction:column;align-items:center;ju
         var moveX=e.touches[0].clientX-panStartX;
         var moveY=e.touches[0].clientY-panStartY;
         if(!panMoved&&(Math.abs(moveX)>tapMaxMove||Math.abs(moveY)>tapMaxMove)){panMoved=true;}
-        if(panMoved){
-          panX=startPanX+moveX;
-          panY=startPanY+moveY;
-          applyTransform();
-        }
+        panX=startPanX+moveX;
+        panY=startPanY+moveY;
+        applyTransform();
       }
       return;
     }
@@ -392,12 +409,7 @@ body{background:#1a1a1a;display:flex;flex-direction:column;align-items:center;ju
     }
     if(isPanning){
       e.preventDefault();
-      if(!panMoved){
-        var tapPos=normEnd(e);
-        send('mousedown',tapPos);
-        send('mouseup',tapPos);
-      }
-      if(!e.touches||e.touches.length===0){isPanning=false;panMoved=false;}
+      if(!e.touches||e.touches.length===0){endPan();}
       return;
     }
     if(!isDown)return;
@@ -415,7 +427,7 @@ body{background:#1a1a1a;display:flex;flex-direction:column;align-items:center;ju
     }
     if(isPanning){
       e.preventDefault();
-      isPanning=false;
+      endPan();
       return;
     }
     if(!isDown)return;
