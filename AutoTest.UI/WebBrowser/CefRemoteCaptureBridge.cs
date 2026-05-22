@@ -1,4 +1,5 @@
 using AutoTest.Biz.RemoteControl;
+using CefSharp;
 using CefSharp.WinForms;
 using System;
 using System.Collections.Generic;
@@ -26,6 +27,8 @@ namespace AutoTest.UI.WebBrowser
         private static readonly Dictionary<ChromiumWebBrowser, BrowserCaptureState> browserStates = new Dictionary<ChromiumWebBrowser, BrowserCaptureState>();
         private static bool initialized = false;
         private const int CaptureRefreshIntervalMs = 80;
+        private const int CaptureTimeoutMs = 1200;
+        private const int MaxFrameAgeMs = 500;
 
         public static void Register(ChromiumWebBrowser browser)
         {
@@ -117,7 +120,7 @@ namespace AutoTest.UI.WebBrowser
             Rectangle browserRect = Rectangle.Empty;
             if (!TryInvoke(browser, () =>
             {
-                if (!browser.IsHandleCreated || browser.Width <= 0 || browser.Height <= 0 || !browser.Visible)
+                if (!browser.IsHandleCreated || browser.Width <= 0 || browser.Height <= 0 || !browser.Visible || !browser.IsBrowserInitialized)
                     return false;
 
                 browserRect = browser.RectangleToScreen(new Rectangle(0, 0, browser.Width, browser.Height));
@@ -140,6 +143,14 @@ namespace AutoTest.UI.WebBrowser
             {
                 if (state.Frame == null)
                     return;
+
+                var age = unchecked(Environment.TickCount - state.LastCaptureTick);
+                if (age > MaxFrameAgeMs)
+                {
+                    state.Frame.Dispose();
+                    state.Frame = null;
+                    return;
+                }
 
                 var srcRect = new Rectangle(hit.X - browserRect.X, hit.Y - browserRect.Y, hit.Width, hit.Height);
                 srcRect = Rectangle.Intersect(srcRect, new Rectangle(0, 0, state.Frame.Width, state.Frame.Height));
@@ -172,7 +183,25 @@ namespace AutoTest.UI.WebBrowser
                     if (browser.IsDisposed)
                         return;
 
-                    var bytes = await browser.CaptureScreenshotAsync().ConfigureAwait(false);
+                    TryInvoke(browser, () =>
+                    {
+                        if (browser.IsDisposed || !browser.IsBrowserInitialized)
+                            return false;
+
+                        var host = browser.GetBrowserHost();
+                        if (host != null)
+                        {
+                            host.Invalidate(PaintElementType.View);
+                        }
+                        return true;
+                    });
+
+                    var captureTask = browser.CaptureScreenshotAsync();
+                    var completed = await Task.WhenAny(captureTask, Task.Delay(CaptureTimeoutMs)).ConfigureAwait(false);
+                    if (completed != captureTask)
+                        return;
+
+                    var bytes = captureTask.Result;
                     if (bytes == null || bytes.Length == 0)
                         return;
 

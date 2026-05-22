@@ -32,8 +32,9 @@ namespace AutoTest.Biz.RemoteControl
                         var bytes = frame.Bytes;
                         var metrics = frame.Metrics;
                         response.ContentType = "image/jpeg";
-                        response.Header["Cache-Control"] = "no-store, no-cache";
+                        response.Header["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0";
                         response.Header["Pragma"] = "no-cache";
+                        response.Header["Expires"] = "0";
                         response.Header["Server-Timing"] = string.Format("capture;dur={0},overlay;dur={1},encode;dur={2},server;dur={3}", metrics.CaptureMs, metrics.OverlayMs, metrics.EncodeMs, metrics.TotalMs);
                         response.Header["X-Capture-Ms"] = metrics.CaptureMs.ToString();
                         response.Header["X-Overlay-Ms"] = metrics.OverlayMs.ToString();

@@ -192,6 +192,9 @@ namespace AutoTest.Biz.RemoteControl
             if (TryPrintWindow(hwnd, target, 0) && !IsNearlyBlack(target))
                 return true;
 
+            if (TryCopyFromScreen(hwnd, target) && !IsNearlyBlack(target))
+                return true;
+
             return TryBitBltWindow(hwnd, target);
         }
 
@@ -208,6 +211,26 @@ namespace AutoTest.Biz.RemoteControl
                 {
                     g.ReleaseHdc(hdc);
                 }
+            }
+        }
+
+        private static bool TryCopyFromScreen(IntPtr hwnd, Bitmap target)
+        {
+            try
+            {
+                RECT rect;
+                if (!GetWindowRect(hwnd, out rect))
+                    return false;
+
+                using (var g = Graphics.FromImage(target))
+                {
+                    g.CopyFromScreen(rect.Left, rect.Top, 0, 0, new Size(target.Width, target.Height), CopyPixelOperation.SourceCopy);
+                    return true;
+                }
+            }
+            catch
+            {
+                return false;
             }
         }
 
