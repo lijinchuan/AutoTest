@@ -58,6 +58,11 @@ namespace AutoTest.Biz.RemoteControl
         public Func<Rectangle, Bitmap> CefOverlayCaptureProvider { get; set; }
 
         /// <summary>
+        /// 切换到后一个Tab命令（由UI层注入）
+        /// </summary>
+        public Func<bool> SwitchToNextTabCommand { get; set; }
+
+        /// <summary>
         /// 设定截图区域（相对主窗口坐标）
         /// </summary>
         public void SetRegion(int x, int y, int width, int height)
@@ -73,6 +78,24 @@ namespace AutoTest.Biz.RemoteControl
         public byte[] CaptureJpegBytes()
         {
             return CaptureJpegFrame().Bytes;
+        }
+
+        public bool SwitchToNextTab()
+        {
+            var cmd = SwitchToNextTabCommand;
+            if (cmd == null)
+            {
+                return false;
+            }
+
+            try
+            {
+                return cmd();
+            }
+            catch
+            {
+                return false;
+            }
         }
 
         public CaptureFrameResult CaptureJpegFrame()

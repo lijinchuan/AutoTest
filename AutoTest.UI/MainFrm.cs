@@ -1,4 +1,5 @@
 ﻿using AutoTest.Biz;
+using AutoTest.Biz.RemoteControl;
 using AutoTest.Biz.SimulateServer;
 using AutoTest.Domain;
 using AutoTest.UI.SubForm;
@@ -113,6 +114,7 @@ namespace AutoTest.UI
 
             InitializeComponent();
             InitFrm();
+            ScreenCaptureService.Instance.SwitchToNextTabCommand = SwitchToNextTabFromRemote;
 
             Instance = this;
         }
@@ -333,6 +335,35 @@ namespace AutoTest.UI
                     break;
                 }
             }
+        }
+
+        private bool SwitchToNextTabFromRemote()
+        {
+            if (TabControl == null || TabControl.IsDisposed)
+            {
+                return false;
+            }
+
+            if (TabControl.InvokeRequired)
+            {
+                return (bool)TabControl.Invoke(new Func<bool>(SwitchToNextTabFromRemote));
+            }
+
+            var count = TabControl.TabPages.Count;
+            if (count <= 1)
+            {
+                return count == 1;
+            }
+
+            var current = TabControl.SelectedIndex;
+            if (current < 0)
+            {
+                TabControl.SelectedIndex = 0;
+                return true;
+            }
+
+            TabControl.SelectedIndex = (current + 1) % count;
+            return true;
         }
 
         public IEnumerable<TestPanel> FindTestPanel()

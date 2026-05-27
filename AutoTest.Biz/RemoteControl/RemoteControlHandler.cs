@@ -1,6 +1,11 @@
-﻿using LJC.FrameWorkV3.Net.HTTP.Server;
+﻿using AutoTest.Biz;
+using AutoTest.Biz.SimulateServer;
+using AutoTest.Data;
+using AutoTest.Domain.Entity;
+using LJC.FrameWorkV3.Net.HTTP.Server;
 using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 
 namespace AutoTest.Biz.RemoteControl
@@ -75,6 +80,35 @@ namespace AutoTest.Biz.RemoteControl
                         return true;
                     }
 
+                    case "nexttab":
+                    {
+                        var switched = ScreenCaptureService.Instance.SwitchToNextTab();
+                        if (switched)
+                        {
+                            WriteOk(response);
+                        }
+                        else
+                        {
+                            response.ContentType = "application/json;charset=utf-8";
+                            response.Content = JsonConvert.SerializeObject(new { code = 500, message = "切换Tab失败，请确认主程序窗口已初始化" });
+                        }
+                        return true;
+                    }
+
+                    case "invokeapi":
+                    {
+                        var req = JsonConvert.DeserializeAnonymousType(
+                            request.GetContent(),
+                            new { caseId = 0, parameters = "" });
+
+                        var apiParams = ParseApiParams(req.parameters);
+                        var result = EnqueueApiTask(req.caseId, apiParams);
+
+                        response.ContentType = "application/json;charset=utf-8";
+                        response.Content = JsonConvert.SerializeObject(result);
+                        return true;
+                    }
+
                     case "setregion":
                     {
                         var req = JsonConvert.DeserializeAnonymousType(
@@ -113,6 +147,59 @@ namespace AutoTest.Biz.RemoteControl
             response.Content = "{\"code\":200}";
         }
 
+        private static Dictionary<string, string> ParseApiParams(string parameters)
+        {
+            if (string.IsNullOrWhiteSpace(parameters))
+            {
+                return new Dictionary<string, string>();
+            }
+
+            var raw = JsonConvert.DeserializeObject<Dictionary<string, object>>(parameters);
+            var dic = new Dictionary<string, string>();
+            if (raw == null)
+            {
+                return dic;
+            }
+
+            foreach (var kv in raw)
+            {
+                dic[kv.Key] = kv.Value == null ? string.Empty : kv.Value.ToString();
+            }
+
+            return dic;
+        }
+
+        private static object EnqueueApiTask(int caseId, Dictionary<string, string> apiParams)
+        {
+            if (caseId <= 0)
+            {
+                return new { code = 400, message = "CaseId不能为空", taskId = 0 };
+            }
+
+            var newTask = new TaskBiz().CreateTask(caseId);
+            if (newTask == null)
+            {
+                return new { code = 404, message = "没有找到任务", taskId = 0 };
+            }
+
+            var addReq = new APITaskRequest
+            {
+                CaseId = caseId,
+                CDate = DateTime.Now,
+                Params = apiParams,
+                State = 0
+            };
+
+            DataStoreSwitcher.Current.Insert(nameof(APITaskRequest), addReq);
+            if (!ApiTaskTrigger.TryEnqueue(newTask, addReq))
+            {
+                DataStoreSwitcher.Current.Delete<APITaskRequest>(nameof(APITaskRequest), addReq.Id);
+                return new { code = 429, message = "队列已满", taskId = 0 };
+            }
+
+            return new { code = 200, message = "已提交", taskId = addReq.Id };
+        }
+
         private static string NormalizeUrl(string url)
         {
             if (url.StartsWith("http", StringComparison.OrdinalIgnoreCase))
@@ -143,7 +230,11 @@ body{background:#1a1a1a;display:flex;flex-direction:column;align-items:center;ju
 #status{color:#4caf50;font-size:12px;margin-top:6px}
 #cfg{margin-top:12px;color:#888;font-size:12px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
 #cfg input{width:60px;padding:2px 4px;background:#333;border:1px solid #555;color:#ccc;font-size:12px}
-#cfg button{padding:2px 8px;background:#444;border:1px solid #666;color:#ccc;cursor:pointer;font-size:12px}
+#cfg button,#cmd button{padding:2px 8px;background:#444;border:1px solid #666;color:#ccc;cursor:pointer;font-size:12px}
+#cmd{margin-top:10px;color:#bbb;font-size:12px;display:flex;gap:8px;flex-wrap:wrap;justify-content:center;align-items:center}
+#cmd input{padding:2px 4px;background:#333;border:1px solid #555;color:#ccc;font-size:12px}
+#cmdCaseId{width:90px}
+#cmdParams{width:320px;max-width:68vw}
 </style>
 </head>
 <body>
@@ -158,6 +249,13 @@ body{background:#1a1a1a;display:flex;flex-direction:column;align-items:center;ju
   H:<input id='rh' type='number' value='720'>
   质量:<input id='rq' type='number' value='70' min='1' max='100'>
   <button onclick='applyRegion()'>应用</button>
+</div>
+<div id='cmd'>
+  执行命令 &nbsp;
+  <button onclick='nextTab()'>切换到后一个Tab</button>
+  CaseId:<input id='cmdCaseId' type='number' value=''>
+  参数:<input id='cmdParams' type='text' value='' placeholder='{""key"":""value""}'>
+  <button onclick='invokeApi()'>提交执行</button>
 </div>
 <script>
 (function(){
@@ -437,6 +535,52 @@ body{background:#1a1a1a;display:flex;flex-direction:column;align-items:center;ju
     send('mouseup',normEnd(e));
   },{passive:false});
 
+  function postJson(path,data,onDone){
+    var xhr=new XMLHttpRequest();
+    xhr.open('POST','/remotecontrol/'+path,true);
+    xhr.setRequestHeader('Content-Type','application/json');
+    xhr.onreadystatechange=function(){
+      if(xhr.readyState!==4){return;}
+      if(onDone){onDone(xhr);}
+    };
+    xhr.send(JSON.stringify(data||{}));
+  }
+
+  window.nextTab=function(){
+    postJson('nexttab',{},function(){});
+  };
+
+  window.invokeApi=function(){
+    var caseId=parseInt(document.getElementById('cmdCaseId').value)||0;
+    var paramsText=(document.getElementById('cmdParams').value||'').trim();
+    if(caseId<=0){
+      alert('请输入有效的CaseId');
+      return;
+    }
+
+    if(paramsText){
+      try{JSON.parse(paramsText);}catch(ex){
+        alert('参数必须是JSON对象，例如 {""key"":""value""}');
+        return;
+      }
+    }
+
+    if(!confirm('确认执行接口调用？')){
+      return;
+    }
+
+    postJson('invokeapi',{caseId:caseId,parameters:paramsText},function(xhr){
+      var msg='执行完成';
+      try{
+        var result=JSON.parse(xhr.responseText||'{}');
+        msg=(result.message||'')+'，TaskId='+((result.taskId||0)+'');
+      }catch(ex){
+        msg='执行结果解析失败';
+      }
+      alert(msg);
+    });
+  };
+
   window.applyRegion=function(){
     var d={
       x:parseInt(document.getElementById('rx').value)||0,
@@ -445,10 +589,7 @@ body{background:#1a1a1a;display:flex;flex-direction:column;align-items:center;ju
       height:parseInt(document.getElementById('rh').value)||720,
       quality:parseInt(document.getElementById('rq').value)||70
     };
-    var xhr=new XMLHttpRequest();
-    xhr.open('POST','/remotecontrol/setregion',true);
-    xhr.setRequestHeader('Content-Type','application/json');
-    xhr.send(JSON.stringify(d));
+    postJson('setregion',d,function(){});
     pollDelay=50;
   };
 })();

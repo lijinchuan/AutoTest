@@ -20,6 +20,7 @@ namespace AutoTest.UI.WebBrowser
             public readonly object SyncRoot = new object();
             public Bitmap Frame;
             public int LastCaptureTick;
+            public int LastInvalidateTick;
             public int Capturing;
         }
 
@@ -29,6 +30,7 @@ namespace AutoTest.UI.WebBrowser
         private const int CaptureRefreshIntervalMs = 80;
         private const int CaptureTimeoutMs = 1200;
         private const int MaxFrameAgeMs = 500;
+        private const int InvalidateMinIntervalMs = 350;
 
         public static void Register(ChromiumWebBrowser browser)
         {
@@ -183,18 +185,35 @@ namespace AutoTest.UI.WebBrowser
                     if (browser.IsDisposed)
                         return;
 
-                    TryInvoke(browser, () =>
+                    var needInvalidate = false;
+                    lock (state.SyncRoot)
                     {
-                        if (browser.IsDisposed || !browser.IsBrowserInitialized)
-                            return false;
+                        var frameAge = state.Frame == null ? int.MaxValue : unchecked(now - state.LastCaptureTick);
+                        var invalidateAge = unchecked(now - state.LastInvalidateTick);
+                        needInvalidate = state.Frame == null || (frameAge >= CaptureRefreshIntervalMs && invalidateAge >= InvalidateMinIntervalMs);
+                    }
 
-                        var host = browser.GetBrowserHost();
-                        if (host != null)
+                    if (needInvalidate)
+                    {
+                        if (TryInvoke(browser, () =>
                         {
+                            if (browser.IsDisposed || !browser.IsBrowserInitialized)
+                                return false;
+
+                            var host = browser.GetBrowserHost();
+                            if (host == null)
+                                return false;
+
                             host.Invalidate(PaintElementType.View);
+                            return true;
+                        }))
+                        {
+                            lock (state.SyncRoot)
+                            {
+                                state.LastInvalidateTick = Environment.TickCount;
+                            }
                         }
-                        return true;
-                    });
+                    }
 
                     var captureTask = browser.CaptureScreenshotAsync();
                     var completed = await Task.WhenAny(captureTask, Task.Delay(CaptureTimeoutMs)).ConfigureAwait(false);

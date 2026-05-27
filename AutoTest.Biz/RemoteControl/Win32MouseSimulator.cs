@@ -15,6 +15,9 @@ namespace AutoTest.Biz.RemoteControl
         [DllImport("user32.dll")]
         private static extern void mouse_event(uint dwFlags, int dx, int dy, uint dwData, IntPtr dwExtraInfo);
 
+        [DllImport("user32.dll")]
+        private static extern void keybd_event(byte bVk, byte bScan, uint dwFlags, IntPtr dwExtraInfo);
+
         [DllImport("user32.dll", SetLastError = true)]
         private static extern bool ScreenToClient(IntPtr hWnd, ref POINT lpPoint);
 
@@ -40,6 +43,10 @@ namespace AutoTest.Biz.RemoteControl
         private const uint MOUSEEVENTF_LEFTUP = 0x0004;
         private const uint MOUSEEVENTF_RIGHTDOWN = 0x0008;
         private const uint MOUSEEVENTF_RIGHTUP = 0x0010;
+        private const uint KEYEVENTF_KEYUP = 0x0002;
+
+        private const byte VK_CONTROL = 0x11;
+        private const byte VK_TAB = 0x09;
 
         private const int WM_MOUSEMOVE = 0x0200;
         private const int WM_LBUTTONDOWN = 0x0201;
@@ -180,6 +187,19 @@ namespace AutoTest.Biz.RemoteControl
             var lParam = MakeLParam(clientPt.X, clientPt.Y);
             SendMessage(targetHwnd, WM_MOUSEMOVE, new IntPtr(MK_RBUTTON), lParam);
             SendMessage(targetHwnd, WM_RBUTTONUP, IntPtr.Zero, lParam);
+        }
+
+        public static void SendCtrlTab(IntPtr hwnd)
+        {
+            if (hwnd != IntPtr.Zero)
+            {
+                SetForegroundWindow(hwnd);
+            }
+
+            keybd_event(VK_CONTROL, 0, 0, IntPtr.Zero);
+            keybd_event(VK_TAB, 0, 0, IntPtr.Zero);
+            keybd_event(VK_TAB, 0, KEYEVENTF_KEYUP, IntPtr.Zero);
+            keybd_event(VK_CONTROL, 0, KEYEVENTF_KEYUP, IntPtr.Zero);
         }
 
         /// <summary>
