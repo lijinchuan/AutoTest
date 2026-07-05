@@ -28,11 +28,18 @@ namespace AutoTest.UI.SubForm
             this.Msg = msg;
             new Thread(new ThreadStart(() =>
             {
-                Thread.Sleep(200);
-                this.DialogResult = DialogResult.Cancel;
-                this.Visible = false;
-                Thread.Sleep(200);
-                this.ShowDialog();
+                try
+                {
+                    Thread.Sleep(200);
+                    this.DialogResult = DialogResult.Cancel;
+                    this.Visible = false;
+                    Thread.Sleep(200);
+                    this.ShowDialog();
+                }
+                catch
+                {
+
+                }
 
             })).Start();
             this.ShowDialog();

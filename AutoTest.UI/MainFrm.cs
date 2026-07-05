@@ -229,7 +229,7 @@ namespace AutoTest.UI
 
             }
 
-            wdlg.Close();
+            wdlg.Hide();
         }
 
         void TabControl_Selected(object sender, TabControlEventArgs e)
