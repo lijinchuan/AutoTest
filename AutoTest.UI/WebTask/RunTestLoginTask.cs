@@ -85,11 +85,11 @@ namespace AutoTest.UI.WebTask
                 userData = new object();
             }
 
-            var code = $"var {WebVar.VarName}={WebVar.VarName}||{{}};\n";
+            var code = $"window.{WebVar.VarName}=window.{WebVar.VarName}||{{}};\n";
 
-            code += $"{WebVar.VarName}.{nameof(WebVar.Bag)}={WebVar.VarName}.{nameof(WebVar.Bag)}||{Newtonsoft.Json.JsonConvert.SerializeObject(userData)}\n";
+            code += $"window.{WebVar.VarName}.{nameof(WebVar.Bag)}=window.{WebVar.VarName}.{nameof(WebVar.Bag)}||{Newtonsoft.Json.JsonConvert.SerializeObject(userData)}\n";
 
-            code += $"{WebVar.VarName}.{nameof(WebVar.WebRequestDatas)}={Newtonsoft.Json.JsonConvert.SerializeObject(webRequestDatas)}\n";
+            code += $"window.{WebVar.VarName}.{nameof(WebVar.WebRequestDatas)}={Newtonsoft.Json.JsonConvert.SerializeObject(webRequestDatas)}\n";
 
             webBrowserTool.ExecuteScript(browser, frame, code);
         }

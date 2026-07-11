@@ -1,4 +1,5 @@
-﻿using CefSharp;
+﻿using AutoTest.Domain;
+using CefSharp;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -66,5 +67,9 @@ namespace AutoTest.UI.WebBrowser
         void EnableMenu(IBrowser browser);
 
         object TryExecuteScript(IBrowser browser, IFrame frame, string code, int timeOut = 30000);
+
+        object DevToolEvaluateScriptAsync(IBrowser browser, string code, int timeout);
+
+        Task<object> DevEvaluateScriptAsPromiseAsync(IBrowser browser, string code, int timeout);
     }
 }

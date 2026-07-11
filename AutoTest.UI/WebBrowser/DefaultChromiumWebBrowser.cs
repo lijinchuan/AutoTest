@@ -139,7 +139,7 @@ namespace AutoTest.UI.WebBrowser
             cSObj = new CSObj(SynchronizationContext.Current, this);
             cSObj.OnPublishMsg += this.WebTask_OnMsgPublish;
             //注册C#对象
-            this.JavascriptObjectRepository.Register("ServerDriverClient", cSObj, false, BindingOptions.DefaultBinder);
+            this.JavascriptObjectRepository.Register("ServerDriverClient", cSObj, true, BindingOptions.DefaultBinder);
 
             CefRemoteCaptureBridge.Register(this);
         }

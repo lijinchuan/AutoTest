@@ -18,6 +18,9 @@ namespace AutoTest.UI.UC
     public partial class UCTestCaseOrder : UserControl
     {
         private List<TestTask> testTasks = new List<TestTask>();
+
+        private IWebBrowserTool webBrowserTool = AutofacBuilder.GetFromFac<IWebBrowserTool>();
+
         private bool _isLoad = false;
         public UCTestCaseOrder()
         {
@@ -55,7 +58,11 @@ namespace AutoTest.UI.UC
 
         public List<int> GetOrders()
         {
-            var list = ((List<object>)CBBroswer.GetBrowser().MainFrame.EvaluateScriptAsync("getEles()").Result.Result).Select(p => (string)p).ToList();
+            var browser = CBBroswer.GetBrowser();
+
+            //var list = ((List<object>)browser.EvaluateScriptAsync("getEles()").Result.Result).Select(p => (string)p).ToList();
+
+            var list= ((List<object>)webBrowserTool.DevEvaluateScriptAsPromiseAsync(browser, "return getEles()", 30000).Result).Select(p => (string)p).ToList();
 
             return list.Select(p => testTasks.FirstOrDefault(q => q.GetTaskName() == p)).Select(p => p.TestCase.Id).ToList();
         }

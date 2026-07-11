@@ -1,6 +1,8 @@
 ﻿using AutoTest.Domain;
 using AutoTest.Domain.Exceptions;
 using CefSharp;
+using CefSharp.DevTools.IO;
+using CefSharp.DevTools.Runtime;
 using System;
 using System.IO;
 using System.Text;
@@ -100,8 +102,10 @@ namespace AutoTest.UI.WebBrowser
 
         public void AddEvalFuntion(IBrowser browser, IFrame frame)
         {
-            var resp = browser.MainFrame.EvaluateScriptAsync(ADDEVALFUNCTIONCODE);
-            Task.WaitAll(new[] { resp }, SCRIPT_TIMEOUT);
+            //var resp = browser.EvaluateScriptAsync(ADDEVALFUNCTIONCODE);
+            //Task.WaitAll(new[] { resp }, SCRIPT_TIMEOUT);
+
+            DevToolEvaluateScriptAsync(browser, ADDEVALFUNCTIONCODE);
         }
 
         private void AssertJavaScriptResult(Task<JavascriptResponse> resp, int timeOut = 0)
@@ -129,51 +133,71 @@ namespace AutoTest.UI.WebBrowser
         {
             if (!force)
             {
-                var resp = browser.MainFrame.EvaluateScriptAsync(ADDJQUERYLIBCODE);
-                AssertJavaScriptResult(resp);
+                //var resp = browser.EvaluateScriptAsync(ADDJQUERYLIBCODE);
+                //AssertJavaScriptResult(resp);
+
+                DevToolEvaluateScriptAsync(browser, ADDJQUERYLIBCODE);
             }
             else
             {
-                var resp = browser.MainFrame.EvaluateScriptAsync(ADDJQUERYLIBCODE.Replace("if (typeof jQuery === 'undefined') {", "if (true) {"));
-                AssertJavaScriptResult(resp);
+                //var resp = browser.EvaluateScriptAsync(ADDJQUERYLIBCODE.Replace("if (typeof jQuery === 'undefined') {", "if (true) {"));
+                //AssertJavaScriptResult(resp);
+
+                DevToolEvaluateScriptAsync(browser, ADDJQUERYLIBCODE.Replace("if (typeof jQuery === 'undefined') {", "if (true) {"));
             }
         }
 
         public bool AddCookeManagerFunction(IBrowser browser, IFrame frame)
         {
-            var resp = browser.MainFrame.EvaluateScriptAsync(ADDCOOKIEMANAGERFUNCTION);
-            AssertJavaScriptResult(resp);
-            return resp.Result.Success;
+            //var resp = browser.EvaluateScriptAsync(ADDCOOKIEMANAGERFUNCTION);
+            //AssertJavaScriptResult(resp);
+            //return resp.Result.Success;
+
+            DevToolEvaluateScriptAsync(browser, ADDCOOKIEMANAGERFUNCTION);
+
+            return true;
         }
 
         public bool RegisterRomoteScript(IBrowser browser, IFrame frame, string url)
         {
             var code = string.Format(REGISTERREMOTESCRIPTCODE, url);
-            var resp = browser.MainFrame.EvaluateScriptAsync(code);
-            AssertJavaScriptResult(resp);
-            return resp.Result.Success;
+            //var resp = browser.EvaluateScriptAsync(code);
+            //AssertJavaScriptResult(resp);
+            //return resp.Result.Success;
+
+            DevToolEvaluateScriptAsync(browser, code);
+
+            return true;
         }
 
         public bool RegisterScript(IBrowser browser, IFrame frame, string code)
         {
             code = string.Format(REGISTERRSCRIPTCODE, code.Replace("\"", "\\\""));
-            var resp = browser.MainFrame.EvaluateScriptAsync(code);
-            AssertJavaScriptResult(resp);
-            return resp.Result.Success;
+            //var resp = browser.EvaluateScriptAsync(code);
+            //AssertJavaScriptResult(resp);
+            //return resp.Result.Success;
+
+            DevToolEvaluateScriptAsync(browser, code);
+
+            return true;
         }
 
         public object ExecuteScript(IBrowser browser, IFrame frame, string code, int timeOut = SCRIPT_TIMEOUT)
         {
-            var resp = browser.MainFrame.EvaluateScriptAsync(code);
-            AssertJavaScriptResult(resp, timeOut);
-            return resp.Result.Result;
+            //var resp = browser.EvaluateScriptAsync(code);
+            //AssertJavaScriptResult(resp, timeOut);
+            //return resp.Result.Result;
+
+            return DevToolEvaluateScriptAsync(browser, code, timeOut);
         }
 
         public object ExecutePromiseScript(IBrowser browser, IFrame frame, string code, int timeOut = SCRIPT_TIMEOUT)
         {
-            var resp = browser.MainFrame.EvaluateScriptAsPromiseAsync(code);
-            AssertJavaScriptResult(resp, timeOut);
-            return resp.Result.Result;
+            //var resp = browser.EvaluateScriptAsPromiseAsync(code);
+            //AssertJavaScriptResult(resp, timeOut);
+            //return resp.Result.Result;
+
+            return DevEvaluateScriptAsPromiseAsync(browser, code, timeOut).Result;
         }
 
         public static bool IsPromiseScript(string code)
@@ -185,10 +209,14 @@ namespace AutoTest.UI.WebBrowser
         {
             if (IsPromiseScript(code))
             {
-                return ExecutePromiseScript(browser, frame, code, timeOut);
+                //return ExecutePromiseScript(browser, frame, code, timeOut);
+
+                return DevEvaluateScriptAsPromiseAsync(browser, code, timeOut).Result;
             }
 
-            return ExecuteScript(browser, frame, code);
+            //return ExecuteScript(browser, frame, code);
+
+            return DevToolEvaluateScriptAsync(browser,code, timeOut);
         }
 
 
@@ -247,11 +275,22 @@ namespace AutoTest.UI.WebBrowser
 
             if (checkVar)
             {
-                var taskResult = browser.MainFrame.EvaluateScriptAsync($"{CSObj.LoadVar}", timeout: TimeSpan.FromSeconds(5)).Result;
-                if (taskResult.Success && true.Equals(taskResult.Result))
+                var code = $"if(typeof {CSObj.LoadVar} === 'undefined' || {CSObj.LoadVar} === false) return false; return true;";
+
+                var result = DevEvaluateScriptAsPromiseAsync(browser, code).Result;
+
+                if(result is bool)
                 {
-                    return true;
+                    return (bool)result;
                 }
+
+                //var taskResult = browser.EvaluateScriptAsync($"{CSObj.LoadVar}", timeout: TimeSpan.FromSeconds(5)).Result;
+                //if (taskResult.Success && true.Equals(taskResult.Result))
+                //{
+                //    return true;
+                //}
+
+
             }
 
             return false;
@@ -281,25 +320,27 @@ namespace AutoTest.UI.WebBrowser
 
         public void EnableMenu(IBrowser browser)
         {
-            _ = browser.MainFrame.EvaluateScriptAsPromiseAsync(@"document.oncontextmenu = function(evt) { evt.returnValue = true;}");
+            _ = browser.EvaluateScriptAsPromiseAsync(@"document.oncontextmenu = function(evt) { evt.returnValue = true;}");
 
         }
 
         public void DisableMenu(IBrowser browser)
         {
-            _ = browser.MainFrame.EvaluateScriptAsPromiseAsync(@"document.oncontextmenu = function (evt) {  evt.preventDefault();};");
+            _ = browser.EvaluateScriptAsPromiseAsync(@"document.oncontextmenu = function (evt) {  evt.preventDefault();};");
 
         }
 
         public bool IsScriptBusy(IBrowser browser)
         {
-            var resp = browser.MainFrame.EvaluateScriptAsPromiseAsync("console.log('IsScriptBusy check');return 1;");
+            //var resp = browser.EvaluateScriptAsPromiseAsync("console.log('IsScriptBusy check');return 1;");
 
-            if (Task.WaitAll(new[] { resp }, 100))
+
+            var ret = DevEvaluateScriptAsPromiseAsync(browser, "console.log('IsScriptBusy check');return 1;").Result;
+
+            if(1.Equals(ret))
             {
                 return false;
             }
-
 
             return true;
         }
@@ -320,5 +361,55 @@ namespace AutoTest.UI.WebBrowser
 
             return boo;
         }
+
+        #region
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="browser"></param>
+        /// <param name="code"></param>
+        /// <param name="timeout"></param>
+        /// <returns></returns>
+        /// <exception cref="TimeoutException"></exception>
+        /// <exception cref="ScriptException"></exception>
+        public object DevToolEvaluateScriptAsync(IBrowser browser, string code, int timeout = SCRIPT_TIMEOUT)
+        {
+            var client = browser.GetDevToolsClient();
+            var resp = client.Runtime.EvaluateAsync(code, timeout: timeout);
+
+            if (!Task.WaitAll(new[] { resp }, timeout))
+            {
+                throw new TimeoutException($"Script execution timed out: {code}");
+            }
+
+            if (resp.Result.ExceptionDetails != null)
+            {
+                throw new ScriptException(resp.Result.ExceptionDetails.ToString());
+            }
+
+            return resp.Result?.Result?.Value;
+        }
+
+        public async Task<object> DevEvaluateScriptAsPromiseAsync(IBrowser browser, string code, int timeout = SCRIPT_TIMEOUT)
+        {
+            var client = browser.GetDevToolsClient();
+            var resp = await client.Runtime.EvaluateAsync($"(async function(){{{code}}})()", timeout: timeout);
+
+
+            if (resp.ExceptionDetails != null)
+            {
+                throw new ScriptException(resp.ExceptionDetails.Text);
+            }
+
+            var resp2 = await client.Runtime.AwaitPromiseAsync(resp.Result.ObjectId);
+            if (resp2.ExceptionDetails != null)
+            {
+                throw new ScriptException(resp2.ExceptionDetails.Text);
+            }
+
+            return resp2.Result?.Value;
+        }
+
+        #endregion
     }
 }

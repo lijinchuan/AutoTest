@@ -213,9 +213,16 @@ namespace AutoTest.UI.WebTask
         /// <returns></returns>
         private dynamic GetUserVarData(IBrowser browser, IFrame frame)
         {
-            var code = $"if(typeof {WebVar.VarName}!='undefined'&&{WebVar.VarName}.{nameof(WebVar.Bag)}) return {WebVar.VarName}.{nameof(WebVar.Bag)}";
+            var code = $"if(typeof {WebVar.VarName}!='undefined'&&{WebVar.VarName}.{nameof(WebVar.Bag)}) return JSON.stringify({WebVar.VarName}.{nameof(WebVar.Bag)});";
 
-            return webBrowserTool.ExecutePromiseScript(browser, frame, code) as dynamic;
+            var result= webBrowserTool.ExecutePromiseScript(browser, frame, code);
+
+            if (result == null)
+            {
+                return null;
+            }
+
+            return JsonHelper.JsonToEntity<dynamic>(result.ToString());
         }
 
         /// <summary>
@@ -276,10 +283,10 @@ namespace AutoTest.UI.WebTask
                 };
             }
 
-            var code = $"var {WebVar.VarName}={WebVar.VarName}||{{}};\n";
-            code += $"{WebVar.VarName}.{nameof(WebVar.Bag)}={Newtonsoft.Json.JsonConvert.SerializeObject(userData)}\n";
+            var code = $"window.{WebVar.VarName}=window.{WebVar.VarName}||{{}};\n";
+            code += $"window.{WebVar.VarName}.{nameof(WebVar.Bag)}=window.{WebVar.VarName}.{nameof(WebVar.Bag)}||{Newtonsoft.Json.JsonConvert.SerializeObject(userData)}\n";
 
-            //code += $"{WebVar.VarName}.{nameof(WebVar.WebRequestDatas)}={Newtonsoft.Json.JsonConvert.SerializeObject(webRequestDatas)}\n";
+            //code += $"window.{WebVar.VarName}.{nameof(WebVar.WebRequestDatas)}=window.{WebVar.VarName}.{nameof(WebVar.WebRequestDatas)}||{Newtonsoft.Json.JsonConvert.SerializeObject(webRequestDatas)}\n";
 
             var ret = webBrowserTool.ExecuteScript(browser, frame, code);
         }

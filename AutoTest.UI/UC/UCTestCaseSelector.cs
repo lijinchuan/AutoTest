@@ -28,6 +28,8 @@ namespace AutoTest.UI.UC
         public Action<int> SelectTestCaseAction;
         private Dictionary<int, TestResult> _testResults = null;
 
+        private IWebBrowserTool webBrowserTool = AutofacBuilder.GetFromFac<IWebBrowserTool>();
+
         private volatile bool _load = false;
         
         public UCTestCaseSelector()
@@ -60,7 +62,8 @@ namespace AutoTest.UI.UC
 
         public void Reset()
         {
-            this.CBBroswer.GetBrowser().MainFrame.EvaluateScriptAsync($"clearResults()");
+            //this.CBBroswer.GetBrowser().EvaluateScriptAsync($"clearResults()");
+            webBrowserTool.DevToolEvaluateScriptAsync(CBBroswer.GetBrowser(), $"clearResults()", 30000);
         }
 
         protected override void OnLoad(EventArgs e)
@@ -85,11 +88,11 @@ namespace AutoTest.UI.UC
             List<int> idList = _testCasesChoose;
             if (CBBroswer.IsBrowserInitialized)
             {
-                var ret = CBBroswer.GetBrowser().MainFrame.EvaluateScriptAsync("getSelCaseId()", timeout: TimeSpan.FromSeconds(5)).Result;
+                var ret = webBrowserTool.DevEvaluateScriptAsPromiseAsync(CBBroswer.GetBrowser(), "return getSelCaseId()", 30000).Result;
 
-                if (ret.Success)
+                if (ret is List<object> list)
                 {
-                    idList = (ret.Result as List<object>)?.Select(p => (int)p).ToList();
+                    idList = list.Select(p => (int)p).ToList();
                 }
 
             }
@@ -129,7 +132,7 @@ namespace AutoTest.UI.UC
             }
             msg += $"({testResult.TestEndDate.Subtract(testResult.TestStartDate).TotalMilliseconds}ms)";
             msg = msg.Replace("\r\n", "<br/>").Replace("\n", "<br/>").Replace("'", "\'");
-            CBBroswer.GetBrowser().MainFrame.EvaluateScriptAsync($"setTestCaseMsg('{testResult.TestCaseId}',{flg},'{msg}')");
+            webBrowserTool.DevToolEvaluateScriptAsync(CBBroswer.GetBrowser(), $"setTestCaseMsg('{testResult.TestCaseId}',{flg},'{msg}')", 30000 );
         }
 
         public void ShowTable()
@@ -156,8 +159,8 @@ namespace AutoTest.UI.UC
                 }
             }
 
-            this.CBBroswer.GetBrowser().MainFrame.EvaluateScriptAsync($"showTable(\"\",\"{sb}\")");
-            this.CBBroswer.GetBrowser().MainFrame.EvaluateScriptAsync("chooseTestCases("+JsonConvert.SerializeObject(_testCasesChoose) +")");
+            webBrowserTool.DevToolEvaluateScriptAsync(CBBroswer.GetBrowser(), $"showTable(\"\",\"{sb}\")", 30000);
+            webBrowserTool.DevToolEvaluateScriptAsync(CBBroswer.GetBrowser(), "chooseTestCases("+JsonConvert.SerializeObject(_testCasesChoose) +")", 30000);
 
             if (_testResults != null)
             {
