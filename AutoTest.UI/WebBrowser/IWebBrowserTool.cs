@@ -20,7 +20,7 @@ namespace AutoTest.UI.WebBrowser
         /// </summary>
         /// <param name="browser"></param>
         /// <param name="frame"></param>
-        void AddEvalFuntion(IBrowser browser, IFrame frame);
+        Task AddEvalFuntion(IBrowser browser, IFrame frame);
 
 
         /// <summary>
@@ -68,7 +68,7 @@ namespace AutoTest.UI.WebBrowser
 
         object TryExecuteScript(IBrowser browser, IFrame frame, string code, int timeOut = 30000);
 
-        object DevToolEvaluateScriptAsync(IBrowser browser, string code, int timeout);
+        Task<object> DevToolEvaluateScriptAsync(IBrowser browser, string code, int timeout);
 
         Task<object> DevEvaluateScriptAsPromiseAsync(IBrowser browser, string code, int timeout);
     }

@@ -96,16 +96,13 @@ namespace AutoTest.UI.UC
                             tbMsg.Text = tbMsg.Text.Substring(tbMsg.Text.Length - 10240, 10240);
                         }
                         if (msg == Consts.CMDCLEARMSG)
-                        {
+                        { 
                             tbMsg.ResetText();
                         }
                         else
                         {
-                            //ThreadPool.GetMaxThreads(out int work, out int completionPortNum);
-                            ThreadPool.GetMinThreads(out int minWork, out int minCompletionPortNum);
-                            ThreadPool.GetMaxThreads(out int maxWork, out int maxCompletionPortNum);
                             ThreadPool.GetAvailableThreads(out int aWork, out int aCompletionPortNum);
-                            tbMsg.AppendText(msg + ("MaxThreads(" + (minWork - maxWork + aWork) + "," + (minCompletionPortNum - maxCompletionPortNum + aCompletionPortNum) + ")") + Environment.NewLine);
+                            tbMsg.AppendText(msg + Environment.NewLine);
                         }
                     }));
                 });

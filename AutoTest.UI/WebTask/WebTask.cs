@@ -167,6 +167,31 @@ namespace AutoTest.UI.WebTask
             OnMsgPublish?.Invoke(msg);
         }
 
+        protected void PublishMsg(string source, Exception ex)
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine(source + ":");
+            if (ex != null)
+            {
+                sb.AppendLine(ex.Message);
+
+                var inner = ex.InnerException;
+
+                var loop = 1;
+                while (inner != null)
+                {
+                    sb.Append(new string(' ', loop * 2));
+                    sb.Append("|--");
+                    sb.AppendLine(inner.Message);
+
+                    inner = inner.InnerException;
+                    loop++;
+                }
+            }
+
+            OnMsgPublish?.Invoke(sb.ToString());
+        }
+
         protected void PublishDebugMsg(string msg)
         {
             if (IsDebug)

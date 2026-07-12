@@ -136,9 +136,17 @@ namespace AutoTest.UI.WebTask
         /// <returns></returns>
         private dynamic GetUserVarData(IBrowser browser, IFrame frame)
         {
-            var code = $"if(typeof {WebVar.VarName}!='undefined'&&{WebVar.VarName}.{nameof(WebVar.Bag)}) return {WebVar.VarName}.{nameof(WebVar.Bag)}";
+            try
+            {
+                var code = $"if(typeof {WebVar.VarName}!='undefined'&&{WebVar.VarName}.{nameof(WebVar.Bag)}) return {WebVar.VarName}.{nameof(WebVar.Bag)}";
 
-            return webBrowserTool.ExecutePromiseScript(browser, frame, code) as dynamic;
+                return webBrowserTool.ExecutePromiseScript(browser, frame, code) as dynamic;
+            }
+            catch (Exception ex)
+            {
+                this.PublishMsg("获取用户数据失败", ex);
+                throw;
+            }
         }
 
         private async Task<int> RunTestCode(IBrowser browser, IFrame frame)
@@ -156,7 +164,7 @@ namespace AutoTest.UI.WebTask
                     }
                     try
                     {
-                        webBrowserTool.WaitLoading(browser, _cancelFlag, false,true);
+                        webBrowserTool.WaitLoading(browser, _cancelFlag, false, true);
                         PrepareTest(browser, frame, bag);
                         var ret = webBrowserTool.ExecutePromiseScript(browser, frame, Util.ReplaceEvnParams(_testLogin.LoginCode, _testEnvParams));
                         if (object.Equals(ret, false))
@@ -176,6 +184,7 @@ namespace AutoTest.UI.WebTask
                     {
                         if (tryCount++ > 30)
                         {
+                            this.PublishMsg("RunTestCode error:", ex);
                             return await Task.FromResult(0);
                         }
                         Thread.Sleep(1000);
@@ -248,7 +257,7 @@ namespace AutoTest.UI.WebTask
             return await Task.FromResult(validResult);
         }
 
-        protected override async Task<int> ExecuteInner(IBrowser browser, IFrame frame,ICookieManager cookieManager)
+        protected override async Task<int> ExecuteInner(IBrowser browser, IFrame frame, ICookieManager cookieManager)
         {
             var ret = 0;
             try
@@ -263,7 +272,8 @@ namespace AutoTest.UI.WebTask
                         using (var visiter = new CookieVisitor(cookieManager))
                         {
                             var container = TestCookieContainerBiz.GetTestCookieContainer(_testSite.Id, _testEnv?.Id, _testLogin.Id);
-                            if (container == null) {
+                            if (container == null)
+                            {
                                 container = new TestCookieContainer()
                                 {
                                     Account = _testLogin.Id,
@@ -281,20 +291,20 @@ namespace AutoTest.UI.WebTask
                                 container.TestCookies.Clear();
                             }
                             var list = visiter.GetCookies(GetStartPageUrl()).Result;
-                            foreach(var li in list)
+                            foreach (var li in list)
                             {
                                 //li.Creation
                                 container.TestCookies.Add(new TestCookie
                                 {
-                                    Domain=li.Domain,
-                                    Expires=li.Expires??DateTime.Now.AddYears(1),
-                                    HttpOnly=li.HttpOnly,
-                                    Name=li.Name,
-                                    Path=li.Path,
-                                    Priority=(int)li.Priority,
-                                    SameSite=(int)li.SameSite,
-                                    Secure=li.Secure,
-                                    Value=li.Value
+                                    Domain = li.Domain,
+                                    Expires = li.Expires ?? DateTime.Now.AddYears(1),
+                                    HttpOnly = li.HttpOnly,
+                                    Name = li.Name,
+                                    Path = li.Path,
+                                    Priority = (int)li.Priority,
+                                    SameSite = (int)li.SameSite,
+                                    Secure = li.Secure,
+                                    Value = li.Value
                                 });
                             }
 
@@ -310,7 +320,7 @@ namespace AutoTest.UI.WebTask
             }
             catch (Exception ex)
             {
-                PublishMsg($"登陆出错:{ex.Message}");
+                PublishMsg($"登陆出错", ex);
             }
             return await Task.FromResult(ret);
         }

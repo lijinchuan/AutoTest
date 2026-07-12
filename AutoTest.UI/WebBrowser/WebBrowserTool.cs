@@ -100,12 +100,12 @@ namespace AutoTest.UI.WebBrowser
             return {{ x:(window.screenLeft?window.screenLeft: window.screenX)+x, y:(window.screenTop?window.screenTop: window.screenY)+y }};
         ";
 
-        public void AddEvalFuntion(IBrowser browser, IFrame frame)
+        public async Task AddEvalFuntion(IBrowser browser, IFrame frame)
         {
             //var resp = browser.EvaluateScriptAsync(ADDEVALFUNCTIONCODE);
             //Task.WaitAll(new[] { resp }, SCRIPT_TIMEOUT);
 
-            DevToolEvaluateScriptAsync(browser, ADDEVALFUNCTIONCODE);
+            await DevToolEvaluateScriptAsync(browser, ADDEVALFUNCTIONCODE);
         }
 
         private void AssertJavaScriptResult(Task<JavascriptResponse> resp, int timeOut = 0)
@@ -372,22 +372,17 @@ namespace AutoTest.UI.WebBrowser
         /// <returns></returns>
         /// <exception cref="TimeoutException"></exception>
         /// <exception cref="ScriptException"></exception>
-        public object DevToolEvaluateScriptAsync(IBrowser browser, string code, int timeout = SCRIPT_TIMEOUT)
+        public async Task<object> DevToolEvaluateScriptAsync(IBrowser browser, string code, int timeout = SCRIPT_TIMEOUT)
         {
             var client = browser.GetDevToolsClient();
-            var resp = client.Runtime.EvaluateAsync(code, timeout: timeout);
+            var result =await client.Runtime.EvaluateAsync(code, timeout: timeout);
 
-            if (!Task.WaitAll(new[] { resp }, timeout))
+            if (result.ExceptionDetails != null)
             {
-                throw new TimeoutException($"Script execution timed out: {code}");
+                throw new ScriptException(result.ExceptionDetails.ToString());
             }
 
-            if (resp.Result.ExceptionDetails != null)
-            {
-                throw new ScriptException(resp.Result.ExceptionDetails.ToString());
-            }
-
-            return resp.Result?.Result?.Value;
+            return result?.Result?.Value;
         }
 
         public async Task<object> DevEvaluateScriptAsPromiseAsync(IBrowser browser, string code, int timeout = SCRIPT_TIMEOUT)

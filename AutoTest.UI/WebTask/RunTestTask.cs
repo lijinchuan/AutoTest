@@ -372,7 +372,7 @@ namespace AutoTest.UI.WebTask
                         {
                             if (tryCount++ >= _maxScriptExeCount)
                             {
-                                PublishMsg("长时间返回false，超时");
+                                PublishMsg("RunTestCode长时间返回false，超时");
                                 return await Task.FromResult(0);
                             }
                             Thread.Sleep(sleepMills);
@@ -382,12 +382,14 @@ namespace AutoTest.UI.WebTask
                             break;
                         }
                     }
-                    catch (WebCheckException)
+                    catch (WebCheckException ex)
                     {
+                        PublishMsg("RunTestCode失败", ex);
                         throw;
                     }
-                    catch (JSException)
+                    catch (JSException ex)
                     {
+                        PublishMsg("RunTestCode失败", ex);
                         throw;
                     }
                     catch (Exception ex)
@@ -396,12 +398,12 @@ namespace AutoTest.UI.WebTask
                         if (ex.Message != lastErr)
                         {
                             lastErr = ex.Message;
-                            PublishMsg(ex.Message);
+                            PublishMsg("RunTestCode失败", ex);
                         }
 
                         if (tryCount++ > 3)
                         {
-                            PublishMsg("错误" + ex.Message + "，且重试次数超过3次");
+                            PublishMsg("RunTestCode错误且重试次数超过3次");
                             return await Task.FromResult(0);
                         }
                         Thread.Sleep(sleepMills);
@@ -470,7 +472,7 @@ namespace AutoTest.UI.WebTask
                             if (ex.Message != lastErr)
                             {
                                 lastErr = ex.Message;
-                                PublishMsg("验证可能会失败：" + ex.Message);
+                                PublishMsg("验证可能会失败：", ex);
                             }
 
                             if (tryCount++ >= 3)
@@ -512,7 +514,7 @@ namespace AutoTest.UI.WebTask
             {
                 _testResult.Success = false;
                 _testResult.FailMsg = ex.Message;
-                PublishMsg(ex.Message);
+                PublishMsg("RunValidCode失败", ex);
                 throw ex;
             }
             
@@ -554,9 +556,9 @@ namespace AutoTest.UI.WebTask
                     return await Task.FromResult(0);
                 }
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
-                PublishMsg("检查登陆失败:"+ex.Message);
+                PublishMsg("检查登陆失败", ex);
                 throw;
             }
 

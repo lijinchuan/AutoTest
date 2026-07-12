@@ -34,9 +34,6 @@ namespace AutoTest.UI
             this.mainMenuBar = new System.Windows.Forms.MenuStrip();
             this.MenItem_File = new System.Windows.Forms.ToolStripMenuItem();
             this.最近ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.SubItemEdit = new System.Windows.Forms.ToolStripMenuItem();
-            this.代理服务器ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.服务器设置ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.SubItemView = new System.Windows.Forms.ToolStripMenuItem();
             this.SubItemTool = new System.Windows.Forms.ToolStripMenuItem();
             this.监控任务ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -56,6 +53,10 @@ namespace AutoTest.UI
             this.SubItemHelp = new System.Windows.Forms.ToolStripMenuItem();
             this.版本ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.TSMReportError = new System.Windows.Forms.ToolStripMenuItem();
+            this.SubItemEdit = new System.Windows.Forms.ToolStripMenuItem();
+            this.代理服务器ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.服务器设置ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.TSMRepairMode = new System.Windows.Forms.ToolStripMenuItem();
             this.panel1 = new System.Windows.Forms.Panel();
             this.TabControl = new AutoTest.UI.UC.MyTabControl();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
@@ -68,7 +69,7 @@ namespace AutoTest.UI
             this.MspPanel = new System.Windows.Forms.ToolStripStatusLabel();
             this.TSL_ClearMsg = new System.Windows.Forms.ToolStripStatusLabel();
             this.TSL_ApiQueue = new System.Windows.Forms.ToolStripStatusLabel();
-            this.TSMRepairMode = new System.Windows.Forms.ToolStripMenuItem();
+            this.TSThreadPoolStatus = new System.Windows.Forms.ToolStripStatusLabel();
             this.mainMenuBar.SuspendLayout();
             this.panel1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
@@ -105,31 +106,6 @@ namespace AutoTest.UI
             this.最近ToolStripMenuItem.Name = "最近ToolStripMenuItem";
             this.最近ToolStripMenuItem.Size = new System.Drawing.Size(124, 22);
             this.最近ToolStripMenuItem.Text = "最近访问";
-            // 
-            // SubItemEdit
-            // 
-            this.SubItemEdit.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.代理服务器ToolStripMenuItem,
-            this.服务器设置ToolStripMenuItem,
-            this.TSMRepairMode});
-            this.SubItemEdit.Name = "SubItemEdit";
-            this.SubItemEdit.Size = new System.Drawing.Size(59, 21);
-            this.SubItemEdit.Text = "设置(S)";
-            // 
-            // 代理服务器ToolStripMenuItem
-            // 
-            this.代理服务器ToolStripMenuItem.Name = "代理服务器ToolStripMenuItem";
-            this.代理服务器ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.代理服务器ToolStripMenuItem.Text = "代理服务器";
-            this.代理服务器ToolStripMenuItem.Visible = true;
-            this.代理服务器ToolStripMenuItem.Click += new System.EventHandler(this.代理服务器ToolStripMenuItem_Click);
-            // 
-            // 服务器设置ToolStripMenuItem
-            // 
-            this.服务器设置ToolStripMenuItem.Name = "服务器设置ToolStripMenuItem";
-            this.服务器设置ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.服务器设置ToolStripMenuItem.Text = "服务器设置";
-            this.服务器设置ToolStripMenuItem.Click += new System.EventHandler(this.服务器设置ToolStripMenuItem_Click);
             // 
             // SubItemView
             // 
@@ -267,15 +243,46 @@ namespace AutoTest.UI
             // 版本ToolStripMenuItem
             // 
             this.版本ToolStripMenuItem.Name = "版本ToolStripMenuItem";
-            this.版本ToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.版本ToolStripMenuItem.Size = new System.Drawing.Size(149, 22);
             this.版本ToolStripMenuItem.Text = "当前版本V1.1";
             // 
             // TSMReportError
             // 
             this.TSMReportError.Name = "TSMReportError";
-            this.TSMReportError.Size = new System.Drawing.Size(180, 22);
+            this.TSMReportError.Size = new System.Drawing.Size(149, 22);
             this.TSMReportError.Text = "故障报告";
             this.TSMReportError.Click += new System.EventHandler(this.TSMReportError_Click);
+            // 
+            // SubItemEdit
+            // 
+            this.SubItemEdit.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
+            this.代理服务器ToolStripMenuItem,
+            this.服务器设置ToolStripMenuItem,
+            this.TSMRepairMode});
+            this.SubItemEdit.Name = "SubItemEdit";
+            this.SubItemEdit.Size = new System.Drawing.Size(59, 21);
+            this.SubItemEdit.Text = "设置(S)";
+            // 
+            // 代理服务器ToolStripMenuItem
+            // 
+            this.代理服务器ToolStripMenuItem.Name = "代理服务器ToolStripMenuItem";
+            this.代理服务器ToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
+            this.代理服务器ToolStripMenuItem.Text = "代理服务器";
+            this.代理服务器ToolStripMenuItem.Click += new System.EventHandler(this.代理服务器ToolStripMenuItem_Click);
+            // 
+            // 服务器设置ToolStripMenuItem
+            // 
+            this.服务器设置ToolStripMenuItem.Name = "服务器设置ToolStripMenuItem";
+            this.服务器设置ToolStripMenuItem.Size = new System.Drawing.Size(136, 22);
+            this.服务器设置ToolStripMenuItem.Text = "服务器设置";
+            this.服务器设置ToolStripMenuItem.Click += new System.EventHandler(this.服务器设置ToolStripMenuItem_Click);
+            // 
+            // TSMRepairMode
+            // 
+            this.TSMRepairMode.Name = "TSMRepairMode";
+            this.TSMRepairMode.Size = new System.Drawing.Size(136, 22);
+            this.TSMRepairMode.Text = "维护模式";
+            this.TSMRepairMode.Click += new System.EventHandler(this.TSMRepairMode_Click);
             // 
             // panel1
             // 
@@ -360,7 +367,8 @@ namespace AutoTest.UI
             this.statusStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.MspPanel,
             this.TSL_ClearMsg,
-            this.TSL_ApiQueue});
+            this.TSL_ApiQueue,
+            this.TSThreadPoolStatus});
             this.statusStrip1.Location = new System.Drawing.Point(0, 531);
             this.statusStrip1.Name = "statusStrip1";
             this.statusStrip1.Size = new System.Drawing.Size(830, 22);
@@ -386,15 +394,14 @@ namespace AutoTest.UI
             // 
             this.TSL_ApiQueue.Alignment = System.Windows.Forms.ToolStripItemAlignment.Right;
             this.TSL_ApiQueue.Name = "TSL_ApiQueue";
-            this.TSL_ApiQueue.Size = new System.Drawing.Size(112, 17);
+            this.TSL_ApiQueue.Size = new System.Drawing.Size(125, 17);
             this.TSL_ApiQueue.Text = "API队列:0/100 运行:0";
             // 
-            // TSMRepairMode
+            // TSThreadPoolStatus
             // 
-            this.TSMRepairMode.Name = "TSMRepairMode";
-            this.TSMRepairMode.Size = new System.Drawing.Size(180, 22);
-            this.TSMRepairMode.Text = "维护模式";
-            this.TSMRepairMode.Click += new System.EventHandler(this.TSMRepairMode_Click);
+            this.TSThreadPoolStatus.Name = "TSThreadPoolStatus";
+            this.TSThreadPoolStatus.Size = new System.Drawing.Size(68, 17);
+            this.TSThreadPoolStatus.Text = "线程池状态";
             // 
             // MainFrm
             // 
@@ -463,6 +470,7 @@ namespace AutoTest.UI
         private System.Windows.Forms.ToolStripMenuItem xPath在线测试ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem TSMGrabWeb;
         private System.Windows.Forms.ToolStripMenuItem TSMRepairMode;
+        private System.Windows.Forms.ToolStripStatusLabel TSThreadPoolStatus;
     }
 }
 

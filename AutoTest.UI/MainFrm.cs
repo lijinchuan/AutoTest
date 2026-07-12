@@ -2,24 +2,25 @@
 using AutoTest.Biz.RemoteControl;
 using AutoTest.Biz.SimulateServer;
 using AutoTest.Domain;
+using AutoTest.Domain.Entity;
 using AutoTest.UI.SubForm;
+using AutoTest.UI.UC;
+using CefSharp;
+using CefSharp.DevTools.Overlay;
+using CefSharp.WinForms;
 using LJC.FrameWorkV3.Data.EntityDataBase;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using AutoTest.Domain.Entity;
-using System.Diagnostics;
-using CefSharp;
-using CefSharp.WinForms;
-using CefSharp.DevTools.Overlay;
-using AutoTest.UI.UC;
+using System.Windows.Interop;
 
 namespace AutoTest.UI
 {
@@ -60,6 +61,8 @@ namespace AutoTest.UI
             apiQueueTimer.Tick += ApiQueueTimer_Tick;
             apiQueueTimer.Start();
             RefreshApiQueueStatus();
+
+            TSThreadPoolStatus.ForeColor = Color.Blue;
         }
 
         private void TSBar_Click(object sender, EventArgs e)
@@ -468,6 +471,15 @@ namespace AutoTest.UI
             TSL_ApiQueue.Text = $"API队列:{ApiTaskTrigger.QueueCount}/{ApiTaskTrigger.QueueCapacity} 运行:{ApiTaskTrigger.RunningCount}";
             TSL_ApiQueue.ToolTipText = "API任务队列状态";
             TSL_ApiQueue.ForeColor = Color.Green;
+
+
+            //ThreadPool.GetMaxThreads(out int work, out int completionPortNum);
+            ThreadPool.GetMinThreads(out int minWork, out int minCompletionPortNum);
+            ThreadPool.GetMaxThreads(out int maxWork, out int maxCompletionPortNum);
+            ThreadPool.GetAvailableThreads(out int aWork, out int aCompletionPortNum);
+            //tbMsg.AppendText(msg + "【MaxThreads(" + (minWork - maxWork + aWork) + "," + (minCompletionPortNum - maxCompletionPortNum + aCompletionPortNum) + ")】" + Environment.NewLine);
+
+            TSThreadPoolStatus.Text = $"工作线程:{minWork}-{maxWork},可用{aWork};IO线程数:{minCompletionPortNum}-{maxCompletionPortNum},可用{aCompletionPortNum}";
         }
 
         private void mD5签名ToolStripMenuItem_Click(object sender, EventArgs e)
