@@ -390,9 +390,13 @@ namespace AutoTest.UI.WebBrowser
             var client = browser.GetDevToolsClient();
             var resp = await client.Runtime.EvaluateAsync($"(async function(){{{code}}})()", timeout: timeout);
 
-
             if (resp.ExceptionDetails != null)
             {
+                if (resp.ExceptionDetails.Exception != null)
+                {
+                    throw new Exception(resp.ExceptionDetails.Exception.Description);
+                }
+
                 throw new ScriptException(resp.ExceptionDetails.Text);
             }
 
