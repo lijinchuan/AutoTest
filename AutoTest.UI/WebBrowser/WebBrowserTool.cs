@@ -191,13 +191,14 @@ namespace AutoTest.UI.WebBrowser
             return DevToolEvaluateScriptAsync(browser, code, timeOut);
         }
 
-        public object ExecutePromiseScript(IBrowser browser, IFrame frame, string code, int timeOut = SCRIPT_TIMEOUT)
+        public async Task<object> ExecutePromiseScript(IBrowser browser, IFrame frame, string code, int timeOut = SCRIPT_TIMEOUT)
         {
             //var resp = browser.EvaluateScriptAsPromiseAsync(code);
             //AssertJavaScriptResult(resp, timeOut);
             //return resp.Result.Result;
 
-            return DevEvaluateScriptAsPromiseAsync(browser, code, timeOut).Result;
+            return await DevEvaluateScriptAsPromiseAsync(browser, code, timeOut);
+
         }
 
         public static bool IsPromiseScript(string code)
@@ -216,7 +217,7 @@ namespace AutoTest.UI.WebBrowser
 
             //return ExecuteScript(browser, frame, code);
 
-            return DevToolEvaluateScriptAsync(browser,code, timeOut);
+            return DevToolEvaluateScriptAsync(browser, code, timeOut);
         }
 
 
@@ -279,7 +280,7 @@ namespace AutoTest.UI.WebBrowser
 
                 var result = DevEvaluateScriptAsPromiseAsync(browser, code).Result;
 
-                if(result is bool)
+                if (result is bool)
                 {
                     return (bool)result;
                 }
@@ -337,7 +338,7 @@ namespace AutoTest.UI.WebBrowser
 
             var ret = DevEvaluateScriptAsPromiseAsync(browser, "console.log('IsScriptBusy check');return 1;").Result;
 
-            if(1.Equals(ret))
+            if (1.Equals(ret))
             {
                 return false;
             }
@@ -375,7 +376,7 @@ namespace AutoTest.UI.WebBrowser
         public async Task<object> DevToolEvaluateScriptAsync(IBrowser browser, string code, int timeout = SCRIPT_TIMEOUT)
         {
             var client = browser.GetDevToolsClient();
-            var result =await client.Runtime.EvaluateAsync(code, timeout: timeout);
+            var result = await client.Runtime.EvaluateAsync(code, timeout: timeout);
 
             if (result.ExceptionDetails != null)
             {
@@ -408,7 +409,6 @@ namespace AutoTest.UI.WebBrowser
 
             return resp2.Result?.Value;
         }
-
         #endregion
     }
 }

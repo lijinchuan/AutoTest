@@ -215,7 +215,7 @@ namespace AutoTest.UI.WebTask
         {
             var code = $"if(typeof {WebVar.VarName}!='undefined'&&{WebVar.VarName}.{nameof(WebVar.Bag)}) return JSON.stringify({WebVar.VarName}.{nameof(WebVar.Bag)});";
 
-            var result= webBrowserTool.ExecutePromiseScript(browser, frame, code);
+            var result= webBrowserTool.ExecutePromiseScript(browser, frame, code).Result;
 
             if (result == null)
             {
@@ -360,7 +360,7 @@ namespace AutoTest.UI.WebTask
                     {
                         PrepareTest(browser, frame, bag);
 
-                        var ret = webBrowserTool.ExecutePromiseScript(browser, frame, Util.ReplaceEvnParams(_testCase.TestCode, _testEnvParams), _RunTestCodeTimeOut);
+                        var ret =await webBrowserTool.ExecutePromiseScript(browser, frame, Util.ReplaceEvnParams(_testCase.TestCode, _testEnvParams), _RunTestCodeTimeOut);
                         UpdateUserVarData(browser, frame);
 
                         if (!_ignoreError)

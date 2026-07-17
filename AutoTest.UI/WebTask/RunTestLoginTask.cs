@@ -140,7 +140,7 @@ namespace AutoTest.UI.WebTask
             {
                 var code = $"if(typeof {WebVar.VarName}!='undefined'&&{WebVar.VarName}.{nameof(WebVar.Bag)}) return {WebVar.VarName}.{nameof(WebVar.Bag)}";
 
-                return webBrowserTool.ExecutePromiseScript(browser, frame, code) as dynamic;
+                return webBrowserTool.ExecutePromiseScript(browser, frame, code).Result as dynamic;
             }
             catch (Exception ex)
             {
@@ -166,7 +166,7 @@ namespace AutoTest.UI.WebTask
                     {
                         webBrowserTool.WaitLoading(browser, _cancelFlag, false, true);
                         PrepareTest(browser, frame, bag);
-                        var ret = webBrowserTool.ExecutePromiseScript(browser, frame, Util.ReplaceEvnParams(_testLogin.LoginCode, _testEnvParams));
+                        var ret = await webBrowserTool.ExecutePromiseScript(browser, frame, Util.ReplaceEvnParams(_testLogin.LoginCode, _testEnvParams));
                         if (object.Equals(ret, false))
                         {
                             //if (tryCount++ > 30)

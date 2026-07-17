@@ -165,7 +165,7 @@ namespace AutoTest.UI.UC
                     var id = Guid.NewGuid().ToString("N");
                     var code = "var scripts =[];var ss= document.getElementsByTagName(\"SCRIPT\"); for(var i=0;i<ss.length;i++){scripts.push(ss[i]); ss[i].remove();};for(var i=0;i<scripts.length;i++){if(scripts[i].id=='" + id + "' || !scripts[i].innerHTML) continue;var newScript = document.createElement(\"SCRIPT\");alert(scripts[i].innerHTML);newScript.innerHTML=scripts[i].innerHTML;document.getElementsByTagName(\"HEAD\").item(0).appendChild(newScript);}";
 
-                    webBrowserTool.ExecutePromiseScript(WBResult.GetBrowser(), frame, code);
+                    webBrowserTool.ExecutePromiseScript(WBResult.GetBrowser(), frame, code).Wait();
                 }
             }
         }

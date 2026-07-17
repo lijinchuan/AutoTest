@@ -47,7 +47,7 @@ namespace AutoTest.UI.WebBrowser
         /// <returns></returns>
         object ExecuteScript(IBrowser browser, IFrame frame, string code, int timeOut = 30000);
 
-        object ExecutePromiseScript(IBrowser browser, IFrame frame, string code, int timeOut = 30000);
+        Task<object> ExecutePromiseScript(IBrowser browser, IFrame frame, string code, int timeOut = 30000);
 
         Task<(double x, double y)> FindElementPosAsync(IBrowser browser, string ele);
 
