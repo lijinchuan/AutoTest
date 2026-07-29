@@ -73,6 +73,11 @@ namespace AutoTest.UI.WebTask
 
         private void SetVar(IBrowser browser, IFrame frame, object userData)
         {
+            SetVarAsync(browser, frame, userData).GetAwaiter().GetResult();
+        }
+
+        private async Task SetVarAsync(IBrowser browser, IFrame frame, object userData)
+        {
             var webRequestDatas = webEvents.Select(p => new WebRequestData
             {
                 Code = p.StatusCode,
@@ -91,22 +96,27 @@ namespace AutoTest.UI.WebTask
 
             code += $"window.{WebVar.VarName}.{nameof(WebVar.WebRequestDatas)}={Newtonsoft.Json.JsonConvert.SerializeObject(webRequestDatas)}\n";
 
-            webBrowserTool.ExecuteScript(browser, frame, code);
+            await webBrowserTool.ExecuteScriptAsync(browser, frame, code);
         }
 
         private void PrepareTest(IBrowser browser, IFrame frame, object userData)
         {
+            PrepareTestAsync(browser, frame, userData).GetAwaiter().GetResult();
+        }
+
+        private async Task PrepareTestAsync(IBrowser browser, IFrame frame, object userData)
+        {
             if (!string.IsNullOrWhiteSpace(_testLogin.LoginCode) || !string.IsNullOrWhiteSpace(_testLogin.ValidCode))
             {
                 //注入JQUERY
-                webBrowserTool.AddJqueryLib(browser, frame);
+                await webBrowserTool.AddJqueryLibAsync(browser, frame);
 
                 //注入工具包
                 if (_globScripts != null && _globScripts.Count > 0)
                 {
                     foreach (var s in _globScripts.OrderBy(p => p.Order))
                     {
-                        RegistTestScript(browser, frame, s);
+                        await RegistTestScriptAsync(browser, frame, s);
                     }
                 }
 
@@ -117,14 +127,14 @@ namespace AutoTest.UI.WebTask
                 {
                     foreach (var s in _siteScripts.OrderBy(p => p.Order))
                     {
-                        RegistTestScript(browser, frame, s);
+                        await RegistTestScriptAsync(browser, frame, s);
                     }
                 }
 
                 PublishDebugMsg("注入通用工具包");
 
                 //注入变量
-                SetVar(browser, frame, userData);
+                await SetVarAsync(browser, frame, userData);
             }
         }
 
@@ -136,11 +146,16 @@ namespace AutoTest.UI.WebTask
         /// <returns></returns>
         private dynamic GetUserVarData(IBrowser browser, IFrame frame)
         {
+            return GetUserVarDataAsync(browser, frame).GetAwaiter().GetResult();
+        }
+
+        private async Task<dynamic> GetUserVarDataAsync(IBrowser browser, IFrame frame)
+        {
             try
             {
                 var code = $"if(typeof {WebVar.VarName}!='undefined'&&{WebVar.VarName}.{nameof(WebVar.Bag)}) return {WebVar.VarName}.{nameof(WebVar.Bag)}";
 
-                return webBrowserTool.ExecutePromiseScript(browser, frame, code).Result as dynamic;
+                return await webBrowserTool.ExecutePromiseScript(browser, frame, code) as dynamic;
             }
             catch (Exception ex)
             {
@@ -164,8 +179,8 @@ namespace AutoTest.UI.WebTask
                     }
                     try
                     {
-                        webBrowserTool.WaitLoading(browser, _cancelFlag, false, true);
-                        PrepareTest(browser, frame, bag);
+                        await webBrowserTool.WaitLoadingAsync(browser, _cancelFlag, false, true);
+                        await PrepareTestAsync(browser, frame, bag);
                         var ret = await webBrowserTool.ExecutePromiseScript(browser, frame, Util.ReplaceEvnParams(_testLogin.LoginCode, _testEnvParams));
                         if (object.Equals(ret, false))
                         {
@@ -173,7 +188,7 @@ namespace AutoTest.UI.WebTask
                             //{
                             //    return await Task.FromResult(0);
                             //}
-                            Thread.Sleep(1000);
+                            await Task.Delay(1000);
                         }
                         else
                         {
@@ -187,11 +202,11 @@ namespace AutoTest.UI.WebTask
                             this.PublishMsg("RunTestCode error:", ex);
                             return await Task.FromResult(0);
                         }
-                        Thread.Sleep(1000);
+                        await Task.Delay(1000);
                     }
                     finally
                     {
-                        bag = GetUserVarData(browser, frame);
+                        bag = await GetUserVarDataAsync(browser, frame);
                     }
                 }
 
@@ -215,23 +230,23 @@ namespace AutoTest.UI.WebTask
                     }
                     try
                     {
-                        webBrowserTool.WaitLoading(browser, _cancelFlag, false,true);
-                        PrepareTest(browser, frame, bag);
-                        var ret = webBrowserTool.TryExecuteScript(browser, frame, Util.ReplaceEvnParams(_testLogin.ValidCode, _testEnvParams));
+                        await webBrowserTool.WaitLoadingAsync(browser, _cancelFlag, false, true);
+                        await PrepareTestAsync(browser, frame, bag);
+                        var ret = await webBrowserTool.TryExecuteScriptAsync(browser, frame, Util.ReplaceEvnParams(_testLogin.ValidCode, _testEnvParams));
                         if (ret == null)
                         {
                             if (tryCount++ > 30)
                             {
                                 return await Task.FromResult(0);
                             }
-                            Thread.Sleep(1000);
+                            await Task.Delay(1000);
                         }
                         else
                         {
                             validResult = object.Equals(ret, true) ? 1 : 0;
                             if (validResult == 0 && _testLogin.IsMannual)
                             {
-                                Thread.Sleep(1000);
+                                await Task.Delay(1000);
                             }
                             else
                             {
@@ -245,11 +260,11 @@ namespace AutoTest.UI.WebTask
                         {
                             return await Task.FromResult(0);
                         }
-                        Thread.Sleep(1000);
+                        await Task.Delay(1000);
                     }
                     finally
                     {
-                        bag = GetUserVarData(browser, frame);
+                        bag = await GetUserVarDataAsync(browser, frame);
                     }
                 }
 

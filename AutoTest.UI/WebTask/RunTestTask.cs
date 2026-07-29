@@ -166,10 +166,15 @@ namespace AutoTest.UI.WebTask
 
         private void PrepareTest(IBrowser browser, IFrame frame, object userData)
         {
+            PrepareTestAsync(browser, frame, userData).GetAwaiter().GetResult();
+        }
+
+        private async Task PrepareTestAsync(IBrowser browser, IFrame frame, object userData)
+        {
             if ((!string.IsNullOrWhiteSpace(_testCase.TestCode) || !string.IsNullOrWhiteSpace(_testCase.ValidCode)))
             {
                 //注入JQUERY
-                webBrowserTool.AddJqueryLib(browser, frame);
+                await webBrowserTool.AddJqueryLibAsync(browser, frame);
 
                 PublishDebugMsg("注入JQUERY");
 
@@ -178,7 +183,7 @@ namespace AutoTest.UI.WebTask
                 {
                     foreach (var s in _globScripts.OrderBy(p => p.Order))
                     {
-                        RegistTestScript(browser, frame, s);
+                        await RegistTestScriptAsync(browser, frame, s);
                     }
                 }
 
@@ -189,14 +194,14 @@ namespace AutoTest.UI.WebTask
                 {
                     foreach (var s in _siteScripts.OrderBy(p => p.Order))
                     {
-                        RegistTestScript(browser, frame, s);
+                        await RegistTestScriptAsync(browser, frame, s);
                     }
                 }
 
                 PublishDebugMsg("注入通用工具包");
 
                 //注入变量
-                SetVar(browser, frame, userData);
+                await SetVarAsync(browser, frame, userData);
 
                 PublishDebugMsg("注入变量");
             }
@@ -213,9 +218,14 @@ namespace AutoTest.UI.WebTask
         /// <returns></returns>
         private dynamic GetUserVarData(IBrowser browser, IFrame frame)
         {
+            return GetUserVarDataAsync(browser, frame).GetAwaiter().GetResult();
+        }
+
+        private async Task<dynamic> GetUserVarDataAsync(IBrowser browser, IFrame frame)
+        {
             var code = $"if(typeof {WebVar.VarName}!='undefined'&&{WebVar.VarName}.{nameof(WebVar.Bag)}) return JSON.stringify({WebVar.VarName}.{nameof(WebVar.Bag)});";
 
-            var result= webBrowserTool.ExecutePromiseScript(browser, frame, code).Result;
+            var result = await webBrowserTool.ExecutePromiseScript(browser, frame, code);
 
             if (result == null)
             {
@@ -233,7 +243,12 @@ namespace AutoTest.UI.WebTask
         /// <returns></returns>
         private void UpdateUserVarData(IBrowser browser, IFrame frame)
         {
-            var userData = GetUserVarData(browser, frame);
+            UpdateUserVarDataAsync(browser, frame).GetAwaiter().GetResult();
+        }
+
+        private async Task UpdateUserVarDataAsync(IBrowser browser, IFrame frame)
+        {
+            var userData = await GetUserVarDataAsync(browser, frame);
 
             if (userData != null)
             {
@@ -265,6 +280,11 @@ namespace AutoTest.UI.WebTask
 
         private void SetVar(IBrowser browser, IFrame frame, object userData)
         {
+            SetVarAsync(browser, frame, userData).GetAwaiter().GetResult();
+        }
+
+        private async Task SetVarAsync(IBrowser browser, IFrame frame, object userData)
+        {
             var webRequestDatas = webEvents.Select(p => new WebRequestData
             {
                 Code = p.StatusCode,
@@ -288,7 +308,7 @@ namespace AutoTest.UI.WebTask
 
             //code += $"window.{WebVar.VarName}.{nameof(WebVar.WebRequestDatas)}=window.{WebVar.VarName}.{nameof(WebVar.WebRequestDatas)}||{Newtonsoft.Json.JsonConvert.SerializeObject(webRequestDatas)}\n";
 
-            var ret = webBrowserTool.ExecuteScript(browser, frame, code);
+            await webBrowserTool.ExecuteScriptAsync(browser, frame, code);
         }
 
         private void AssertWebHasNoError()
@@ -355,13 +375,13 @@ namespace AutoTest.UI.WebTask
                         throw new Exception("任务取消");
                     }
 
-                    webBrowserTool.WaitLoading(browser, _cancelFlag, true, true);
+                    await webBrowserTool.WaitLoadingAsync(browser, _cancelFlag, true, true);
                     try
                     {
-                        PrepareTest(browser, frame, bag);
+                        await PrepareTestAsync(browser, frame, bag);
 
                         var ret =await webBrowserTool.ExecutePromiseScript(browser, frame, Util.ReplaceEvnParams(_testCase.TestCode, _testEnvParams), _RunTestCodeTimeOut);
-                        UpdateUserVarData(browser, frame);
+                        await UpdateUserVarDataAsync(browser, frame);
 
                         if (!_ignoreError)
                         {
@@ -375,7 +395,7 @@ namespace AutoTest.UI.WebTask
                                 PublishMsg("RunTestCode长时间返回false，超时");
                                 return await Task.FromResult(0);
                             }
-                            Thread.Sleep(sleepMills);
+                            await Task.Delay(sleepMills);
                         }
                         else
                         {
@@ -394,7 +414,7 @@ namespace AutoTest.UI.WebTask
                     }
                     catch (Exception ex)
                     {
-                        UpdateUserVarData(browser, frame);
+                        await UpdateUserVarDataAsync(browser, frame);
                         if (ex.Message != lastErr)
                         {
                             lastErr = ex.Message;
@@ -406,7 +426,7 @@ namespace AutoTest.UI.WebTask
                             PublishMsg("RunTestCode错误且重试次数超过3次");
                             return await Task.FromResult(0);
                         }
-                        Thread.Sleep(sleepMills);
+                        await Task.Delay(sleepMills);
                     }
                 }
 
@@ -438,11 +458,11 @@ namespace AutoTest.UI.WebTask
                         PublishDebugMsg("检查请求没有异常");
                         try
                         {
-                            PrepareTest(browser, frame, bag);
+                            await PrepareTestAsync(browser, frame, bag);
 
                             PublishDebugMsg("开始执行验证代码");
-                            var ret = webBrowserTool.TryExecuteScript(browser, frame, Util.ReplaceEvnParams(_testCase.ValidCode, _testEnvParams));
-                            UpdateUserVarData(browser, frame);
+                            var ret = await webBrowserTool.TryExecuteScriptAsync(browser, frame, Util.ReplaceEvnParams(_testCase.ValidCode, _testEnvParams));
+                            await UpdateUserVarDataAsync(browser, frame);
                             PublishDebugMsg("执行验证代码,结果:" + ret);
                             if (ret == null)
                             {
@@ -452,7 +472,7 @@ namespace AutoTest.UI.WebTask
                                     _testResult.FailMsg = "检查结果一直为NULL";
                                     return await Task.FromResult(0);
                                 }
-                                Thread.Sleep(sleepMills);
+                                await Task.Delay(sleepMills);
                             }
                             else
                             {
@@ -468,7 +488,7 @@ namespace AutoTest.UI.WebTask
                         }
                         catch (Exception ex)
                         {
-                            UpdateUserVarData(browser, frame);
+                            await UpdateUserVarDataAsync(browser, frame);
                             if (ex.Message != lastErr)
                             {
                                 lastErr = ex.Message;
@@ -481,7 +501,7 @@ namespace AutoTest.UI.WebTask
                                 _testResult.FailMsg = "检查出错：" + ex.Message;
                                 return await Task.FromResult(0);
                             }
-                            Thread.Sleep(sleepMills);
+                            await Task.Delay(sleepMills);
                         }
                     }
                 }
@@ -523,15 +543,20 @@ namespace AutoTest.UI.WebTask
 
         private bool Check(IBrowser browser, IFrame frame)
         {
+            return CheckAsync(browser, frame).GetAwaiter().GetResult();
+        }
+
+        private async Task<bool> CheckAsync(IBrowser browser, IFrame frame)
+        {
             var flag = true;
             if (!string.IsNullOrWhiteSpace(_testSite.CheckLoginCode))
             {
                 //注入JQUERY
-                webBrowserTool.AddJqueryLib(browser, frame);
+                await webBrowserTool.AddJqueryLibAsync(browser, frame);
 
                 PublishDebugMsg("注入JQUERY");
 
-                var isLogin = webBrowserTool.TryExecuteScript(browser, frame, _testSite.CheckLoginCode);
+                var isLogin = await webBrowserTool.TryExecuteScriptAsync(browser, frame, _testSite.CheckLoginCode);
                 if (!object.Equals(isLogin, true))
                 {
                     if (_testLogin == null)
@@ -551,7 +576,7 @@ namespace AutoTest.UI.WebTask
         {
             try
             {
-                if (!Check(browser, frame))
+                if (!await CheckAsync(browser, frame))
                 {
                     return await Task.FromResult(0);
                 }
@@ -569,7 +594,7 @@ namespace AutoTest.UI.WebTask
                 ret = await RunTestCode(browser, frame);
                 if (ret == 1)
                 {
-                    webBrowserTool.WaitLoading(browser, _cancelFlag, true);
+                    await webBrowserTool.WaitLoadingAsync(browser, _cancelFlag, true);
                     PublishDebugMsg($"{_testCase.CaseName}执行代码成功，准备验证");
                     ret = await RunValidCode(browser, frame);
                     if (ret == 1)

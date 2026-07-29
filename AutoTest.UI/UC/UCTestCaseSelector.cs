@@ -88,7 +88,7 @@ namespace AutoTest.UI.UC
             List<int> idList = _testCasesChoose;
             if (CBBroswer.IsBrowserInitialized)
             {
-                var ret = webBrowserTool.DevEvaluateScriptAsPromiseAsync(CBBroswer.GetBrowser(), "return getSelCaseId()", 30000).Result;
+                var ret = Task.Run(() => webBrowserTool.DevEvaluateScriptAsPromiseAsync(CBBroswer.GetBrowser(), "return getSelCaseId()", 30000)).GetAwaiter().GetResult();
 
                 if (ret is List<object> list)
                 {

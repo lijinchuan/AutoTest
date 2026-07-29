@@ -1,12 +1,14 @@
 ﻿using AutoTest.Domain.Entity;
 using AutoTest.UI.WebBrowser.ResourceRequestHandler;
 using CefSharp;
+using LJC.FrameWorkV3.LogManager;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 
 namespace AutoTest.UI.WebBrowser.RequestHandler
 {
@@ -52,6 +54,7 @@ namespace AutoTest.UI.WebBrowser.RequestHandler
 
         public void OnPluginCrashed(IWebBrowser chromiumWebBrowser, IBrowser browser, string pluginPath)
         {
+            LogHelper.Instance.Error($"Grab浏览器插件崩溃: {pluginPath}");
         }
 
         public bool OnQuotaRequest(IWebBrowser chromiumWebBrowser, IBrowser browser, string originUrl, long newSize, IRequestCallback callback)
@@ -61,11 +64,38 @@ namespace AutoTest.UI.WebBrowser.RequestHandler
 
         public void OnRenderProcessTerminated(IWebBrowser chromiumWebBrowser, IBrowser browser, CefTerminationStatus status)
         {
+            LogHelper.Instance.Error($"Grab浏览器渲染进程终止(无错误码): Status={status}");
+
+            TryRecoverBrowser(chromiumWebBrowser, browser);
         }
 
         public void OnRenderProcessTerminated(IWebBrowser chromiumWebBrowser, IBrowser browser, CefTerminationStatus status, int errorCode, string errorMessage)
         {
-            //throw new NotImplementedException();
+            LogHelper.Instance.Error($"Grab浏览器渲染进程终止: Status={status}, ErrorCode={errorCode}, ErrorMsg={errorMessage}");
+
+            TryRecoverBrowser(chromiumWebBrowser, browser);
+        }
+
+        private static void TryRecoverBrowser(IWebBrowser chromiumWebBrowser, IBrowser browser)
+        {
+            if (chromiumWebBrowser is Control control && !control.IsDisposed)
+            {
+                control.BeginInvoke(new Action(() =>
+                {
+                    try
+                    {
+                        if (!control.IsDisposed && browser != null && !browser.IsDisposed)
+                        {
+                            browser.Reload();
+                            LogHelper.Instance.Info("Grab浏览器渲染进程恢复成功");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        LogHelper.Instance.Error("Grab浏览器渲染进程恢复失败", ex);
+                    }
+                }));
+            }
         }
 
         public void OnRenderViewReady(IWebBrowser chromiumWebBrowser, IBrowser browser)

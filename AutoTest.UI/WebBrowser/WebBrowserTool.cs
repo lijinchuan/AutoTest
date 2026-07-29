@@ -1,4 +1,4 @@
-﻿using AutoTest.Domain;
+using AutoTest.Domain;
 using AutoTest.Domain.Exceptions;
 using CefSharp;
 using CefSharp.DevTools.IO;
@@ -129,76 +129,85 @@ namespace AutoTest.UI.WebBrowser
             }
         }
 
+        // ========== 旧同步方法（保留向后兼容） ==========
+
         public void AddJqueryLib(IBrowser browser, IFrame frame, bool force = false)
         {
-            if (!force)
-            {
-                //var resp = browser.EvaluateScriptAsync(ADDJQUERYLIBCODE);
-                //AssertJavaScriptResult(resp);
-
-                DevToolEvaluateScriptAsync(browser, ADDJQUERYLIBCODE);
-            }
-            else
-            {
-                //var resp = browser.EvaluateScriptAsync(ADDJQUERYLIBCODE.Replace("if (typeof jQuery === 'undefined') {", "if (true) {"));
-                //AssertJavaScriptResult(resp);
-
-                DevToolEvaluateScriptAsync(browser, ADDJQUERYLIBCODE.Replace("if (typeof jQuery === 'undefined') {", "if (true) {"));
-            }
+            AddJqueryLibAsync(browser, frame, force).GetAwaiter().GetResult();
         }
 
         public bool AddCookeManagerFunction(IBrowser browser, IFrame frame)
         {
-            //var resp = browser.EvaluateScriptAsync(ADDCOOKIEMANAGERFUNCTION);
-            //AssertJavaScriptResult(resp);
-            //return resp.Result.Success;
-
-            DevToolEvaluateScriptAsync(browser, ADDCOOKIEMANAGERFUNCTION);
-
+            AddCookeManagerFunctionAsync(browser, frame).GetAwaiter().GetResult();
             return true;
         }
 
         public bool RegisterRomoteScript(IBrowser browser, IFrame frame, string url)
         {
-            var code = string.Format(REGISTERREMOTESCRIPTCODE, url);
-            //var resp = browser.EvaluateScriptAsync(code);
-            //AssertJavaScriptResult(resp);
-            //return resp.Result.Success;
-
-            DevToolEvaluateScriptAsync(browser, code);
-
+            RegisterRomoteScriptAsync(browser, frame, url).GetAwaiter().GetResult();
             return true;
         }
 
         public bool RegisterScript(IBrowser browser, IFrame frame, string code)
         {
-            code = string.Format(REGISTERRSCRIPTCODE, code.Replace("\"", "\\\""));
-            //var resp = browser.EvaluateScriptAsync(code);
-            //AssertJavaScriptResult(resp);
-            //return resp.Result.Success;
-
-            DevToolEvaluateScriptAsync(browser, code);
-
+            RegisterScriptAsync(browser, frame, code).GetAwaiter().GetResult();
             return true;
         }
 
         public object ExecuteScript(IBrowser browser, IFrame frame, string code, int timeOut = SCRIPT_TIMEOUT)
         {
-            //var resp = browser.EvaluateScriptAsync(code);
-            //AssertJavaScriptResult(resp, timeOut);
-            //return resp.Result.Result;
+            return ExecuteScriptAsync(browser, frame, code, timeOut).GetAwaiter().GetResult();
+        }
 
-            return DevToolEvaluateScriptAsync(browser, code, timeOut);
+        public object TryExecuteScript(IBrowser browser, IFrame frame, string code, int timeOut = SCRIPT_TIMEOUT)
+        {
+            return TryExecuteScriptAsync(browser, frame, code, timeOut).GetAwaiter().GetResult();
+        }
+
+        public void WaitLoading(IBrowser browser, bool breakFlag, bool checkScript = false, bool checkVar = false, int timeOutMs = 120000)
+        {
+            WaitLoadingAsync(browser, breakFlag, checkScript, checkVar, timeOutMs).GetAwaiter().GetResult();
+        }
+
+        // ========== 新异步方法 ==========
+
+        public async Task AddJqueryLibAsync(IBrowser browser, IFrame frame, bool force = false)
+        {
+            if (!force)
+            {
+                await DevToolEvaluateScriptAsync(browser, ADDJQUERYLIBCODE);
+            }
+            else
+            {
+                await DevToolEvaluateScriptAsync(browser, ADDJQUERYLIBCODE.Replace("if (typeof jQuery === 'undefined') {", "if (true) {"));
+            }
+        }
+
+        public async Task AddCookeManagerFunctionAsync(IBrowser browser, IFrame frame)
+        {
+            await DevToolEvaluateScriptAsync(browser, ADDCOOKIEMANAGERFUNCTION);
+        }
+
+        public async Task RegisterRomoteScriptAsync(IBrowser browser, IFrame frame, string url)
+        {
+            var code = string.Format(REGISTERREMOTESCRIPTCODE, url);
+            await DevToolEvaluateScriptAsync(browser, code);
+        }
+
+        public async Task RegisterScriptAsync(IBrowser browser, IFrame frame, string code)
+        {
+            code = string.Format(REGISTERRSCRIPTCODE, code.Replace("\"", "\\\""));
+            await DevToolEvaluateScriptAsync(browser, code);
+        }
+
+        public async Task<object> ExecuteScriptAsync(IBrowser browser, IFrame frame, string code, int timeOut = SCRIPT_TIMEOUT)
+        {
+            return await DevToolEvaluateScriptAsync(browser, code, timeOut);
         }
 
         public async Task<object> ExecutePromiseScript(IBrowser browser, IFrame frame, string code, int timeOut = SCRIPT_TIMEOUT)
         {
-            //var resp = browser.EvaluateScriptAsPromiseAsync(code);
-            //AssertJavaScriptResult(resp, timeOut);
-            //return resp.Result.Result;
-
             return await DevEvaluateScriptAsPromiseAsync(browser, code, timeOut);
-
         }
 
         public static bool IsPromiseScript(string code)
@@ -206,18 +215,14 @@ namespace AutoTest.UI.WebBrowser
             return Regex.IsMatch(code, @"([^\w]|^)return([\r\n\s]+|$)", RegexOptions.IgnoreCase);
         }
 
-        public object TryExecuteScript(IBrowser browser, IFrame frame, string code, int timeOut = SCRIPT_TIMEOUT)
+        public async Task<object> TryExecuteScriptAsync(IBrowser browser, IFrame frame, string code, int timeOut = SCRIPT_TIMEOUT)
         {
             if (IsPromiseScript(code))
             {
-                //return ExecutePromiseScript(browser, frame, code, timeOut);
-
-                return DevEvaluateScriptAsPromiseAsync(browser, code, timeOut).Result;
+                return await DevEvaluateScriptAsPromiseAsync(browser, code, timeOut);
             }
 
-            //return ExecuteScript(browser, frame, code);
-
-            return DevToolEvaluateScriptAsync(browser, code, timeOut);
+            return await DevToolEvaluateScriptAsync(browser, code, timeOut);
         }
 
 
@@ -267,8 +272,13 @@ namespace AutoTest.UI.WebBrowser
             return (rect.x, rect.y);
         }
 
-        public bool IsLoading(IBrowser browser, bool checkVar = false)
+        public async Task<bool> IsLoadingAsync(IBrowser browser, bool checkVar = false)
         {
+            if (browser.IsDisposed)
+            {
+                return false;
+            }
+
             if (browser.IsLoading)
             {
                 return true;
@@ -278,40 +288,68 @@ namespace AutoTest.UI.WebBrowser
             {
                 var code = $"if(typeof {CSObj.LoadVar} === 'undefined' || {CSObj.LoadVar} === false) return false; return true;";
 
-                var result = DevEvaluateScriptAsPromiseAsync(browser, code).Result;
-
-                if (result is bool)
+                try
                 {
-                    return (bool)result;
+                    var result = await DevEvaluateScriptAsPromiseAsync(browser, code);
+
+                    if (result is bool)
+                    {
+                        return (bool)result;
+                    }
+
+                    // result为null表示执行上下文在脚本求值期间被销毁（页面跳转/刷新），视为仍在加载
+                    if (result == null)
+                    {
+                        return true;
+                    }
                 }
-
-                //var taskResult = browser.EvaluateScriptAsync($"{CSObj.LoadVar}", timeout: TimeSpan.FromSeconds(5)).Result;
-                //if (taskResult.Success && true.Equals(taskResult.Result))
-                //{
-                //    return true;
-                //}
-
-
+                catch (ObjectDisposedException)
+                {
+                    return false;
+                }
+                catch (Exception) when (browser.IsDisposed)
+                {
+                    return false;
+                }
+                catch (Exception ex) when (ex.Message.Contains("Cannot find context"))
+                {
+                    // EvaluateAsync阶段就报上下文丢失，页面正在跳转或刷新，视为仍在加载中
+                    return true;
+                }
             }
 
             return false;
         }
 
-        public void WaitLoading(IBrowser browser, bool breakFlag, bool checkScript = false, bool checkVar = false, int timeOutMs = 120000)
+        public async Task WaitLoadingAsync(IBrowser browser, bool breakFlag, bool checkScript = false, bool checkVar = false, int timeOutMs = 120000)
         {
+            int pollingDelay = checkVar ? 500 : 200;
             int ms = 0;
-            while (IsLoading(browser, checkVar) && !breakFlag)
+
+            while (await IsLoadingAsync(browser, checkVar) && !breakFlag)
             {
-                Thread.Sleep(10);
-                ms += 10;
+                if (browser.IsDisposed)
+                {
+                    return;
+                }
+
+                await Task.Delay(pollingDelay);
+                ms += pollingDelay;
                 if (ms > timeOutMs)
                 {
                     throw new TimeoutException($"{browser.MainFrame.Url}加载超时");
                 }
             }
-            while (checkScript && IsScriptBusy(browser) && !breakFlag)
+
+            while (checkScript && await IsScriptBusyAsync(browser) && !breakFlag)
             {
-                ms += 100;
+                if (browser.IsDisposed)
+                {
+                    return;
+                }
+
+                await Task.Delay(200);
+                ms += 200;
                 if (ms > timeOutMs)
                 {
                     throw new TimeoutException($"{browser.MainFrame.Url}页面脚本超时");
@@ -331,16 +369,40 @@ namespace AutoTest.UI.WebBrowser
 
         }
 
-        public bool IsScriptBusy(IBrowser browser)
+        public async Task<bool> IsScriptBusyAsync(IBrowser browser)
         {
-            //var resp = browser.EvaluateScriptAsPromiseAsync("console.log('IsScriptBusy check');return 1;");
-
-
-            var ret = DevEvaluateScriptAsPromiseAsync(browser, "console.log('IsScriptBusy check');return 1;").Result;
-
-            if (1.Equals(ret))
+            if (browser.IsDisposed)
             {
                 return false;
+            }
+
+            try
+            {
+                var ret = await DevEvaluateScriptAsPromiseAsync(browser, "console.log('IsScriptBusy check');return 1;");
+
+                if (1.Equals(ret))
+                {
+                    return false;
+                }
+
+                // ret为null表示执行上下文被销毁，视为脚本忙
+                if (ret == null)
+                {
+                    return true;
+                }
+            }
+            catch (ObjectDisposedException)
+            {
+                return false;
+            }
+            catch (Exception) when (browser.IsDisposed)
+            {
+                return false;
+            }
+            catch (Exception ex) when (ex.Message.Contains("Cannot find context"))
+            {
+                // EvaluateAsync阶段就报上下文丢失，页面正在跳转或刷新，视为脚本忙
+                return true;
             }
 
             return true;
@@ -365,7 +427,7 @@ namespace AutoTest.UI.WebBrowser
 
         #region
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="browser"></param>
         /// <param name="code"></param>
@@ -401,13 +463,21 @@ namespace AutoTest.UI.WebBrowser
                 throw new ScriptException(resp.ExceptionDetails.Text);
             }
 
-            var resp2 = await client.Runtime.AwaitPromiseAsync(resp.Result.ObjectId);
-            if (resp2.ExceptionDetails != null)
+            try
             {
-                throw new ScriptException(resp2.ExceptionDetails.Text);
-            }
+                var resp2 = await client.Runtime.AwaitPromiseAsync(resp.Result.ObjectId);
+                if (resp2.ExceptionDetails != null)
+                {
+                    throw new ScriptException(resp2.ExceptionDetails.Text);
+                }
 
-            return resp2.Result?.Value;
+                return resp2.Result?.Value;
+            }
+            catch (Exception ex) when (ex.Message.Contains("Cannot find context"))
+            {
+                // EvaluateAsync成功后，AwaitPromiseAsync之前页面发生了跳转/刷新，执行上下文被销毁
+                return null;
+            }
         }
         #endregion
     }

@@ -178,18 +178,18 @@ namespace AutoTest.UI.WebBrowser
             // Method intentionally left empty.
             if (DocumentLoadCompleted != null)
             {
-                _ = new Action(() =>
+                _ = Task.Run(async () =>
                 {
                     try
                     {
-                        webBrowserTool.WaitLoading(GetBrowser(), cancelFlag, false);
+                        await webBrowserTool.WaitLoadingAsync(GetBrowser(), cancelFlag, false);
                         DocumentLoadCompleted?.Invoke(e.Browser, e.Frame);
                     }
                     catch
                     {
 
                     }
-                }).BeginInvoke(null, null);
+                });
             }
         }
 
@@ -507,7 +507,7 @@ namespace AutoTest.UI.WebBrowser
                     }
                 }
 
-                if (!readyResetEvent.WaitOne(60000))
+                if (!await Task.Run(() => readyResetEvent.WaitOne(60000)))
                 {
                     OnMsgPublished($"任务超时:{webTask.GetTaskName()}");
                     webTask.ForceCancel("超时");
@@ -530,13 +530,13 @@ namespace AutoTest.UI.WebBrowser
             return true;
         }
 
-        private void WebTask_OnTaskReady(IWebTask webTask)
+        private async void WebTask_OnTaskReady(IWebTask webTask)
         {
             _ = readyResetEvent.Set();
             try
             {
                 var cookieManager = this.GetCookieManager();
-                _ = webTask.Execute(GetBrowser(), GetBrowser().MainFrame, cookieManager);
+                await webTask.Execute(GetBrowser(), GetBrowser().MainFrame, cookieManager);
             }
             catch (Exception ex)
             {
@@ -591,12 +591,22 @@ namespace AutoTest.UI.WebBrowser
             }
         }
 
-        private void WebTask_OnTaskCompleted(IWebTask webTask)
+        private async void WebTask_OnTaskCompleted(IWebTask webTask)
         {
+            if (this.IsDisposed)
+            {
+                Clear(webTask);
+                return;
+            }
+
             try
             {
                 this.Stop();
-                webBrowserTool.WaitLoading(GetBrowser(), cancelFlag, timeOutMs: 30000);
+                var browser = GetBrowser();
+                if (browser != null && !browser.IsDisposed)
+                {
+                    await webBrowserTool.WaitLoadingAsync(browser, cancelFlag, timeOutMs: 30000);
+                }
                 Clear(webTask);
 
                 if (webTask.GetNext() != null)
@@ -609,8 +619,15 @@ namespace AutoTest.UI.WebBrowser
                 try
                 {
                     LogHelper.Instance.Error("出错（此错误可忽略）", ex);
-                    this.LoadUrl("about:blank");
-                    webBrowserTool.WaitLoading(GetBrowser(), cancelFlag, timeOutMs: 30000);
+                    if (!this.IsDisposed)
+                    {
+                        this.LoadUrl("about:blank");
+                        var browser = GetBrowser();
+                        if (browser != null && !browser.IsDisposed)
+                        {
+                            await webBrowserTool.WaitLoadingAsync(browser, cancelFlag, timeOutMs: 30000);
+                        }
+                    }
                     Clear(webTask);
                 }
                 catch (Exception exx)

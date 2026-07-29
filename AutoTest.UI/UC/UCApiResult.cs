@@ -137,7 +137,7 @@ namespace AutoTest.UI.UC
                 WBResult.LoadUrl(url);
             }
 
-            void DocumentCompleted(object sender, FrameLoadEndEventArgs e)
+            async void DocumentCompleted(object sender, FrameLoadEndEventArgs e)
             {
                 WBResult.FrameLoadEnd -= DocumentCompleted;
                 frame = WBResult.GetBrowser().MainFrame;
@@ -147,7 +147,7 @@ namespace AutoTest.UI.UC
                     return;
                 }
 
-                webBrowserTool.RegisterScript(WBResult.GetBrowser(), frame, "function replacedom(dom){document.documentElement.innerHTML=dom;return true;}");
+                await webBrowserTool.RegisterScriptAsync(WBResult.GetBrowser(), frame, "function replacedom(dom){document.documentElement.innerHTML=dom;return true;}");
 
                 var startPos = newHtml.IndexOf("<head>", StringComparison.OrdinalIgnoreCase);
                 var endPos = newHtml.LastIndexOf("</body>", StringComparison.OrdinalIgnoreCase);
@@ -159,13 +159,13 @@ namespace AutoTest.UI.UC
 
                 WBResult.ExecuteScriptAsync("replacedom", newHtml);
 
-                var resp = frame.EvaluateScriptAsPromiseAsync("return document.getElementsByTagName(\"head\").length").Result;
+                var resp = await frame.EvaluateScriptAsPromiseAsync("return document.getElementsByTagName(\"head\").length");
                 if (resp.Success&&((int)resp.Result)>0)
                 {
                     var id = Guid.NewGuid().ToString("N");
                     var code = "var scripts =[];var ss= document.getElementsByTagName(\"SCRIPT\"); for(var i=0;i<ss.length;i++){scripts.push(ss[i]); ss[i].remove();};for(var i=0;i<scripts.length;i++){if(scripts[i].id=='" + id + "' || !scripts[i].innerHTML) continue;var newScript = document.createElement(\"SCRIPT\");alert(scripts[i].innerHTML);newScript.innerHTML=scripts[i].innerHTML;document.getElementsByTagName(\"HEAD\").item(0).appendChild(newScript);}";
 
-                    webBrowserTool.ExecutePromiseScript(WBResult.GetBrowser(), frame, code).Wait();
+                    await webBrowserTool.ExecutePromiseScript(WBResult.GetBrowser(), frame, code);
                 }
             }
         }

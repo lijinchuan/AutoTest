@@ -222,12 +222,16 @@ namespace AutoTest.UI.WebTask
 
         protected void AddGlobalFunction(IBrowser browser, IFrame frame)
         {
+            AddGlobalFunctionAsync(browser, frame).GetAwaiter().GetResult();
+        }
+
+        protected async Task AddGlobalFunctionAsync(IBrowser browser, IFrame frame)
+        {
             var fileName = "GlobalFunction.js";
 
             var jsFile = File.ReadAllText(fileName);
 
-            webBrowserTool.ExecuteScript(browser, frame, jsFile);
-
+            await webBrowserTool.ExecuteScriptAsync(browser, frame, jsFile);
         }
 
         public virtual void DocumentLoadStartHandler(IBrowser browser, IFrame frame)
@@ -266,6 +270,11 @@ namespace AutoTest.UI.WebTask
 
         protected void RegistTestScript(IBrowser browser, IFrame frame, TestScript testScript)
         {
+            RegistTestScriptAsync(browser, frame, testScript).GetAwaiter().GetResult();
+        }
+
+        protected async Task RegistTestScriptAsync(IBrowser browser, IFrame frame, TestScript testScript)
+        {
             if (!testScript.Enable || string.IsNullOrWhiteSpace(testScript.Body))
             {
                 return;
@@ -275,11 +284,11 @@ namespace AutoTest.UI.WebTask
 
             if (Regex.Match(body.TrimStart(), "^(https?:|//)", RegexOptions.IgnoreCase).Success)
             {
-                webBrowserTool.RegisterRomoteScript(browser, frame, body.TrimStart());
+                await webBrowserTool.RegisterRomoteScriptAsync(browser, frame, body.TrimStart());
             }
             else
             {
-                webBrowserTool.ExecuteScript(browser, frame, body);
+                await webBrowserTool.ExecuteScriptAsync(browser, frame, body);
             }
         }
 

@@ -62,7 +62,8 @@ namespace AutoTest.UI.UC
 
             //var list = ((List<object>)browser.EvaluateScriptAsync("getEles()").Result.Result).Select(p => (string)p).ToList();
 
-            var list= ((List<object>)webBrowserTool.DevEvaluateScriptAsPromiseAsync(browser, "return getEles()", 30000).Result).Select(p => (string)p).ToList();
+            var result = Task.Run(() => webBrowserTool.DevEvaluateScriptAsPromiseAsync(browser, "return getEles()", 30000)).GetAwaiter().GetResult();
+            var list = ((List<object>)result).Select(p => (string)p).ToList();
 
             return list.Select(p => testTasks.FirstOrDefault(q => q.GetTaskName() == p)).Select(p => p.TestCase.Id).ToList();
         }

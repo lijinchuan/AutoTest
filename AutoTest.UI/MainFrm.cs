@@ -111,7 +111,14 @@ namespace AutoTest.UI
             {
                 var settings = new CefSettings();
                 settings.LogSeverity = LogSeverity.Warning;
-                //settings.CefCommandLineArgs.Add("--js-flags", $"--max_old_space_size=2048");
+
+                // 禁用GPU加速，减少长时间运行后GPU进程崩溃导致浏览器空白的问题
+                settings.CefCommandLineArgs.Add("--disable-gpu-compositing", "1");
+                settings.CefCommandLineArgs.Add("--disable-gpu", "1");
+
+                // 限制JS堆内存大小，防止渲染进程内存泄漏
+                settings.CefCommandLineArgs.Add("--js-flags", "--max-old-space-size=512");
+
                 Cef.Initialize(settings);
             }
 
