@@ -116,5 +116,10 @@ namespace AutoTest.UI.WebBrowser
         /// 判断脚本是否繁忙（异步）
         /// </summary>
         Task<bool> IsScriptBusyAsync(IBrowser browser);
+
+        /// <summary>
+        /// 释放指定 Browser 缓存的 DevToolsClient。Browser 关闭时调用以释放资源。
+        /// </summary>
+        void ReleaseDevToolsClient(IBrowser browser);
     }
 }

@@ -1,9 +1,11 @@
 using AutoTest.Domain;
 using AutoTest.Domain.Exceptions;
 using CefSharp;
+using CefSharp.DevTools;
 using CefSharp.DevTools.IO;
 using CefSharp.DevTools.Runtime;
 using System;
+using System.Collections.Concurrent;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -14,6 +16,45 @@ namespace AutoTest.UI.WebBrowser
 {
     public class WebBrowserTool : IWebBrowserTool
     {
+        /// <summary>
+        /// 静态缓存: 每个 Browser 复用一个 DevToolsClient，避免频繁创建/销毁
+        /// Key: browser.Identifier
+        /// </summary>
+        private static readonly ConcurrentDictionary<int, DevToolsClient> _devToolsClients =
+            new ConcurrentDictionary<int, DevToolsClient>();
+
+        /// <summary>
+        /// 获取或创建指定 Browser 的 DevToolsClient（缓存复用）
+        /// </summary>
+        private static DevToolsClient GetOrCreateDevToolsClient(IBrowser browser)
+        {
+            if (browser.IsDisposed)
+                throw new ObjectDisposedException(nameof(browser));
+
+            return _devToolsClients.GetOrAdd(browser.Identifier, _ => browser.GetDevToolsClient());
+        }
+
+        /// <summary>
+        /// 释放指定 Browser 的 DevToolsClient 并从缓存移除。
+        /// Browser 关闭/Dispose 时调用，通常由 DefaultChromiumWebBrowser.Dispose() 触发。
+        /// </summary>
+        public void ReleaseDevToolsClient(IBrowser browser)
+        {
+            if (browser == null) return;
+
+            if (_devToolsClients.TryRemove(browser.Identifier, out var client))
+            {
+                try
+                {
+                    client.Dispose();
+                }
+                catch
+                {
+                    // DevToolsClient 可能已处于不可用状态，忽略释放异常
+                }
+            }
+        }
+
         //private static string ADDJQUERYLIBCODE = @"if(typeof jQuery == 'undefined'){
         //        var script = document.createElement(""script"");
         //        script.type = ""text/javascript"";
@@ -437,7 +478,7 @@ namespace AutoTest.UI.WebBrowser
         /// <exception cref="ScriptException"></exception>
         public async Task<object> DevToolEvaluateScriptAsync(IBrowser browser, string code, int timeout = SCRIPT_TIMEOUT)
         {
-            var client = browser.GetDevToolsClient();
+            var client = GetOrCreateDevToolsClient(browser);
             var result = await client.Runtime.EvaluateAsync(code, timeout: timeout);
 
             if (result.ExceptionDetails != null)
@@ -450,7 +491,7 @@ namespace AutoTest.UI.WebBrowser
 
         public async Task<object> DevEvaluateScriptAsPromiseAsync(IBrowser browser, string code, int timeout = SCRIPT_TIMEOUT)
         {
-            var client = browser.GetDevToolsClient();
+            var client = GetOrCreateDevToolsClient(browser);
             var resp = await client.Runtime.EvaluateAsync($"(async function(){{{code}}})()", timeout: timeout);
 
             if (resp.ExceptionDetails != null)

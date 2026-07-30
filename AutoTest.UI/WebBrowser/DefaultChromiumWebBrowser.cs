@@ -748,8 +748,14 @@ namespace AutoTest.UI.WebBrowser
 
             OnMsgPublished = null;
 
+            var browser = GetBrowser();
+            if (browser != null)
+            {
+                webBrowserTool.ReleaseDevToolsClient(browser);
+                browser.CloseBrowser(false);//关闭浏览器
+            }
+
             JavascriptObjectRepository.UnRegisterAll();//解绑对象 高版本才有
-            GetBrowser().CloseBrowser(false);//关闭浏览器
 
             base.Dispose(disposing);
         }
