@@ -1,4 +1,5 @@
-﻿using AutoTest.Domain.Entity;
+﻿using AutoTest.Biz;
+using AutoTest.Domain.Entity;
 using AutoTest.Domain.Model;
 using AutoTest.UI.WebTask;
 using AutoTest.Util;
@@ -459,20 +460,16 @@ namespace AutoTest.UI.WebBrowser
 
         public bool CallTask(int caseId,bool priority)
         {
-            if (browser is DefaultChromiumWebBrowser)
-            {
-                var task = new Biz.TaskBiz().CreateTask(caseId);
-                if (task != null)
-                {
-                    var runTaskList = new RunTestTask(task.GetTaskName(), false, task.TestSite, task.TestLogin, task.TestPage, task.TestCase, task.TestEnv, task.TestEnvParams, task.GlobalTestScripts, task.SiteTestScripts, task.ResultNotify);
-                    if((browser as DefaultChromiumWebBrowser).AddTask(runTaskList, priority))
-                    {
-                        Task.Factory.StartNew(() => (browser as DefaultChromiumWebBrowser).RunTask());
-                        return true;
-                    }
-                }
-            }
-            return false;
+            var task = new Biz.TaskBiz().CreateTask(caseId);
+            if (task == null) return false;
+
+            var runner = new DesktopTestRunner(
+                task.TestCase,
+                task.TestEnv,
+                task.TestEnvParams,
+                task.ResultNotify);
+            Task.Factory.StartNew(async () => await runner.RunAsync());
+            return true;
         }
 
         public void Dispose()

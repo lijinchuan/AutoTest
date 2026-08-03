@@ -19,6 +19,7 @@ namespace AutoTest.UI.SubForm
         private int _caseId;
         private TestCase _copyCase;
         private List<TestScript> _testScripts;
+
         public AddTestCaseDlg()
         {
             InitializeComponent();
@@ -31,6 +32,10 @@ namespace AutoTest.UI.SubForm
             _caseId = caseId;
             _copyCase = copyCase;
             _testScripts = testScripts;
+
+            // 桌面测试工具，永久隐藏 URL 字段
+            TBUrl.Visible = false;
+            label7.Visible = false;
 
             if (testScripts != null)
             {
@@ -82,11 +87,9 @@ namespace AutoTest.UI.SubForm
                     return;
                 }
                 TBName.Text = testCase.CaseName;
-                TBUrl.Text = testCase.Url ?? string.Empty;
                 NUDOrder.Value = testCase.Order;
                 TBCode.Text = testCase.TestCode;
                 TBValidCode.Text = testCase.ValidCode;
-
                 CBUser.SelectedValue = testCase.OnlyUserId;
             }
             else
@@ -96,10 +99,6 @@ namespace AutoTest.UI.SubForm
                     TBName.Text = _copyCase.CaseName;
                     TBCode.Text = _copyCase.TestCode;
                     TBValidCode.Text = _copyCase.ValidCode;
-                    if (!string.IsNullOrWhiteSpace(_copyCase.Url))
-                    {
-                        TBUrl.Text = _copyCase.Url;
-                    }
                 }
 
                 var cnt = AutoTest.Data.DataStoreSwitcher.Current.Count(nameof(TestCase), nameof(TestCase.PageId), new object[] { _pageId });
@@ -128,7 +127,6 @@ namespace AutoTest.UI.SubForm
                 Order = (int)NUDOrder.Value,
                 TestCode = TBCode.Text,
                 ValidCode = TBValidCode.Text,
-                Url = TBUrl.Text,
                 OnlyUserId = (int)CBUser.SelectedValue
             };
             if (_caseId == 0)

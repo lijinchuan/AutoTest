@@ -474,8 +474,12 @@ namespace AutoTest.UI.UC
 
                     TaskHelper.SetInterval(1000, () =>
                     {
-                        var runTaskList = testTaskList.Select(task => new RunTestTask(task.GetTaskName(), false, task.TestSite, task.TestLogin, task.TestPage, task.TestCase, task.TestEnv, task.TestEnvParams, task.GlobalTestScripts, task.SiteTestScripts, task.ResultNotify));
-                        BeginInvoke(new Action(() => testPanel.RunTest(runTaskList)));
+                        foreach (var task in testTaskList)
+                        {
+                            var runner = new Biz.DesktopTestRunner(
+                                task.TestCase, task.TestEnv, task.TestEnvParams, task.ResultNotify);
+                            Task.Factory.StartNew(async () => await runner.RunAsync());
+                        }
                         return true;
                     }, runintime: false);
                 }
@@ -922,57 +926,14 @@ namespace AutoTest.UI.UC
                         }
                     case "登陆":
                         {
-                            var testSite = FindParentNode<TestSite>(selnode);
-                            var testLogin = FindParentNode<TestLogin>(selnode);
-                            var ep = GetCurrEnvData(selnode);
-
-                            var globalScripts = AutoTest.Data.DataStoreSwitcher.Current.Find<TestScript>(nameof(TestScript), (Func<TestScript, bool>)(s => s.Enable && s.SourceId == testSite.SourceId && s.SiteId == 0)).ToList();
-                            var siteScripts = AutoTest.Data.DataStoreSwitcher.Current.Find<TestScript>(nameof(TestScript), (Func<TestScript, bool>)(s => s.Enable && s.SourceId == testSite.SourceId && s.SiteId == testLogin.SiteId)).ToList();
-
-                            var testPanel = (TestPanel)Util.TryAddToMainTab(this, $"执行测试", () =>
-                            {
-                                var panel = new UC.TestPanel(testSite.Name);
-                                panel.Load();
-
-                                return panel;
-                            }, typeof(TestPanel));
-
-                            LJC.FrameWorkV3.Comm.TaskHelper.SetInterval(1000, () =>
-                            {
-                                BeginInvoke(new Action(() => testPanel.RunTest(new RunTestLoginTask(testLogin.Url, false, testSite, testLogin, ep.env, ep.envParams, globalScripts, siteScripts))));
-                                return true;
-                            }, runintime: false);
+                            // 桌面测试工具不需要Web登录
+                            Util.SendMsg(this, "桌面测试模式不支持Web登录");
                             break;
                         }
                     case "退出":
                         {
-                            var testSite = FindParentNode<TestSite>(selnode);
-
-                            var testLogin = FindParentNode<TestLogin>(selnode);
-                            var ep = GetCurrEnvData(selnode);
-                            var testPanel = (TestPanel)Util.TryAddToMainTab(this, $"执行测试", () => null, typeof(TestPanel));
-                            if (testPanel != null)
-                            {
-                                if (new ConfirmDlg(testSite.Name, "退出吗？", 30).ShowDialog() != DialogResult.OK)
-                                {
-                                    return;
-                                }
-                                TestCookieContainerBiz.SetExpired(testSite.Id, ep.env?.Id, testLogin.Id);
-                                var loginTask = new RunTestLoginTask(testLogin.Url, false, testSite, testLogin, ep.env, ep.envParams,null,null);
-                                if (testPanel.ClearCookie(loginTask.GetStartPageUrl()))
-                                {
-                                    Util.SendMsg(this, "cookie清理成功");
-                                }
-                                else
-                                {
-                                    Util.SendMsg(this, "cookie清理失败");
-                                }
-                            }
-                            else
-                            {
-                                new AlertDlg(testSite.Name, "cookie清理失败，执行窗口未开启", null).ShowDialog();
-                            }
-
+                            // 桌面测试工具不需要Web登出
+                            Util.SendMsg(this, "桌面测试模式不支持Web登出");
                             break;
                         }
                     case "切换":
@@ -1511,8 +1472,12 @@ namespace AutoTest.UI.UC
     return panel;
 }, null);
 
-                          var runTaskList = kv.Select(task => new RunTestTask(task.GetTaskName(), false, task.TestSite, task.TestLogin, task.TestPage, task.TestCase, task.TestEnv, task.TestEnvParams, task.GlobalTestScripts, task.SiteTestScripts, task.ResultNotify));
-                          BeginInvoke(new Action(() => testPanel.RunTest(runTaskList)));
+                          foreach (var task in kv)
+                          {
+                              var runner = new Biz.DesktopTestRunner(
+                                  task.TestCase, task.TestEnv, task.TestEnvParams, task.ResultNotify);
+                              Task.Factory.StartNew(async () => await runner.RunAsync());
+                          }
                       }               
 
                       TestLogin GetTestLogin(TestCase testCase, TestSite testSite)
@@ -1591,8 +1556,9 @@ private void ApiTaskTrigger_NewTaskRecived(int workerId, TestTask task, APITaskR
         createOrGetPanel();
     }
 
-    var runTaskList = new RunTestTask(task.GetTaskName(), false, task.TestSite, task.TestLogin, task.TestPage, task.TestCase, task.TestEnv, task.TestEnvParams, task.GlobalTestScripts, task.SiteTestScripts, task.ResultNotify, apiTaskRequest);
-    BeginInvoke(new Action(() => testPanel.RunTest(runTaskList)));
+    var runner = new Biz.DesktopTestRunner(
+        task.TestCase, task.TestEnv, task.TestEnvParams, task.ResultNotify);
+    Task.Factory.StartNew(async () => await runner.RunAsync());
 }
     }
 }

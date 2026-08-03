@@ -1,0 +1,37 @@
+[build-system]
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "autodesk"
+version = "1.0.0"
+description = "Desktop Automated Testing Framework using pytest + uiautomation + allure"
+requires-python = ">=3.10"
+dependencies = [
+    "uiautomation>=2.0.0",
+    "pytest>=7.4.0",
+    "allure-pytest>=2.13.0",
+    "pyyaml>=6.0",
+    "click>=8.0",
+    "pydantic>=2.0",
+    "pillow>=10.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest-xdist>=3.0",
+    "pytest-timeout>=2.0",
+]
+
+[project.scripts]
+autodesk = "src.cli:main"
+
+[tool.pytest.ini_options]
+testpaths = ["src/autodesk/tests"]
+python_files = "test_*.py"
+python_classes = "Test*"
+python_functions = "test_*"
+addopts = "-v --alluredir=results/allure --strict-markers"
+
+[tool.setuptools.packages.find]
+where = ["src"]

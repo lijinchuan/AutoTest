@@ -1,0 +1,15 @@
+# ============================================================
+# 环境变量配置
+# 对应现有 C# 项目中的 TestEnv + TestEnvParam 实体
+# ============================================================
+
+default:
+  name: "default"
+  description: "默认本地测试环境"
+
+staging:
+  name: "staging"
+  description: "预发布测试环境"
+  variables:
+    APP_PATH: "C:\\Program Files\\MyApp\\MyApp.exe"
+    TEST_TIMEOUT: "60"

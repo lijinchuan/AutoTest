@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace AutoTest.UI.UC
@@ -49,56 +50,27 @@ namespace AutoTest.UI.UC
             return UCTestCaseSelector1.GetSelecteCase();
         }
 
-        private void RunTest(List<TestTask> tasks,bool resetResult)
+        private void RunTest(List<TestTask> tasks, bool resetResult)
         {
             if (!tasks.Any())
             {
                 return;
             }
-            TestPanel testPanel = null;
             if (new ConfirmDlg("询问", "执行测试吗？").ShowDialog() == DialogResult.OK)
             {
                 if (resetResult)
                 {
                     UCTestCaseSelector1.Reset();
                 }
-                testPanel = (TestPanel)Util.TryAddToMainTab(this, $"执行测试", () =>
-                {
-                    var panel = new TestPanel("执行测试");
 
-                    panel.OnTaskStart += t =>
-                    {
-                        var rt = t as RunTestTask;
-                        if (rt != null && rt.TestLogin != null && (currentTestLogin == null || currentTestLogin.Id != rt.TestLogin.Id))
-                        {
-                            currentTestLogin = rt.TestLogin;
-                            panel.ClearCookie(rt.GetStartPageUrl());
+                // 桌面测试：创建日志+结果面板，不需要浏览器
+                var logTab = new LogViewTab();
+                logTab.Dock = DockStyle.Fill;
 
-                            var cookies = Biz.TestCookieContainerBiz.GetCookies(rt.TestLogin.SiteId, rt.TestEnv?.Id, rt.TestLogin.Id);
-                            if (cookies?.Count > 0)
-                            {
-                                panel.SetCookie(rt.GetStartPageUrl(), cookies);
-                            }
-                        }
-                        OnTaskStart?.Invoke(t);
-                    };
+                TabPage tabPage = new TabPage("执行测试");
+                tabPage.Controls.Add(logTab);
 
-                    panel.Load();
-
-                    return panel;
-                }, typeof(TestPanel));
-
-                if (testPanel.IsRunning())
-                {
-                    Util.SendMsg(this, "正在执行测试，请稍后再试");
-                    return;
-                }
-
-                if (!testPanel.Reset())
-                {
-                    Util.SendMsg(this, "任务未开始，有测试在执行");
-                    return;
-                }
+                Util.TryAddToMainTab(this, $"执行测试", () => tabPage, null);
 
                 if (_testTaskBag != null)
                 {
@@ -122,24 +94,19 @@ namespace AutoTest.UI.UC
 
                 LJC.FrameWorkV3.Comm.TaskHelper.SetInterval(1000, () =>
                 {
-                    var runTaskList = tasks.Select(task => new RunTestTask(task.GetTaskName(), false, task.TestSite, task.TestLogin, task.TestPage, task.TestCase, task.TestEnv, task.TestEnvParams, task.GlobalTestScripts, task.SiteTestScripts, task.ResultNotify));
-                    BeginInvoke(new Action(() =>
+                    foreach (var task in tasks)
                     {
-                        _ = testPanel.RunTest(runTaskList);
+                        var runner = new DesktopTestRunner(
+                            task.TestCase, task.TestEnv, task.TestEnvParams, task.ResultNotify);
+                        Task.Factory.StartNew(async () => await runner.RunAsync());
+                    }
 
-                        LJC.FrameWorkV3.Comm.TaskHelper.SetInterval(1000, () =>
-                        {
-                            if (testPanel.IsDisposed || !testPanel.IsRunning())
-                            {
-                                BeginInvoke(new Action(() => { BtnOk.Enabled = true; BtnCancel.Enabled = false; BtnRefrash.Enabled = true; BtnCancel.Click -= BtnCancel_Click; Util.SelectedTab(this, this); }));
-                                return true;
-                            }
-                            return false;
-                        }, runintime: false);
-                    }));
-                    
+                    BeginInvoke(new Action(() => { BtnOk.Enabled = true; BtnCancel.Enabled = false; BtnRefrash.Enabled = true; BtnCancel.Click -= BtnCancel_Click; Util.SelectedTab(this, this); }));
+
                     return true;
                 }, runintime: false);
+
+
             }
 
             void BtnCancel_Click(object ss, EventArgs ee)
@@ -147,10 +114,6 @@ namespace AutoTest.UI.UC
                 if (new ConfirmDlg("停止任务提示", "要停止任务吗？", timeOutOk: false).ShowDialog() != DialogResult.OK)
                 {
                     return;
-                }
-                if (!testPanel.IsDisposed)
-                {
-                    testPanel.CancelTasks();
                 }
             }
         }

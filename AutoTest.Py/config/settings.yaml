@@ -1,0 +1,44 @@
+# ============================================================
+# AutoDesk 框架配置文件
+# 对应现有 C# 项目中的 App.config + configfile.json
+# ============================================================
+
+# 被测桌面应用定义
+apps:
+  notepad:
+    name: "Notepad"
+    executable: "notepad.exe"
+    window_title: "无标题-记事本"
+    window_class: "Notepad"
+    startup_timeout: 10
+
+  notepad_zh:
+    name: "Notepad (中文Windows)"
+    executable: "notepad.exe"
+    window_title: "无标题 - 记事本"
+    window_class: "Notepad"
+    startup_timeout: 10
+
+  calculator:
+    name: "Calculator"
+    executable: "calc.exe"
+    window_title: "计算器"
+    window_class: "ApplicationFrameWindow"
+    startup_timeout: 10
+
+# 框架设置
+framework:
+  default_timeout: 10.0
+  implicit_wait: 0.5
+  screenshot_on_failure: true
+  screenshot_dir: "results/screenshots"
+  allure_dir: "results/allure"
+  max_retries: 2
+  poll_interval: 0.5
+
+# 日志
+logging:
+  level: "INFO"
+  file: "results/autodesk.log"
+  max_bytes: 10485760
+  backup_count: 5

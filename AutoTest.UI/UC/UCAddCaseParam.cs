@@ -876,6 +876,19 @@ namespace AutoTest.UI.UC
 
         private void BindData()
         {
+            // 本项目是桌面测试工具，永久隐藏 Web 专属 UI
+            CBWebMethod.Visible = false;
+            TBUrl.Visible = false;
+            BtnSend.Visible = false;
+
+            Tabs.TabPages.Remove(TP_Params);   // URL参数
+            Tabs.TabPages.Remove(TP_Auth);     // 鉴权
+            Tabs.TabPages.Remove(TP_Header);   // 请求头
+            Tabs.TabPages.Remove(TP_Cookie);   // Cookie
+            Tabs.TabPages.Remove(TP_Body);     // 请求体
+
+            tabPage8.Text = "脚本(Python)";
+
             if (this._testCase == null)
             {
                 FormDatas.Add(new ParamInfo());
