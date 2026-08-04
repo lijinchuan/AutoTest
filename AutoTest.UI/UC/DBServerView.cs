@@ -477,7 +477,9 @@ namespace AutoTest.UI.UC
                         foreach (var task in testTaskList)
                         {
                             var runner = new Biz.DesktopTestRunner(
-                                task.TestCase, task.TestEnv, task.TestEnvParams, task.ResultNotify);
+                                task.TestCase, task.TestEnv, task.TestEnvParams,
+                                task.GlobalTestScripts, task.SiteTestScripts,
+                                task.ResultNotify);
                             Task.Factory.StartNew(async () => await runner.RunAsync());
                         }
                         return true;
@@ -1475,7 +1477,9 @@ namespace AutoTest.UI.UC
                           foreach (var task in kv)
                           {
                               var runner = new Biz.DesktopTestRunner(
-                                  task.TestCase, task.TestEnv, task.TestEnvParams, task.ResultNotify);
+                                  task.TestCase, task.TestEnv, task.TestEnvParams,
+                                  task.GlobalTestScripts, task.SiteTestScripts,
+                                  task.ResultNotify);
                               Task.Factory.StartNew(async () => await runner.RunAsync());
                           }
                       }               
@@ -1557,7 +1561,9 @@ private void ApiTaskTrigger_NewTaskRecived(int workerId, TestTask task, APITaskR
     }
 
     var runner = new Biz.DesktopTestRunner(
-        task.TestCase, task.TestEnv, task.TestEnvParams, task.ResultNotify);
+        task.TestCase, task.TestEnv, task.TestEnvParams,
+        task.GlobalTestScripts, task.SiteTestScripts,
+        task.ResultNotify);
     Task.Factory.StartNew(async () => await runner.RunAsync());
 }
     }

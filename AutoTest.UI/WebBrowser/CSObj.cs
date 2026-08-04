@@ -467,6 +467,8 @@ namespace AutoTest.UI.WebBrowser
                 task.TestCase,
                 task.TestEnv,
                 task.TestEnvParams,
+                task.GlobalTestScripts,
+                task.SiteTestScripts,
                 task.ResultNotify);
             Task.Factory.StartNew(async () => await runner.RunAsync());
             return true;

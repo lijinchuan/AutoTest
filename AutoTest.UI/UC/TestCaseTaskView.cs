@@ -97,7 +97,9 @@ namespace AutoTest.UI.UC
                     foreach (var task in tasks)
                     {
                         var runner = new DesktopTestRunner(
-                            task.TestCase, task.TestEnv, task.TestEnvParams, task.ResultNotify);
+                            task.TestCase, task.TestEnv, task.TestEnvParams,
+                            task.GlobalTestScripts, task.SiteTestScripts,
+                            task.ResultNotify);
                         Task.Factory.StartNew(async () => await runner.RunAsync());
                     }
 

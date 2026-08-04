@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using System;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -22,6 +23,8 @@ namespace AutoTest.Biz
         private readonly TestCase _testCase;
         private readonly TestEnv _testEnv;
         private readonly System.Collections.Generic.List<TestEnvParam> _testEnvParams;
+        private readonly System.Collections.Generic.List<TestScript> _globalScripts;
+        private readonly System.Collections.Generic.List<TestScript> _siteScripts;
         private readonly Action<TestResult> _notify;
 
         private TestResult _testResult;
@@ -40,11 +43,15 @@ namespace AutoTest.Biz
             TestCase testCase,
             TestEnv testEnv,
             System.Collections.Generic.List<TestEnvParam> testEnvParams,
+            System.Collections.Generic.List<TestScript> globalScripts,
+            System.Collections.Generic.List<TestScript> siteScripts,
             Action<TestResult> notify)
         {
             _testCase = testCase ?? throw new ArgumentNullException(nameof(testCase));
             _testEnv = testEnv;
             _testEnvParams = testEnvParams ?? new System.Collections.Generic.List<TestEnvParam>();
+            _globalScripts = globalScripts ?? new System.Collections.Generic.List<TestScript>();
+            _siteScripts = siteScripts ?? new System.Collections.Generic.List<TestScript>();
             _notify = notify;
 
             _testResult = new TestResult
@@ -71,12 +78,10 @@ namespace AutoTest.Biz
                 // 1. 准备 Python 测试脚本文件
                 string scriptPath = PrepareTestScript();
 
-                // 2. 执行 pytest
-                var resultJson = await RunPythonTestAsync(scriptPath);
+                // 2. 执行 pytest（通过 autodesk.runner）
+                await RunPythonTestAsync(scriptPath);
 
-                // 3. 结果已在 RunPythonTestAsync 中设置
-
-                // 4. 清理临时文件
+                // 3. 清理临时文件
                 CleanupScript(scriptPath);
             }
             catch (OperationCanceledException)
@@ -145,6 +150,10 @@ namespace AutoTest.Biz
                     sb.AppendLine("import uiautomation as uia");
                     sb.AppendLine();
                 }
+
+                // 注入全局脚本和局部脚本（对应老框架注入顺序：先全局后局部，按 Order 排序）
+                AppendTestScripts(sb, _globalScripts, "全局脚本 (TestSource)");
+                AppendTestScripts(sb, _siteScripts, "局部脚本 (TestSite)");
 
                 sb.AppendLine(code);
 
@@ -221,7 +230,7 @@ namespace AutoTest.Biz
             var psi = new ProcessStartInfo
             {
                 FileName = pythonExe,
-                Arguments = $"\"{scriptPath}\"",
+                Arguments = $"-m autodesk.runner --test-file \"{scriptPath}\" --allure-dir \"results/allure\"",
                 WorkingDirectory = PyProjectRoot,
                 UseShellExecute = false,
                 RedirectStandardOutput = true,
@@ -241,14 +250,23 @@ namespace AutoTest.Biz
 
             var outputBuilder = new StringBuilder();
             var errorBuilder = new StringBuilder();
+            // 用于同步等待异步读完成
+            var outputDone = new TaskCompletionSource<bool>();
+            var errorDone = new TaskCompletionSource<bool>();
 
             _pythonProcess.OutputDataReceived += (s, e) =>
             {
-                if (e.Data != null) outputBuilder.AppendLine(e.Data);
+                if (e.Data == null)
+                    outputDone.TrySetResult(true);
+                else
+                    outputBuilder.AppendLine(e.Data);
             };
             _pythonProcess.ErrorDataReceived += (s, e) =>
             {
-                if (e.Data != null) errorBuilder.AppendLine(e.Data);
+                if (e.Data == null)
+                    errorDone.TrySetResult(true);
+                else
+                    errorBuilder.AppendLine(e.Data);
             };
 
             _pythonProcess.Start();
@@ -256,14 +274,8 @@ namespace AutoTest.Biz
             _pythonProcess.BeginErrorReadLine();
 
             // 等待进程结束，带超时
-            var tcs = new TaskCompletionSource<bool>();
+            var waitTask = Task.Run(() => _pythonProcess.WaitForExit());
             var timeoutTask = Task.Delay(DefaultTimeoutMs, _cts.Token);
-
-            var waitTask = Task.Run(() =>
-            {
-                _pythonProcess.WaitForExit();
-                tcs.TrySetResult(true);
-            });
 
             var completedTask = await Task.WhenAny(waitTask, timeoutTask);
 
@@ -274,49 +286,105 @@ namespace AutoTest.Biz
                 throw new TimeoutException($"桌面测试超时 ({DefaultTimeoutMs / 1000}s)");
             }
 
-            await tcs.Task; // 确保 WaitForExit 完成
-            _pythonProcess.WaitForExit(); // 二次确认
+            // 确保进程已退出
+            await waitTask;
+
+            // ★ 等待异步输出流完全读完（修复竞态条件）
+            await Task.WhenAny(Task.WhenAll(outputDone.Task, errorDone.Task),
+                Task.Delay(5000)); // 最多等 5 秒
 
             string output = outputBuilder.ToString();
             string error = errorBuilder.ToString();
+            int exitCode = _pythonProcess.ExitCode;
 
-            LogHelper.Instance.Info($"Python 进程退出码: {_pythonProcess.ExitCode}");
+            LogHelper.Instance.Info($"Python 进程退出码: {exitCode}");
             if (!string.IsNullOrWhiteSpace(error))
             {
                 LogHelper.Instance.Warn($"Python stderr: {error}");
             }
 
-            // 简单脚本模式：exit code 0 且没有异常 → 成功
-            if (_pythonProcess.ExitCode == 0)
+            // 提取标记包裹的 JSON 结果
+            string resultJson = ExtractJsonLine(output);
+
+            if (string.IsNullOrWhiteSpace(resultJson))
             {
-                _testResult.Success = true;
-                string summary = output?.Trim();
-                if (summary?.Length > 500) summary = summary.Substring(0, 500);
-                _testResult.FailMsg = summary ?? "执行成功";
-                _testResult.ResultContent = output;
-                return output ?? "";
+                // runner 没有输出 JSON → 根据退出码判断
+                if (exitCode == 0 && string.IsNullOrWhiteSpace(error))
+                {
+                    // 进程正常退出，无输出 → 可能是简单脚本模式，按成功处理
+                    _testResult.Success = true;
+                    _testResult.FailMsg = "执行成功（无结构化输出）";
+                    _testResult.ResultContent = output;
+                }
+                else
+                {
+                    _testResult.Success = false;
+                    if (string.IsNullOrWhiteSpace(output) && string.IsNullOrWhiteSpace(error))
+                    {
+                        _testResult.FailMsg = "Python 未产生任何输出。可能原因:\n"
+                            + "1) Python 未安装或未添加到 PATH\n"
+                            + "2) Windows 应用执行别名(stub)拦截了 python 命令\n"
+                            + "   → 关闭方法: 设置 → 应用 → 应用执行别名 → 关闭 python.exe\n"
+                            + $"3) autodesk 包未找到 (PYTHONPATH={PyProjectRoot}\\src)";
+                    }
+                    else
+                    {
+                        _testResult.FailMsg = $"测试失败 (exit={exitCode})。\nstderr: {error}\nstdout: {output}";
+                    }
+                    _testResult.ResultContent = output;
+                }
+                return null;
             }
-            else
-            {
-                _testResult.Success = false;
-                string errMsg = error?.Trim() ?? output?.Trim() ?? "未知错误";
-                if (errMsg.Length > 500) errMsg = errMsg.Substring(0, 500);
-                _testResult.FailMsg = errMsg;
-                _testResult.ResultContent = output;
-                return output ?? "";
-            }
+
+            // 解析 JSON 结果
+            ParseResult(resultJson);
+            return resultJson;
         }
 
         /// <summary>
-        /// 从 stdout 中提取 JSON 行
+        /// 从 stdout 中提取 JSON 结果行
+        /// runner.py 用 <<<AUTODESK_RESULT>>> / <<<END_AUTODESK_RESULT>>> 包裹 JSON
         /// </summary>
         private string ExtractJsonLine(string output)
         {
             if (string.IsNullOrWhiteSpace(output)) return null;
 
-            // runner.py 输出的 JSON 在最后一行（或独立一行）
-            var lines = output.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-            foreach (var line in lines)
+            // 优先查找标记包裹的 JSON
+            int startMarker = output.IndexOf("<<<AUTODESK_RESULT>>>");
+            int endMarker = output.IndexOf("<<<END_AUTODESK_RESULT>>>");
+
+            if (startMarker >= 0 && endMarker > startMarker)
+            {
+                string jsonBlock = output.Substring(
+                    startMarker + "<<<AUTODESK_RESULT>>>".Length,
+                    endMarker - startMarker - "<<<AUTODESK_RESULT>>>".Length).Trim();
+
+                if (jsonBlock.StartsWith("{") && jsonBlock.EndsWith("}"))
+                {
+                    try
+                    {
+                        JsonConvert.DeserializeObject(jsonBlock);
+                        return jsonBlock;
+                    }
+                    catch { }
+                }
+
+                // 跨行提取
+                var lines = jsonBlock.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (var line in lines)
+                {
+                    var t = line.Trim();
+                    if (t.StartsWith("{") && t.EndsWith("}"))
+                    {
+                        try { JsonConvert.DeserializeObject(t); return t; }
+                        catch { }
+                    }
+                }
+            }
+
+            // 回退：在整个输出中搜索 JSON 行
+            var allLines = output.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (var line in allLines)
             {
                 var trimmed = line.Trim();
                 if (trimmed.StartsWith("{") && trimmed.EndsWith("}"))
@@ -389,6 +457,31 @@ namespace AutoTest.Biz
                 input = input.Replace("{" + param.Name + "}", param.Val ?? "");
             }
             return input;
+        }
+
+        /// <summary>
+        /// 将 TestScript 列表按 Order 合并进生成的 Python 脚本。
+        /// 对应老框架 RunTestTask 的注入逻辑：只注入 Enable 且 Body 非空的脚本，
+        /// 先替换环境变量参数，再按 Order 排序追加。
+        /// 脚本内容以 Python 代码段形式插入，供 TestCode/ValidCode 调用。
+        /// </summary>
+        private void AppendTestScripts(StringBuilder sb, System.Collections.Generic.List<TestScript> scripts, string sectionTitle)
+        {
+            if (scripts == null || scripts.Count == 0) return;
+
+            var enabled = scripts.Where(s => s != null && s.Enable && !string.IsNullOrWhiteSpace(s.Body))
+                                 .OrderBy(s => s.Order)
+                                 .ToList();
+            if (enabled.Count == 0) return;
+
+            sb.AppendLine();
+            sb.AppendLine("# ===== " + sectionTitle + " =====");
+            foreach (var s in enabled)
+            {
+                sb.AppendLine("# 脚本: " + (s.ScriptName ?? string.Empty));
+                sb.AppendLine(ReplaceEnvParams(s.Body));
+                sb.AppendLine();
+            }
         }
 
         /// <summary>
