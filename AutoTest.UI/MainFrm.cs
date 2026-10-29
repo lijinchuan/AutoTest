@@ -229,15 +229,9 @@ namespace AutoTest.UI
 
             }
 
-            try
-            {
-                KillBrowserSubprocess();//杀死进程
-                Cef.Shutdown();//释放资源
-            }
-            catch
-            {
-
-            }
+            //注意：这里不能调用 Cef.Shutdown()。
+            //OnClosing 阶段子控件（各个浏览器）还没有 Dispose，先 Shutdown 会让随后的浏览器释放访问到已关闭的 CEF，
+            //表现为退出卡死。CEF 相关资源统一放到 Program.Main 中、窗体释放之后处理。
 
             wdlg.Hide();
         }
@@ -586,38 +580,45 @@ namespace AutoTest.UI
         /// <summary>
         /// 清理CefSharp.BrowserSubprocess
         /// </summary>
-        private void KillBrowserSubprocess()
+        internal static void KillBrowserSubprocess()
         {
             try
             {
                 string SYSPath = System.AppDomain.CurrentDomain.BaseDirectory;
                 Process[] processs = Process.GetProcessesByName("CefSharp.BrowserSubprocess");
-                if (processs != null && processs.Length > 0)
+                foreach (var process in processs)
                 {
-                    for (int i = 0; i < processs.Length; i++)
+                    try
                     {
-                        Process process = processs[i];
-
-                        bool bKill = false;
-                        if (process.MainModule != null)
+                        using (process)
                         {
-                            string FileName = process.MainModule.FileName;
-                            if (SYSPath.Contains(FileName) || FileName.Contains(SYSPath))
+                            string fileName = null;
+                            try
                             {
-                                bKill = true;
+                                fileName = process.MainModule?.FileName;
+                            }
+                            catch
+                            {
+                                //个别进程无法读取 MainModule，跳过即可，不能因此中断整个清理
+                            }
+
+                            if (!string.IsNullOrWhiteSpace(fileName)
+                                && (SYSPath.Contains(fileName) || fileName.Contains(SYSPath)))
+                            {
+                                process.Kill();
                             }
                         }
-                        if (bKill)
-                        {
-                            process.Kill();
-                        }
-
+                    }
+                    catch (Exception ex)
+                    {
+                        //退出流程中不能再弹模态框，否则进程会停在看不到的对话框上
+                        LJC.FrameWorkV3.LogManager.LogHelper.Instance.Error("清理CefSharp.BrowserSubprocess异常", ex);
                     }
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show(ex.ToString(), "清理CefSharp.BrowserSubprocess异常");
+                LJC.FrameWorkV3.LogManager.LogHelper.Instance.Error("清理CefSharp.BrowserSubprocess异常", ex);
             }
 
         }

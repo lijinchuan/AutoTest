@@ -64,6 +64,16 @@ namespace AutoTest.UI.WebTask
 
         protected ConcurrentBag<WebEvent> webEvents = new ConcurrentBag<WebEvent>();
 
+        /// <summary>
+        /// 清空本次抓取的响应内容。响应体可能很大，任务结束后必须主动释放
+        /// </summary>
+        protected void ClearWebEvents()
+        {
+            while (webEvents.TryTake(out _))
+            {
+            }
+        }
+
         private bool _readyFlag = false;
         private readonly object _locker = new object();
 

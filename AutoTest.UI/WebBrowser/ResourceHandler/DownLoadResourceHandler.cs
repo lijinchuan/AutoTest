@@ -14,9 +14,17 @@ namespace AutoTest.UI.WebBrowser.ResourceHandler
     {
         public const string UrlFlag = "_ask_back_download_";
         private const string CrosKey = "Access-Control-Allow-Origin";
+
+        /// <summary>
+        /// 共享 HttpClient。原来每个请求都 new 一个，每个实例都有自己的连接池和 socket，
+        /// 高频下载时内存和句柄会持续增长
+        /// </summary>
+        private static readonly HttpClient httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(120) };
+
         private IRequest _orgRequest;
         private Task<HttpResponseMessage> _downTask;
         private int _dataReadCount = 0;
+        private byte[] _contentBytes;
 
         private string TrimUrl(string url)
         {
@@ -30,7 +38,6 @@ namespace AutoTest.UI.WebBrowser.ResourceHandler
         {
             _orgRequest = orgRequest;
 
-            HttpClient httpClient = new HttpClient();
             var httpMessage = new HttpRequestMessage
             {
                 Method = new HttpMethod(orgRequest.Method),
@@ -77,6 +84,42 @@ namespace AutoTest.UI.WebBrowser.ResourceHandler
 
         public void Dispose()
         {
+            _contentBytes = null;
+
+            try
+            {
+                if (_downTask == null)
+                {
+                    return;
+                }
+
+                if (_downTask.Status == TaskStatus.RanToCompletion)
+                {
+                    _downTask.Result?.Dispose();
+                }
+                else if (!_downTask.IsCompleted)
+                {
+                    //导航/取消导致响应提前结束，也要把已经拿到的内容释放掉
+                    _ = _downTask.ContinueWith(t => t.Result?.Dispose(), TaskContinuationOptions.OnlyOnRanToCompletion);
+                }
+            }
+            catch
+            {
+            }
+        }
+
+        /// <summary>
+        /// 取响应字节，只读一次，避免每次 Read 都重新分配一份完整内容的副本
+        /// </summary>
+        private byte[] GetResponseBytes()
+        {
+            if (_contentBytes == null)
+            {
+                _downTask.Wait();
+                _contentBytes = _downTask.Result.Content.ReadAsByteArrayAsync().Result;
+            }
+
+            return _contentBytes;
         }
 
         public void GetResponseHeaders(IResponse response, out long responseLength, out string redirectUrl)
@@ -102,8 +145,7 @@ namespace AutoTest.UI.WebBrowser.ResourceHandler
 
             response.StatusCode = (int)_downTask.Result.StatusCode;
             response.SetHeaderByName(CrosKey, "*", true);
-            var bytes = _downTask.Result.Content.ReadAsByteArrayAsync().Result;
-            responseLength = bytes.Length;
+            responseLength = GetResponseBytes().Length;
             redirectUrl = null;
         }
 
@@ -120,8 +162,7 @@ namespace AutoTest.UI.WebBrowser.ResourceHandler
 
         public bool Read(Stream dataOut, out int bytesRead, IResourceReadCallback callback)
         {
-            _downTask.Wait();
-            var bytes = _downTask.Result.Content.ReadAsByteArrayAsync().Result;
+            var bytes = GetResponseBytes();
             int leftToRead = bytes.Length - _dataReadCount;
             if (leftToRead == 0)
             {

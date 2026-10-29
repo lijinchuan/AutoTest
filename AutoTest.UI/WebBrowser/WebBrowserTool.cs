@@ -7,6 +7,7 @@ using CefSharp.DevTools.Runtime;
 using System;
 using System.Collections.Concurrent;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
@@ -32,6 +33,28 @@ namespace AutoTest.UI.WebBrowser
                 throw new ObjectDisposedException(nameof(browser));
 
             return _devToolsClients.GetOrAdd(browser.Identifier, _ => browser.GetDevToolsClient());
+        }
+
+        /// <summary>
+        /// 释放所有缓存的 DevToolsClient，应用退出时调用。
+        /// 静态字典不清理的话，每次浏览器崩溃/重建都会留下一个 DevToolsClient。
+        /// </summary>
+        public static void DisposeAllDevToolsClients()
+        {
+            foreach (var key in _devToolsClients.Keys.ToArray())
+            {
+                DevToolsClient client;
+                if (_devToolsClients.TryRemove(key, out client))
+                {
+                    try
+                    {
+                        client.Dispose();
+                    }
+                    catch
+                    {
+                    }
+                }
+            }
         }
 
         /// <summary>

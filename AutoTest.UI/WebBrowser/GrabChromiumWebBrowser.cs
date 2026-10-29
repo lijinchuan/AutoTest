@@ -18,22 +18,28 @@ namespace AutoTest.UI.WebBrowser
         private readonly List<IEventListener> eventListeners = new List<IEventListener>();
 
         public GrabChromiumWebBrowser(string name, string address)
-            : base(address)
+            : base(address, BrowserContextCache.Acquire(name))
         {
             Name = name;
-            var setting = new RequestContextSettings()
-            {
-                CachePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CefSharp\\Cache_" + name),
-                PersistSessionCookies = true
-            };
-            var context = new RequestContext(setting);
-            RequestContext = context;
 
             RequestHandler = new RequestHandler.GrabRequestHandler();
 
             LifeSpanHandler = new DefLifeSpanHandler();
 
             CefRemoteCaptureBridge.Register(this);
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                lock (eventListeners)
+                {
+                    eventListeners.Clear();
+                }
+            }
+
+            base.Dispose(disposing);
         }
 
         /// <summary>

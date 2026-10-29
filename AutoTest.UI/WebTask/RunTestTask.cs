@@ -656,6 +656,9 @@ namespace AutoTest.UI.WebTask
                     ApiTaskTrigger.NotifyCompleted(_apiTaskRequest.Id);
                 }
             }
+
+            //任务已经结束，释放本次抓取的全部响应内容
+            ClearWebEvents();
         }
 
         /// <summary>

@@ -3,8 +3,12 @@
   <Import Project="..\packages\CefSharp.Common.150.0.110\build\CefSharp.Common.props" Condition="Exists('..\packages\CefSharp.Common.150.0.110\build\CefSharp.Common.props')" />
   <Import Project="..\packages\chromiumembeddedframework.runtime.win-x86.150.0.11\build\chromiumembeddedframework.runtime.win-x86.props" Condition="Exists('..\packages\chromiumembeddedframework.runtime.win-x86.150.0.11\build\chromiumembeddedframework.runtime.win-x86.props')" />
   <Import Project="..\packages\chromiumembeddedframework.runtime.win-x64.150.0.11\build\chromiumembeddedframework.runtime.win-x64.props" Condition="Exists('..\packages\chromiumembeddedframework.runtime.win-x64.150.0.11\build\chromiumembeddedframework.runtime.win-x64.props')" />
-  <Import Project="..\packages\cef.redist.x64.120.2.7\build\cef.redist.x64.props" Condition="Exists('..\packages\cef.redist.x64.120.2.7\build\cef.redist.x64.props')" />
-  <Import Project="..\packages\cef.redist.x86.95.7.14\build\cef.redist.x86.props" Condition="Exists('..\packages\cef.redist.x86.95.7.14\build\cef.redist.x86.props')" />
+  <!--
+    不要重新加回 cef.redist.x86 / cef.redist.x64 的 props 导入。
+    这两个旧包和 chromiumembeddedframework.runtime.win-* 定义了同名的 CefRedist32CopyResources /
+    CefRedist64CopyResources target，后导入的会覆盖先导入的，结果用旧版 libcef.dll 覆盖掉 CefSharp 150
+    需要的 libcef.dll，启动时 Cef.Initialize 直接失败（窗口一片空白）。
+  -->
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -508,6 +512,7 @@
     <Compile Include="WebBrowser\CommonFileDialogHandler .cs" />
     <Compile Include="WebBrowser\CookieVisitor.cs" />
     <Compile Include="WebBrowser\CSObj.cs" />
+    <Compile Include="WebBrowser\BrowserContextCache.cs" />
     <Compile Include="WebBrowser\CSUCTestCaseSelector.cs" />
     <Compile Include="WebBrowser\CefRemoteCaptureBridge.cs" />
     <Compile Include="WebBrowser\DefaultChromiumWebBrowser.cs">

@@ -106,16 +106,9 @@ namespace AutoTest.UI.WebBrowser
         }
 
         public DefaultChromiumWebBrowser(string name, string address)
-            : base(address)
+            : base(address, BrowserContextCache.Acquire(name))
         {
             Name = name;
-            var setting = new RequestContextSettings()
-            {
-                CachePath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "CefSharp\\Cache_" + name),
-                PersistSessionCookies = true
-            };
-            var context = new RequestContext(setting);
-            RequestContext = context;
 
             dialogHandler = new CommonFileDialogHandler();
             DialogHandler = dialogHandler;
@@ -240,6 +233,7 @@ namespace AutoTest.UI.WebBrowser
         {
             webTask.OnMsgPublish -= WebTask_OnMsgPublish;
             webTask.OnTaskReady -= WebTask_OnTaskReady;
+            webTask.OnTaskCompleted -= WebTask_OnTaskCompleted;
             DocumentLoadCompleted -= webTask.DocumentCompletedHandler;
             DocumentLoadStart -= webTask.DocumentLoadStartHandler;
             lock (webTaskList)
@@ -247,6 +241,18 @@ namespace AutoTest.UI.WebBrowser
                 _ = webTaskListHash.Remove(webTask.GetTaskName());
             }
             RemoveEventListener(webTask.GetEventListener());
+
+            //任务结束后不再持有任务对象（任务里保存着本次抓取的全部响应内容）
+            if (ReferenceEquals(lastTask, webTask))
+            {
+                lastTask = null;
+            }
+
+            if (cSObj != null)
+            {
+                cSObj.SetWebTask(null);
+            }
+
             if (webTask.ClearCookies)
             {
                 //删除所有的COOKIE
@@ -746,16 +752,65 @@ namespace AutoTest.UI.WebBrowser
             // Cleanup managed objects by calling their
             // Dispose() methods.
 
-            OnMsgPublished = null;
+            if (disposing)
+            {
+                try
+                {
+                    //silenceJsDialogHandler 是静态的，不解绑的话每个创建过的浏览器都会被它永久引用，
+                    //浏览器、RequestContext、CSObj、eventListeners 全部无法回收
+                    silenceJsDialogHandler.OnAlert -= WebTask_OnMsgPublish;
+
+                    FrameLoadStart -= DefaultChromiumWebBrowser_FrameLoadStart;
+                    FrameLoadEnd -= DefaultChromiumWebBrowser_FrameLoadEnd;
+                    LoadingStateChanged -= DefaultChromiumWebBrowser_LoadingStateChanged;
+                    IsBrowserInitializedChanged -= DefaultChromiumWebBrowser_IsBrowserInitializedChanged;
+
+                    DocumentLoadStart = null;
+                    DocumentLoadCompleted = null;
+                    OnTaskStart = null;
+                    OnAllTasksCompleted = null;
+                    OnMsgPublished = null;
+
+                    if (cSObj != null)
+                    {
+                        cSObj.OnPublishMsg -= WebTask_OnMsgPublish;
+                        cSObj.Dispose();
+                        cSObj = null;
+                    }
+
+                    lock (eventListeners)
+                    {
+                        eventListeners.Clear();
+                    }
+
+                    ClearTask();
+                    lastTask = null;
+                }
+                catch
+                {
+                }
+            }
 
             var browser = GetBrowser();
             if (browser != null)
             {
-                webBrowserTool.ReleaseDevToolsClient(browser);
+                try
+                {
+                    webBrowserTool.ReleaseDevToolsClient(browser);
+                }
+                catch
+                {
+                }
                 browser.CloseBrowser(false);//关闭浏览器
             }
 
-            JavascriptObjectRepository.UnRegisterAll();//解绑对象 高版本才有
+            try
+            {
+                JavascriptObjectRepository.UnRegisterAll();//解绑对象 高版本才有
+            }
+            catch
+            {
+            }
 
             base.Dispose(disposing);
         }

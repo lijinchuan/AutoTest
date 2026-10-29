@@ -105,7 +105,10 @@ namespace AutoTest.Biz.RemoteControl
             var hwnd = CurrentWindowHandle;
             if (hwnd == IntPtr.Zero || !IsWindow(hwnd))
             {
-                hwnd = Process.GetCurrentProcess().MainWindowHandle;
+                using (var currentProcess = Process.GetCurrentProcess())
+                {
+                    hwnd = currentProcess.MainWindowHandle;
+                }
                 if (hwnd == IntPtr.Zero)
                     throw new InvalidOperationException("未找到主窗口句柄");
                 CurrentWindowHandle = hwnd;
@@ -138,11 +141,11 @@ namespace AutoTest.Biz.RemoteControl
 
                     var encodeSw = Stopwatch.StartNew();
                     var encoder = GetJpegEncoder();
-                    var encoderParams = new EncoderParameters(1);
-                    encoderParams.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, JpegQuality);
-
+                    //EncoderParameters/EncoderParameter 包装了非托管 GDI+ 句柄，每次截图都必须释放，否则会持续累积
+                    using (var encoderParams = new EncoderParameters(1))
                     using (var ms = new MemoryStream())
                     {
+                        encoderParams.Param[0] = new EncoderParameter(System.Drawing.Imaging.Encoder.Quality, JpegQuality);
                         cropBmp.Save(ms, encoder, encoderParams);
                         encodeSw.Stop();
                         totalSw.Stop();

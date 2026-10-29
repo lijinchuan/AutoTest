@@ -43,50 +43,65 @@ namespace AutoTest.UI.WebBrowser.ResourceRequestHandler
         protected override void OnResourceLoadComplete(IWebBrowser chromiumWebBrowser, IBrowser browser, IFrame frame, IRequest request, IResponse response, UrlRequestStatus status, long receivedContentLength)
         {
             var guid = StringUtil.GetMD5(request.Url + request.Identifier);
-            if (guid != null)
+            if (guid == null)
             {
-                var filter = ResponseFilterFactory.GetResponseFilter(guid);
-                if (filter != null)
+                return;
+            }
+
+            var filter = ResponseFilterFactory.GetResponseFilter(guid);
+            if (filter == null)
+            {
+                return;
+            }
+
+            try
+            {
+                var buffer = new byte[512];
+                var stream = filter.GetStream();
+                byte[] data = null;
+                using (MemoryStream ms = new MemoryStream())
                 {
-                    var buffer = new byte[512];
-                    var stream = filter.GetStream();
-                    byte[] data = null;
-                    using (MemoryStream ms = new MemoryStream())
+                    int readlen;
+                    while ((readlen = stream.Read(buffer, 0, buffer.Length)) > 0)
                     {
-                        int readlen;
-                        while ((readlen = stream.Read(buffer, 0, buffer.Length)) > 0)
-                        {
-                            ms.Write(buffer, 0, readlen);
-                        }
-                        data = ms.ToArray();
+                        ms.Write(buffer, 0, readlen);
                     }
-
-                    if (chromiumWebBrowser is GrabChromiumWebBrowser)
-                    {
-                        //包装事件给各个事件处理器处理
-                        var webevent = new WebEvent
-                        {
-                            Data = data,
-                            SourceUrl = request.Url,
-                            DataType = response.MimeType,
-                            ResponseChartSet = string.IsNullOrWhiteSpace(response.Charset) ? "utf-8" : response.Charset,
-                            StatusCode = response.StatusCode,
-                            Browser = browser,
-                            Frame = frame
-                        };
-
-                        webevent.Content = filter.GetContent(webevent);
-
-                        foreach (var listener in (chromiumWebBrowser as GrabChromiumWebBrowser).GetEventListeners())
-                        {
-                            if (listener.Process(webevent))
-                            {
-                                break;
-                            }
-                        }
-                    }
-
+                    data = ms.ToArray();
                 }
+
+                if (chromiumWebBrowser is GrabChromiumWebBrowser)
+                {
+                    //包装事件给各个事件处理器处理
+                    var webevent = new WebEvent
+                    {
+                        Data = data,
+                        SourceUrl = request.Url,
+                        DataType = response.MimeType,
+                        ResponseChartSet = string.IsNullOrWhiteSpace(response.Charset) ? "utf-8" : response.Charset,
+                        StatusCode = response.StatusCode,
+                        Browser = browser,
+                        Frame = frame
+                    };
+
+                    webevent.Content = filter.GetContent(webevent);
+
+                    foreach (var listener in (chromiumWebBrowser as GrabChromiumWebBrowser).GetEventListeners())
+                    {
+                        if (listener.Process(webevent))
+                        {
+                            break;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                LJC.FrameWorkV3.LogManager.LogHelper.Instance.Error("处理响应失败:" + request.Url, ex);
+            }
+            finally
+            {
+                //过滤器持有完整响应体，读完必须释放，否则每个响应都会一直占着内存
+                filter.ReleaseBuffer();
             }
         }
     }

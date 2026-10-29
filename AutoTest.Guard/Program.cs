@@ -105,16 +105,32 @@ namespace AutoTest.Guard
         /// <returns></returns>
         static bool CheckNoOtherProcess()
         {
-            var currprocess = Process.GetCurrentProcess();
-            Process[] pa = Process.GetProcesses();//获取当前进程数组。
-            foreach (Process p in pa)
+            var result = true;
+
+            using (var currprocess = Process.GetCurrentProcess())
             {
-                if (p.ProcessName == currprocess.ProcessName && p.Id != currprocess.Id)
+                Process[] pa = Process.GetProcesses();//获取当前进程数组。
+                foreach (Process p in pa)
                 {
-                    return false;
+                    try
+                    {
+                        if (result && p.ProcessName == currprocess.ProcessName && p.Id != currprocess.Id)
+                        {
+                            result = false;
+                        }
+                    }
+                    catch
+                    {
+                    }
+                    finally
+                    {
+                        //Process 持有系统句柄，不释放会随检查次数持续增长
+                        p.Dispose();
+                    }
                 }
             }
-            return true;
+
+            return result;
         }
 
         static int MakeLParam(int LoWord, int HiWord)
@@ -350,22 +366,64 @@ namespace AutoTest.Guard
                         else
                         {
                             var parentProcess = processList[0];
-                            ManagementObjectSearcher searcher = new ManagementObjectSearcher("Select * From Win32_Process Where ParentProcessID=" + parentProcess.Id);
-                            ManagementObjectCollection moc = searcher.Get();
-                            foreach (ManagementObject mo in moc)
+                            using (var searcher = new ManagementObjectSearcher("Select * From Win32_Process Where ParentProcessID=" + parentProcess.Id))
+                            using (var moc = searcher.Get())
                             {
-                                var pName = Convert.ToString(mo["Name"]);
-                                var pId = Convert.ToInt32(mo["ProcessID"]);
-                                if ("CefSharp.BrowserSubprocess.exe".Equals(pName, StringComparison.OrdinalIgnoreCase))
+                                foreach (ManagementObject mo in moc)
                                 {
-                                    var childProcess = Process.GetProcessById(pId);
-                                    if (!childProcess.Responding)
+                                    using (mo)
                                     {
-                                        PrintWarn("子进程未响应，关闭......");
-                                        Kill(parentProcess);
-                                        break;
+                                        var pName = Convert.ToString(mo["Name"]);
+                                        var pId = Convert.ToInt32(mo["ProcessID"]);
+                                        if ("CefSharp.BrowserSubprocess.exe".Equals(pName, StringComparison.OrdinalIgnoreCase))
+                                        {
+                                            Process childProcess = null;
+                                            try
+                                            {
+                                                childProcess = Process.GetProcessById(pId);
+                                                if (!childProcess.Responding)
+                                                {
+                                                    PrintWarn("子进程未响应，关闭......");
+                                                    Kill(parentProcess);
+                                                    break;
+                                                }
+                                            }
+                                            catch
+                                            {
+                                            }
+                                            finally
+                                            {
+                                                childProcess?.Dispose();
+                                            }
+                                        }
                                     }
                                 }
+                            }
+                        }
+
+                        //释放 Process 句柄，避免守护进程自身每 30 秒泄漏一批句柄
+                        foreach (var p in pa)
+                        {
+                            try
+                            {
+                                if (!processList.Contains(p))
+                                {
+                                    p.Dispose();
+                                }
+                            }
+                            catch
+                            {
+                            }
+                        }
+
+                        foreach (var p in processList)
+                        {
+                            try
+                            {
+                                p.Dispose();
+                            }
+                            catch
+                            {
                             }
                         }
                     }

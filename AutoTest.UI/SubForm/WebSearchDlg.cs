@@ -112,11 +112,23 @@ namespace AutoTest.UI.SubForm
             }
         }
 
+        /// <summary>
+        /// 抓包窗口最多保留的事件数，超过后丢弃最早的一批，避免长时间开启抓包无限吃内存
+        /// </summary>
+        private const int MaxWebEventCount = 20000;
+
         private bool _eventListener_OnProcess(WebEvent evt)
         {
             if (!stop)
             {
-                webEvents.Add(evt);
+                lock (webEvents)
+                {
+                    if (webEvents.Count >= MaxWebEventCount)
+                    {
+                        webEvents.RemoveRange(0, MaxWebEventCount / 4);
+                    }
+                    webEvents.Add(evt);
+                }
             }
             return true;
         }
@@ -134,7 +146,12 @@ namespace AutoTest.UI.SubForm
                 return;
             }
             var list = new List<WebEvent>();
-            foreach (var evt in webEvents.ToList())
+            List<WebEvent> snapshot;
+            lock (webEvents)
+            {
+                snapshot = webEvents.ToList();
+            }
+            foreach (var evt in snapshot)
             {
                 if (evt.Content != null)
                 {
@@ -176,7 +193,10 @@ namespace AutoTest.UI.SubForm
             if (status == 0)
             {
                 stop = false;
-                webEvents.Clear();
+                lock (webEvents)
+                {
+                    webEvents.Clear();
+                }
                 var url = TBUrl.Text;
                 status = 1;
                 PBBtn.Image = Resources.Resource1.record_green;

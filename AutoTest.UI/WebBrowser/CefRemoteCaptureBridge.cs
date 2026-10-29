@@ -69,6 +69,24 @@ namespace AutoTest.UI.WebBrowser
             DisposeState(state);
         }
 
+        /// <summary>
+        /// 释放所有浏览器缓存的截图帧，应用退出时调用
+        /// </summary>
+        public static void Clear()
+        {
+            List<BrowserCaptureState> states;
+            lock (locker)
+            {
+                states = browserStates.Values.ToList();
+                browserStates.Clear();
+            }
+
+            foreach (var state in states)
+            {
+                DisposeState(state);
+            }
+        }
+
         private static void EnsureInitialized()
         {
             if (initialized)
